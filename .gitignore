@@ -1,0 +1,49 @@
+# Secrets (keep the template trackable)
+.env
+.env.*
+!.env.example
+
+# Browser auth / session state
+.auth/
+browser-sessions/
+storageState*.json
+*.session.json
+playwright/.auth/
+.cookies*
+
+# Runtime artifacts (submission-evidence/ stays tracked)
+artifacts/
+data/*.db
+*.db
+*.sqlite
+*.sqlite3
+tmp/
+.cache/
+test-results/
+playwright-report/
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Sanitised evidence chosen for submission is always tracked
+!submission-evidence/
+!submission-evidence/**
