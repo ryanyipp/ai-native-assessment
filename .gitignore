@@ -47,3 +47,6 @@ Thumbs.db
 # Sanitised evidence chosen for submission is always tracked
 !submission-evidence/
 !submission-evidence/**
+
+# Fixture runtime data
+fixtures/creator-studio/data/
