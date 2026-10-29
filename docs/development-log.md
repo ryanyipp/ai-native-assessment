@@ -103,3 +103,14 @@ Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery t
 **Live run:** `run_248eaaa2a5cd` through the API with the injected stall (explorer-a, 75 s; lease 45 s). It ended **partial**: the explorer share was used and 4 explore tasks are unfinished. 26 calls (exploration 19, testing 4, verification 3), 28,903 tokens, US$0.033894 reported, 0 truncated replies.
 - **Recovery:** explorer-a's attempt on `explore:start` expired; its context was closed; the task was reassigned and completed by explorer-b; explorer-a's late model call was refused and its late result rejected.
 - **Handoffs:** both forms (drafts and scheduling) were tested this time with no truncation. 3 candidates were verified: R5 confirmed, two R2 inconclusive (not explicit).
+
+## 2026-10-29: Evaluation (single-agent baseline vs shared queue)
+
+- **Lease vs model timeout:** fixed with a heartbeat that renews the lease while a call is in flight. A 5 s call on a 2 s lease survives; after it, silence expires the task.
+- **Baseline:** `single_agent` mode added. The sequential specialist pipeline is not the baseline.
+- **Frozen set:** `evaluation/creator-studio/` (committed in `1d162af`, before the batch).
+- **Batch `batch-cp5`:** 12 live runs (3 × 2 conditions × 2 builds), no faults, US$0.2273 of the US$1 cap, no harness errors.
+  - D1 found 3/3 in both conditions; 0 false confirmations; all six confirmations manually checked as valid.
+  - `queue_review` cost about 3× more (US$0.025–0.038 vs US$0.008–0.012) and always ended partial with 5–7 unfinished explore tasks.
+  - Coverage saturated at 100%, so it does not discriminate.
+- **Report:** `docs/evaluation.md`. Records: `evaluation/results/batch-cp5/`.

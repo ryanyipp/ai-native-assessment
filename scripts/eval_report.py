@@ -162,6 +162,20 @@ def main(batch: str) -> None:
                  + (f"; harness error: {s['harness_error']}" if s["harness_error"] else ""))
     if not bad:
         L.append("- none")
+    L += ["", "## Limitations", "",
+          "- One small fixture, one known defect, two ambiguous requirements, about three runs per cell. "
+          "This says nothing general about multi-agent review.",
+          "- The reference map is coarse (route + heading). A filled form matches its empty reference state, so "
+          "coverage saturates at 100% in both conditions and spurious states read 0: coverage does not discriminate here.",
+          "- `queue_review` stops exploring at its budget share, so it always ends `partial` with unfinished explore "
+          "tasks. `single_agent` finishes exploring early on this small site. The unfinished work comes from the "
+          "budget split, not a fault.",
+          "- Single-agent confirmations are self-checks (`independence: self`). Code replayed and evaluated them, but "
+          "the agent that suspected the defect also chose the assertion.",
+          "- Same model, prompts and call limits. The exploration step structure differs (12 sequential steps vs "
+          "3 steps per queued task).",
+          "- The checkpoint-4 injected-stall run is recovery evidence only and is not in this batch.",
+          "", f"Manual review of the confirmed assertions: `evaluation/results/{batch}/manual-review.md`."]
     (ROOT / "docs" / "evaluation.md").write_text("\n".join(L) + "\n", "utf-8")
     print(f"scored {len(scores)} runs; US${total:.4f}; wrote docs/evaluation.md")
 

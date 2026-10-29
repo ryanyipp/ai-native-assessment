@@ -1,0 +1,781 @@
+[
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_9191ff906668",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'confirmed': 1, 'inconclusive': 1}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 6,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 1,
+    "unverified": 0,
+    "candidates": 2,
+    "test_cases": 5,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 56.4,
+    "calls": 9,
+    "tokens": 10752,
+    "cost_usd": 0.008849,
+    "truncated_calls": 0,
+    "independence": [
+      "self"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_d0a4798593de",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "text_contains": null,
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+          "chosen_by": "single-agent"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/118f915e?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/09d49293?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_1204b1110946",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 5, 'done': 11}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 3}; 6 test case(s), 3 candidate(s), verification {'confirmed': 1, 'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 10,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 3,
+    "test_cases": 6,
+    "unfinished_tasks": 5,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 93.8,
+    "calls": 26,
+    "tokens": 29868,
+    "cost_usd": 0.038146,
+    "truncated_calls": 1,
+    "independence": [
+      "independent"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_f829506ccefe",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "text_contains": null,
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the 'Publish date' field because 2026-06-14 is before the studio date of 2026-06-15.",
+          "chosen_by": "verifier"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/83e0ec0b?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/b8a0a5dc?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_e36317467007",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 1 candidate(s), verification: {'inconclusive': 1}",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 7,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 1,
+    "unverified": 0,
+    "candidates": 1,
+    "test_cases": 6,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 45.3,
+    "calls": 8,
+    "tokens": 9328,
+    "cost_usd": 0.007719,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_67acd134314d",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 6, 'done': 10}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 6 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 11,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 2,
+    "test_cases": 6,
+    "unfinished_tasks": 6,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 69.2,
+    "calls": 23,
+    "tokens": 23598,
+    "cost_usd": 0.023159,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_08666f8f7aba",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 3 candidate(s), verification: {'confirmed': 1, 'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 6,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 3,
+    "test_cases": 6,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 58.3,
+    "calls": 10,
+    "tokens": 12732,
+    "cost_usd": 0.010534,
+    "truncated_calls": 0,
+    "independence": [
+      "self"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_4343aaecf48f",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "text_contains": null,
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+          "chosen_by": "single-agent"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/ed94fdd2?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/c3471680?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_2028e64471e5",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 5, 'done': 9}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 1}; 6 test case(s), 1 candidate(s), verification {'confirmed': 1}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 10,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 0,
+    "unverified": 0,
+    "candidates": 1,
+    "test_cases": 6,
+    "unfinished_tasks": 5,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 79.7,
+    "calls": 24,
+    "tokens": 26280,
+    "cost_usd": 0.029917,
+    "truncated_calls": 0,
+    "independence": [
+      "independent"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_fcce60884d0f",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Old Post",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the Publish date field because the date is in the past relative to the studio date.",
+          "chosen_by": "verifier"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/92d7ff53?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/3cdd9107?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_5cef4cedf0c5",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 2 candidate(s), verification: {'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 8,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 2,
+    "test_cases": 6,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 46.9,
+    "calls": 8,
+    "tokens": 9377,
+    "cost_usd": 0.007939,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_1acebb45c8a3",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 7, 'done': 9}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 6 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 11,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 2,
+    "test_cases": 6,
+    "unfinished_tasks": 7,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 69.7,
+    "calls": 23,
+    "tokens": 24530,
+    "cost_usd": 0.026135,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_e6af408a1d14",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 4 candidate(s), verification: {'confirmed': 1, 'inconclusive': 3}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 7,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 3,
+    "unverified": 0,
+    "candidates": 4,
+    "test_cases": 6,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 61.1,
+    "calls": 10,
+    "tokens": 13054,
+    "cost_usd": 0.012222,
+    "truncated_calls": 0,
+    "independence": [
+      "self"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_ebfb3e74b2c1",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "text_contains": null,
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past.",
+          "chosen_by": "single-agent"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/98f6f9cf?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/4cb8b1bc?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_6250423b8bfc",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 7, 'done': 8}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 1}; 6 test case(s), 1 candidate(s), verification {'confirmed': 1}",
+    "harness_error": null,
+    "coverage_required": "5/5",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "spurious_states": 0,
+    "states_total": 11,
+    "known_defects": [
+      "D1"
+    ],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "not_reproduced": 0,
+    "inconclusive": 0,
+    "unverified": 0,
+    "candidates": 1,
+    "test_cases": 6,
+    "unfinished_tasks": 7,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 82.0,
+    "calls": 25,
+    "tokens": 26878,
+    "cost_usd": 0.030121,
+    "truncated_calls": 1,
+    "independence": [
+      "independent"
+    ],
+    "confirmed_assertions": [
+      {
+        "finding": "fnd_4a7a3d37b7fc",
+        "requirement": "R5",
+        "inputs": {
+          "Post title": "Expired Content",
+          "Publish date": "2026-06-14"
+        },
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "text_contains": null,
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed for the 'Publish date' field because 2026-06-14 is before the studio date 2026-06-15.",
+          "chosen_by": "verifier"
+        },
+        "observed": [
+          {
+            "url": "http://localhost:5174/scheduled/81a3e20c?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          },
+          {
+            "url": "http://localhost:5174/scheduled/9829cd1a?scheduled=1",
+            "route": "/scheduled/:id",
+            "alert_messages": [],
+            "field_validation": {},
+            "status_messages": [
+              "Post scheduled."
+            ],
+            "matching_messages": []
+          }
+        ],
+        "verified_by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_c636babfc447",
+    "status": "completed",
+    "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 0 candidate(s)",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 6,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 0,
+    "unverified": 0,
+    "candidates": 0,
+    "test_cases": 5,
+    "unfinished_tasks": 0,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 40.9,
+    "calls": 8,
+    "tokens": 9085,
+    "cost_usd": 0.007488,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_0a7f995ed09a",
+    "status": "partial",
+    "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 7, 'done': 9}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 6 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+    "harness_error": null,
+    "coverage_required": "6/6",
+    "coverage_ratio": 1.0,
+    "matched_states": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "spurious_states": 0,
+    "states_total": 11,
+    "known_defects": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "not_reproduced": 0,
+    "inconclusive": 2,
+    "unverified": 0,
+    "candidates": 2,
+    "test_cases": 6,
+    "unfinished_tasks": 7,
+    "forms_discovered": 2,
+    "forms_untested": 0,
+    "elapsed_s": 70.0,
+    "calls": 23,
+    "tokens": 24220,
+    "cost_usd": 0.02509,
+    "truncated_calls": 0,
+    "independence": [],
+    "confirmed_assertions": []
+  }
+]
