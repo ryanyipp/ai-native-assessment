@@ -89,7 +89,7 @@ class QueueReviewRun(ReviewRun):
                 depends_on: list[str] | None = None, input_refs: list[str] | None = None,
                 task_id: str | None = None, status: TaskStatus = TaskStatus.ready, note: str | None = None) -> Task | None:
         lim = self.run.limits
-        if status == TaskStatus.ready and len(self.queue.snapshot()) >= lim.max_tasks:
+        if status == TaskStatus.ready and sum(t.status != TaskStatus.skipped for t in self.queue.snapshot()) >= lim.max_tasks:
             status, note = TaskStatus.unfinished, f"not run: task limit ({lim.max_tasks}) reached"
         t = Task(id=task_id or new_id("task"), run_id=self.run.id, type=type_, key=key, payload=payload,
                  queued_by=by, priority=PRIORITY[type_], depth=depth, depends_on=depends_on or [],
@@ -97,7 +97,7 @@ class QueueReviewRun(ReviewRun):
         t, created = self.queue.enqueue(t)
         if created:
             verb = "queued" if t.status == TaskStatus.ready else f"recorded as {t.status.value}"
-            self.event("task_queued" if t.status == TaskStatus.ready else "task_unfinished",
+            self.event({TaskStatus.ready: "task_queued", TaskStatus.skipped: "task_skipped"}.get(t.status, "task_unfinished"),
                        f"{type_} task {verb} by {by}: {key}" + (f" ({note})" if note else ""), agent_id=by, task=t,
                        task_type=type_, key=key, depends_on=t.depends_on, payload=payload, depth=depth)
             return t
@@ -111,11 +111,45 @@ class QueueReviewRun(ReviewRun):
         self.enqueue("input_test", f"input_test:{form.key}", by=form.discovered_by, task_id=tid, depth=depth,
                      payload={"form_id": form.id, "handoff_id": handoff.id}, input_refs=[form.id, handoff.id])
 
+    def frontier_skip_reason(self, st: ScreenState, task: Task) -> str | None:
+        """Why a new state should not become exploration work, or None if it should.
+
+        Only page structure is compared; states are never merged, they keep their own
+        records and sightings. Messages (errors, saved banners) and dialogs change the
+        structure, so they are not treated as variations.
+        """
+        explored = {t.payload.get("state_id") for t in self.queue.snapshot()
+                    if t.type == "explore" and t.status in (TaskStatus.ready, TaskStatus.claimed, TaskStatus.done)}
+        if task.type == "explore" and not task.payload.get("state_id"):
+            explored.add(None)
+        for other in self.states.values():
+            if other.id == st.id or other.structure is None or other.structure != st.structure:
+                continue
+            if other.id in explored or other.id == task.payload.get("state_id"):
+                return f"variation of '{other.summary}': same page structure, only field fill state differs"
+        if task.type in ("input_test", "verify"):
+            form = next((f for f in self.forms.values() if f.id == task.payload.get("form_id")), None)
+            if form is None and task.type == "verify":
+                fnd = next((f for f in self.store.list_for_run(Finding, self.run.id)
+                            if f.id == task.payload.get("finding_id")), None)
+                form = next((f for f in self.forms.values() if fnd and f.id == fnd.form_id), None)
+            form_state = self.state_by_id(form.state_id) if form else None
+            if form_state and form_state.layout and form_state.layout == st.layout:
+                return (f"outcome of the already-tested form '{form_state.summary}' "
+                        "(same layout; its messages are kept in the test-case record)")
+        return None
+
     def defer_frontier(self, states: list[ScreenState], agent_id: str, task: Task) -> None:
-        """Queue mode: new states are actionable explore tasks, not deferred."""
+        """Queue mode: new states are actionable explore tasks unless they add nothing new to explore."""
         lim = self.run.limits
         for st in states:
             depth = task.depth + 1
+            why = self.frontier_skip_reason(st, task)
+            if why:
+                self.enqueue("explore", f"explore:{st.signature}", by=agent_id, depth=depth,
+                             payload={"state_id": st.id}, input_refs=[st.id], status=TaskStatus.skipped,
+                             note=f"not explored: {why}")
+                continue
             if depth > lim.max_depth:
                 self.depth_cut += 1
                 self.enqueue("explore", f"explore:{st.signature}", by=agent_id, depth=depth,
@@ -167,10 +201,16 @@ class QueueReviewRun(ReviewRun):
         if current is None:
             return None
         interval = max(0.5, self.run.limits.task_lease_s / 3)
+        stop_at = time.monotonic() + self.call_deadline_s
 
         async def beat():
             while True:
                 await asyncio.sleep(interval)
+                if time.monotonic() > stop_at:
+                    # A healthy call has returned by now; stop vouching for a hung one so its lease can expire.
+                    self.event("heartbeat_stopped", f"Stopped renewing {current.key} for {current.owner}: model call "
+                               f"exceeded {self.call_deadline_s:.0f}s", agent_id=COORDINATOR, task=current)
+                    return
                 try:
                     self.queue.renew(current, self.run.limits.task_lease_s)
                 except StaleAttempt:

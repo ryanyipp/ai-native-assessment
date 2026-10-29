@@ -136,6 +136,7 @@ class TaskStatus(StrEnum):
     ready = "ready"
     deferred = "deferred"  # sequential mode: recorded for the queue, not executed
     unfinished = "unfinished"  # queue mode: never run because a limit or the run end was reached
+    skipped = "skipped"  # queue mode: recorded but not explored (a variation or an already-tested outcome)
     claimed = "claimed"
     done = "done"
     blocked = "blocked"
@@ -327,6 +328,8 @@ class ScreenState(BaseModel):
     # Every worker/context that observed this signature. States from different
     # test-data contexts share a node only with their sightings preserved.
     sightings: list[StateSighting] = Field(default_factory=list)
+    structure: str | None = None  # page structure without field fill flags (see engine.page_structure)
+    layout: str | None = None  # structure without status/alert messages
 
 
 class Transition(BaseModel):

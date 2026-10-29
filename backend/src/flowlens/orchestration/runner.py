@@ -8,6 +8,7 @@ verifier; a plain `ExplorerRun` is the checkpoint 1 single-explorer mode.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import time
 import traceback
@@ -15,7 +16,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from flowlens.agents import explorer
-from flowlens.browser.engine import BrowserEngine, Execution, control_of, origin_of, state_signature
+from flowlens.browser.engine import BrowserEngine, Execution, control_of, origin_of, page_structure, state_signature
 from flowlens.config import Settings
 from flowlens.models.contracts import (
     ActionResult,
@@ -156,7 +157,9 @@ class ExplorerRun:
         sighting = StateSighting(agent_id=agent_id, phase=phase, context_id=context_id,
                                  action_result_id=action_result_id)
         if st is None:
+            structure, layout = page_structure(ex.observation)
             st = ScreenState(
+                structure=structure, layout=layout,
                 run_id=self.run.id, signature=sig, route=route, url=ex.observation.url,
                 title=ex.observation.title, summary=_state_summary(ex.observation),
                 screenshot_artifact_id=shot_id, first_seen_step=step,
@@ -228,6 +231,13 @@ class ExplorerRun:
     def explore_cookies(self) -> list[dict]:
         """Hook: the single-agent baseline explores in a fresh workspace, like queue explorers."""
         return []
+
+    CALL_GRACE_S = 2.0
+
+    @property
+    def call_deadline_s(self) -> float:
+        """Hard bound on one model call: the client timeout plus a small grace."""
+        return self.settings.flowlens_model_timeout_s + self.CALL_GRACE_S
 
     def start_heartbeat(self, task: Task):
         """Hook: queue mode keeps the lease alive while a bounded model call is in flight."""
@@ -302,7 +312,9 @@ class ExplorerRun:
         resp = None
         heartbeat = self.start_heartbeat(task)
         try:
-            resp = await self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens)
+            resp = await asyncio.wait_for(
+                self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens),
+                timeout=self.call_deadline_s)
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply
             call.error = str(e)[:300]

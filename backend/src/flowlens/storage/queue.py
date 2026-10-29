@@ -26,7 +26,8 @@ from typing import Iterator
 from flowlens.models.contracts import Task, TaskStatus, new_id, utcnow
 from flowlens.storage.db import Store
 
-TERMINAL = {TaskStatus.done, TaskStatus.failed, TaskStatus.blocked, TaskStatus.unfinished, TaskStatus.deferred}
+TERMINAL = {TaskStatus.done, TaskStatus.failed, TaskStatus.blocked, TaskStatus.unfinished, TaskStatus.deferred,
+            TaskStatus.skipped}
 BAD_END = {TaskStatus.failed, TaskStatus.blocked, TaskStatus.unfinished}
 
 

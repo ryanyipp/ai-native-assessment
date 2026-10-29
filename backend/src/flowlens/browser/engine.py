@@ -175,6 +175,23 @@ def state_signature(obs: Observation) -> tuple[str, str]:
     return hashlib.sha256(raw.encode()).hexdigest()[:16], route
 
 
+def page_structure(obs: Observation) -> tuple[str, str]:
+    """(structure, layout) used to decide which new states deserve exploration.
+
+    structure: route + headings + control roles/names + status and alert messages,
+    WITHOUT field filled/empty flags. Two states that differ only in which fields are
+    filled share a structure. Dialogs, errors and saved/persistence banners change
+    headings, controls or messages, so they keep distinct structures.
+    layout: the same without messages, so an error outcome of a form shares the form's layout.
+    """
+    route = normalise_route(obs.url)
+    controls = ";".join(sorted(f"{e.role}:{e.name}" for e in obs.elements))
+    layout = "|".join([route, ";".join(obs.headings), controls])
+    msgs = ";".join(sorted(set(obs.status_messages) | set(obs.alert_messages)))
+    return (hashlib.sha256(f"{layout}|{msgs}".encode()).hexdigest()[:16],
+            hashlib.sha256(layout.encode()).hexdigest()[:16])
+
+
 def origin_of(url: str) -> str:
     s = urlsplit(url)
     return f"{s.scheme}://{s.netloc}".lower()
