@@ -48,6 +48,7 @@ from flowlens.models.contracts import (
     utcnow,
 )
 from flowlens.services.evidence import EvidenceStore
+from flowlens.verification import persistence
 from flowlens.services.llm import BudgetExceeded, LLMClient, check_budget
 from flowlens.storage.db import Store
 
@@ -429,23 +430,10 @@ class ExplorerRun:
     def _same_context_check(self, decision: explorer.FinishAction, obs) -> AssertionResult:
         """Engine evaluates the explorer's claimed values against the last real observation.
 
-        Same browser context and same trace: NOT an independent verification.
+        Same browser context and same trace: NOT an independent verification. Checkbox and
+        on/off states are recorded as not evaluated (see verification/persistence.py).
         """
-        rows = []
-        for cv in decision.checked_values:
-            el = next((e for e in obs.elements if e.name.lower() == cv.field.lower() and e.value is not None), None)
-            actual = el.value if el else None
-            in_text = cv.expected in obs.text_excerpt
-            rows.append({"field": cv.field, "expected": cv.expected, "actual_value": actual,
-                         "matched": actual == cv.expected or (el is None and in_text)})
-        passed = bool(rows) and all(r["matched"] for r in rows) and self.reload_seen_after_save
-        return AssertionResult(
-            assertion=Assertion(type=AssertionType.text_or_value_retained,
-                                params={"values": [cv.model_dump() for cv in decision.checked_values],
-                                        "requires_reload_in_trace": True}),
-            passed=passed,
-            observed={"fields": rows, "reload_in_trace": self.reload_seen_after_save, "url": obs.url},
-        )
+        return persistence.evaluate(decision.checked_values, obs, self.reload_seen_after_save)
 
     # --- main loop ----------------------------------------------------------
 
@@ -526,7 +514,7 @@ class ExplorerRun:
             check = self._same_context_check(act, obs)
             finding = Finding(
                 run_id=self.run.id, kind="persistence_check", reported_by=self.explorer_id,
-                description="Saved draft content persists after page reload (explorer observation)",
+                description="Entered content persists after page reload (explorer observation)",
                 expected="Values entered and saved are shown again after a reload",
                 observed=act.summary, agent_claim=act.persistence, same_context_check=check,
                 evidence_refs=[a.id for a in self.store.list_for_run(ActionResult, self.run.id)],

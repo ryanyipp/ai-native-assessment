@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { ReactFlowProvider } from '@xyflow/react'
-import { Activity, ChevronDown, ExternalLink, FileSearch, Info, Layers, Loader2, Monitor, PanelLeft, Plus, RefreshCw, Settings2, Waypoints } from 'lucide-react'
+import { Activity, ChevronDown, Download, ExternalLink, FileText, FileSearch, Info, Layers, Loader2, Monitor, PanelLeft, Plus, RefreshCw, Settings2, Waypoints } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip } from './components/ui'
 import { cx } from './lib/ui-utils'
@@ -56,7 +56,18 @@ function RunHeader({ detail }: { detail: RunDetail }) {
         </Tooltip>
       )}
       {active && <span className="inline-flex items-center gap-1 text-xs text-accent-700"><Loader2 size={12} className="motion-safe:animate-spin" aria-hidden />Updating every 1.5 s</span>}
-      <details className="group relative ml-auto">
+      {/* Report built by the backend from this run's saved records only. */}
+      <div className="ml-auto flex items-center gap-1.5">
+        <a href={`/api/runs/${r.id}/report`} target="_blank" rel="noreferrer"
+          className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50">
+          <FileText size={13} aria-hidden />Report
+        </a>
+        <a href={`/api/runs/${r.id}/report.md`} download
+          className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50">
+          <Download size={13} aria-hidden />Markdown
+        </a>
+      </div>
+      <details className="group relative">
         <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
           <Settings2 size={13} aria-hidden />Diagnostics<ChevronDown size={12} aria-hidden className="transition-transform group-open:rotate-180" />
         </summary>

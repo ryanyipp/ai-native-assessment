@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 
 from flowlens.browser.engine import BrowserEngine, origin_of
 from flowlens.models.contracts import (
@@ -222,3 +222,29 @@ def get_artifact(artifact_id: str, request: Request):
     if root not in path.parents or not path.is_file():
         raise HTTPException(404, "artifact file missing")
     return FileResponse(path, media_type=ev.media_type)
+
+
+def _report(run_id: str, request: Request) -> dict:
+    from flowlens.services.report import build_report
+
+    d = request.app.state.store.detail(run_id)
+    if d is None:
+        raise HTTPException(404, "run not found")
+    return build_report(d, request.app.state.settings.artifacts_path.resolve(), str(request.base_url))
+
+
+@router.get("/runs/{run_id}/report.md")
+def report_markdown(run_id: str, request: Request):
+    """Markdown review report from the saved records only (no model call, no browser)."""
+    from flowlens.services.report import to_markdown
+
+    return Response(to_markdown(_report(run_id, request)), media_type="text/markdown; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="flowlens-report-{run_id}.md"'})
+
+
+@router.get("/runs/{run_id}/report", response_class=HTMLResponse)
+def report_html(run_id: str, request: Request):
+    """Printable HTML view of the same report."""
+    from flowlens.services.report import to_html
+
+    return HTMLResponse(to_html(_report(run_id, request), f"/api/runs/{run_id}/report.md"))

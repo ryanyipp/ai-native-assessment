@@ -8,11 +8,32 @@ import { verificationMeta } from '../../lib/ui-utils'
 
 const claimText = { retained: 'Values retained', not_retained: 'Values not retained', unknown: 'Could not determine' }
 
-type CheckRow = { field: string; expected: string; actual_value: string | null; matched: boolean }
+type CheckRow = { field: string; expected: string; actual_value: string | null; matched: boolean; status?: RowStatus; basis?: string }
+type RowStatus = 'matched' | 'mismatch' | 'not_evaluated'
+
+// Mirrors backend/src/flowlens/verification/persistence.py (summarise): checkbox and on/off states are
+// never compared, so visible text cannot count as success. Rows recorded before statuses existed are
+// read by the same rules; the stored record is unchanged.
+const STATE_WORDS = new Set(['completed', 'complete', 'incomplete', 'done', 'not done', 'checked', 'unchecked', 'ticked', 'unticked',
+  'active', 'inactive', 'selected', 'unselected', 'on', 'off', 'true', 'false', 'yes', 'no', 'enabled', 'disabled', 'open', 'closed',
+  'pending', 'toggled'])
+function readRow(r: CheckRow): CheckRow & { status: RowStatus; basis: string } {
+  if (r.status) return { ...r, status: r.status, basis: r.basis ?? '' }
+  if (STATE_WORDS.has(r.expected.trim().toLowerCase())) return { ...r, status: 'not_evaluated', basis: 'checkbox or on/off state: not compared by this check' }
+  return { ...r, status: r.matched ? 'matched' : 'mismatch', basis: r.actual_value != null ? 'field value' : 'visible page text' }
+}
+function checkOutcome(rows: ReturnType<typeof readRow>[], reload: boolean, stored?: string): 'passed' | 'failed' | 'not_evaluated' {
+  if (stored === 'passed' || stored === 'failed' || stored === 'not_evaluated') return stored
+  if (rows.some((r) => r.status === 'mismatch')) return 'failed'
+  if (!rows.length || rows.some((r) => r.status === 'not_evaluated')) return 'not_evaluated'
+  return reload ? 'passed' : 'failed'
+}
+const OUTCOME = { passed: ['green', 'Values matched'], failed: ['red', 'Mismatch'], not_evaluated: ['neutral', 'Not evaluated'] } as const
 
 function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; onSelect: (s: Selection) => void }) {
   const check = f.same_context_check
-  const rows = (check?.observed.fields as CheckRow[] | undefined) ?? []
+  const rows = ((check?.observed.fields as CheckRow[] | undefined) ?? []).map(readRow)
+  const outcome = checkOutcome(rows, !!check?.observed.reload_in_trace, check?.observed.outcome as string | undefined)
   const reload = detail.transitions.find((t) => t.action.type === 'reload')
   return (
     <article className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -29,7 +50,7 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
       </dl>
       {check && (
         <div>
-          <SectionTitle aside={<Badge tone={check.passed ? 'green' : 'red'}>{check.passed ? 'Values matched' : 'Mismatch'}</Badge>}>
+          <SectionTitle aside={<Badge tone={OUTCOME[outcome][0]}>{OUTCOME[outcome][1]}</Badge>}>
             Same-session engine check
           </SectionTitle>
           <table className="w-full table-fixed text-left text-xs">
@@ -45,14 +66,18 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
                 <tr key={r.field}>
                   <td className="py-1.5">{r.field}</td>
                   <td className="py-1.5 font-mono [overflow-wrap:anywhere]">{r.expected}</td>
-                  <td className={`py-1.5 font-mono [overflow-wrap:anywhere] ${r.matched ? '' : 'text-red-700'}`}>{r.actual_value ?? 'not found'}</td>
+                  <td className={`py-1.5 [overflow-wrap:anywhere] ${r.status === 'mismatch' ? 'text-red-700' : ''}`}>
+                    {r.status === 'not_evaluated' ? <span className="text-slate-600">Not evaluated</span>
+                      : <span className="font-mono">{r.actual_value ?? (r.status === 'matched' ? 'shown on page' : 'not found')}</span>}
+                    <span className="block text-[11px] text-slate-500">{r.basis}</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <p className="mt-2 text-xs leading-relaxed text-slate-500">
             Code compared these values in the same browser session the explorer used. It checks the explorer's own trace and is not an
-            independent replay.
+            independent replay. Checkbox and on/off states are not compared by this check and are shown as not evaluated.
           </p>
         </div>
       )}
