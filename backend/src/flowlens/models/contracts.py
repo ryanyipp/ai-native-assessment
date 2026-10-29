@@ -57,6 +57,8 @@ class RunLimits(BaseModel):
     max_model_calls: int = Field(40, ge=1, le=200)
     max_cost_usd: float = Field(0.50, gt=0, le=10)
     max_output_tokens: int = Field(800, ge=100, le=4000)
+    # Tester plans/assessments and verifier choices: hidden reasoning shares this cap.
+    max_output_tokens_planning: int = Field(2000, ge=100, le=4000)
     max_duration_s: int = Field(600, ge=10, le=3600)
     max_states: int = Field(30, ge=1, le=200)
     # Calls held back from explorer and tester so verification can still run.

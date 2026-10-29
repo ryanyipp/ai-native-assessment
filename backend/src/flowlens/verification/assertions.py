@@ -59,7 +59,8 @@ VOCABULARY_DOC = """\
 - element_visible {"name": str, "role": str|null, "expect_visible": bool}: a control or heading whose
   name contains `name` is (or, with expect_visible=false, is not) on the page.
 - validation_message_present {"text_contains": str|null, "field": str|null}: the page shows a
-  validation/alert message (optionally containing text, or on a specific field).
+  validation/alert message (optionally containing text). With `field`, only that field's own
+  validation message or a page alert naming the field counts.
 - navigation_reached {"route": str, "expect_reached": bool}: the final page's normalised route equals
   `route` (ids shown as :id), or with expect_reached=false does not.
 - text_or_value_retained {"expected": str, "field": str|null}: a field holds `expected`, or the
@@ -92,8 +93,9 @@ def evaluate(a: Assertion, after: Observation, start_url: str) -> AssertionResul
     elif isinstance(p, ValidationMessageParams):
         field_msgs = {e.name: e.validation_message for e in after.elements if e.validation_message}
         if p.field:
+            # The field's own validation message, or a page alert that names the field.
             field_msgs = {k: v for k, v in field_msgs.items() if _norm(k) == _norm(p.field)}
-            msgs = list(field_msgs.values())
+            msgs = list(field_msgs.values()) + [m for m in after.alert_messages if _norm(p.field) in _norm(m)]
         else:
             msgs = list(after.alert_messages) + list(field_msgs.values())
         if p.text_contains:

@@ -238,7 +238,7 @@ class ExplorerRun:
     # --- model calls (one budget for every worker in the run) ----------------
 
     async def call_model(self, messages: list[dict[str, str]], *, agent_id: str, phase: str, task: Task,
-                         reserve: int = 0) -> tuple[str, str]:
+                         reserve: int = 0, max_tokens: int | None = None) -> tuple[str, str]:
         """Budget-checked call recorded against the run. Returns (content, model_call_id).
 
         `reserve` holds back calls for later workers (verification) from this caller.
@@ -253,7 +253,7 @@ class ExplorerRun:
                          ok=False, agent_id=agent_id, phase=phase)
         resp = None
         try:
-            resp = await self.llm.complete(messages, lim.max_output_tokens)
+            resp = await self.llm.complete(messages, max_tokens or lim.max_output_tokens)
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply
             call.error = str(e)[:300]

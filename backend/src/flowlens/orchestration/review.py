@@ -132,7 +132,8 @@ class ReviewRun(ExplorerRun):
         last_err = None
         for _ in range(2):
             content, mc_id = await self.call_model(note_msgs, agent_id=agent_id, phase=phase, task=task,
-                                                   reserve=reserve)
+                                                   reserve=reserve,
+                                                   max_tokens=self.run.limits.max_output_tokens_planning)
             try:
                 return parse(content), mc_id
             except ValueError as e:
@@ -244,8 +245,7 @@ class ReviewRun(ExplorerRun):
         task.status = "blocked"
         task.note = why
         self.store.put(task)
-        if budget:
-            self.budget_note = why
+        self.budget_note = why if budget else (self.budget_note or f"{task.owner} task blocked: {why}")
         self.event("task_blocked", why, agent_id=task.owner, task=task)
         return []
 
@@ -374,11 +374,12 @@ class ReviewRun(ExplorerRun):
         f.handoff_ids.append(handoff.id)
         attempts: list[VerificationAttempt] = []
         if req is None or f.kind != "defect_candidate":
+            why = ("No supplied requirement states the expected behaviour" if req is None else
+                   f"The tester could not judge the outcome against {req.id} (verdict unclear)")
             att = VerificationAttempt(
                 run_id=self.run.id, finding_id=f.id, handoff_id=handoff.id, verifier_id=verifier.AGENT_ID,
                 replay_index=0, target_origin=self.origin, failure_class="expectation", outcome="inconclusive",
-                reason="No supplied requirement states the expected behaviour, so there is no explicit assertion "
-                       "to evaluate. Kept as a review observation.",
+                reason=f"{why}, so there is no explicit assertion to evaluate. Kept as a review observation.",
                 evidence_refs=[handoff_art], finished_at=utcnow())
             self._record_attempt(att, task)
             attempts.append(att)
@@ -387,6 +388,8 @@ class ReviewRun(ExplorerRun):
             for i in range(lim.verification_replays):
                 att = await self.replay(f, handoff, task, i, assertion)
                 attempts.append(att)
+                if att.failure_class in ("expectation", "verifier") and assertion is None:
+                    break  # no valid assertion: further replays would have nothing to evaluate
                 if assertion is None and att.assertion is not None and att.failure_class != "verifier":
                     assertion = att.assertion  # reuse the validated assertion for later replays
         self.accept(f, attempts, task)
@@ -444,6 +447,14 @@ class ReviewRun(ExplorerRun):
                     except ValueError as e:
                         return done("inconclusive", str(e), "verifier")
                     att.model_call_id = mc_id
+                    quote = " ".join(decision.requirement_quote.split()).casefold()
+                    quote_ok = bool(quote) and quote in " ".join((f.requirement_text or "").split()).casefold()
+                    if not decision.explicit or decision.assertion is None:
+                        return done("inconclusive", f"Verifier judged that {f.requirement_ref} does not explicitly "
+                                    f"state this behaviour: {decision.reasoning[:240]}", "expectation")
+                    if not quote_ok:
+                        return done("inconclusive", "The verifier's quoted requirement text was not found in "
+                                    f"{f.requirement_ref}: {decision.requirement_quote[:120]!r}", "verifier")
                     if decision.requirement_ref != f.requirement_ref:
                         return done("inconclusive", f"Verifier cited {decision.requirement_ref}, not the candidate's "
                                     f"requirement {f.requirement_ref}", "verifier")

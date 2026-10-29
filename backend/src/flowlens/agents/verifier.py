@@ -29,8 +29,11 @@ class ChosenAssertion(BaseModel):
 class VerifierDecision(BaseModel):
     reasoning: str = Field(max_length=800)
     requirement_ref: str = Field(max_length=20)
-    assertion: ChosenAssertion
-    expected: str = Field(max_length=300)
+    # Does the requirement text itself state the behaviour being checked?
+    explicit: bool
+    requirement_quote: str = Field("", max_length=400)  # words from the requirement that state it
+    assertion: ChosenAssertion | None = None
+    expected: str = Field("", max_length=300)
 
 
 _decision = TypeAdapter(VerifierDecision)
@@ -39,7 +42,11 @@ SYSTEM = f"""You are the Verifier inside FlowLens, a website reviewer. A candida
 against an explicit requirement. Code will repeat the reported inputs in fresh browser sessions with fresh \
 test data and then evaluate ONE assertion that you choose against the resulting page.
 
-Choose the assertion that the page must satisfy if the requirement is met after the actions. Code decides \
+First decide whether the requirement text explicitly states what must happen for these inputs. A \
+requirement that only describes what something has or contains does not make a value mandatory or forbidden. \
+If it is not explicit, reply with "explicit": false and no assertion; the candidate stays a review observation.
+
+Otherwise choose the assertion that the page must satisfy if the requirement is met after the actions. Code decides \
 the outcome: if the assertion fails, the requirement violation is confirmed; if it passes, the candidate \
 is not reproduced. Do not try to predict the outcome; encode the requirement faithfully.
 
@@ -47,8 +54,9 @@ Assertion vocabulary (type and params):
 {VOCABULARY_DOC}
 
 Reply with ONE JSON object and nothing else:
-{{"reasoning": "<short>", "requirement_ref": "<the requirement id>",
-  "assertion": {{"type": "<one type above>", "params": {{...}}}},
+{{"reasoning": "<short>", "requirement_ref": "<the requirement id>", "explicit": true | false,
+  "requirement_quote": "<exact words from the requirement that state the expected behaviour>",
+  "assertion": {{"type": "<one type above>", "params": {{...}}}} | null,
   "expected": "<the expected value in plain words>"}}"""
 
 

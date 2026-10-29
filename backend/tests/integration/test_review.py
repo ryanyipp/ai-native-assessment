@@ -75,8 +75,9 @@ def make_script(tester_verdict=None, tester_ref="R5", verifier_assertion=None):
         if "You are the Verifier" in system:
             calls.append("verifier")
             a = verifier_assertion or {"type": "validation_message_present", "params": {}}
-            return json.dumps({"reasoning": "scripted", "requirement_ref": "R5", "assertion": a,
-                               "expected": "a validation message"})
+            return json.dumps({"reasoning": "scripted", "requirement_ref": "R5", "explicit": True,
+                               "requirement_quote": "A publish date in the past must be rejected",
+                               "assertion": a, "expected": "a validation message"})
         raise AssertionError("unexpected prompt")
 
     return script, calls
@@ -294,3 +295,46 @@ def test_assertion_params_are_typed():
         validate_assertion(Assertion(type="navigation_reached", params={"route": "/x", "script": "alert(1)"}))
     with pytest.raises(ValueError):
         Assertion(type="run_javascript", params={})
+
+
+async def test_truncated_tester_reply_blocks_task_and_marks_run_partial(fixture_server, tmp_path):
+    base, _ = make_script()
+
+    def script(messages):
+        if "Design a small set" in messages[0]["content"]:
+            return '{"reasoning": "cut off'
+        return base(messages)
+
+    rr, store, _ = make_review(fixture_server, tmp_path, script)
+    await rr.execute()
+    d = store.detail(rr.run.id)
+    assert d.run.status == RunStatus.partial and "blocked" in d.run.stop_reason
+    assert any(t.type == "input_test" and t.status == "blocked" for t in d.tasks)
+    assert not d.findings
+
+
+async def test_verifier_can_judge_requirement_not_explicit(fixture_server, tmp_path):
+    base, calls = make_script()
+
+    def script(messages):
+        if "You are the Verifier" in messages[0]["content"]:
+            calls.append("verifier")
+            return json.dumps({"reasoning": "R5 does not say this", "requirement_ref": "R5", "explicit": False,
+                               "requirement_quote": "", "assertion": None, "expected": ""})
+        return base(messages)
+
+    rr, store, _ = make_review(fixture_server, tmp_path, script)
+    await rr.execute()
+    d = store.detail(rr.run.id)
+    (f,) = d.findings
+    assert f.verification_status == "inconclusive" and calls.count("verifier") == 1
+    assert [v.failure_class for v in d.verifications] == ["expectation"]
+
+
+async def test_field_scoped_assertion_accepts_alert_naming_field(corrected_server, tmp_path):
+    script, _ = make_script(tester_verdict="unexpected",
+                            verifier_assertion={"type": "validation_message_present", "params": {"field": "Publish date"}})
+    rr, store, _ = make_review(corrected_server, tmp_path, script)
+    await rr.execute()
+    (f,) = store.detail(rr.run.id).findings
+    assert f.verification_status == "not_reproduced"
