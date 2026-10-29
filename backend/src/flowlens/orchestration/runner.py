@@ -202,6 +202,7 @@ class ExplorerRun:
             started_at=ex.started_at, duration_ms=ex.duration_ms,
             screenshot_artifact_id=shot.id, observation_artifact_id=obs_art.id,
             agent_id=agent_id, phase=phase, context_id=context_id, task_id=task.id,
+            target_box=ex.target_box,
         )
         self.store.put(result)
         state, new = (self.record_state(ex, step, shot.id, agent_id=agent_id, phase=phase,

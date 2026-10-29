@@ -246,6 +246,8 @@ class ActionResult(BaseModel):
     duration_ms: int
     screenshot_artifact_id: str | None = None
     observation_artifact_id: str | None = None
+    # Recorded bounds of the clicked/filled element on the page BEFORE this action (full-page px).
+    target_box: dict[str, int] | None = None
     # Worker provenance. Old single-explorer records default to explorer-a.
     agent_id: str = "explorer-a"
     phase: Phase = "explore"

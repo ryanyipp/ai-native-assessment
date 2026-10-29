@@ -1,10 +1,23 @@
 from __future__ import annotations
 
+import asyncio
+import base64
+
 from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, Field
 from fastapi.responses import FileResponse
 
-from flowlens.browser.engine import origin_of
-from flowlens.models.contracts import Evidence, Provenance, Run, RunCreate, RunDetail, RunLimits
+from flowlens.browser.engine import BrowserEngine, origin_of
+from flowlens.models.contracts import (
+    Evidence,
+    NavigateAction,
+    Provenance,
+    Run,
+    RunCreate,
+    RunDetail,
+    RunLimits,
+    utcnow,
+)
 from flowlens.orchestration.launch import LOADED_FINGERPRINT, StaleCodeError, check_code_current, start_run_thread
 from flowlens.services.llm import OpenRouterClient
 
@@ -59,6 +72,40 @@ def create_run(body: RunCreate, request: Request):
     store.put(run)
     start_run_thread(run, store, s, llm)
     return run
+
+
+class PreviewRequest(BaseModel):
+    url: str = Field(max_length=2000)
+
+
+def _capture(url: str, settings) -> dict:
+    """One static screenshot in a throwaway browser context (own thread and loop; Playwright on Windows)."""
+
+    async def go():
+        async with BrowserEngine(settings.allowed_origins, settings.flowlens_headless) as eng:
+            ex = await eng.execute(NavigateAction(url=url))
+            return ex
+
+    ex = asyncio.run(go())
+    return {"ok": ex.ok, "error": ex.error, "requested_url": url, "final_url": ex.url_after,
+            "title": ex.observation.title, "headings": ex.observation.headings,
+            "captured_at": utcnow().isoformat(), "viewport": {"width": 1280, "height": 800},
+            "image_png_base64": base64.b64encode(ex.screenshot_png).decode()}
+
+
+@router.post("/preview")
+async def preview(body: PreviewRequest, request: Request):
+    """A real, non-interactive screenshot of an allowed URL, before any run starts.
+
+    Uses a fresh browser context with no test session and no workspace; nothing is stored.
+    """
+    s = request.app.state.settings
+    if origin_of(body.url) not in {o.lower() for o in s.allowed_origins}:
+        raise HTTPException(400, f"origin {origin_of(body.url)} is not in FLOWLENS_ALLOWED_ORIGINS")
+    try:
+        return await asyncio.wait_for(asyncio.to_thread(_capture, body.url, s), timeout=40)
+    except TimeoutError as e:
+        raise HTTPException(504, "the page did not load within 40 s") from e
 
 
 @router.get("/runs", response_model=list[Run])

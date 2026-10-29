@@ -245,6 +245,10 @@ function useSize<T extends HTMLElement>() {
   return [ref, size] as const
 }
 
+function recordIds(d: RunDetail) {
+  return new Set([...d.states.map((s) => s.id), ...d.transitions.map((t) => t.id)])
+}
+
 function FitOnLayoutChange({ layoutKey }: { layoutKey: string }) {
   const rf = useReactFlow()
   useEffect(() => {
@@ -254,16 +258,31 @@ function FitOnLayoutChange({ layoutKey }: { layoutKey: string }) {
   return null
 }
 
-export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumbs }: {
+export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumbs, compact = false }: {
   detail: RunDetail
   selection: Selection
   onSelect: (s: Selection) => void
   showThumbs: boolean
   onToggleThumbs: () => void
+  compact?: boolean // docked mini map: no legend or toolbar
 }) {
   const [wrapRef, size] = useSize<HTMLDivElement>()
   const { pos: positions, columns } = useMemo(() => layoutStates(detail, size, showThumbs), [detail, size, showThumbs])
   const startId = useMemo(() => [...detail.states].sort((a, b) => a.first_seen_step - b.first_seen_step)[0]?.id, [detail])
+
+  // Records accepted after the map first rendered are marked new so they animate once.
+  // The first render of a run (including old runs) marks nothing as new.
+  const [track, setTrack] = useState(() => ({ detail, run: detail.run.id, known: recordIds(detail), fresh: new Set<string>() }))
+  if (track.detail !== detail) {
+    const ids = recordIds(detail)
+    if (track.run !== detail.run.id) setTrack({ detail, run: detail.run.id, known: ids, fresh: new Set() })
+    else {
+      const add = [...ids].filter((id) => !track.known.has(id))
+      setTrack({ detail, run: track.run, known: ids, fresh: add.length ? new Set([...track.fresh, ...add]) : track.fresh })
+    }
+  }
+  const fresh = track.fresh
+  const [follow, setFollow] = useState(true)
 
   const { nodes, edges } = useMemo(() => {
     // Highlight the selection's neighbourhood so the eye can follow it.
@@ -288,6 +307,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
       id: s.id,
       type: 'state',
       position: positions.get(s.id) ?? { x: 0, y: 0 },
+      className: fresh.has(s.id) ? 'fl-new-node' : undefined,
       ariaLabel: `State: ${s.summary}, route ${s.route}`,
       data: {
         state: s,
@@ -313,6 +333,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
           source: t.source_state_id,
           target: t.target_state_id,
           type: 'transition',
+          className: fresh.has(t.id) ? 'fl-new-edge' : undefined,
           markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : PHASE_STROKE[t.phase ?? ''] ?? '#94a3b8' },
           data: {
             transition: t,
@@ -326,7 +347,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         }
       })
     return { nodes, edges }
-  }, [detail, positions, selection, onSelect, startId, showThumbs])
+  }, [detail, positions, selection, onSelect, startId, showThumbs, fresh])
 
   return (
     <div ref={wrapRef} className="h-full w-full">
@@ -338,6 +359,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
       onNodeClick={(_, n) => onSelect({ kind: 'state', id: n.id })}
       onEdgeClick={(_, e) => onSelect({ kind: 'transition', id: e.id })}
       onPaneClick={() => onSelect(null)}
+      onMoveStart={(e) => { if (e) setFollow(false) }}
       nodesConnectable={false}
       nodesDraggable
       minZoom={0.2}
@@ -346,7 +368,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
       fitViewOptions={{ padding: 0.2 }}
       proOptions={{ hideAttribution: true }}
     >
-      <FitOnLayoutChange layoutKey={`${detail.run.id}:${detail.states.length}:${columns}:${showThumbs}:${size.w}x${size.h}`} />
+      {follow && <FitOnLayoutChange layoutKey={`${detail.run.id}:${detail.states.length}:${columns}:${showThumbs}:${size.w}x${size.h}`} />}
       <Background gap={20} size={1} color="var(--color-slate-200)" />
       <Controls showInteractive={false} position="bottom-left" className="!rounded-md !border !border-slate-200 !shadow-sm" fitViewOptions={{ padding: 0.2, duration: 250 }} />
       {detail.states.length >= 8 && <MiniMap
@@ -359,16 +381,18 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         className="!rounded-md !border !border-slate-200 !shadow-sm"
         style={{ width: 160, height: 100 }}
       />}
-      <Panel position="top-left" className="!m-3">
-        <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs}
+      {!compact && <Panel position="top-left" className="!m-3">
+        <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs} follow={follow} onToggleFollow={() => setFollow((f) => !f)}
           phases={new Set(detail.transitions.map((t) => t.phase ?? 'explore'))} />
-      </Panel>
+      </Panel>}
     </ReactFlow>
     </div>
   )
 }
 
-function MapToolbar({ showThumbs, onToggleThumbs, phases }: { showThumbs: boolean; onToggleThumbs: () => void; phases: Set<string> }) {
+function MapToolbar({ showThumbs, onToggleThumbs, phases, follow, onToggleFollow }: {
+  showThumbs: boolean; onToggleThumbs: () => void; phases: Set<string>; follow: boolean; onToggleFollow: () => void
+}) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-white/95 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 shadow-sm backdrop-blur">
       <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-slate-400" aria-hidden />{phases.size > 1 ? 'Explorer' : 'Action'}</span>
@@ -379,6 +403,11 @@ function MapToolbar({ showThumbs, onToggleThumbs, phases }: { showThumbs: boolea
       <button type="button" onClick={onToggleThumbs} aria-pressed={showThumbs}
         className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900">
         <ImageIcon size={12} aria-hidden />Thumbnails
+      </button>
+      <button type="button" onClick={onToggleFollow} aria-pressed={follow}
+        title="Re-fit the map as new pages are accepted. Turns off when you pan or zoom."
+        className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900">
+        Follow new pages
       </button>
     </div>
   )

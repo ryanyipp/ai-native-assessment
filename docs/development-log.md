@@ -135,3 +135,10 @@ Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery t
 - **DT2:** 4/4 confirmed (was 0/6 before the fix). DT5: 2/2 in queue_review, 0/2 in single_agent (exploration never reached the cancel dialog; unresolved).
 - **Errors:** 0 false confirmations, 0 verifier-output inconclusives. Two truncated tester plans were repaired.
 - **Tooling:** staged run limit; inconclusive-cause breakdown; scorer notes restricted to `docs/evaluation-2.md`.
+
+## 2026-10-29: UI iteration 2 (browser preview and worker views)
+
+- **Added:** pre-run settings panel and static preview (`POST /api/preview`); a docked or swappable worker view built from recorded screenshots and events; click highlights only from recorded bounds (`ActionResult.target_box`); one-time animation for newly accepted map records (reduced-motion aware); follow and stop-following for the map viewport.
+- **Design record:** `docs/ui-iteration-2/README.md`.
+- **Checks:** 30/30 new, plus 29/22/13 regression; backend 64 passed.
+- **Live runs:** `run_a4f1034bfe0f` (US$0.028); `run_a54099283d9d` (US$0.023) was started by mistake when a failed script edit re-ran the live check. It is disclosed and kept.

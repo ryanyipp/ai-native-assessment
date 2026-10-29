@@ -36,6 +36,13 @@ body {
 @keyframes fl-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .fl-enter { animation: fl-fade-in 180ms ease-out both; }
 
+/* Newly accepted map records animate once; disabled for reduced motion (rule below). */
+@keyframes fl-node-pop { 0% { opacity: 0; transform: scale(0.92); } 60% { opacity: 1; } 100% { transform: none; } }
+@keyframes fl-ring { 0% { box-shadow: 0 0 0 0 rgb(59 110 245 / 0.55); } 100% { box-shadow: 0 0 0 12px rgb(59 110 245 / 0); } }
+@keyframes fl-edge-flash { 0%, 60% { stroke: var(--color-accent-500); stroke-width: 3px; } 100% { } }
+.fl-new-node > div { animation: fl-node-pop 420ms ease-out both, fl-ring 1.4s ease-out 1; }
+.fl-new-edge .react-flow__edge-path { animation: fl-edge-flash 2.2s ease-out 1; }
 @media (prefers-reduced-motion: reduce) {
+  .fl-new-node > div, .fl-new-edge .react-flow__edge-path { animation: none !important; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

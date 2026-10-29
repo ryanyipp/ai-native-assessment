@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { ReactFlowProvider } from '@xyflow/react'
-import { Activity, ExternalLink, FileSearch, Info, Layers, Loader2, PanelLeft, Plus, RefreshCw, ScanSearch, Waypoints } from 'lucide-react'
+import { Activity, ArrowLeftRight, ExternalLink, FileSearch, Info, Layers, Loader2, Minimize2, Monitor, PanelLeft, Plus, RefreshCw, Waypoints } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip } from './components/ui'
 import { cx } from './lib/ui-utils'
@@ -10,6 +10,8 @@ import { FindingsPanel } from './features/findings/FindingsPanel'
 import { FlowMap, type Selection } from './features/flow-map/FlowMap'
 import { RunActivity } from './features/run-activity/RunActivity'
 import { RunHistory } from './features/run-history/RunHistory'
+import { PagePreview, type PreviewState } from './features/browser-preview/PagePreview'
+import { WorkerPreview } from './features/browser-preview/WorkerPreview'
 import { RunLauncher } from './features/run-launcher/RunLauncher'
 import { api } from './lib/api'
 import { fmtInt, fmtUsd, shortUrl } from './lib/format'
@@ -83,8 +85,13 @@ export default function App() {
   const [detailError, setDetailError] = useState<string | null>(null)
   const [selection, setSelection] = useState<Selection>(null)
   const [tab, setTab] = useState<Tab>('evidence')
-  const [launcherOpen, setLauncherOpen] = useState(false)
-  const [railOpen, setRailOpen] = useState(() => window.innerWidth >= 1280)
+  const [setupOpen, setSetupOpen] = useState(() => !new URLSearchParams(location.search).get('run'))
+  const [preview, setPreview] = useState<PreviewState>({ kind: 'idle' })
+  const [worker, setWorker] = useState<string | null>(null)
+  const [swapped, setSwapped] = useState(false)
+  const [dockOpen, setDockOpen] = useState(true)
+  // The rail starts open only on wide screens, so the map and the worker view keep their width.
+  const [railOpen, setRailOpen] = useState(() => window.innerWidth >= 1600)
   const [showThumbs, setShowThumbs] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
   const inspectorRef = useRef<HTMLDivElement>(null)
@@ -124,7 +131,15 @@ export default function App() {
     }
   }, [runId, refreshRuns, reloadKey])
 
+  const capture = useCallback((url: string) => {
+    setPreview({ kind: 'loading', url })
+    api.preview(url)
+      .then((data) => setPreview({ kind: 'ready', data }))
+      .catch((e: Error) => setPreview({ kind: 'error', url, message: e.message }))
+  }, [])
+
   const openRun = useCallback((id: string) => {
+    setSetupOpen(false)
     setSelection(null)
     setDetail((d) => (d?.run.id === id ? d : null))
     setDetailError(null)
@@ -203,7 +218,7 @@ export default function App() {
                 <span className="h-1.5 w-1.5 rounded-full bg-red-500" aria-hidden />Backend unreachable
               </span>
             )}
-            <Button variant="primary" size="sm" onClick={() => setLauncherOpen(true)}><Plus size={14} aria-hidden />New run</Button>
+            <Button variant="primary" size="sm" onClick={() => { setSetupOpen(true); refreshRuns() }} aria-pressed={setupOpen}><Plus size={14} aria-hidden />New run</Button>
           </div>
         </header>
 
@@ -227,11 +242,16 @@ export default function App() {
             {healthError && !detail && (
               <div className="p-4"><Callout tone="red" title="Cannot reach the backend">{healthError} Start it with <code className="font-mono">uvicorn flowlens.main:app --port 8000</code> from <code className="font-mono">backend/</code>.</Callout></div>
             )}
-            {!runId ? (
-              <EmptyState icon={<ScanSearch size={28} />} title="No run selected"
-                action={<Button variant="primary" className="mt-2" onClick={() => setLauncherOpen(true)}><Plus size={14} />New run</Button>}>
-                Pick a run from the history, or start a new review of an authorised local or staging site.
-              </EmptyState>
+            {setupOpen || !runId ? (
+              <div className="flex min-h-0 flex-1 max-lg:flex-col">
+                <RunLauncher health={health} previewBusy={preview.kind === 'loading'} onPreview={capture}
+                  onClose={runId ? () => setSetupOpen(false) : undefined}
+                  onCreated={(r) => { refreshRuns(); setSwapped(false); openRun(r.id) }} />
+                <div className="min-h-0 min-w-0 flex-1 max-lg:min-h-[50vh]">
+                  <PagePreview state={preview} onRefresh={() => preview.kind !== 'idle' && capture(
+                    preview.kind === 'ready' ? preview.data.requested_url : preview.url)} />
+                </div>
+              </div>
             ) : detailError && !detail ? (
               <div className="p-6">
                 <Callout tone="red" title={`Could not load ${runId}`}>
@@ -250,18 +270,52 @@ export default function App() {
                   </div>
                 )}
                 <div className="flex min-h-0 flex-1 max-lg:flex-col">
-                  {/* Map: the largest region */}
-                  <section aria-label="Website flow map" data-testid="flow-map" className="relative min-h-0 min-w-0 flex-1 bg-slate-50 max-lg:min-h-[55vh]">
-                    {detail.states.length === 0 ? (
-                      <EmptyState icon={<Layers size={24} />} title={ACTIVE.has(detail.run.status) ? 'Opening the target…' : 'No states recorded'}>
-                        {ACTIVE.has(detail.run.status) ? 'States appear as the explorer observes pages.' : detail.run.stop_reason ?? 'This run recorded no browser states.'}
-                      </EmptyState>
-                    ) : (
-                      <ReactFlowProvider>
-                        <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={showThumbs} onToggleThumbs={() => setShowThumbs((v) => !v)} />
-                      </ReactFlowProvider>
-                    )}
-                  </section>
+                  {/* Main view: the map (or, swapped, the worker browser view) with the other one docked. */}
+                  <div className="relative flex min-h-0 min-w-0 flex-1 flex-col max-lg:min-h-[70vh] xl:flex-row">
+                    <section aria-label={swapped ? 'Worker browser view (main)' : 'Website flow map'} data-testid="main-view"
+                      className="relative min-h-0 flex-1 bg-slate-50">
+                      {swapped ? (
+                        <WorkerPreview detail={detail} worker={worker} onWorker={setWorker} onSelect={select} />
+                      ) : detail.states.length === 0 ? (
+                        <EmptyState icon={<Layers size={24} />} title={ACTIVE.has(detail.run.status) ? 'Opening the target…' : 'No states recorded'}>
+                          {ACTIVE.has(detail.run.status) ? 'States appear as workers record pages.' : detail.run.stop_reason ?? 'This run recorded no browser states.'}
+                        </EmptyState>
+                      ) : (
+                        <ReactFlowProvider>
+                          <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={showThumbs} onToggleThumbs={() => setShowThumbs((v) => !v)} />
+                        </ReactFlowProvider>
+                      )}
+                    </section>
+                    <aside aria-label={swapped ? 'Docked map' : 'Docked worker browser view'} data-testid="dock"
+                      className={cx('flex shrink-0 flex-col overflow-hidden border-slate-200 bg-white',
+                        'border-t xl:w-[340px] xl:border-l xl:border-t-0', dockOpen ? 'max-xl:h-[300px]' : '')}>
+                      <div className="flex items-center gap-1.5 border-b border-slate-200 px-2.5 py-1.5 text-xs">
+                        <Monitor size={13} aria-hidden className="text-slate-500" />
+                        <span className="font-medium text-slate-800">{swapped ? 'Map' : 'Worker view'}</span>
+                        <Button size="sm" variant="ghost" className="ml-auto" onClick={() => setSwapped((s) => !s)}
+                          aria-label={swapped ? 'Swap views: make the map the main view' : 'Swap views: make the worker view the main view'}>
+                          <ArrowLeftRight size={13} aria-hidden />Swap views
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setDockOpen((o) => !o)} aria-expanded={dockOpen}
+                          aria-label={dockOpen ? 'Minimise docked panel' : 'Expand docked panel'}>
+                          <Minimize2 size={13} aria-hidden />
+                        </Button>
+                      </div>
+                      {dockOpen && (swapped ? (
+                        <div className="min-h-[220px] flex-1 bg-slate-50">
+                          {detail.states.length > 0 && (
+                            <ReactFlowProvider>
+                              <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={false} onToggleThumbs={() => undefined} compact />
+                            </ReactFlowProvider>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="min-h-0 flex-1 overflow-hidden">
+                          <WorkerPreview detail={detail} worker={worker} onWorker={setWorker} onSelect={select} compact />
+                        </div>
+                      ))}
+                    </aside>
+                  </div>
 
                   {/* Inspector */}
                   <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)} ref={inspectorRef}
@@ -294,8 +348,6 @@ export default function App() {
           </main>
         </div>
 
-        <RunLauncher health={health} open={launcherOpen} onOpenChange={(o) => { setLauncherOpen(o); if (o) refreshRuns() }}
-          onCreated={(r) => { refreshRuns(); openRun(r.id) }} />
       </div>
     </RTooltip.Provider>
   )

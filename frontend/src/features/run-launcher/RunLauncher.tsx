@@ -1,5 +1,4 @@
-import * as Dialog from '@radix-ui/react-dialog'
-import { KeyRound, Play, X } from 'lucide-react'
+import { Camera, KeyRound, Play, X } from 'lucide-react'
 import { useId, useState, type ReactNode } from 'react'
 import { Button, Callout } from '../../components/ui'
 import { cx } from '../../lib/ui-utils'
@@ -46,18 +45,20 @@ const inputCls = (err?: string) =>
     err ? 'border-red-400 focus:ring-red-200' : 'border-slate-300 focus:border-accent-500 focus:ring-accent-100',
   )
 
-export function RunLauncher({ health, open, onOpenChange, onCreated }: {
+/** Persistent run-settings panel (pre-run). The main area beside it shows the browser preview. */
+export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose }: {
   health: Health | null
-  open: boolean
-  onOpenChange: (o: boolean) => void
   onCreated: (run: Run) => void
+  onPreview: (url: string) => void
+  previewBusy: boolean
+  onClose?: () => void
 }) {
   const uid = useId()
   const [targetUrl, setTargetUrl] = useState('http://localhost:5174/')
   const [goal, setGoal] = useState(DEFAULT_GOAL)
   const [requirements, setRequirements] = useState('')
   const [injectStall, setInjectStall] = useState(false)
-  const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify' | 'queue_review'>('single_explorer')
+  const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'>('single_explorer')
   const [limits, setLimits] = useState<Record<LimitKey, number>>({
     max_cost_usd: health?.default_run_budget_usd ?? 0.5,
     max_steps: 15,
@@ -100,7 +101,6 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
         ...(mode === 'queue_review' && injectStall ? { fault_injection: { worker: 'explorer-a', task_type: 'explore', stall_s: 75 } } : {}),
       })
       onCreated(run)
-      onOpenChange(false)
     } catch (err) {
       setApiError((err as Error).message)
     } finally {
@@ -109,20 +109,19 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-slate-950/40" />
-        <Dialog.Content className="fl-enter fixed left-1/2 top-1/2 z-50 flex max-h-[calc(100vh-2rem)] w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
+    <aside aria-labelledby={`${uid}-title`} className="flex min-h-0 w-[400px] shrink-0 flex-col border-r border-slate-200 bg-white max-lg:w-full max-lg:border-b max-lg:border-r-0">
           <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
             <div>
-              <Dialog.Title className="text-base font-semibold">New review run</Dialog.Title>
-              <Dialog.Description className="mt-0.5 text-[13px] text-slate-500">
-                One explorer drives a real browser with live model calls. This uses API credit.
-              </Dialog.Description>
+              <h2 id={`${uid}-title`} className="text-base font-semibold">New review run</h2>
+              <p className="mt-0.5 text-[13px] text-slate-500">
+                Settings stay here while you preview the target. Starting a run drives a real browser with live model calls and uses API credit.
+              </p>
             </div>
-            <Dialog.Close className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100" aria-label="Close">
-              <X size={16} />
-            </Dialog.Close>
+            {onClose && (
+              <button type="button" onClick={onClose} className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100" aria-label="Close run settings">
+                <X size={16} />
+              </button>
+            )}
           </div>
           <form id={`${uid}-form`} onSubmit={submit} noValidate className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <FormField id={`${uid}-url`} label="Target website" error={show('url')} hint="Only authorised local or staging origins are accepted.">
@@ -141,6 +140,7 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
                 ['single_explorer', 'Explorer only', 'One explorer pursues the goal. Its result stays unverified.'],
                 ['explore_test_verify', 'Explorer → input tester → verifier (sequential)', 'Forms the explorer opens are tested; suspected requirement violations are replayed in fresh sessions. Uses more model calls.'],
                 ['queue_review', 'Shared queue: two explorers, tester, verifier', 'Workers claim tasks from one queue in separate browser contexts and data workspaces. Exploration stops at its budget share so testing and verification can run.'],
+                ['single_agent', 'Single-agent baseline', 'One agent context explores, tests and checks its own findings (evaluation baseline; its checks are self-checks).'],
               ] as const).map(([value, label, hint]) => (
                 <label key={value} className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-2.5 py-2 text-[13px] has-[:checked]:border-accent-500 has-[:checked]:bg-accent-50">
                   <input type="radio" name={`${uid}-mode`} value={value} checked={mode === value} onChange={() => setMode(value)} className="mt-0.5" />
@@ -196,21 +196,21 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
               </div>
             </div>
 
-            {!health && <Callout tone="red" title="Backend unreachable">Start the API on port 8000, then reopen this dialog.</Callout>}
+            {!health && <Callout tone="red" title="Backend unreachable">Start the API on port 8000, then try again.</Callout>}
             {health && !canRun && (
               <Callout tone="amber" title="Live runs unavailable">Set OPENROUTER_API_KEY in .env and restart the backend.</Callout>
             )}
             {apiError && <Callout tone="red" title="The server rejected the run">{apiError}</Callout>}
           </form>
           <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-5 py-3">
-            <Dialog.Close asChild><Button>Cancel</Button></Dialog.Close>
+            <Button type="button" disabled={previewBusy || !!errors.url} onClick={() => { setTouched(true); if (!errors.url) onPreview(targetUrl.trim()) }}>
+              <Camera size={14} aria-hidden /> {previewBusy ? 'Capturing…' : 'Preview page'}
+            </Button>
             <Button variant="primary" type="submit" form={`${uid}-form`} disabled={busy || !canRun}>
               <Play size={14} aria-hidden /> {busy ? 'Starting…' : 'Start live run'}
             </Button>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    </aside>
   )
 }
 

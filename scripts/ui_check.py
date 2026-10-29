@@ -120,7 +120,7 @@ async def main() -> None:
 
         # Launcher validation (client-side; nothing is submitted).
         await page.get_by_role("button", name="New run").first.click()
-        dlg = page.get_by_role("dialog")
+        dlg = page.get_by_role("complementary", name="New review run")  # persistent settings panel (was a dialog)
         await dlg.get_by_label("Target website").fill("https://example.com/")
         await dlg.get_by_label("Review goal").fill("abc")
         await dlg.get_by_role("button", name="Start live run").click()
@@ -136,8 +136,8 @@ async def main() -> None:
         await dlg.get_by_role("button", name="Start live run").click()
         check("launcher validates limits", await dlg.get_by_text("Between 1 and 60.").is_visible())
         await page.screenshot(path=OUT / "after-launcher-validation.png")
-        await axe(page, "launcher dialog")
-        await page.keyboard.press("Escape")
+        await axe(page, "run settings panel")
+        await dlg.get_by_role("button", name="Close run settings").click()
 
         # Missing screenshots degrade to placeholders.
         await page.route("**/api/artifacts/*", lambda r: r.fulfill(status=404, body="{}"))
@@ -171,7 +171,7 @@ async def main() -> None:
         # Backend down: simulated by failing every API request.
         await page.route("**/api/**", lambda r: r.abort())
         await page.goto(f"{UI}/")
-        await expect(page.get_by_text("Backend unreachable")).to_be_visible()
+        await expect(page.get_by_role("status").filter(has_text="Backend unreachable")).to_be_visible()
         check("backend outage is shown", await page.get_by_text("Cannot reach the backend").is_visible())
         await page.screenshot(path=OUT / "after-backend-unreachable.png")
         await page.unroute("**/api/**")

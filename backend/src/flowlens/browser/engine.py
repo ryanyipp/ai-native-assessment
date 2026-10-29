@@ -145,6 +145,8 @@ class Execution:
     observation: Observation
     screenshot_png: bytes
     target_element: ObservedElement | None = None  # resolved element, from the pre-action observation
+    # Page-coordinate bounds of the target element just before the action (for click highlights).
+    target_box: dict | None = None
 
 
 def normalise_route(url: str) -> str:
@@ -303,6 +305,7 @@ class BrowserEngine:
         url_before = page.url
         target = None
         target_el = None
+        target_box = None
         error = None
         try:
             if isinstance(action, InspectAction):
@@ -321,6 +324,7 @@ class BrowserEngine:
                 target_el = el
                 target = f"{el.role} '{el.name}'"
                 loc = page.locator(f'[data-flowlens-id="{action.element_id}"]')
+                target_box = await self._page_box(loc)
                 if isinstance(action, FillAction):
                     if el.role not in ("textbox", "combobox", "searchbox") and el.tag not in ("input", "textarea"):
                         raise ActionRejected(f"element {action.element_id} ({el.role}) is not fillable")
@@ -357,4 +361,17 @@ class BrowserEngine:
             observation=obs,
             screenshot_png=png,
             target_element=target_el,
+            target_box=target_box,
         )
+
+    async def _page_box(self, loc) -> dict | None:
+        """Bounds in full-page coordinates (viewport box + scroll), or None if not measurable."""
+        try:
+            box = await loc.bounding_box(timeout=1000)
+            sx, sy = await self.page.evaluate("[window.scrollX, window.scrollY]")
+        except PlaywrightError:
+            return None
+        if not box:
+            return None
+        return {"x": round(box["x"] + sx), "y": round(box["y"] + sy),
+                "width": round(box["width"]), "height": round(box["height"])}

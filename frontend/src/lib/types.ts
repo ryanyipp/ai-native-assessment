@@ -118,6 +118,7 @@ export interface ActionResult {
   duration_ms: number
   screenshot_artifact_id: string | null
   observation_artifact_id: string | null
+  target_box?: { x: number; y: number; width: number; height: number } | null
   agent_id?: string
   phase?: Phase
   context_id?: string | null
@@ -210,8 +211,14 @@ export interface RunEvent {
   type: string
   message: string
   agent_id: string | null
+  task_id?: string | null
   data: Record<string, unknown>
   created_at: string
+}
+
+export interface PagePreview {
+  ok: boolean; error: string | null; requested_url: string; final_url: string; title: string; headings: string[]
+  captured_at: string; viewport: { width: number; height: number }; image_png_base64: string
 }
 
 export interface ModelCall {
