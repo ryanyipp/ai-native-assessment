@@ -47,3 +47,18 @@ shadcn/ui was not adopted. Only three primitives were needed, so I wrote small T
 - *Contrast*: white text on `accent-500` (selected step pill) and the Start badge on dimmed nodes were below 4.5:1 (axe). Fixed.
 
 **Checks:** backend pytest 37 passed (scripted-model tests are labelled `mocked_model`); `npm run build`, `npm run lint` clean; `scripts/ui_check.py` 29/29 on the checkpoint 1 run (compatibility); `scripts/ui_check_review.py` 22/22 on the checkpoint 2 runs.
+
+## 2026-10-29: Fix for run_53d7009ff711 (stale backend)
+
+**Symptom:** a review run started from the UI failed when the tester started: `AttributeError: 'RunLimits' object has no attribute 'max_output_tokens_planning'`. The explorer had finished, one form had been handed off, and 15 calls (US$0.0166) had been spent. The run record is unchanged.
+
+**Root cause:** the API backend had been started before `RunLimits` gained the field, and was not restarted. `start_run_thread` imported `ReviewRun` lazily, so the first review run loaded the newer `review.py` from disk on top of the old in-memory contracts. The traceback's line numbers did not match the loaded code. The evaluation script runs in a fresh process, which is why the earlier live runs did not hit it.
+
+**Fix (`63037f0`):**
+- Run classes are now imported at startup (`orchestration/launch.py`).
+- The API returns 503 ("restart the backend") if backend source changed after the process started, and `/api/health` reports `code_version`.
+- Failures record the stage and progress, and state that zero findings is not a pass; the Findings tab leads with this.
+- API runs take their provenance label from the client.
+- Regression tests cover the API review path with default settings, the stale-code refusal, and a crash mid-review.
+
+**Verification:** backend restarted while idle. A fresh live run through the API, `run_a572a9bf88c5`, completed: 11 calls (explorer 4, tester 4, verifier 3), 14,820 tokens, US$0.023625 reported. R5 was confirmed in 2/2 fresh replays; two R2 candidates and one observation without a requirement were inconclusive.
