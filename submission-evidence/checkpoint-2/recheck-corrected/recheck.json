@@ -1,0 +1,269 @@
+{
+  "findings": [
+    {
+      "id": "fnd_f3fa653d7784",
+      "run_id": "run_40e786578fef",
+      "kind": "defect_candidate",
+      "reported_by": "input-tester",
+      "description": "Re-check of fnd_b2da8101d83d: Schedule a post: Past date rejection",
+      "expected": "The form shows a validation message and no post is scheduled because the date is before the studio date.",
+      "observed": "The post was scheduled successfully despite the date (2026-06-14) being before the studio date (2026-06-15).",
+      "agent_claim": null,
+      "same_context_check": null,
+      "evidence_refs": [
+        "art_15ccd3f28327",
+        "art_2b995a6167e6",
+        "art_f9b8ed20d30f",
+        "art_df5d96079710",
+        "art_417c735a02e3",
+        "art_3289fea66303",
+        "art_9bef559040ae",
+        "art_452a8031c15b"
+      ],
+      "verification_status": "not_reproduced",
+      "replay_recipe": [],
+      "requirement_ref": "R5",
+      "requirement_text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+      "inputs": {
+        "Post title": "Yesterday's News",
+        "Publish date": "2026-06-14"
+      },
+      "reproduction": {
+        "target_state_id": "state_3eef75972938",
+        "expected_signature": "d88f89ed7886b427",
+        "direct_path": "/schedule/new",
+        "steps": [
+          {
+            "type": "navigate",
+            "path": "/",
+            "control": null,
+            "value": null
+          },
+          {
+            "type": "click",
+            "path": null,
+            "control": {
+              "role": "link",
+              "name": "New draft",
+              "input_type": null
+            },
+            "value": null
+          },
+          {
+            "type": "click",
+            "path": null,
+            "control": {
+              "role": "link",
+              "name": "Dashboard",
+              "input_type": null
+            },
+            "value": null
+          },
+          {
+            "type": "click",
+            "path": null,
+            "control": {
+              "role": "link",
+              "name": "Schedule a post",
+              "input_type": null
+            },
+            "value": null
+          }
+        ],
+        "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+      },
+      "reproduction_steps": [
+        {
+          "type": "fill",
+          "path": null,
+          "control": {
+            "role": "textbox",
+            "name": "Post title",
+            "input_type": "text"
+          },
+          "value": "Yesterday's News"
+        },
+        {
+          "type": "fill",
+          "path": null,
+          "control": {
+            "role": "textbox",
+            "name": "Publish date",
+            "input_type": "date"
+          },
+          "value": "2026-06-14"
+        },
+        {
+          "type": "click",
+          "path": null,
+          "control": {
+            "role": "button",
+            "name": "Schedule post",
+            "input_type": null
+          },
+          "value": null
+        }
+      ],
+      "form_id": "form_7ac8bf6ceea4",
+      "test_case_id": "tc_d168d435a078",
+      "handoff_ids": [
+        "ho_a21e46e6f678"
+      ],
+      "verification_ids": [
+        "ver_0aebe8d3c05b",
+        "ver_5e5d0f0734c2"
+      ],
+      "verified_by": "verifier",
+      "verification_reason": "All 2 fresh replays met R5; this does not prove there is no intermittent bug.",
+      "source_finding_id": "fnd_b2da8101d83d"
+    }
+  ],
+  "verifications": [
+    {
+      "id": "ver_0aebe8d3c05b",
+      "run_id": "run_40e786578fef",
+      "finding_id": "fnd_f3fa653d7784",
+      "handoff_id": "ho_a21e46e6f678",
+      "verifier_id": "verifier",
+      "replay_index": 0,
+      "target_origin": "http://localhost:5175",
+      "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+      "fresh_context": true,
+      "setup_ok": true,
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "failure_class": null,
+      "assertion": {
+        "type": "validation_message_present",
+        "params": {
+          "field": "Publish date"
+        },
+        "requirement_ref": "R5",
+        "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+        "chosen_by": "verifier"
+      },
+      "result": {
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+          "chosen_by": "verifier"
+        },
+        "passed": true,
+        "observed": {
+          "url": "http://localhost:5175/schedule",
+          "route": "/schedule",
+          "alert_messages": [
+            "Publish date cannot be in the past."
+          ],
+          "field_validation": {},
+          "status_messages": [
+            "Publish date cannot be in the past."
+          ],
+          "matching_messages": [
+            "Publish date cannot be in the past."
+          ]
+        },
+        "evaluated_by": "engine"
+      },
+      "outcome": "not_reproduced",
+      "reason": "Assertion validation_message_present held: the page met R5 in this fresh replay.",
+      "action_result_ids": [
+        "act_c9606c0b40b4",
+        "act_85b3d1e56877",
+        "act_33ebb9ee44c6",
+        "act_1bf0035be7f7"
+      ],
+      "evidence_refs": [
+        "art_915273961c36",
+        "art_cff3a7faddcb",
+        "art_bc3a3849c141",
+        "art_5b99144a4413",
+        "art_d2dd2568765f",
+        "art_ca516efb1d2b",
+        "art_0b2b431ff6db",
+        "art_6ed91480f193",
+        "art_9079fe3d773d"
+      ],
+      "model_call_id": null,
+      "started_at": "2026-10-29T07:27:52.665589Z",
+      "finished_at": "2026-10-29T07:27:56.542312Z"
+    },
+    {
+      "id": "ver_5e5d0f0734c2",
+      "run_id": "run_40e786578fef",
+      "finding_id": "fnd_f3fa653d7784",
+      "handoff_id": "ho_a21e46e6f678",
+      "verifier_id": "verifier",
+      "replay_index": 1,
+      "target_origin": "http://localhost:5175",
+      "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+      "fresh_context": true,
+      "setup_ok": true,
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "failure_class": null,
+      "assertion": {
+        "type": "validation_message_present",
+        "params": {
+          "field": "Publish date"
+        },
+        "requirement_ref": "R5",
+        "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+        "chosen_by": "verifier"
+      },
+      "result": {
+        "assertion": {
+          "type": "validation_message_present",
+          "params": {
+            "field": "Publish date"
+          },
+          "requirement_ref": "R5",
+          "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+          "chosen_by": "verifier"
+        },
+        "passed": true,
+        "observed": {
+          "url": "http://localhost:5175/schedule",
+          "route": "/schedule",
+          "alert_messages": [
+            "Publish date cannot be in the past."
+          ],
+          "field_validation": {},
+          "status_messages": [
+            "Publish date cannot be in the past."
+          ],
+          "matching_messages": [
+            "Publish date cannot be in the past."
+          ]
+        },
+        "evaluated_by": "engine"
+      },
+      "outcome": "not_reproduced",
+      "reason": "Assertion validation_message_present held: the page met R5 in this fresh replay.",
+      "action_result_ids": [
+        "act_8e1c694dd294",
+        "act_d93623f9cd53",
+        "act_b0c092b56fac",
+        "act_860d015a2281"
+      ],
+      "evidence_refs": [
+        "art_3c67cbb0656e",
+        "art_8f0f50746bb2",
+        "art_d0b98e6272c9",
+        "art_b1000145e9ea",
+        "art_3d6c0698b17b",
+        "art_8bbce5ca43a6",
+        "art_d6fd8d66ce15",
+        "art_5dfb95bcbc3b",
+        "art_46c82a6dc4bd"
+      ],
+      "model_call_id": null,
+      "started_at": "2026-10-29T07:27:56.719178Z",
+      "finished_at": "2026-10-29T07:28:00.708770Z"
+    }
+  ]
+}

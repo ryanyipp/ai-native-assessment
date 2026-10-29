@@ -33,3 +33,17 @@ shadcn/ui was not adopted. Only three primitives were needed, so I wrote small T
 **Backend changes:** none. The UI uses only the existing `/api/health`, `/api/runs`, `/api/runs/{id}` and `/api/artifacts/{id}` endpoints.
 
 **Browser check:** `backend\.venv\Scripts\python scripts\ui_check.py run_e957eab8645e docs\ui-iteration` runs 29 checks, including axe, against a saved real run. It needs the backend and frontend running and makes no model calls. The design iteration is recorded in `docs/ui-iteration/README.md`.
+
+## 2026-10-29: Checkpoint 2 (input tester and independent verifier)
+
+**Built:** fixture scheduling form with broken/corrected modes, fixed clock and per-workspace data; handoff, test-case and verification contracts; semantic control resolution; typed assertions; `ReviewRun` (explorer → input tester → verifier, sequential); `ReverifyRun`; UI extensions. Design: `docs/architecture.md`. Evidence: `submission-evidence/checkpoint-2/`.
+
+**Problems found by live runs, and what changed:**
+- *Truncated tester JSON* (`run_eb3e50ed6997`): hidden reasoning consumed 764 of 800 output tokens. Added `max_output_tokens_planning` (2000) for tester/verifier calls. This still truncated once in `run_44704dfc5083` (1,918 reasoning tokens). That run is recorded as partial; it is not hidden or retried away.
+- *Blocked tester left the run `completed`*: a blocked task now marks the run `partial`.
+- *False confirmations of R2* (`run_5f08da7d0fc8`): "A draft has a title and a caption" was read as "both required". The verifier now states whether the requirement is explicit and quotes it; code checks the quote against the requirement text. Not explicit → inconclusive. This is a prompt and schema change, not fixture-specific.
+- *Field-scoped validation assertion* did not see page-level alerts naming the field, so the corrected build would also have "failed". The evaluator now accepts an alert that names the field.
+- *Disconnected map nodes*: every fill in a fresh session created a state. Fresh sessions now add only start and outcome states.
+- *Contrast*: white text on `accent-500` (selected step pill) and the Start badge on dimmed nodes were below 4.5:1 (axe). Fixed.
+
+**Checks:** backend pytest 37 passed (scripted-model tests are labelled `mocked_model`); `npm run build`, `npm run lint` clean; `scripts/ui_check.py` 29/29 on the checkpoint 1 run (compatibility); `scripts/ui_check_review.py` 22/22 on the checkpoint 2 runs.

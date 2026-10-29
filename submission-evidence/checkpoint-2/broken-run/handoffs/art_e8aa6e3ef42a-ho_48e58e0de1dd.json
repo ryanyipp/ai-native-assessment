@@ -1,0 +1,104 @@
+{
+  "id": "ho_48e58e0de1dd",
+  "run_id": "run_db4f36872772",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-a",
+  "to_agent": "input-tester",
+  "task_id": "task_44145149073d",
+  "source_state_id": "state_3eef75972938",
+  "form_id": "form_7ac8bf6ceea4",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_3eef75972938",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Dashboard",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Schedule a post",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "A creator can start a new draft from the dashboard."
+    },
+    {
+      "id": "R2",
+      "text": "A draft has a title and a caption."
+    },
+    {
+      "id": "R3",
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown."
+    },
+    {
+      "id": "R4",
+      "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date."
+    },
+    {
+      "id": "R5",
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A creator can start a new draft from the dashboard.",
+      "source": "R1"
+    },
+    {
+      "text": "A draft has a title and a caption.",
+      "source": "R2"
+    },
+    {
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+      "source": "R3"
+    },
+    {
+      "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+      "source": "R4"
+    },
+    {
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+      "source": "R5"
+    }
+  ],
+  "evidence_refs": [
+    "art_9c63c96a6397",
+    "art_f2098c43138d"
+  ],
+  "created_at": "2026-10-29T07:26:40.474608Z"
+}

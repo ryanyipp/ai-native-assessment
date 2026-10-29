@@ -2,7 +2,7 @@
 
 An AI website reviewer. It explores an authorised staging site and builds an evidence-linked map of observed states and transitions. See `docs/plan.md` for the full plan and `AGENTS.md` for working rules.
 
-Status: **Checkpoint 1** (one live explorer, browser-to-map vertical slice).
+Status: **Checkpoint 2** (explorer → input tester → independent verifier, sequential). See `docs/architecture.md`.
 
 ## Prerequisites (Windows)
 
@@ -22,15 +22,16 @@ Empty or missing optional `.env` values fall back to defaults in `backend/src/fl
 ## Start (three terminals, from the repository root)
 
 ```powershell
-# 1. Fixture (review target) on :5174
+# 1. Fixture (review target): broken build on :5174 and, optionally, the corrected build on :5175
 backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studio --host 127.0.0.1 --port 5174
+$env:CREATOR_STUDIO_MODE='corrected'; $env:CREATOR_STUDIO_DATA='fixtures\creator-studio\data\corrected.json'; backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studio --host 127.0.0.1 --port 5175
 # 2. Backend API on :8000
 cd backend; .\.venv\Scripts\python -m uvicorn flowlens.main:app --host 127.0.0.1 --port 8000
 # 3. Frontend on :5173
 cd frontend; npm run dev
 ```
 
-Open http://localhost:5173, keep the default target `http://localhost:5174/` and goal, and click **Start live run**.
+Open http://localhost:5173, keep the default target `http://localhost:5174/` and goal, and click **Start live run**. To run the checkpoint 2 workflow, choose **Explorer → input tester → verifier** in the launcher and paste the lines of `fixtures/creator-studio/requirements.md` as requirements.
 
 ## Checks
 
@@ -39,6 +40,9 @@ cd backend; .\.venv\Scripts\python -m pytest -q
 cd frontend; npm run build; npm run lint
 # With backend and frontend running (no model calls):
 backend\.venv\Scripts\python scripts\ui_check.py run_e957eab8645e docs\ui-iteration
+backend\.venv\Scripts\python scripts\ui_check_review.py run_db4f36872772 run_44704dfc5083 run_40e786578fef docs\checkpoint-2
+# Checkpoint 2 live evaluation (spends credit; both fixture builds must be running):
+backend\.venv\Scripts\python scripts\checkpoint2_eval.py all
 ```
 
 ## Budget

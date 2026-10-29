@@ -1,0 +1,405 @@
+{
+  "test_cases": [
+    {
+      "id": "tc_fd756c9c27dc",
+      "run_id": "run_44704dfc5083",
+      "form_id": "form_127e7dde3dca",
+      "handoff_id": "ho_08f81134d69e",
+      "designed_by": "input-tester",
+      "label": "Valid future post",
+      "inputs": {
+        "Post title": "Future Announcement",
+        "Publish date": "2026-06-20"
+      },
+      "submit": {
+        "role": "button",
+        "name": "Schedule post",
+        "input_type": null
+      },
+      "requirement_ref": "R4",
+      "expected": "The post is successfully scheduled for the future date.",
+      "expectation_source": "R4",
+      "context_id": "input-tester:tc_fd756c9c27dc:ws_58b78b16c6",
+      "status": "executed",
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "action_result_ids": [
+        "act_b0a263f3b6de",
+        "act_678606aa3e8c",
+        "act_f7773c9561eb",
+        "act_e40f8198e0b8"
+      ],
+      "evidence_refs": [
+        "art_fbfea9fbe859",
+        "art_608e3957c465",
+        "art_1bd009a3bb09",
+        "art_2b439c9858d9",
+        "art_a83623381efc",
+        "art_80aa2f4bf54f",
+        "art_bdf6ab7f7ca6",
+        "art_f3258f15e754"
+      ],
+      "observed": {
+        "url_before": "http://localhost:5175/schedule/new",
+        "url_after": "http://localhost:5175/scheduled/8a4213ac?scheduled=1",
+        "title": "Scheduled post \u00b7 Creator Studio",
+        "headings": [
+          "Scheduled post"
+        ],
+        "status_messages": [
+          "Post scheduled."
+        ],
+        "alert_messages": [],
+        "invalid_fields": [],
+        "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Future Announcement Publish date 2026-06-20 Back to dashboard"
+      },
+      "resulting_state_id": "state_d8f84c49cede",
+      "tester_verdict": "as_expected",
+      "tester_note": "The post was successfully scheduled for a future date (2026-06-20) and redirected to a confirmation page.",
+      "model_call_ids": [
+        "mc_18c24d274926",
+        "mc_74967b16e7a7"
+      ]
+    },
+    {
+      "id": "tc_674f28ef60d5",
+      "run_id": "run_44704dfc5083",
+      "form_id": "form_127e7dde3dca",
+      "handoff_id": "ho_08f81134d69e",
+      "designed_by": "input-tester",
+      "label": "Schedule for studio date",
+      "inputs": {
+        "Post title": "Current Day Post",
+        "Publish date": "2026-06-15"
+      },
+      "submit": {
+        "role": "button",
+        "name": "Schedule post",
+        "input_type": null
+      },
+      "requirement_ref": "R5",
+      "expected": "The post is scheduled successfully because the date is not before the studio date.",
+      "expectation_source": "R5",
+      "context_id": "input-tester:tc_674f28ef60d5:ws_a727d55406",
+      "status": "executed",
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "action_result_ids": [
+        "act_4d3c1f52edfd",
+        "act_0961042e4e96",
+        "act_046f78f7e90b",
+        "act_f25b8e7b7df7"
+      ],
+      "evidence_refs": [
+        "art_3683bf5c3658",
+        "art_1bad9a523e35",
+        "art_778661f265c2",
+        "art_40ccd9d3192a",
+        "art_85557e239fe7",
+        "art_5b9f47622136",
+        "art_800fb6d96f9c",
+        "art_a2429d849984"
+      ],
+      "observed": {
+        "url_before": "http://localhost:5175/schedule/new",
+        "url_after": "http://localhost:5175/scheduled/16a4d55f?scheduled=1",
+        "title": "Scheduled post \u00b7 Creator Studio",
+        "headings": [
+          "Scheduled post"
+        ],
+        "status_messages": [
+          "Post scheduled."
+        ],
+        "alert_messages": [],
+        "invalid_fields": [],
+        "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Current Day Post Publish date 2026-06-15 Back to dashboard"
+      },
+      "resulting_state_id": "state_d8f84c49cede",
+      "tester_verdict": "as_expected",
+      "tester_note": "The post was successfully scheduled for the current studio date (2026-06-15), which is not 'before' the studio date.",
+      "model_call_ids": [
+        "mc_18c24d274926",
+        "mc_74967b16e7a7"
+      ]
+    },
+    {
+      "id": "tc_ac823a97e288",
+      "run_id": "run_44704dfc5083",
+      "form_id": "form_127e7dde3dca",
+      "handoff_id": "ho_08f81134d69e",
+      "designed_by": "input-tester",
+      "label": "Schedule for past date",
+      "inputs": {
+        "Post title": "Yesterday's News",
+        "Publish date": "2026-06-14"
+      },
+      "submit": {
+        "role": "button",
+        "name": "Schedule post",
+        "input_type": null
+      },
+      "requirement_ref": "R5",
+      "expected": "The form shows a validation message and no post is scheduled.",
+      "expectation_source": "R5",
+      "context_id": "input-tester:tc_ac823a97e288:ws_82532ef70c",
+      "status": "executed",
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "action_result_ids": [
+        "act_4594dde5b0e0",
+        "act_88dad39a5d5b",
+        "act_3bb8bcb3263d",
+        "act_f2bfb3b4ec59"
+      ],
+      "evidence_refs": [
+        "art_3d53d0dbc5b2",
+        "art_c7825785ea70",
+        "art_9f552ba9f383",
+        "art_171467ffcd33",
+        "art_1783054df6bc",
+        "art_824c68c1ea09",
+        "art_4d0fdc754cc8",
+        "art_4904762e92a7"
+      ],
+      "observed": {
+        "url_before": "http://localhost:5175/schedule/new",
+        "url_after": "http://localhost:5175/schedule",
+        "title": "Schedule a post \u00b7 Creator Studio",
+        "headings": [
+          "Schedule a post"
+        ],
+        "status_messages": [
+          "Publish date cannot be in the past."
+        ],
+        "alert_messages": [
+          "Publish date cannot be in the past."
+        ],
+        "invalid_fields": [],
+        "text_excerpt": "Creator Studio Dashboard Schedule a post Publish date cannot be in the past. Studio date: 2026-06-15 Post title Publish date Schedule post"
+      },
+      "resulting_state_id": "state_c797507d7fd4",
+      "tester_verdict": "as_expected",
+      "tester_note": "The system rejected the date 2026-06-14 (before the studio date 2026-06-15) and displayed a validation message.",
+      "model_call_ids": [
+        "mc_18c24d274926",
+        "mc_74967b16e7a7"
+      ]
+    },
+    {
+      "id": "tc_5b0899fada4b",
+      "run_id": "run_44704dfc5083",
+      "form_id": "form_127e7dde3dca",
+      "handoff_id": "ho_08f81134d69e",
+      "designed_by": "input-tester",
+      "label": "Missing post title",
+      "inputs": {
+        "Post title": "",
+        "Publish date": "2026-06-20"
+      },
+      "submit": {
+        "role": "button",
+        "name": "Schedule post",
+        "input_type": null
+      },
+      "requirement_ref": null,
+      "expected": "The form should prevent submission or show a validation error for the required title field.",
+      "expectation_source": "unspecified",
+      "context_id": "input-tester:tc_5b0899fada4b:ws_c85aecb211",
+      "status": "executed",
+      "setup_strategy": "direct",
+      "setup_error": null,
+      "action_result_ids": [
+        "act_d387a04184f3",
+        "act_74c3d7f31d25",
+        "act_10f76cc3855c",
+        "act_d4d97add1d30"
+      ],
+      "evidence_refs": [
+        "art_028cd74fcbdf",
+        "art_149f8518e05f",
+        "art_6582e395b9a1",
+        "art_aee55a640a5d",
+        "art_2b1b62937811",
+        "art_9e81024e67be",
+        "art_109c0825a0e1",
+        "art_7c8ff65c24bf"
+      ],
+      "observed": {
+        "url_before": "http://localhost:5175/schedule/new",
+        "url_after": "http://localhost:5175/schedule/new",
+        "title": "Schedule a post \u00b7 Creator Studio",
+        "headings": [
+          "Schedule a post"
+        ],
+        "status_messages": [],
+        "alert_messages": [],
+        "invalid_fields": [
+          "Post title"
+        ],
+        "text_excerpt": "Creator Studio Dashboard Schedule a post Studio date: 2026-06-15 Post title Publish date Schedule post"
+      },
+      "resulting_state_id": "state_6cbc1d88b466",
+      "tester_verdict": "unclear",
+      "tester_note": "The form prevented submission and marked 'Post title' as invalid, but the requirements do not explicitly state that the title is mandatory for scheduling.",
+      "model_call_ids": [
+        "mc_18c24d274926",
+        "mc_74967b16e7a7"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_33aa35c30175",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:start",
+      "depends_on": [],
+      "input_refs": [],
+      "owner": "explorer-a",
+      "attempt_id": "att_1",
+      "lease_expires_at": null,
+      "status": "done",
+      "result_refs": [],
+      "note": null
+    },
+    {
+      "id": "task_d2047c36b7a3",
+      "run_id": "run_44704dfc5083",
+      "type": "input_test",
+      "key": "run_44704dfc5083:input_test:cc472cb2f5142026",
+      "depends_on": [],
+      "input_refs": [
+        "form_6be79ee5c371",
+        "ho_4458685db60b"
+      ],
+      "owner": "input-tester",
+      "attempt_id": "att_1",
+      "lease_expires_at": null,
+      "status": "blocked",
+      "result_refs": [],
+      "note": "input-tester produced invalid replies: invalid test plan: Invalid JSON: EOF while parsing a string at line 22 column 22 at ()"
+    },
+    {
+      "id": "task_cceebbca8138",
+      "run_id": "run_44704dfc5083",
+      "type": "input_test",
+      "key": "run_44704dfc5083:input_test:8a8bf412b0cd0dd3",
+      "depends_on": [],
+      "input_refs": [
+        "form_127e7dde3dca",
+        "ho_08f81134d69e"
+      ],
+      "owner": "input-tester",
+      "attempt_id": "att_1",
+      "lease_expires_at": null,
+      "status": "done",
+      "result_refs": [
+        "tc_fd756c9c27dc",
+        "tc_674f28ef60d5",
+        "tc_ac823a97e288",
+        "tc_5b0899fada4b",
+        "fnd_873df2312e68"
+      ],
+      "note": null
+    },
+    {
+      "id": "task_259d330b855b",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:4c681de608497c33",
+      "depends_on": [],
+      "input_refs": [
+        "state_f703f2961670"
+      ],
+      "owner": null,
+      "attempt_id": null,
+      "lease_expires_at": null,
+      "status": "deferred",
+      "result_refs": [],
+      "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+    },
+    {
+      "id": "task_4108d1f244e0",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:f08dd5f8c6b7e55f",
+      "depends_on": [],
+      "input_refs": [
+        "state_a6d859fc576e"
+      ],
+      "owner": null,
+      "attempt_id": null,
+      "lease_expires_at": null,
+      "status": "deferred",
+      "result_refs": [],
+      "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+    },
+    {
+      "id": "task_57f4839e21ad",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:ec74b49ccfe0be8e",
+      "depends_on": [],
+      "input_refs": [
+        "state_d8f84c49cede"
+      ],
+      "owner": null,
+      "attempt_id": null,
+      "lease_expires_at": null,
+      "status": "deferred",
+      "result_refs": [],
+      "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+    },
+    {
+      "id": "task_30d1e9e39d97",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:7bdad788cadca381",
+      "depends_on": [],
+      "input_refs": [
+        "state_c797507d7fd4"
+      ],
+      "owner": null,
+      "attempt_id": null,
+      "lease_expires_at": null,
+      "status": "deferred",
+      "result_refs": [],
+      "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+    },
+    {
+      "id": "task_7da2e7d275e5",
+      "run_id": "run_44704dfc5083",
+      "type": "explore",
+      "key": "run_44704dfc5083:explore:974340f8e181665d",
+      "depends_on": [],
+      "input_refs": [
+        "state_6cbc1d88b466"
+      ],
+      "owner": null,
+      "attempt_id": null,
+      "lease_expires_at": null,
+      "status": "deferred",
+      "result_refs": [],
+      "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+    },
+    {
+      "id": "task_190816e2e404",
+      "run_id": "run_44704dfc5083",
+      "type": "verify",
+      "key": "run_44704dfc5083:verify:fnd_873df2312e68",
+      "depends_on": [],
+      "input_refs": [
+        "fnd_873df2312e68"
+      ],
+      "owner": "verifier",
+      "attempt_id": "att_1",
+      "lease_expires_at": null,
+      "status": "done",
+      "result_refs": [
+        "ver_e9d391c309e7"
+      ],
+      "note": null
+    }
+  ],
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 4 case(s); 1 candidate(s), verification: {'inconclusive': 1}; stopped early: input-tester task blocked: input-tester produced invalid replies: invalid test plan: Invalid JSON: EOF while parsing a string at line 22 column 22 at ()"
+}
