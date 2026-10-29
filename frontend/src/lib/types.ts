@@ -153,7 +153,12 @@ export interface Finding {
   source_finding_id?: string | null
 }
 
-export interface Task { id: string; type: string; key: string; owner: string | null; status: string; input_refs: string[]; note: string | null }
+export interface Task {
+  id: string; type: string; key: string; owner: string | null; status: string; input_refs: string[]; note: string | null
+  attempt_id?: string | null; attempts?: number; max_attempts?: number; depends_on?: string[]; depth?: number
+  queued_by?: string | null; payload?: Record<string, string>; lease_expires_at?: string | null
+  created_at?: string; claimed_at?: string | null; finished_at?: string | null; result_refs?: string[]
+}
 
 export interface DiscoveredForm {
   id: string; key: string; state_id: string; url: string; route: string; headings: string[]

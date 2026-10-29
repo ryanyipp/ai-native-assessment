@@ -17,10 +17,61 @@ const HANDOFF_EVENTS: Record<string, string> = {
   result_rejected: 'Result rejected',
   task_blocked: 'Task blocked',
   frontier_deferred: 'New state deferred',
+  task_queued: 'Task queued',
+  task_claimed: 'Task claimed',
+  task_completed: 'Task completed',
+  task_failed: 'Task failed',
+  task_retry: 'Task retried',
+  task_unfinished: 'Task unfinished',
+}
+
+const TASK_TONE: Record<string, string> = {
+  ready: 'bg-slate-100 text-slate-700', claimed: 'bg-blue-50 text-blue-800', done: 'bg-emerald-50 text-emerald-800',
+  blocked: 'bg-amber-50 text-amber-900', failed: 'bg-red-50 text-red-800', unfinished: 'bg-amber-50 text-amber-900',
+  deferred: 'bg-slate-100 text-slate-700',
+}
+const TASK_LABEL: Record<string, string> = { ready: 'queued', claimed: 'claimed', done: 'completed' }
+
+function TaskBoard({ detail }: { detail: RunDetail }) {
+  const tasks = detail.tasks ?? []
+  if (tasks.length === 0) return null
+  const counts = Object.entries(tasks.reduce<Record<string, number>>((m, t) => ({ ...m, [t.status]: (m[t.status] ?? 0) + 1 }), {}))
+  const handedOff = new Set((detail.handoffs ?? []).map((h) => h.task_id))
+  return (
+    <section aria-label="Tasks">
+      <h3 className="mb-1.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Tasks ({tasks.length})
+        {counts.map(([s, n]) => (
+          <span key={s} className={cx('rounded px-1.5 text-[11px] font-medium normal-case tracking-normal', TASK_TONE[s])}>{n} {TASK_LABEL[s] ?? s}</span>
+        ))}
+      </h3>
+      <ol className="space-y-1 text-xs">
+        {tasks.map((t) => (
+          <li key={t.id} className="rounded-md border border-slate-100 px-2 py-1.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className={cx('rounded px-1.5 text-[11px] font-medium', TASK_TONE[t.status])}>{TASK_LABEL[t.status] ?? t.status}</span>
+              <span className="font-medium text-slate-800">{t.type.replace('_', ' ')}</span>
+              {t.owner ? <AgentChip id={t.owner} /> : <span className="text-[11px] text-slate-500">no owner</span>}
+              {handedOff.has(t.id) && <span className="text-[11px] text-slate-600">handed off</span>}
+              {(t.attempts ?? 0) > 1 && <span className="text-[11px] text-slate-600">attempt {t.attempts}/{t.max_attempts}</span>}
+              {(t.depends_on ?? []).length > 0 && <span className="text-[11px] text-slate-600">waits for {t.depends_on!.length} task</span>}
+            </div>
+            <div className="mt-0.5 flex flex-wrap gap-x-2 text-[11px] text-slate-500">
+              <span className="font-mono [overflow-wrap:anywhere]">{t.key}</span>
+              {t.queued_by && <span>queued by {t.queued_by}</span>}
+              {t.depth !== undefined && t.type === 'explore' && <span>depth {t.depth}</span>}
+            </div>
+            {t.note && <p className="mt-0.5 text-[11px] text-slate-600 [overflow-wrap:anywhere]">{t.note}</p>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
 }
 
 const agentTone: Record<string, string> = {
   'explorer-a': 'bg-sky-50 text-sky-800 ring-sky-200',
+  'explorer-b': 'bg-teal-50 text-teal-800 ring-teal-200',
   'input-tester': 'bg-amber-50 text-amber-900 ring-amber-200',
   verifier: 'bg-violet-50 text-violet-800 ring-violet-200',
   coordinator: 'bg-slate-100 text-slate-700 ring-slate-200',
@@ -90,6 +141,7 @@ export function RunActivity({ detail, selection, onSelect }: {
           )
         })}
       </ol>
+      <TaskBoard detail={detail} />
       {handoffs.length > 0 ? (
         <section aria-label="Handoffs between workers">
           <h3 className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -105,7 +157,9 @@ export function RunActivity({ detail, selection, onSelect }: {
               </li>
             ))}
           </ol>
-          <p className="mt-2 text-[11px] text-slate-500">Sequential handoffs (checkpoint 2). The shared queue, claims and leases come later.</p>
+          <p className="mt-2 text-[11px] text-slate-500">{detail.run.mode === 'queue_review'
+            ? 'Recorded queue events: claims carry an attempt id and lease; lease expiry and reassignment arrive in the next checkpoint.'
+            : 'Sequential handoffs (checkpoint 2). The shared queue is the queue_review mode.'}</p>
         </section>
       ) : (
         <div className="flex gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-xs leading-relaxed text-slate-500">

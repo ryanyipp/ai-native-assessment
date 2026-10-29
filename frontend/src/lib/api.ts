@@ -45,7 +45,7 @@ export const api = {
   health: () => request<Health>('/api/health'),
   listRuns: () => request<Run[]>('/api/runs'),
   getRun: (id: string) => request<RunDetail>(`/api/runs/${encodeURIComponent(id)}`),
-  createRun: (body: { target_url: string; goal: string; requirements: string[]; limits?: Partial<Run['limits']>; mode?: 'single_explorer' | 'explore_test_verify' }) =>
+  createRun: (body: { target_url: string; goal: string; requirements: string[]; limits?: Partial<Run['limits']>; mode?: 'single_explorer' | 'explore_test_verify' | 'queue_review' }) =>
     request<Run>('/api/runs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
