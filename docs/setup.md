@@ -134,4 +134,4 @@ cd frontend; npm run build; npm run lint
 
 ## Which setup paths have been tested
 
-See the table at the end of `docs/setup-verification.md`.
+See `docs/setup-verification.md`: native setup and Docker Compose, each from a clean clone on Windows 11.
