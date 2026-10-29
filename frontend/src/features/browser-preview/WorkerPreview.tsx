@@ -48,13 +48,11 @@ export function WorkerPreview({ detail, worker, onWorker, onSelect, compact = fa
   const a = st.lastAction
   const tr = a ? transitionForAction(detail, a) : undefined
   const before = a ? beforeShotFor(detail, a) : null
-  const openEvidence = () => {
-    if (tr) onSelect({ kind: 'transition', id: tr.id })
-    else if (a) {
-      const s = detail.states.find((x) => x.first_seen_step === a.step)
-      if (s) onSelect({ kind: 'state', id: s.id })
-    }
-  }
+  // Evidence target: the action's transition, else the page this action was recorded on (setup and
+  // replay steps create no transition). None means there is nothing to open, and the button says so.
+  const landed = a ? detail.states.find((x) => x.first_seen_step === a.step || (x.sightings ?? []).some((v) => v.action_result_id === a.id)) : undefined
+  const target: Selection = tr ? { kind: 'transition', id: tr.id } : landed ? { kind: 'state', id: landed.id } : null
+  const openEvidence = () => { if (target) onSelect(target) }
   return (
     <section aria-label="Worker browser view" className="flex h-full min-h-0 flex-col bg-white">
       <div className="border-b border-slate-200 px-3 py-2">
@@ -85,7 +83,8 @@ export function WorkerPreview({ detail, worker, onWorker, onSelect, compact = fa
       <div className="min-h-0 flex-1 overflow-auto p-3">
         {a?.screenshot_artifact_id ? (
           <>
-            <button type="button" onClick={openEvidence} className="block w-full text-left" aria-label={`Open evidence for step ${a.step}`}>
+            <button type="button" onClick={openEvidence} disabled={!target} className="block w-full text-left disabled:cursor-default"
+              aria-label={target ? `Open evidence for step ${a.step}` : `No map record to open for step ${a.step}`}>
               {showWhere && before ? <Highlight before={before} action={a} />
                 : <Thumb id={a.screenshot_artifact_id} alt={`Page after step ${a.step}`}
                     className={cx('w-full rounded border border-slate-200', compact ? 'max-h-52' : '')} />}

@@ -50,8 +50,10 @@ async def main() -> None:
         # --- broken-build review run --------------------------------------------
         await open_run(page, BROKEN)
         header = page.locator("header").first
+        await page.get_by_text("Diagnostics").click()  # metadata moved into the Diagnostics dropdown
         check("header names the workflow", await page.get_by_text("Explorer → tester → verifier").first.is_visible())
         check("header shows evaluation build label", await page.get_by_text("build: creator-studio:broken").is_visible())
+        await page.get_by_text("Diagnostics").click()
         check("map legend distinguishes test and verification", await page.get_by_text("Input test", exact=True).is_visible()
               and await page.get_by_text("Verification", exact=True).first.is_visible())
         check("map has tester and verifier transitions",
@@ -113,7 +115,9 @@ async def main() -> None:
 
         # --- corrected build ------------------------------------------------------
         await open_run(page, CORRECTED)
+        await page.get_by_text("Diagnostics").click()
         check("corrected run labelled with its build", await page.get_by_text("build: creator-studio:corrected").is_visible())
+        await page.get_by_text("Diagnostics").click()
         await page.get_by_role("tab", name="Findings").click()
         panel = page.get_by_role("tabpanel")
         check("corrected run has no confirmed finding",
@@ -124,7 +128,9 @@ async def main() -> None:
 
         # --- browser-only re-check of the broken finding on the corrected build -----
         await open_run(page, RECHECK)
+        await page.get_by_text("Diagnostics").click()
         check("re-check run labelled as browser re-check", await page.get_by_text("Browser re-check").first.is_visible())
+        await page.get_by_text("Diagnostics").click()
         await page.get_by_role("tab", name="Findings").click()
         panel = page.get_by_role("tabpanel")
         check("re-check shows not reproduced", await panel.get_by_text("Not reproduced", exact=True).first.is_visible()

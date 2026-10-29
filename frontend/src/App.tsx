@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { ReactFlowProvider } from '@xyflow/react'
-import { Activity, ArrowLeftRight, ExternalLink, FileSearch, Info, Layers, Loader2, Minimize2, Monitor, PanelLeft, Plus, RefreshCw, Waypoints } from 'lucide-react'
+import { Activity, ChevronDown, ExternalLink, FileSearch, Info, Layers, Loader2, Monitor, PanelLeft, Plus, RefreshCw, Settings2, Waypoints } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip } from './components/ui'
 import { cx } from './lib/ui-utils'
@@ -12,6 +12,7 @@ import { RunActivity } from './features/run-activity/RunActivity'
 import { RunHistory } from './features/run-history/RunHistory'
 import { PagePreview, type PreviewState } from './features/browser-preview/PagePreview'
 import { WorkerPreview } from './features/browser-preview/WorkerPreview'
+import { AgentStrip } from './features/agents/AgentStrip'
 import { RunLauncher } from './features/run-launcher/RunLauncher'
 import { api } from './lib/api'
 import { fmtInt, fmtUsd, shortUrl } from './lib/format'
@@ -19,48 +20,56 @@ import { transitionsByStep } from './lib/run-model'
 import type { Health, Run, RunDetail } from './lib/types'
 
 const ACTIVE = new Set(['queued', 'running'])
-type Tab = 'evidence' | 'activity' | 'findings'
+type Tab = 'browser' | 'evidence' | 'activity' | 'findings'
 
+const STOPPED = new Set(['failed', 'partial', 'interrupted'])
+
+const MODE_LABEL: Record<string, string> = {
+  queue_review: 'Shared queue', explore_test_verify: 'Explorer → tester → verifier', single_agent: 'Single-agent baseline',
+  reverify: 'Re-check', single_explorer: 'Single explorer',
+}
+
+/** Compact run header: goal, target, status. Technical metadata and cost live in Diagnostics; failures stay visible. */
 function RunHeader({ detail }: { detail: RunDetail }) {
   const r = detail.run
   const active = ACTIVE.has(r.status)
   return (
-    <header className="border-b border-slate-200 bg-white px-5 py-3">
-      <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
-        <h1 className="min-w-0 max-w-full truncate text-[15px] font-semibold text-slate-900" title={r.goal}>{r.goal}</h1>
-        <StatusBadge status={r.status} withTooltip />
-        <ProvenanceBadge run={r} />
-        <Badge>{r.mode === 'queue_review' ? 'Shared queue · 2 explorers' : r.mode === 'explore_test_verify' ? 'Explorer → tester → verifier' : r.mode === 'reverify' ? 'Re-check of a finding' : 'Single explorer'}</Badge>
-        {r.fault_injection && (
-          <Tooltip content={`Evaluation fault: ${r.fault_injection.worker} stalls ${r.fault_injection.stall_s}s after claiming a ${r.fault_injection.task_type} task. Recovery events in Activity are real coordinator behaviour.`}>
-            <span tabIndex={0} className="inline-flex"><Badge tone="amber">Injected fault</Badge></span>
-          </Tooltip>
-        )}
-        {r.target_build && (
-          <Tooltip content="Evaluation-only label of the target build. It is recorded for comparison and never given to the agents.">
-            <span tabIndex={0} className="inline-flex"><Badge tone="blue">build: {r.target_build}</Badge></span>
-          </Tooltip>
-        )}
-      </div>
-      <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
-        <span className="font-mono text-slate-500">{r.id}</span>
-        <a href={r.target_url} target="_blank" rel="noreferrer" className="inline-flex min-w-0 items-center gap-1 hover:text-accent-700" title={r.target_url}>
-          <span className="truncate font-mono">{shortUrl(r.target_url)}</span>
-          <ExternalLink size={11} aria-hidden className="shrink-0" />
-        </a>
-        <span className="font-mono">{r.model}</span>
-        <span className="tabular-nums">
-          {r.usage.model_calls} calls · {fmtInt(r.usage.total_tokens)} tokens · {fmtUsd(r.usage.reported_cost_usd, 4)} reported
-          {r.usage.calls_without_cost > 0 && ` (${r.usage.calls_without_cost} calls without cost)`}
-        </span>
-        {active && (
-          <span className="inline-flex items-center gap-1 text-accent-700"><Loader2 size={12} className="animate-spin" aria-hidden />Updating every 1.5 s</span>
-        )}
-      </div>
-      {r.stop_reason && (
-        <p className={cx('mt-1.5 text-xs', r.status === 'completed' ? 'text-slate-600' : 'font-medium text-amber-800')}>
-          <span className="text-slate-500">Stop reason:</span> {r.stop_reason}
-          {r.status === 'completed' && <span className="text-slate-500"> (the run finished; this is not a verdict on the website)</span>}
+    <header className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-slate-200 bg-white px-4 py-2">
+      <h1 className="min-w-0 max-w-[min(56rem,100%)] truncate text-[14px] font-semibold text-slate-900" title={r.goal}>{r.goal}</h1>
+      <a href={r.target_url} target="_blank" rel="noreferrer" title={r.target_url}
+        className="inline-flex min-w-0 items-center gap-1 font-mono text-xs text-slate-600 hover:text-accent-700">
+        <span className="truncate">{shortUrl(r.target_url)}</span><ExternalLink size={11} aria-hidden className="shrink-0" />
+      </a>
+      <StatusBadge status={r.status} withTooltip />
+      {r.fault_injection && (
+        <Tooltip content={`Evaluation fault: ${r.fault_injection.worker} stalls ${r.fault_injection.stall_s}s after claiming a ${r.fault_injection.task_type} task. Recovery events in Activity are real coordinator behaviour.`}>
+          <span tabIndex={0} className="inline-flex"><Badge tone="amber">Injected fault</Badge></span>
+        </Tooltip>
+      )}
+      {active && <span className="inline-flex items-center gap-1 text-xs text-accent-700"><Loader2 size={12} className="motion-safe:animate-spin" aria-hidden />Updating every 1.5 s</span>}
+      <details className="group relative ml-auto">
+        <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+          <Settings2 size={13} aria-hidden />Diagnostics<ChevronDown size={12} aria-hidden className="transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="absolute right-0 top-full z-30 mt-1 w-[min(30rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700 shadow-lg">
+          <dl className="grid grid-cols-[7rem_minmax(0,1fr)] gap-x-3 gap-y-1.5">
+            <dt className="text-slate-500">Run</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.id}</dd>
+            <dt className="text-slate-500">Workflow</dt><dd>{MODE_LABEL[r.mode] ?? r.mode}</dd>
+            <dt className="text-slate-500">Provenance</dt><dd><ProvenanceBadge run={r} /></dd>
+            <dt className="text-slate-500">Model</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.model}</dd>
+            <dt className="text-slate-500">Usage</dt>
+            <dd className="tabular-nums">{r.usage.model_calls} of {r.limits.max_model_calls} calls · {fmtInt(r.usage.total_tokens)} tokens
+              {r.usage.calls_without_cost > 0 && ` · ${r.usage.calls_without_cost} calls without cost`}</dd>
+            <dt className="text-slate-500">Reported cost</dt><dd className="tabular-nums">{fmtUsd(r.usage.reported_cost_usd, 4)} of {fmtUsd(r.limits.max_cost_usd, 2)} run limit</dd>
+            {r.target_build && (<><dt className="text-slate-500">Build label</dt><dd>build: {r.target_build} <span className="text-slate-500">(evaluation only; never given to agents)</span></dd></>)}
+            {r.stop_reason && (<><dt className="text-slate-500">Stop reason</dt><dd className="[overflow-wrap:anywhere]">{r.stop_reason}
+              {r.status === 'completed' && <span className="text-slate-500"> (the run finished; this is not a verdict on the website)</span>}</dd></>)}
+          </dl>
+        </div>
+      </details>
+      {STOPPED.has(r.status) && r.stop_reason && (
+        <p className="w-full truncate text-xs text-amber-800" role="status" title={r.stop_reason}>
+          <span className="font-medium">{r.status === 'failed' ? 'Stopped on an error' : 'Stopped early'}:</span> {r.stop_reason}
         </p>
       )}
     </header>
@@ -88,8 +97,6 @@ export default function App() {
   const [setupOpen, setSetupOpen] = useState(() => !new URLSearchParams(location.search).get('run'))
   const [preview, setPreview] = useState<PreviewState>({ kind: 'idle' })
   const [worker, setWorker] = useState<string | null>(null)
-  const [swapped, setSwapped] = useState(false)
-  const [dockOpen, setDockOpen] = useState(true)
   // The rail starts open only on wide screens, so the map and the worker view keep their width.
   const [railOpen, setRailOpen] = useState(() => window.innerWidth >= 1600)
   const [showThumbs, setShowThumbs] = useState(true)
@@ -185,7 +192,7 @@ export default function App() {
 
   const tabTrigger = (value: Tab, label: string, icon: React.ReactNode, count?: number) => (
     <Tabs.Trigger value={value}
-      className="relative inline-flex h-10 items-center gap-1.5 px-1 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-900 data-[state=active]:text-slate-900 data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:-bottom-px data-[state=active]:after:h-0.5 data-[state=active]:after:bg-slate-900">
+      className="relative inline-flex h-10 shrink-0 items-center gap-1.5 px-1 text-[13px] font-medium [&>svg]:max-xl:hidden text-slate-500 transition-colors hover:text-slate-900 data-[state=active]:text-slate-900 data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:-bottom-px data-[state=active]:after:h-0.5 data-[state=active]:after:bg-slate-900">
       {icon}{label}
       {count !== undefined && <span className="rounded-full bg-slate-100 px-1.5 text-[10px] tabular-nums text-slate-600">{count}</span>}
     </Tabs.Trigger>
@@ -246,7 +253,7 @@ export default function App() {
               <div className="flex min-h-0 flex-1 max-lg:flex-col">
                 <RunLauncher health={health} previewBusy={preview.kind === 'loading'} onPreview={capture}
                   onClose={runId ? () => setSetupOpen(false) : undefined}
-                  onCreated={(r) => { refreshRuns(); setSwapped(false); openRun(r.id) }} />
+                  onCreated={(r) => { refreshRuns(); setTab('browser'); openRun(r.id) }} />
                 <div className="min-h-0 min-w-0 flex-1 max-lg:min-h-[50vh]">
                   <PagePreview state={preview} onRefresh={() => preview.kind !== 'idle' && capture(
                     preview.kind === 'ready' ? preview.data.requested_url : preview.url)} />
@@ -264,67 +271,39 @@ export default function App() {
             ) : (
               <>
                 <RunHeader detail={detail} />
+                <AgentStrip detail={detail} selected={tab === 'browser' ? worker : null}
+                  onSelect={(w) => { setWorker(w); setTab('browser') }} />
                 {detailError && (
                   <div className="border-b border-red-200 bg-red-50 px-5 py-1.5 text-xs text-red-800" role="alert">
                     Updates paused: {detailError} <button type="button" className="ml-2 underline" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
                   </div>
                 )}
                 <div className="flex min-h-0 flex-1 max-lg:flex-col">
-                  {/* Main view: the map (or, swapped, the worker browser view) with the other one docked. */}
-                  <div className="relative flex min-h-0 min-w-0 flex-1 flex-col max-lg:min-h-[70vh] xl:flex-row">
-                    <section aria-label={swapped ? 'Worker browser view (main)' : 'Website flow map'} data-testid="main-view"
-                      className="relative min-h-0 flex-1 bg-slate-50">
-                      {swapped ? (
-                        <WorkerPreview detail={detail} worker={worker} onWorker={setWorker} onSelect={select} />
-                      ) : detail.states.length === 0 ? (
-                        <EmptyState icon={<Layers size={24} />} title={ACTIVE.has(detail.run.status) ? 'Opening the target…' : 'No states recorded'}>
-                          {ACTIVE.has(detail.run.status) ? 'States appear as workers record pages.' : detail.run.stop_reason ?? 'This run recorded no browser states.'}
-                        </EmptyState>
-                      ) : (
-                        <ReactFlowProvider>
-                          <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={showThumbs} onToggleThumbs={() => setShowThumbs((v) => !v)} />
-                        </ReactFlowProvider>
-                      )}
-                    </section>
-                    <aside aria-label={swapped ? 'Docked map' : 'Docked worker browser view'} data-testid="dock"
-                      className={cx('flex shrink-0 flex-col overflow-hidden border-slate-200 bg-white',
-                        'border-t xl:w-[340px] xl:border-l xl:border-t-0', dockOpen ? 'max-xl:h-[300px]' : '')}>
-                      <div className="flex items-center gap-1.5 border-b border-slate-200 px-2.5 py-1.5 text-xs">
-                        <Monitor size={13} aria-hidden className="text-slate-500" />
-                        <span className="font-medium text-slate-800">{swapped ? 'Map' : 'Worker view'}</span>
-                        <Button size="sm" variant="ghost" className="ml-auto" onClick={() => setSwapped((s) => !s)}
-                          aria-label={swapped ? 'Swap views: make the map the main view' : 'Swap views: make the worker view the main view'}>
-                          <ArrowLeftRight size={13} aria-hidden />Swap views
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setDockOpen((o) => !o)} aria-expanded={dockOpen}
-                          aria-label={dockOpen ? 'Minimise docked panel' : 'Expand docked panel'}>
-                          <Minimize2 size={13} aria-hidden />
-                        </Button>
-                      </div>
-                      {dockOpen && (swapped ? (
-                        <div className="min-h-[220px] flex-1 bg-slate-50">
-                          {detail.states.length > 0 && (
-                            <ReactFlowProvider>
-                              <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={false} onToggleThumbs={() => undefined} compact />
-                            </ReactFlowProvider>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="min-h-0 flex-1 overflow-hidden">
-                          <WorkerPreview detail={detail} worker={worker} onWorker={setWorker} onSelect={select} compact />
-                        </div>
-                      ))}
-                    </aside>
-                  </div>
+                  {/* The map stays the dominant view. */}
+                  <section aria-label="Website flow map" data-testid="main-view" className="relative min-h-0 min-w-0 flex-1 bg-slate-50 max-lg:min-h-[60vh]">
+                    {detail.states.length === 0 ? (
+                      <EmptyState icon={<Layers size={24} />} title={ACTIVE.has(detail.run.status) ? 'Opening the target…' : 'No states recorded'}>
+                        {ACTIVE.has(detail.run.status) ? 'States appear as workers record pages.' : detail.run.stop_reason ?? 'This run recorded no browser states.'}
+                      </EmptyState>
+                    ) : (
+                      <ReactFlowProvider>
+                        <FlowMap detail={detail} selection={selection} onSelect={select} showThumbs={showThumbs} onToggleThumbs={() => setShowThumbs((v) => !v)} />
+                      </ReactFlowProvider>
+                    )}
+                  </section>
 
                   {/* Inspector */}
                   <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)} ref={inspectorRef}
                     className="flex min-h-0 w-[400px] shrink-0 flex-col border-l border-slate-200 bg-white max-lg:w-full max-lg:border-l-0 max-lg:border-t xl:w-[440px]">
-                    <Tabs.List aria-label="Run details" className="flex shrink-0 gap-5 border-b border-slate-200 px-4">
+                    <Tabs.List aria-label="Run details" className="flex shrink-0 gap-4 overflow-x-auto border-b border-slate-200 px-4 max-xl:gap-3">
+                      {tabTrigger('browser', 'Browser', <Monitor size={14} aria-hidden />)}
                       {tabTrigger('evidence', 'Evidence', <FileSearch size={14} aria-hidden />)}
                       {tabTrigger('activity', 'Activity', <Activity size={14} aria-hidden />, detail.actions.length)}
                       {tabTrigger('findings', 'Findings', <Info size={14} aria-hidden />, detail.findings.length)}
                     </Tabs.List>
+                    <Tabs.Content value="browser" className="min-h-0 flex-1 focus-visible:outline-none">
+                      <WorkerPreview detail={detail} worker={worker} onWorker={setWorker} onSelect={select} />
+                    </Tabs.Content>
                     <Tabs.Content value="evidence" className="min-h-0 flex-1 focus-visible:outline-none">
                       {selection ? (
                         <EvidencePanel detail={detail} selection={selection} onSelect={select} onStep={step} />

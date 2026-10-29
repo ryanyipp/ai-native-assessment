@@ -68,3 +68,30 @@ export function beforeShotFor(d: RunDetail, a: ActionResult): ActionResult | nul
     .sort((x, y) => y.step - x.step)[0]
   return prev && prev.url_after === a.url_before ? prev : null
 }
+
+/** The agents each workflow actually runs (from the backend modes), before any of them has acted. */
+export function rosterFor(mode: string): string[] {
+  switch (mode) {
+    case 'queue_review':
+      return ['explorer-a', 'explorer-b', 'input-tester', 'verifier']
+    case 'explore_test_verify':
+      return ['explorer-a', 'input-tester', 'verifier']
+    case 'single_agent':
+      return ['single-agent']
+    case 'reverify':
+      return ['verifier']
+    default:
+      return ['explorer-a']
+  }
+}
+
+export function agentsOf(d: RunDetail): string[] {
+  const out = rosterFor(d.run.mode)
+  for (const w of workersOf(d)) if (!out.includes(w)) out.push(w)
+  return out
+}
+
+export function hasActed(d: RunDetail, worker: string): boolean {
+  return actionsOf(d, worker).length > 0 || d.model_calls.some((m) => m.agent_id === worker)
+    || d.events.some((e) => e.agent_id === worker && e.type === 'task_claimed')
+}

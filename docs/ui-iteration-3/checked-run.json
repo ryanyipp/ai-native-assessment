@@ -1,0 +1,17 @@
+{
+  "run_id": "run_a4f1034bfe0f",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (12/12)); tasks {'unfinished': 3, 'skipped': 1, 'done': 8}; claimed by {'explorer-a': 3, 'explorer-b': 2, 'input-tester': 2, 'verifier': 3}; 5 test case(s), 3 candidate(s), verification {'confirmed': 2, 'inconclusive': 1}",
+  "usage": {
+    "model_calls": 19,
+    "prompt_tokens": 15417,
+    "completion_tokens": 6758,
+    "total_tokens": 22175,
+    "reported_cost_usd": 0.027982500000000007,
+    "calls_without_cost": 0,
+    "exploration_calls": 12,
+    "testing_calls": 5,
+    "verification_calls": 2,
+    "truncated_calls": 1
+  }
+}

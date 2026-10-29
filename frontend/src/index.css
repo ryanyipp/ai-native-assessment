@@ -42,7 +42,16 @@ body {
 @keyframes fl-edge-flash { 0%, 60% { stroke: var(--color-accent-500); stroke-width: 3px; } 100% { } }
 .fl-new-node > div { animation: fl-node-pop 420ms ease-out both, fl-ring 1.4s ease-out 1; }
 .fl-new-edge .react-flow__edge-path { animation: fl-edge-flash 2.2s ease-out 1; }
+/* Agent strip: active workers bob gently with a soft pulse; a new handoff slides in once. */
+@keyframes fl-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes fl-pulse { 0% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0.45); } 70%, 100% { box-shadow: 0 0 0 7px rgb(16 185 129 / 0); } }
+@keyframes fl-received { 0% { box-shadow: 0 0 0 0 rgb(59 110 245 / 0.6); } 100% { box-shadow: 0 0 0 10px rgb(59 110 245 / 0); } }
+@keyframes fl-slide-in { from { opacity: 0; transform: translateX(-10px); background-color: rgb(219 228 255); } to { opacity: 1; transform: none; } }
+.fl-agent-active { animation: fl-bob 1.6s ease-in-out infinite, fl-pulse 1.6s ease-out infinite; }
+.fl-agent-received { animation: fl-received 1.2s ease-out 2; }
+.fl-handoff-new { animation: fl-slide-in 600ms ease-out both; }
 @media (prefers-reduced-motion: reduce) {
   .fl-new-node > div, .fl-new-edge .react-flow__edge-path { animation: none !important; }
+  .fl-agent-active, .fl-agent-received, .fl-handoff-new { animation: none !important; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
