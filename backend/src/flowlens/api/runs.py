@@ -43,7 +43,7 @@ def create_run(body: RunCreate, request: Request):
     )
     run = Run(
         target_url=target, goal=body.goal, requirements=body.requirements, model=s.openrouter_model,
-        limits=limits, provenance=Provenance(live=True, synthetic_fixture=True),
+        limits=limits, mode=body.mode, provenance=Provenance(live=True, synthetic_fixture=True),
     )
     store.put(run)
     start_run_thread(run, store, s, OpenRouterClient(s))

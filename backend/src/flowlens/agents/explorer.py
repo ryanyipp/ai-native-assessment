@@ -8,11 +8,11 @@ repository or evaluation access, and it cannot confirm findings.
 from __future__ import annotations
 
 import json
-import re
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, TypeAdapter, ValidationError
+from pydantic import BaseModel, Field, TypeAdapter
 
+from flowlens.agents.common import parse_json_reply
 from flowlens.models.contracts import (
     ClickAction,
     FillAction,
@@ -31,7 +31,7 @@ class CheckedValue(BaseModel):
 
 class FinishAction(BaseModel):
     type: Literal["finish"] = "finish"
-    persistence: Literal["retained", "not_retained", "unknown"]
+    persistence: Literal["retained", "not_retained", "unknown"] = "unknown"
     checked_values: list[CheckedValue] = Field(default_factory=list, max_length=10)
     summary: str = Field(max_length=600)
 
@@ -66,12 +66,14 @@ Allowed actions:
   {"type": "finish", "persistence": "retained" | "not_retained" | "unknown",
    "checked_values": [{"field": "<control name>", "expected": "<value you entered>"}],
    "summary": "<what you observed>"}
+  (persistence and checked_values are only for goals about saved data; otherwise use "unknown" and [].)
 
 Rules:
 - Choose controls from the observation only. Do not guess ids or URLs you have not seen.
 - Prefer clicking visible links and buttons over typing URLs.
 - Use distinctive test values so you can recognise them later.
 - If an action fails, read the error and try a different approach.
+- Forms you open are recorded and handed to an input tester; you do not need to test every input.
 - Report only what you observed. Your finish result is an unverified observation; another component \
 checks it independently.
 - Finish with "unknown" if you cannot complete the goal."""
@@ -83,6 +85,8 @@ def render_observation(obs: Observation) -> str:
         lines.append("Headings: " + " | ".join(obs.headings))
     if obs.status_messages:
         lines.append("Status messages: " + " | ".join(obs.status_messages))
+    if obs.alert_messages:
+        lines.append("Alerts: " + " | ".join(obs.alert_messages))
     lines.append("Interactive elements:")
     for e in obs.elements:
         parts = [e.id, e.role, json.dumps(e.name)]
@@ -92,6 +96,10 @@ def render_observation(obs: Observation) -> str:
             parts.append(f"value={json.dumps(e.value[:200])}")
         if e.href:
             parts.append(f"href={e.href}")
+        if e.required:
+            parts.append("required")
+        if e.validation_message:
+            parts.append(f"invalid={json.dumps(e.validation_message[:120])}")
         if e.disabled:
             parts.append("disabled")
         lines.append("  " + " ".join(parts))
@@ -114,15 +122,4 @@ def build_messages(goal: str, requirements: list[str], history: list[str], obs: 
 
 
 def parse_decision(content: str) -> ExplorerDecision:
-    text = content.strip()
-    fence = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.S)
-    if fence:
-        text = fence.group(1)
-    elif not text.startswith("{"):
-        start, end = text.find("{"), text.rfind("}")
-        if start != -1 and end > start:
-            text = text[start : end + 1]
-    try:
-        return _decision.validate_json(text)
-    except ValidationError as e:
-        raise ValueError(f"invalid decision: {e.errors()[0]['msg']} at {e.errors()[0]['loc']}") from e
+    return parse_json_reply(content, _decision, "decision")
