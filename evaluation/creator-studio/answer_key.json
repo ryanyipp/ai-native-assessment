@@ -1,0 +1,26 @@
+{
+  "note": "Evaluation-only answer key. Read by scripts/eval_report.py; never passed to runtime agents or prompts.",
+  "reference_states": [
+    {"id": "S1", "name": "Dashboard", "route": "/", "heading": "Dashboard"},
+    {"id": "S2", "name": "New draft form", "route": "/drafts/new", "heading": "New draft"},
+    {"id": "S3", "name": "Edit draft (after save)", "route": "/drafts/:id", "heading": "Edit draft"},
+    {"id": "S4", "name": "Schedule form", "route": "/schedule/new", "heading": "Schedule a post"},
+    {"id": "S5", "name": "Scheduled post", "route": "/scheduled/:id", "heading": "Scheduled post"},
+    {"id": "S6", "name": "Schedule rejected with validation alert", "route": "/schedule", "heading": "Schedule a post",
+     "needs_alert": true, "optional_on": ["broken"],
+     "why_optional": "on the broken build a past date is accepted; the alert state needs another invalid input"}
+  ],
+  "known_defects": [
+    {"id": "D1", "builds": ["broken"], "requirement": "R5", "field": "Publish date", "before": "2026-06-15",
+     "description": "A publish date before the studio date is accepted and a post is scheduled."}
+  ],
+  "ambiguous": [
+    {"id": "A1", "requirement": "R2", "description": "Whether an empty title or caption must be rejected is not stated; a confirmation is a false confirmation."},
+    {"id": "A2", "requirement": null, "description": "Scheduling with an empty post title is not covered by an explicit rejection requirement."}
+  ],
+  "scoring": {
+    "defect_found": "a confirmed finding citing the defect's requirement whose inputs put the field before the cut-off date",
+    "false_confirmation": "any confirmed finding that does not match a known defect of that build",
+    "zero_findings": "never counted as a pass; reported with coverage and unfinished work"
+  }
+}
