@@ -25,9 +25,10 @@ def _free_port() -> int:
 
 
 class FixtureServer:
-    def __init__(self, data_path: Path):
+    def __init__(self, data_path: Path, mode: str = "broken"):
         self.mod = load_fixture_module()
         self.mod.DATA_PATH = data_path
+        self.mod.MODE = mode  # evaluation-only switch; never visible to agents
         self.port = _free_port()
         self.url = f"http://127.0.0.1:{self.port}"
         self._server = None
@@ -54,5 +55,12 @@ class FixtureServer:
 @pytest.fixture
 def fixture_server(tmp_path):
     srv = FixtureServer(tmp_path / "drafts.json").start()
+    yield srv
+    srv.stop()
+
+
+@pytest.fixture
+def corrected_server(tmp_path):
+    srv = FixtureServer(tmp_path / "corrected.json", mode="corrected").start()
     yield srv
     srv.stop()
