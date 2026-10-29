@@ -128,3 +128,10 @@ Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery t
 - **Code (`620cff5`):** action-only forms and check pages (multi-step postconditions); capacity held for admitted tests (priority: admitted tests > verification > exploration); truncation-aware bounded repair; duplicate-launch guard; duplicate-batch audit (no shared workspaces; timing uncertainty disclosed). ticket-desk relabelled as a known regression fixture.
 - **`batch-postfix-ticket-desk`:** 12 runs, US$0.2246. **Failed validation:** DT2 0/6 (was 6/6), DT5 0/6, no false confirmations. Root cause: the provider-side JSON schema introduced in this pass made verifier replies loop inside string fields or omit the assertion.
 - **Fix:** provider schemas off by default; "explicit but no assertion" reported as a verifier failure. Regression tests pass (62). The fix is not yet validated live.
+
+## 2026-10-29: Live validation of 071c86c
+
+`batch-postfix2-ticket-desk` was staged: a gate of one broken run per condition passed, then the batch continued. It stopped at 8 of 12 runs because the conservative per-run cap guard refused the third repetition. US$0.145 of US$0.275.
+- **DT2:** 4/4 confirmed (was 0/6 before the fix). DT5: 2/2 in queue_review, 0/2 in single_agent (exploration never reached the cancel dialog; unresolved).
+- **Errors:** 0 false confirmations, 0 verifier-output inconclusives. Two truncated tester plans were repaired.
+- **Tooling:** staged run limit; inconclusive-cause breakdown; scorer notes restricted to `docs/evaluation-2.md`.

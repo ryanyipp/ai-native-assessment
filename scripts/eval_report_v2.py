@@ -161,7 +161,7 @@ def main(out_md: str, pairs: list[str]) -> None:
               f"Batch total: {len(scores)} runs, {sum(s['calls'] for s in scores)} calls, "
               f"{sum(s['tokens'] for s in scores):,} tokens, US${sum(s['cost'] for s in scores):.4f}.", ""]
     notes = ROOT / "evaluation" / "notes-v2.md"  # hand-written reading of the results, kept with the generator
-    if notes.exists():
+    if notes.exists() and out_md.replace("\\", "/") == "docs/evaluation-2.md":  # notes describe that report only
         L += [notes.read_text("utf-8")]
     (ROOT / out_md).write_text("\n".join(L) + "\n", "utf-8")
     print("wrote", out_md)
