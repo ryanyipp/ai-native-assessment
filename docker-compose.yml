@@ -7,13 +7,15 @@
 # are loaded at start (no API key, no model calls). Live runs need OPENROUTER_API_KEY in .env
 # (optional file; never copied into images). Host ports can be changed with the *_PORT variables.
 
+# Built once by the backend service; the fixture services reuse that image (never pulled).
 x-backend-image: &backend-image
-  build: { context: ., dockerfile: docker/backend.Dockerfile }
   image: flowlens-backend:local
+  pull_policy: never
 
 services:
   backend:
-    <<: *backend-image
+    build: { context: ., dockerfile: docker/backend.Dockerfile }
+    image: flowlens-backend:local
     env_file:
       - path: .env
         required: false
