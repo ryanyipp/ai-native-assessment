@@ -41,6 +41,7 @@ class NavigationReachedParams(_P):
 class TextOrValueRetainedParams(_P):
     expected: str = Field(min_length=1, max_length=500)
     field: str | None = Field(None, max_length=160)  # control name; omitted = visible page text
+    expect_present: bool = True  # False: the text must no longer be on the page (e.g. a removed item)
 
 
 class StateConditionParams(_P):
@@ -63,8 +64,8 @@ VOCABULARY_DOC = """\
   validation message or a page alert naming the field counts.
 - navigation_reached {"route": str, "expect_reached": bool}: the final page's normalised route equals
   `route` (ids shown as :id), or with expect_reached=false does not.
-- text_or_value_retained {"expected": str, "field": str|null}: a field holds `expected`, or the
-  visible page text contains it.
+- text_or_value_retained {"expected": str, "field": str|null, "expect_present": bool}: a field holds
+  `expected`, or the visible page text contains it (expect_present=false: the text is gone).
 - state_condition {"condition": "remained_on_start_route" | "left_start_route"}: whether the page
   route after the actions equals the route before them."""
 
@@ -112,8 +113,9 @@ def evaluate(a: Assertion, after: Observation, start_url: str) -> AssertionResul
             observed["field_value"] = el.value if el else None
             passed = el is not None and el.value == p.expected
         else:
-            passed = p.expected in after.text_excerpt
-            observed["in_page_text"] = passed
+            present = p.expected in after.text_excerpt
+            observed["in_page_text"] = present
+            passed = present == p.expect_present
     else:
         assert isinstance(p, StateConditionParams)
         same = normalise_route(start_url) == observed["route"]

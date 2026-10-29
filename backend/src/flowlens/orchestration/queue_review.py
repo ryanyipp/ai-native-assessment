@@ -342,7 +342,18 @@ class QueueReviewRun(ReviewRun):
             form = next(f for f in self.forms.values() if f.id == task.payload["form_id"])
             handoff = self.store.get(Handoff, task.payload["handoff_id"])
             self._current_depth = task.depth
-            findings = await self.test_form(form, task=task, handoff=handoff)
+            lim = self.run.limits
+            # Admission: a test needs a plan and an assessment call. Hold both now, so verification
+            # or exploration running meanwhile cannot strand a test halfway (seen in batch-cs-queue-rerun).
+            if not self.admit(task.id, 2, lim.reserved_verification_calls):
+                return [], "not admitted: not enough call capacity left for a full test (plan + assessment)", \
+                    TaskStatus.unfinished
+            self.event("capacity_held", f"Held 2 calls for {task.key} (admitted test)", agent_id=COORDINATOR,
+                       task=task, holds=dict(self.holds))
+            try:
+                findings = await self.test_form(form, task=task, handoff=handoff)
+            finally:
+                self.release(task.id)
             for f in findings:
                 self.queue_verification(f, task)
             cases = [c.id for c in self.store.list_for_run(TestCase, self.run.id) if c.handoff_id == handoff.id]

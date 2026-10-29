@@ -247,11 +247,11 @@ class BrowserEngine:
         if origin_of(url) not in self.allowed_origins:
             raise ActionRejected(f"origin {origin_of(url)} is not in the allowed target origins")
 
-    async def observe(self) -> Observation:
-        assert self.page
-        raw = await self.page.evaluate(_INSPECT_JS, MAX_ELEMENTS)
-        obs = Observation(
-            url=self.page.url,
+    @staticmethod
+    async def _read(page) -> Observation:
+        raw = await page.evaluate(_INSPECT_JS, MAX_ELEMENTS)
+        return Observation(
+            url=page.url,
             title=raw["title"],
             headings=raw["headings"],
             elements=[ObservedElement(**e) for e in raw["elements"]],
@@ -260,8 +260,28 @@ class BrowserEngine:
             alert_messages=raw["alerts"],
             invalid_fields=[e["name"] for e in raw["elements"] if e.get("validation_message")],
         )
+
+    async def observe(self) -> Observation:
+        assert self.page
+        obs = await self._read(self.page)
         self.last_observation = obs
         return obs
+
+    async def peek(self, url: str) -> tuple[Observation, bytes]:
+        """Open a same-origin page in a second tab of this context (same session and test data),
+        observe it and close it. The main page and its element ids are untouched. GET only."""
+        if self.before_action is not None:
+            self.before_action()
+        self.check_origin(url)
+        assert self.context
+        tab = await self.context.new_page()
+        try:
+            await tab.goto(url, wait_until="load", timeout=NAV_TIMEOUT_MS)
+            obs = await self._read(tab)
+            png = await tab.screenshot(full_page=True)
+        finally:
+            await tab.close()
+        return obs, png
 
     def _element(self, element_id: str) -> ObservedElement:
         obs = self.last_observation

@@ -13,6 +13,7 @@ recorded as deferred exploration tasks rather than explored now.
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 from flowlens.agents import input_tester, verifier
@@ -26,6 +27,7 @@ from flowlens.models.contracts import (
     Expectation,
     Finding,
     Handoff,
+    ModelCall,
     Run,
     RunStatus,
     ScreenState,
@@ -150,22 +152,40 @@ class ReviewRun(ExplorerRun):
             self.event("frontier_deferred", f"New state from {agent_id} queued for exploration (deferred): {st.summary}",
                        agent_id=COORDINATOR, task=task, state_id=st.id, deferred_task_id=t.id)
 
-    async def model(self, messages, *, agent_id: str, phase: str, task: Task, parse, reserve: int = 0):
-        """One model call plus one corrective retry on an invalid reply."""
-        note_msgs = messages
+    async def model(self, messages, *, agent_id: str, phase: str, task: Task, parse, reserve: int = 0,
+                    schema: dict | None = None):
+        """A schema-validated model call with at most one bounded repair.
+
+        Replies are validated against the bounded pydantic schema (and sent to the provider as a
+        JSON schema where supported). A reply cut off at the output limit is diagnosed as truncation
+        and repaired once with a larger output cap and a compactness instruction; any other invalid
+        reply is repaired once with the validation error. Every attempt stays recorded.
+        """
+        lim = self.run.limits
+        note_msgs, max_tokens = messages, lim.max_output_tokens_planning
         last_err = None
-        for _ in range(2):
-            content, mc_id = await self.call_model(note_msgs, agent_id=agent_id, phase=phase, task=task,
-                                                   reserve=reserve,
-                                                   max_tokens=self.run.limits.max_output_tokens_planning,
-                                                   reasoning_tokens=self.run.limits.planning_reasoning_tokens)
+        for attempt in range(2):
+            content, mc_id = await self.call_model(
+                note_msgs, agent_id=agent_id, phase=phase, task=task, reserve=reserve, max_tokens=max_tokens,
+                reasoning_tokens=lim.planning_reasoning_tokens, schema=schema,
+                hold_key=task.id if task.id in self.holds else None)
             try:
                 return parse(content), mc_id
             except ValueError as e:
-                last_err = e
-                self.event("decision_rejected", str(e), agent_id=agent_id, task=task, model_call_id=mc_id)
-                note_msgs = [*messages[:-1], {"role": "user", "content": messages[-1]["content"]
-                             + f"\n\nNote: your previous reply was rejected: {e}. Reply with one valid JSON object."}]
+                mc = self.store.get(ModelCall, mc_id)
+                truncated = mc is not None and mc.finish_reason == "length"
+                last_err = f"{'truncated at the output limit; ' if truncated else ''}{e}"
+                self.event("reply_truncated" if truncated else "decision_rejected",
+                           f"{agent_id} reply {'cut off at the output limit' if truncated else 'rejected'}: {e}",
+                           agent_id=agent_id, task=task, model_call_id=mc_id, attempt=attempt + 1,
+                           reasoning_tokens=mc.reasoning_tokens if mc else None)
+                if truncated:
+                    max_tokens = min(max_tokens * 2, 4000)
+                    fix = ("your previous reply was cut off at the output limit. Reply with compact single-line "
+                           "JSON, fewer cases and shorter text.")
+                else:
+                    fix = f"your previous reply was rejected: {e}. Reply with one valid compact JSON object."
+                note_msgs = [*messages[:-1], {"role": "user", "content": messages[-1]["content"] + f"\n\nNote: {fix}"}]
         raise ValueError(f"{agent_id} produced invalid replies: {last_err}")
 
     # --- coordinator ---------------------------------------------------------
@@ -227,7 +247,7 @@ class ReviewRun(ExplorerRun):
             plan, plan_mc = await self.model(
                 input_tester.plan_messages(handoff, form, lim.max_cases_per_form),
                 agent_id=self.tester_id, phase="input_test", task=task, parse=input_tester.parse_plan,
-                reserve=lim.reserved_verification_calls)
+                reserve=lim.reserved_verification_calls, schema=input_tester.TestPlan.model_json_schema())
         except BudgetExceeded as e:
             return self._block(task, f"tester not run: {e}")
         except ValueError as e:
@@ -241,6 +261,7 @@ class ReviewRun(ExplorerRun):
             ref = pc.requirement_ref if pc.requirement_ref in self.req_ids else None
             tc = TestCase(run_id=self.run.id, form_id=form.id, handoff_id=handoff.id,
                           designed_by=self.tester_id, label=pc.label, inputs=pc.inputs, submit=submit,
+                          check_path=pc.check_page,
                           requirement_ref=ref, expected=pc.expected, expectation_source=ref or "unspecified",
                           model_call_ids=[plan_mc])
             await self.execute_case(tc, form, handoff, task, state)
@@ -257,7 +278,7 @@ class ReviewRun(ExplorerRun):
             assessment, assess_mc = await self.model(
                 input_tester.assess_messages(handoff, form, executed), agent_id=self.tester_id,
                 phase="input_test", task=task, parse=input_tester.parse_assessment,
-                reserve=lim.reserved_verification_calls)
+                reserve=lim.reserved_verification_calls, schema=input_tester.TestAssessment.model_json_schema())
         except BudgetExceeded as e:
             return self._block(task, f"tester could not assess outcomes: {e}")
         except ValueError as e:
@@ -316,13 +337,20 @@ class ReviewRun(ExplorerRun):
             else:
                 start_state, start_url = att.mark_state(reached.execution), reached.execution.observation.url
                 steps = self._case_steps(tc, form)
+                before = await self.peek(eng, tc.check_path, att, "before") if tc.check_path else None
                 err, app_err, ex = await self._run_steps(eng, steps, att)
+                after = (await self.peek(eng, tc.check_path, att, "after")
+                         if tc.check_path and ex is not None and not (err or app_err) else None)
                 if err or app_err or ex is None:
                     tc.status, tc.setup_error = "execution_failed", err or app_err or "no actions executed"
                 else:
                     tc.status = "executed"
                 if ex is not None:
                     tc.observed = outcome_facts(ex.observation, start_url)
+                    if before is not None:
+                        tc.observed["check_page"] = {
+                            "path": tc.check_path, "before": outcome_facts(before, before.url),
+                            "after": outcome_facts(after, after.url) if after else None}
                     end_state = att.mark_state(ex, recipe=[*handoff.setup.steps, *steps])
                     tc.resulting_state_id = end_state.id
                     last = att.results[-1]
@@ -345,6 +373,18 @@ class ReviewRun(ExplorerRun):
                    context_id=ctx.context_id, resulting_state_id=tc.resulting_state_id,
                    evidence_refs=tc.evidence_refs[-2:])
         self.defer_frontier(att.new_states, self.tester_id, task)
+
+    async def peek(self, eng: BrowserEngine, path: str, att: _Attempt, when: str):
+        """Observe a check page in a second tab of the same session; recorded as evidence."""
+        t0 = time.perf_counter()
+        started = utcnow()
+        url = self.origin.rstrip("/") + path
+        obs, png = await eng.peek(url)
+        ex = Execution(ok=True, error=None, target_description=f"check page {path} ({when} the action)",
+                       url_before=url, url_after=obs.url, started_at=started,
+                       duration_ms=int((time.perf_counter() - t0) * 1000), observation=obs, screenshot_png=png)
+        await att.record({"type": "inspect", "url": path, "check": when}, ex, f"check page {path} {when} the action")
+        return obs
 
     @staticmethod
     def _case_steps(tc: TestCase, form: DiscoveredForm) -> list[SemanticStep]:
@@ -382,6 +422,7 @@ class ReviewRun(ExplorerRun):
             expected=tc.expected, observed=observed, evidence_refs=list(tc.evidence_refs),
             requirement_ref=tc.requirement_ref, requirement_text=req.text if req else None,
             inputs=dict(tc.inputs), reproduction=handoff.setup, reproduction_steps=self._case_steps(tc, form),
+            check_path=tc.check_path,
             form_id=form.id, test_case_id=tc.id, handoff_ids=[handoff.id],
         )
         self.store.put(f)
@@ -482,11 +523,14 @@ class ReviewRun(ExplorerRun):
                     return done("inconclusive", f"Could not recreate the starting state: {reached.error}", "setup")
                 att.setup_ok = True
                 start_state, start_obs = rec.mark_state(reached.execution), reached.execution.observation
+                check_before = await self.peek(eng, f.check_path, rec, "before") if f.check_path else None
                 if assertion is None:
                     try:
                         decision, mc_id = await self.model(
-                            verifier.build_messages(f, start_obs), agent_id=self.verifier_id, phase="verify",
-                            task=task, parse=verifier.parse_decision)
+                            verifier.build_messages(f, start_obs, check_before=check_before),
+                            agent_id=self.verifier_id, phase="verify",
+                            task=task, parse=verifier.parse_decision,
+                            schema=verifier.VerifierDecision.model_json_schema())
                     except BudgetExceeded as e:
                         self.budget_note = str(e)
                         return done("inconclusive", f"Verifier could not choose an assertion: {e}", "verifier")
@@ -526,8 +570,11 @@ class ReviewRun(ExplorerRun):
                 if app_err or ex is None:
                     return done("inconclusive", f"The application failed during the repeated actions: {app_err}",
                                 "application")
+                target_obs = ex.observation
+                if f.check_path:  # multi-step postcondition: evaluate on the check page after the steps
+                    target_obs = await self.peek(eng, f.check_path, rec, "after")
                 try:
-                    result = evaluate(assertion, ex.observation, start_obs.url)
+                    result = evaluate(assertion, target_obs, start_obs.url)
                 except AssertionInvalid as e:
                     return done("inconclusive", f"Assertion rejected by the engine: {e}", "verifier")
                 att.result = result

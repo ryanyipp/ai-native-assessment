@@ -16,7 +16,15 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from flowlens.agents import explorer
-from flowlens.browser.engine import BrowserEngine, Execution, control_of, origin_of, page_structure, state_signature
+from flowlens.browser.engine import (
+    BrowserEngine,
+    Execution,
+    control_of,
+    normalise_route,
+    origin_of,
+    page_structure,
+    state_signature,
+)
 from flowlens.config import Settings
 from flowlens.models.contracts import (
     ActionResult,
@@ -99,10 +107,13 @@ def extract_forms(obs) -> list[tuple[str, list[FormField], list[ControlRef]]]:
         fields = [FormField(control=control_of(e), required=e.required, observed_value=e.value)
                   for e in els if e.tag in FIELD_TAGS and (e.input_type or "") not in NON_FIELD_TYPES]
         submits = [control_of(e) for e in els if e.role == "button"]
-        if not fields or not submits:
+        if not submits:
             continue
-        # Route is deliberately excluded: the same form on create and edit pages is tested once.
-        raw = ";".join(sorted(f"{f.control.role}:{f.control.name}:{f.control.input_type}" for f in fields))
+        if fields:
+            # Route is deliberately excluded: the same form on create and edit pages is tested once.
+            raw = ";".join(sorted(f"{f.control.role}:{f.control.name}:{f.control.input_type}" for f in fields))
+        else:  # action-only form (confirm, delete, cancel ...): identified by its page and buttons
+            raw = "action|" + normalise_route(obs.url) + "|" + ";".join(sorted(s.name for s in submits))
         out.append((hashlib.sha256(raw.encode()).hexdigest()[:16], fields, submits))
     return out
 
@@ -131,6 +142,7 @@ class ExplorerRun:
         self.reload_seen_after_save = False
         self.step_seq = -1  # one ordered step counter across every worker in the run
         self.in_flight = 0  # reserved but unfinished model calls
+        self.holds: dict[str, int] = {}  # capacity held for admitted work (queue mode)
         self.in_flight_phase: dict[str, int] = {}
         self.stage = "exploring"  # where the review is; used in failure reasons
 
@@ -254,7 +266,9 @@ class ExplorerRun:
             form = DiscoveredForm(
                 run_id=self.run.id, key=key, state_id=state.id, url=ex.observation.url, route=state.route,
                 headings=ex.observation.headings, fields=fields, submit_controls=submits,
-                page_text=ex.observation.text_excerpt[:800], discovered_by=agent_id,
+                page_text=ex.observation.text_excerpt[:800], discovered_by=agent_id, action_only=not fields,
+                page_links=sorted({e.href for e in ex.observation.elements
+                                   if e.href and e.href.startswith("/") and not e.href.startswith("//")})[:20],
                 action_result_id=result.id,
                 evidence_refs=[r for r in (result.screenshot_artifact_id, obs_art) if r],
             )
@@ -276,7 +290,23 @@ class ExplorerRun:
     def guard_call(self, task: Task) -> None:
         """Hook: queue mode refuses calls from revoked attempts."""
 
-    def reserve_call(self, phase: str, reserve: int, phase_cap: int | None) -> None:
+    def admit(self, key: str, calls: int, reserve: int) -> bool:
+        """Hold `calls` units of capacity for an admitted unit of work (queue mode: a test task).
+
+        Holds count as used for everyone else, so later verification or exploration
+        cannot consume capacity an admitted test still needs. Admission itself respects
+        the global limit, so the run total never exceeds max_model_calls.
+        """
+        lim, u = self.run.limits, self.run.usage
+        if u.model_calls + self.in_flight + sum(self.holds.values()) + calls > lim.max_model_calls - reserve:
+            return False
+        self.holds[key] = calls
+        return True
+
+    def release(self, key: str) -> None:
+        self.holds.pop(key, None)
+
+    def reserve_call(self, phase: str, reserve: int, phase_cap: int | None, hold_key: str | None = None) -> None:
         """Check and take one unit of call capacity in one synchronous step.
 
         No await happens between the check and the increment, so concurrent workers on
@@ -284,8 +314,17 @@ class ExplorerRun:
         seen in checkpoint 3). Calls in flight count as used.
         """
         lim, u = self.run.limits, self.run.usage
+        if hold_key is not None and self.holds.get(hold_key, 0) > 0:
+            # Spend the admitted hold; cost and credit-pool limits still apply.
+            check_budget(calls_used=0, max_calls=1, run_cost=u.reported_cost_usd, run_limit=lim.max_cost_usd,
+                         pool_spent=self.store.total_reported_cost(), pool_limit=self.settings.flowlens_budget_usd)
+            self.holds[hold_key] -= 1
+            self.in_flight += 1
+            self.in_flight_phase[phase] = self.in_flight_phase.get(phase, 0) + 1
+            return
         check_budget(
-            calls_used=u.model_calls + self.in_flight, max_calls=max(lim.max_model_calls - reserve, 0),
+            calls_used=u.model_calls + self.in_flight + sum(self.holds.values()),
+            max_calls=max(lim.max_model_calls - reserve, 0),
             run_cost=u.reported_cost_usd, run_limit=lim.max_cost_usd,
             pool_spent=self.store.total_reported_cost(), pool_limit=self.settings.flowlens_budget_usd,
         )
@@ -298,7 +337,8 @@ class ExplorerRun:
 
     async def call_model(self, messages: list[dict[str, str]], *, agent_id: str, phase: str, task: Task,
                          reserve: int = 0, max_tokens: int | None = None, phase_cap: int | None = None,
-                         reasoning_tokens: int | None = None) -> tuple[str, str]:
+                         reasoning_tokens: int | None = None, hold_key: str | None = None,
+                         schema: dict | None = None) -> tuple[str, str]:
         """Budget-reserved call recorded against the run. Returns (content, model_call_id).
 
         `reserve` holds back calls for later workers from the global count; `phase_cap`
@@ -306,14 +346,15 @@ class ExplorerRun:
         """
         lim = self.run.limits
         self.guard_call(task)
-        self.reserve_call(phase, reserve, phase_cap)
+        self.reserve_call(phase, reserve, phase_cap, hold_key)
         call = ModelCall(run_id=self.run.id, step=max(self.step_seq, 0), model=self.llm.model, latency_ms=0,
                          ok=False, agent_id=agent_id, phase=phase)
         resp = None
         heartbeat = self.start_heartbeat(task)
         try:
+            extra = {"schema": schema} if schema and getattr(self.llm, "supports_schema", False) else {}
             resp = await asyncio.wait_for(
-                self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens),
+                self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens, **extra),
                 timeout=self.call_deadline_s)
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply

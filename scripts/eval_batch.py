@@ -83,5 +83,45 @@ async def main(batch: str) -> None:
                                                "reported_cost_usd")}, default=str), f"batch US${spent:.4f}", flush=True)
 
 
+LOCK = ROOT / "evaluation" / ".batch.lock"
+
+
+def other_batch_processes() -> list[str]:
+    """Other running eval_batch processes, from the OS process table (Git Bash `ps` cannot see them)."""
+    import os
+    import subprocess
+    if os.name != "nt":
+        out = subprocess.run(["ps", "-eo", "pid,args"], capture_output=True, text=True).stdout.splitlines()
+        rows = [line.strip().split(None, 1) for line in out[1:]]
+    else:
+        cmd = ("Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'eval_batch\\.py' } | "
+               "ForEach-Object { \"$($_.ProcessId) $($_.CommandLine)\" }")
+        out = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True).stdout
+        rows = [line.strip().split(None, 1) for line in out.splitlines() if line.strip()]
+    me = {str(os.getpid()), str(os.getppid())}
+    return [f"{r[0]} {r[1][:160]}" for r in rows if len(r) == 2 and r[0] not in me and "eval_batch.py" in r[1]
+            and "powershell" not in r[1].lower()]
+
+
+def acquire_lock(batch: str) -> None:
+    """Refuse to start if another batch is running or a lock is held; one batch at a time, sequentially."""
+    import os
+    others = other_batch_processes()
+    if others:
+        sys.exit("refusing to start: another evaluation batch process is running:\n  " + "\n  ".join(others))
+    try:
+        fd = os.open(LOCK, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        sys.exit(f"refusing to start: {LOCK} exists ({LOCK.read_text('utf-8').strip()}). Remove it only after "
+                 "checking that no batch is running.")
+    os.write(fd, f"pid={os.getpid()} batch={batch} started={datetime.now(UTC).isoformat()}".encode())
+    os.close(fd)
+
+
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else datetime.now(UTC).strftime("batch-%Y%m%d-%H%M")))
+    batch_id = sys.argv[1] if len(sys.argv) > 1 else datetime.now(UTC).strftime("batch-%Y%m%d-%H%M")
+    acquire_lock(batch_id)
+    try:
+        asyncio.run(main(batch_id))
+    finally:
+        LOCK.unlink(missing_ok=True)

@@ -53,3 +53,6 @@ fixtures/creator-studio/data/
 
 # ticket-desk fixture runtime data
 fixtures/ticket-desk/data/
+
+# evaluation batch lock
+evaluation/.batch.lock

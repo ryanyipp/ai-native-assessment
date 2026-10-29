@@ -24,6 +24,8 @@ class PlannedCase(BaseModel):
     submit: str | None = Field(None, max_length=160)  # submit control name
     requirement_ref: str | None = Field(None, max_length=20)
     expected: str = Field(max_length=200)
+    # Optional same-site page whose content the requirement says should change because of the action.
+    check_page: str | None = Field(None, max_length=200, pattern=r"^/[^\s]*$")
 
 
 class TestPlan(BaseModel):
@@ -60,14 +62,19 @@ Reply with ONE JSON object and nothing else:
   {"label": "<short name>", "inputs": {"<field name exactly as listed>": "<value>"},
    "submit": "<submit control name exactly as listed>",
    "requirement_ref": "<requirement id this case checks, or null>",
-   "expected": "<what should happen, according to that requirement>"}]}
+   "expected": "<what should happen, according to that requirement>",
+   "check_page": "<optional: a page path from 'Links' where the effect should be visible, or null>"}]}
 
 Rules:
 - Use only the field and submit names listed. Unlisted fields keep their current value.
+- A form with no fields performs an action (confirm, delete, cancel ...). Use "inputs": {} for it.
+- If a requirement says the action changes another page (for example, an item disappears from a list),
+  set check_page to that page's path. Code opens it in the same session before and after the action.
 - Values are typed exactly. A field with type=date needs YYYY-MM-DD.
 - Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use \
 null and describe your own expectation; it will be treated as a review observation, not a defect.
-- At most {max_cases} cases. Keep labels and expectations to one short line each."""
+- At most {max_cases} cases. Keep labels and expectations to one short line each.
+- Reply with compact JSON on a single line (no indentation)."""
 
 ASSESS_SYSTEM = """You are the Input Tester inside FlowLens. You designed input cases for a form; code \
 executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts \
@@ -83,7 +90,9 @@ Reply with ONE JSON object and nothing else:
   {"case": <case number>, "verdict": "as_expected" | "unexpected" | "unclear",
    "observed_summary": "<what the facts show>", "requirement_ref": "<id or null>"}]}
 
-Your verdicts are unverified candidates. A separate verifier checks them independently."""
+If a case has a check page, its facts include that page before and after the action; compare them.
+Your verdicts are unverified candidates. A separate verifier checks them independently.
+Reply with compact JSON on a single line (no indentation)."""
 
 
 def render_form(form: DiscoveredForm) -> str:
@@ -96,7 +105,11 @@ def render_form(form: DiscoveredForm) -> str:
         if f.observed_value:
             extra.append(f"current value={json.dumps(f.observed_value[:80])}")
         lines.append(f"  - {json.dumps(c.name)} ({c.role}{', ' + ', '.join(extra) if extra else ''})")
+    if not form.fields:
+        lines.append("  (none: this form performs an action)")
     lines.append("Submit controls: " + ", ".join(json.dumps(s.name) for s in form.submit_controls))
+    if form.page_links:
+        lines.append("Links on this page: " + ", ".join(form.page_links))
     lines.append("Visible page text (truncated): " + form.page_text[:600])
     return "\n".join(lines)
 

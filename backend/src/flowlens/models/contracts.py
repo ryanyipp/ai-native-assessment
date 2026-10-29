@@ -384,6 +384,8 @@ class DiscoveredForm(BaseModel):
     fields: list[FormField]
     submit_controls: list[ControlRef] = Field(default_factory=list)
     page_text: str = ""  # bounded visible text of the page when discovered
+    page_links: list[str] = Field(default_factory=list)  # same-site paths linked from the page
+    action_only: bool = False  # a form with no fields, only an action button (confirm, delete, cancel...)
     discovered_by: str
     action_result_id: str
     evidence_refs: list[str] = Field(default_factory=list)  # screenshot + observation artifacts
@@ -450,6 +452,8 @@ class TestCase(BaseModel):
     label: str
     inputs: dict[str, str] = Field(default_factory=dict)  # field name -> value
     submit: ControlRef | None = None
+    # Multi-step postcondition: a page opened in the same session before and after the action.
+    check_path: str | None = None
     requirement_ref: str | None = None
     expected: str
     expectation_source: str  # requirement id or "unspecified"
@@ -525,6 +529,7 @@ class Finding(BaseModel):
     inputs: dict[str, str] = Field(default_factory=dict)
     reproduction: SetupRecipe | None = None
     reproduction_steps: list[SemanticStep] = Field(default_factory=list)
+    check_path: str | None = None  # postcondition page, checked before and after the steps
     form_id: str | None = None
     test_case_id: str | None = None
     handoff_ids: list[str] = Field(default_factory=list)

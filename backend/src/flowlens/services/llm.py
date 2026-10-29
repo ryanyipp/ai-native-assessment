@@ -35,6 +35,10 @@ class BudgetExceeded(Exception):
     pass
 
 
+class SchemaRejected(Exception):
+    pass
+
+
 @dataclass
 class LLMResponse:
     content: str
@@ -60,6 +64,7 @@ class LLMClient(Protocol):
 
 class OpenRouterClient:
     is_mock = False
+    supports_schema = True
 
     def __init__(self, settings: Settings):
         if not settings.has_api_key:
@@ -71,13 +76,23 @@ class OpenRouterClient:
         self._slots = _slots(settings.flowlens_max_concurrent_model_calls)
 
     async def complete(self, messages: list[dict[str, str]], max_tokens: int,
-                       reasoning_tokens: int | None = None) -> LLMResponse:
+                       reasoning_tokens: int | None = None, schema: dict | None = None) -> LLMResponse:
+        if schema is not None:
+            try:
+                return await self._complete(messages, max_tokens, reasoning_tokens, schema)
+            except SchemaRejected:
+                pass  # provider refused structured output: fall back to plain JSON mode (still validated locally)
+        return await self._complete(messages, max_tokens, reasoning_tokens, None)
+
+    async def _complete(self, messages, max_tokens, reasoning_tokens, schema) -> LLMResponse:
         body = {
             "model": self.model,
             "messages": messages,
             "max_tokens": max_tokens,
             "temperature": 0,
-            "response_format": {"type": "json_object"},
+            "response_format": ({"type": "json_schema",
+                                 "json_schema": {"name": "reply", "strict": False, "schema": schema}}
+                                if schema is not None else {"type": "json_object"}),
             # Keep hidden reasoning small so it cannot consume the output budget.
             # A token budget bounds hidden reasoning more tightly than an effort level; it shares the output cap.
             "reasoning": ({"max_tokens": reasoning_tokens, "exclude": True} if reasoning_tokens is not None
@@ -99,6 +114,8 @@ class OpenRouterClient:
             latency = int((time.perf_counter() - t0) * 1000)
         finally:
             self._slots.release()
+        if r.status_code == 400 and schema is not None:
+            raise SchemaRejected(r.text[:200])
         if r.status_code != 200:
             raise RuntimeError(f"OpenRouter HTTP {r.status_code}: {r.text[:300]}")
         data = r.json()

@@ -57,10 +57,12 @@ Reply with ONE JSON object and nothing else:
 {{"reasoning": "<short>", "requirement_ref": "<the requirement id>", "explicit": true | false,
   "requirement_quote": "<exact words from the requirement that state the expected behaviour>",
   "assertion": {{"type": "<one type above>", "params": {{...}}}} | null,
-  "expected": "<the expected value in plain words>"}}"""
+  "expected": "<the expected value in plain words>"}}
+Reply with compact JSON on a single line (no indentation)."""
 
 
-def build_messages(finding: Finding, fresh_obs: Observation, note: str | None = None):
+def build_messages(finding: Finding, fresh_obs: Observation, note: str | None = None,
+                   check_before: Observation | None = None):
     steps = "\n".join(f"  {i}. {s.describe()}" for i, s in enumerate(finding.reproduction_steps, 1))
     user = (
         f"Requirement {finding.requirement_ref}: {finding.requirement_text}\n\n"
@@ -68,6 +70,9 @@ def build_messages(finding: Finding, fresh_obs: Observation, note: str | None = 
         f"Steps code will repeat after reaching the start page:\n{steps}\n\n"
         f"Start page as you observed it in a fresh session (before the steps):\n{render_observation(fresh_obs)}"
     )
+    if check_before is not None:
+        user += (f"\n\nCheck page {finding.check_path}, opened in the same fresh session BEFORE the steps "
+                 f"(the assertion is evaluated on this page AFTER the steps):\n{render_observation(check_before)}")
     if note:
         user += f"\n\nNote: {note}"
     return [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}]
