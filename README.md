@@ -36,7 +36,9 @@ Open http://localhost:5173, keep the default target `http://localhost:5174/` and
 
 ```powershell
 cd backend; .\.venv\Scripts\python -m pytest -q
-cd frontend; npm run build
+cd frontend; npm run build; npm run lint
+# With backend and frontend running (no model calls):
+backend\.venv\Scripts\python scripts\ui_check.py run_e957eab8645e docs\ui-iteration
 ```
 
 ## Budget
