@@ -23,7 +23,14 @@ const HANDOFF_EVENTS: Record<string, string> = {
   task_failed: 'Task failed',
   task_retry: 'Task retried',
   task_unfinished: 'Task unfinished',
+  fault_injected: 'Injected fault',
+  lease_expired: 'Lease expired',
+  context_fenced: 'Context closed',
+  task_reassigned: 'Task reassigned',
+  late_action_rejected: 'Late action refused',
+  task_recovered: 'Task recovered',
 }
+const RECOVERY = new Set(['fault_injected', 'lease_expired', 'context_fenced', 'task_reassigned', 'late_action_rejected', 'result_rejected', 'task_recovered'])
 
 const TASK_TONE: Record<string, string> = {
   ready: 'bg-slate-100 text-slate-700', claimed: 'bg-blue-50 text-blue-800', done: 'bg-emerald-50 text-emerald-800',
@@ -54,6 +61,12 @@ function TaskBoard({ detail }: { detail: RunDetail }) {
               {t.owner ? <AgentChip id={t.owner} /> : <span className="text-[11px] text-slate-500">no owner</span>}
               {handedOff.has(t.id) && <span className="text-[11px] text-slate-600">handed off</span>}
               {(t.attempts ?? 0) > 1 && <span className="text-[11px] text-slate-600">attempt {t.attempts}/{t.max_attempts}</span>}
+              {(t.expired_attempts ?? []).length > 0 && (
+                <span className="rounded bg-amber-50 px-1.5 text-[11px] font-medium text-amber-900">
+                  {t.expired_attempts!.length} expired lease{t.expired_attempts!.length > 1 ? 's' : ''}
+                  {(t.excluded_workers ?? []).length > 0 && ` · excluded ${t.excluded_workers!.join(', ')}`}
+                </span>
+              )}
               {(t.depends_on ?? []).length > 0 && <span className="text-[11px] text-slate-600">waits for {t.depends_on!.length} task</span>}
             </div>
             <div className="mt-0.5 flex flex-wrap gap-x-2 text-[11px] text-slate-500">
@@ -149,7 +162,8 @@ export function RunActivity({ detail, selection, onSelect }: {
           </h3>
           <ol className="space-y-1 text-xs">
             {handoffs.map((e) => (
-              <li key={e.seq} className="flex flex-wrap items-baseline gap-x-2 rounded-md px-1.5 py-1 hover:bg-slate-50">
+              <li key={e.seq} className={cx('flex flex-wrap items-baseline gap-x-2 rounded-md px-1.5 py-1 hover:bg-slate-50',
+                RECOVERY.has(e.type) && 'bg-amber-50/60', e.type === 'fault_injected' && 'ring-1 ring-inset ring-amber-300')}>
                 <span className="font-mono text-[11px] text-slate-500">#{e.seq}</span>
                 <AgentChip id={e.agent_id} />
                 <span className="font-medium text-slate-800">{HANDOFF_EVENTS[e.type]}</span>

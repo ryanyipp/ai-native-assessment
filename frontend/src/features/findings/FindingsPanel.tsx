@@ -123,7 +123,14 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
           <Field label="States">{detail.states.length} observed</Field>
           <Field label="Transitions">{detail.transitions.length} ({failed} failed actions)</Field>
           {(detail.test_cases ?? []).length > 0 && <Field label="Test cases">{detail.test_cases!.length} executed or attempted</Field>}
-          <Field label="Model calls">{r.usage.model_calls} of {r.limits.max_model_calls} allowed (shared by all workers)</Field>
+          <Field label="Model calls">{r.usage.model_calls} of {r.limits.max_model_calls} allowed (shared by all workers)
+            {r.usage.exploration_calls !== undefined && r.mode === 'queue_review' && (
+              <span className="block text-xs text-slate-500">
+                exploration {r.usage.exploration_calls} · testing {r.usage.testing_calls} · verification {r.usage.verification_calls}
+                {(r.usage.truncated_calls ?? 0) > 0 && ` · ${r.usage.truncated_calls} truncated`}
+              </span>
+            )}
+          </Field>
           <Field label="Tokens">{fmtInt(r.usage.prompt_tokens)} in · {fmtInt(r.usage.completion_tokens)} out</Field>
           <Field label="Reported cost">{fmtUsd(r.usage.reported_cost_usd, 6)} of {fmtUsd(r.limits.max_cost_usd, 2)} run limit</Field>
         </dl>

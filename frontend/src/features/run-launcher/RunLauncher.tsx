@@ -56,6 +56,7 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
   const [targetUrl, setTargetUrl] = useState('http://localhost:5174/')
   const [goal, setGoal] = useState(DEFAULT_GOAL)
   const [requirements, setRequirements] = useState('')
+  const [injectStall, setInjectStall] = useState(false)
   const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify' | 'queue_review'>('single_explorer')
   const [limits, setLimits] = useState<Record<LimitKey, number>>({
     max_cost_usd: health?.default_run_budget_usd ?? 0.5,
@@ -96,6 +97,7 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
         requirements: requirements.split('\n').map((r) => r.trim()).filter(Boolean),
         limits,
         mode,
+        ...(mode === 'queue_review' && injectStall ? { fault_injection: { worker: 'explorer-a', task_type: 'explore', stall_s: 75 } } : {}),
       })
       onCreated(run)
       onOpenChange(false)
@@ -145,6 +147,13 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
                   <span><span className="font-medium text-slate-900">{label}</span><span className="block text-xs text-slate-600">{hint}</span></span>
                 </label>
               ))}
+              {mode === 'queue_review' && (
+                <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-2.5 py-2 text-[13px]">
+                  <input type="checkbox" checked={injectStall} onChange={(e) => setInjectStall(e.target.checked)} className="mt-0.5" />
+                  <span><span className="font-medium text-slate-900">Inject a stall (labelled fault)</span>
+                    <span className="block text-xs text-slate-600">explorer-a stops for 75 s after its first claim. The run is labelled as containing an injected failure.</span></span>
+                </label>
+              )}
             </fieldset>
             <FormField id={`${uid}-req`} label="Requirements (optional)" hint="One per line, optionally prefixed with an id such as R5. The tester and verifier only treat these as explicit expectations.">
               <textarea id={`${uid}-req`} className={inputCls()} rows={2} value={requirements} aria-describedby={`${uid}-req-hint`}

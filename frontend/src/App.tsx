@@ -29,6 +29,11 @@ function RunHeader({ detail }: { detail: RunDetail }) {
         <StatusBadge status={r.status} withTooltip />
         <ProvenanceBadge run={r} />
         <Badge>{r.mode === 'queue_review' ? 'Shared queue · 2 explorers' : r.mode === 'explore_test_verify' ? 'Explorer → tester → verifier' : r.mode === 'reverify' ? 'Re-check of a finding' : 'Single explorer'}</Badge>
+        {r.fault_injection && (
+          <Tooltip content={`Evaluation fault: ${r.fault_injection.worker} stalls ${r.fault_injection.stall_s}s after claiming a ${r.fault_injection.task_type} task. Recovery events in Activity are real coordinator behaviour.`}>
+            <span tabIndex={0} className="inline-flex"><Badge tone="amber">Injected fault</Badge></span>
+          </Tooltip>
+        )}
         {r.target_build && (
           <Tooltip content="Evaluation-only label of the target build. It is recorded for comparison and never given to the agents.">
             <span tabIndex={0} className="inline-flex"><Badge tone="blue">build: {r.target_build}</Badge></span>

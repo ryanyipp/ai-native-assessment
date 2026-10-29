@@ -28,7 +28,13 @@ export interface Usage {
   total_tokens: number
   reported_cost_usd: number
   calls_without_cost: number
+  exploration_calls?: number
+  testing_calls?: number
+  verification_calls?: number
+  truncated_calls?: number
 }
+
+export interface FaultInjection { kind: string; worker: string; task_type: string; stall_s: number; times: number }
 
 export interface Run {
   id: string
@@ -38,6 +44,7 @@ export interface Run {
   model: string
   mode: 'single_explorer' | 'explore_test_verify' | 'reverify' | string
   target_build: string | null
+  fault_injection?: FaultInjection | null
   limits: RunLimits
   status: RunStatus
   stop_reason: string | null
@@ -158,6 +165,7 @@ export interface Task {
   attempt_id?: string | null; attempts?: number; max_attempts?: number; depends_on?: string[]; depth?: number
   queued_by?: string | null; payload?: Record<string, string>; lease_expires_at?: string | null
   created_at?: string; claimed_at?: string | null; finished_at?: string | null; result_refs?: string[]
+  excluded_workers?: string[]; expired_attempts?: string[]
 }
 
 export interface DiscoveredForm {
@@ -219,6 +227,7 @@ export interface ModelCall {
   ok: boolean
   error: string | null
   artifact_id: string | null
+  finish_reason?: string | null
   agent_id?: string
   phase?: Phase
 }
