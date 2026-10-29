@@ -16,6 +16,7 @@ from pathlib import Path
 
 from flowlens.config import Settings
 from flowlens.models.contracts import Run
+from flowlens.orchestration.queue_review import QueueReviewRun
 from flowlens.orchestration.review import ReviewRun
 from flowlens.orchestration.runner import ExplorerRun
 from flowlens.services.llm import LLMClient
@@ -50,7 +51,7 @@ def check_code_current() -> None:
 
 
 def run_class(run: Run) -> type[ExplorerRun]:
-    return ReviewRun if run.mode == "explore_test_verify" else ExplorerRun
+    return {"explore_test_verify": ReviewRun, "queue_review": QueueReviewRun}.get(run.mode, ExplorerRun)
 
 
 def start_run_thread(run: Run, store: Store, settings: Settings, llm: LLMClient) -> threading.Thread:

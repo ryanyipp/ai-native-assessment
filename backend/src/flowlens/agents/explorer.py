@@ -49,7 +49,7 @@ class ExplorerDecision(BaseModel):
 
 _decision = TypeAdapter(ExplorerDecision)
 
-SYSTEM_PROMPT = """You are Explorer A inside FlowLens, a website reviewer. You operate a real browser on an \
+SYSTEM_PROMPT = """You are {name} inside FlowLens, a website reviewer. You operate a real browser on an \
 authorised test website, one action at a time, to pursue a goal.
 
 Each turn you get the goal, your previous actions with their outcomes, and an observation of the current \
@@ -108,7 +108,8 @@ def render_observation(obs: Observation) -> str:
 
 
 def build_messages(goal: str, requirements: list[str], history: list[str], obs: Observation,
-                   step: int, max_steps: int, note: str | None = None) -> list[dict[str, str]]:
+                   step: int, max_steps: int, note: str | None = None,
+                   name: str = "Explorer A") -> list[dict[str, str]]:
     req = "\n".join(f"- {r}" for r in requirements) or "(none supplied)"
     hist = "\n".join(history[-12:]) or "(no actions yet)"
     user = (
@@ -118,7 +119,7 @@ def build_messages(goal: str, requirements: list[str], history: list[str], obs: 
     )
     if note:
         user += f"\n\nNote: {note}"
-    return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}]
+    return [{"role": "system", "content": SYSTEM_PROMPT.replace("{name}", name)}, {"role": "user", "content": user}]
 
 
 def parse_decision(content: str) -> ExplorerDecision:

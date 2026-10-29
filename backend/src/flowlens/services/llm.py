@@ -8,6 +8,7 @@ case per call is bounded by max_output_tokens plus the prompt size.
 
 from __future__ import annotations
 
+import asyncio
 import threading
 import time
 from dataclasses import dataclass, field
@@ -82,12 +83,16 @@ class OpenRouterClient:
             "Content-Type": "application/json",
             "X-Title": "FlowLens",
         }
-        # Blocking acquire is fine: each run has its own thread and event loop.
-        with self._slots:
+        # Several workers share one event loop in queue mode, so wait for a slot off-loop;
+        # a blocking acquire here would freeze the loop while the slot holders await I/O.
+        await asyncio.to_thread(self._slots.acquire)
+        try:
             t0 = time.perf_counter()
             async with httpx.AsyncClient(timeout=self._timeout) as client:
                 r = await client.post(f"{self._base}/chat/completions", json=body, headers=headers)
             latency = int((time.perf_counter() - t0) * 1000)
+        finally:
+            self._slots.release()
         if r.status_code != 200:
             raise RuntimeError(f"OpenRouter HTTP {r.status_code}: {r.text[:300]}")
         data = r.json()

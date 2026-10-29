@@ -49,7 +49,7 @@ class RunStatus(StrEnum):
     interrupted = "interrupted"
 
 
-RunMode = Literal["single_explorer", "explore_test_verify", "reverify"]
+RunMode = Literal["single_explorer", "explore_test_verify", "queue_review", "reverify"]
 
 
 class RunLimits(BaseModel):
@@ -66,6 +66,13 @@ class RunLimits(BaseModel):
     max_forms_tested: int = Field(3, ge=0, le=10)
     max_cases_per_form: int = Field(4, ge=1, le=8)
     verification_replays: int = Field(2, ge=1, le=5)
+    # Shared queue (queue_review): explorers leave these calls for tester and verifier.
+    reserved_testing_calls: int = Field(8, ge=0, le=50)
+    explore_steps_per_task: int = Field(4, ge=1, le=15)
+    max_depth: int = Field(2, ge=0, le=6)  # frontier depth from the start state
+    max_tasks: int = Field(40, ge=1, le=300)
+    task_max_attempts: int = Field(2, ge=1, le=5)
+    task_lease_s: int = Field(300, ge=10, le=3600)  # recorded now; expiry is enforced in checkpoint 4
 
 
 class RunCreate(BaseModel):
@@ -73,7 +80,7 @@ class RunCreate(BaseModel):
     goal: str = Field(min_length=5, max_length=2000)
     requirements: list[str] = Field(default_factory=list, max_length=20)
     limits: RunLimits | None = None
-    mode: Literal["single_explorer", "explore_test_verify"] = "single_explorer"
+    mode: Literal["single_explorer", "explore_test_verify", "queue_review"] = "single_explorer"
 
 
 class Usage(BaseModel):
@@ -109,7 +116,8 @@ class Run(BaseModel):
 
 class TaskStatus(StrEnum):
     ready = "ready"
-    deferred = "deferred"  # recorded for a later checkpoint's queue; not executed
+    deferred = "deferred"  # sequential mode: recorded for the queue, not executed
+    unfinished = "unfinished"  # queue mode: never run because a limit or the run end was reached
     claimed = "claimed"
     done = "done"
     blocked = "blocked"
@@ -132,6 +140,15 @@ class Task(BaseModel):
     status: TaskStatus = TaskStatus.ready
     result_refs: list[str] = Field(default_factory=list)
     note: str | None = None
+    priority: int = 0  # higher is claimed first within a task type
+    depth: int = 0
+    attempts: int = 0  # claims so far
+    max_attempts: int = 2
+    payload: dict[str, Any] = Field(default_factory=dict)  # ids of the records this task works on
+    queued_by: str | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+    claimed_at: datetime | None = None
+    finished_at: datetime | None = None
 
 
 # --- Browser commands and observations -------------------------------------

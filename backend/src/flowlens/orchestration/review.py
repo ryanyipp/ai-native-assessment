@@ -72,12 +72,16 @@ class _Attempt:
         self.evidence += [x for x in (res.screenshot_artifact_id, obs_art) if x]
         self.duration_ms += res.duration_ms
 
-    def mark_state(self, ex: Execution) -> ScreenState:
-        """Record the state after the latest action: the reached start state or the outcome."""
+    def mark_state(self, ex: Execution, recipe: list[SemanticStep] | None = None) -> ScreenState:
+        """Record the state after the latest action: the reached start state or the outcome.
+
+        `recipe` is how a fresh worker reaches this state from the start; it is stored
+        only if the state is new, so it can become an actionable exploration task.
+        """
         last = self.results[-1]
         st, new = self.r.record_state(ex, last.step, last.screenshot_artifact_id, agent_id=self.agent_id,
                                       phase=self.phase, context_id=self.context_id, action_result_id=last.id,
-                                      task=self.task)
+                                      task=self.task, recipe=recipe)
         self.states.append(st)
         if new:
             self.new_states.append(st)
@@ -188,22 +192,31 @@ class ReviewRun(ExplorerRun):
 
     # --- input tester ----------------------------------------------------------
 
-    async def test_form(self, form: DiscoveredForm) -> list[Finding]:
-        lim = self.run.limits
+    def form_handoff(self, form: DiscoveredForm, task_id: str) -> Handoff:
         state = self.state_by_id(form.state_id)
         assert state is not None
-        task = self.new_task("input_test", f"{self.run.id}:input_test:{form.key}", input_tester.AGENT_ID, [form.id])
-        handoff = Handoff(
+        return Handoff(
             run_id=self.run.id, kind="form_to_tester", from_agent=form.discovered_by, to_agent=input_tester.AGENT_ID,
-            task_id=task.id, source_state_id=state.id, form_id=form.id, setup=self.setup_for(state),
+            task_id=task_id, source_state_id=state.id, form_id=form.id, setup=self.setup_for(state),
             requirements=self.reqs,
             expected_behaviour=[Expectation(text=r.text, source=r.id) for r in self.reqs]
             or [Expectation(text="No requirement supplied.", source="none supplied")],
             evidence_refs=list(form.evidence_refs),
         )
-        self.publish_handoff(handoff)
-        task.input_refs.append(handoff.id)
-        self.store.put(task)
+
+    async def test_form(self, form: DiscoveredForm, task: Task | None = None,
+                        handoff: Handoff | None = None) -> list[Finding]:
+        """Sequential mode creates the task and handoff here; queue mode passes in the claimed ones."""
+        lim = self.run.limits
+        state = self.state_by_id(form.state_id)
+        assert state is not None
+        if task is None:
+            task = self.new_task("input_test", f"{self.run.id}:input_test:{form.key}", input_tester.AGENT_ID, [form.id])
+        if handoff is None:
+            handoff = self.form_handoff(form, task.id)
+            self.publish_handoff(handoff)
+            task.input_refs.append(handoff.id)
+            self.store.put(task)
         self.summary["forms_tested"] += 1
         try:
             plan, plan_mc = await self.model(
@@ -305,7 +318,7 @@ class ReviewRun(ExplorerRun):
                     tc.status = "executed"
                 if ex is not None:
                     tc.observed = outcome_facts(ex.observation, start_url)
-                    end_state = att.mark_state(ex)
+                    end_state = att.mark_state(ex, recipe=[*handoff.setup.steps, *steps])
                     tc.resulting_state_id = end_state.id
                     last = att.results[-1]
                     self.store.put(Transition(
@@ -376,21 +389,30 @@ class ReviewRun(ExplorerRun):
 
     # --- verifier ---------------------------------------------------------------
 
-    async def verify_finding(self, f: Finding, *, from_agent: str, fixed_assertion: Assertion | None = None) -> None:
-        lim = self.run.limits
-        task = self.new_task("verify", f"{self.run.id}:verify:{f.id}", verifier.AGENT_ID, [f.id])
+    def candidate_handoff(self, f: Finding, from_agent: str, task_id: str) -> Handoff:
         req = self.req_ids.get(f.requirement_ref or "")
-        handoff = Handoff(
+        return Handoff(
             run_id=self.run.id, kind="candidate_to_verifier", from_agent=from_agent, to_agent=verifier.AGENT_ID,
-            task_id=task.id, source_state_id=f.reproduction.target_state_id if f.reproduction else "",
+            task_id=task_id, source_state_id=f.reproduction.target_state_id if f.reproduction else "",
             form_id=f.form_id, finding_id=f.id, setup=f.reproduction or SetupRecipe(target_state_id="", expected_signature=""),
             requirements=[req] if req else [],
             expected_behaviour=[Expectation(text=req.text, source=req.id)] if req
             else [Expectation(text=f.expected, source="none supplied")],
             evidence_refs=list(f.evidence_refs),
         )
-        handoff_art = self.publish_handoff(handoff)
-        f.handoff_ids.append(handoff.id)
+
+    async def verify_finding(self, f: Finding, *, from_agent: str, fixed_assertion: Assertion | None = None,
+                             task: Task | None = None, handoff: Handoff | None = None) -> None:
+        lim = self.run.limits
+        req = self.req_ids.get(f.requirement_ref or "")
+        if task is None:
+            task = self.new_task("verify", f"{self.run.id}:verify:{f.id}", verifier.AGENT_ID, [f.id])
+        if handoff is None:
+            handoff = self.candidate_handoff(f, from_agent, task.id)
+            self.publish_handoff(handoff)
+        handoff_art = handoff.evidence_refs[-1]
+        if handoff.id not in f.handoff_ids:
+            f.handoff_ids.append(handoff.id)
         attempts: list[VerificationAttempt] = []
         if req is None or f.kind != "defect_candidate":
             why = ("No supplied requirement states the expected behaviour" if req is None else
@@ -507,7 +529,7 @@ class ReviewRun(ExplorerRun):
                 last = rec.results[-1]
                 self.store.put(Transition(
                     run_id=self.run.id, step=last.step, source_state_id=start_state.id,
-                    target_state_id=rec.mark_state(ex).id,
+                    target_state_id=rec.mark_state(ex, recipe=[*handoff.setup.steps, *f.reproduction_steps]).id,
                     action={"type": "verify_case", "finding_id": f.id, "inputs": f.inputs,
                             "assertion": assertion.type.value},
                     label=f"verify: {_short_inputs(f.inputs)}", action_result_id=last.id, ok=True,

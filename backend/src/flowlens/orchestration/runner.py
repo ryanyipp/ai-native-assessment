@@ -107,6 +107,8 @@ def extract_forms(obs) -> list[tuple[str, list[FormField], list[ControlRef]]]:
 
 
 class ExplorerRun:
+    persist_root_task = True
+
     def __init__(self, run: Run, store: Store, settings: Settings, llm: LLMClient):
         self.run = run
         self.store = store
@@ -116,7 +118,8 @@ class ExplorerRun:
         self.origin = origin_of(run.target_url)
         self.task = Task(run_id=run.id, key=f"{run.id}:explore:start", owner=explorer.AGENT_ID,
                          attempt_id="att_1", status="claimed")
-        self.store.put(self.task)
+        if self.persist_root_task:
+            self.store.put(self.task)
         self.states: dict[str, ScreenState] = {}
         self.forms: dict[str, DiscoveredForm] = {}
         self.recipe: list[dict[str, Any]] = []
@@ -142,7 +145,8 @@ class ExplorerRun:
         ))
 
     def record_state(self, ex: Execution, step: int, shot_id: str, *, agent_id: str, phase: str,
-                     context_id: str | None, action_result_id: str, task: Task | None = None) -> tuple[ScreenState, bool]:
+                     context_id: str | None, action_result_id: str, task: Task | None = None,
+                     recipe: list[SemanticStep] | None = None) -> tuple[ScreenState, bool]:
         sig, route = state_signature(ex.observation)
         st = self.states.get(sig)
         sighting = StateSighting(agent_id=agent_id, phase=phase, context_id=context_id,
@@ -153,7 +157,7 @@ class ExplorerRun:
                 title=ex.observation.title, summary=_state_summary(ex.observation),
                 screenshot_artifact_id=shot_id, first_seen_step=step,
                 setup_recipe=list(self.recipe) if phase == "explore" else [],
-                semantic_recipe=list(self.semantic) if phase == "explore" else [],
+                semantic_recipe=list(recipe) if recipe is not None else (list(self.semantic) if phase == "explore" else []),
                 discovered_by=agent_id, phase=phase, context_id=context_id, sightings=[sighting],
             )
             self.states[sig] = st
@@ -215,22 +219,28 @@ class ExplorerRun:
             self._discover_forms(ex, target, result, obs_art)
         return target
 
-    def _discover_forms(self, ex: Execution, state: ScreenState, result: ActionResult, obs_art: str) -> None:
+    def on_form_discovered(self, form: DiscoveredForm) -> None:
+        """Hook: the queue coordinator turns each new form into a tester task."""
+
+    def _discover_forms(self, ex: Execution, state: ScreenState, result: ActionResult, obs_art: str,
+                        agent_id: str = explorer.AGENT_ID, task: Task | None = None) -> None:
         for key, fields, submits in extract_forms(ex.observation):
             if key in self.forms:
                 continue
             form = DiscoveredForm(
                 run_id=self.run.id, key=key, state_id=state.id, url=ex.observation.url, route=state.route,
                 headings=ex.observation.headings, fields=fields, submit_controls=submits,
-                page_text=ex.observation.text_excerpt[:800], discovered_by=explorer.AGENT_ID,
+                page_text=ex.observation.text_excerpt[:800], discovered_by=agent_id,
                 action_result_id=result.id,
                 evidence_refs=[r for r in (result.screenshot_artifact_id, obs_art) if r],
             )
             self.forms[key] = form
             self.store.put(form)
             names = ", ".join(f.control.name for f in fields)
-            self.event("form_discovered", f"Form on {state.route}: {names}", form_id=form.id,
-                       state_id=state.id, action_result_id=result.id, evidence_refs=form.evidence_refs)
+            self.event("form_discovered", f"Form on {state.route}: {names}", agent_id=agent_id, task=task,
+                       form_id=form.id, state_id=state.id, action_result_id=result.id,
+                       evidence_refs=form.evidence_refs)
+            self.on_form_discovered(form)
 
     def _save_run(self) -> None:
         self.store.put(self.run)
