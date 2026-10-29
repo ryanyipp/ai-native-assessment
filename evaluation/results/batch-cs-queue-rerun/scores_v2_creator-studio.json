@@ -1,0 +1,416 @@
+[
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_aac1ddc598bd",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 9,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 2,
+    "unfinished": 3,
+    "skipped": 2,
+    "elapsed_s": 94.7,
+    "calls": 25,
+    "tokens": 28432,
+    "cost": 0.034215999999999996,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Old Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_eb568166bad0",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 9,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 2,
+    "unfinished": 3,
+    "skipped": 2,
+    "elapsed_s": 100.0,
+    "calls": 26,
+    "tokens": 30027,
+    "cost": 0.0386485,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_a083c875a73f",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 4,
+    "skipped": 2,
+    "elapsed_s": 86.1,
+    "calls": 24,
+    "tokens": 28303,
+    "cost": 0.035506499999999996,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_d44261de8dca",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 3,
+    "skipped": 2,
+    "elapsed_s": 85.7,
+    "calls": 24,
+    "tokens": 26128,
+    "cost": 0.030146499999999996,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_2117356c2fec",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 9,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [
+      "D1"
+    ],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 4,
+    "skipped": 2,
+    "elapsed_s": 87.3,
+    "calls": 25,
+    "tokens": 28298,
+    "cost": 0.036041500000000004,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_c249ce51edbe",
+    "status": "partial",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/6",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S4",
+      "S7"
+    ],
+    "states": 7,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [
+      "D1"
+    ],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 1,
+    "skipped": 2,
+    "elapsed_s": 76.4,
+    "calls": 23,
+    "tokens": 25297,
+    "cost": 0.0309935,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_d91130f9ce23",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 3,
+    "unfinished": 4,
+    "skipped": 2,
+    "elapsed_s": 77.4,
+    "calls": 23,
+    "tokens": 25195,
+    "cost": 0.028244999999999996,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_f0a1194baec1",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 4,
+    "skipped": 2,
+    "elapsed_s": 80.9,
+    "calls": 24,
+    "tokens": 26038,
+    "cost": 0.0299015,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_5fefa2f17859",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 9,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 1,
+    "unfinished": 2,
+    "skipped": 2,
+    "elapsed_s": 83.6,
+    "calls": 24,
+    "tokens": 26004,
+    "cost": 0.029037,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Old Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_935385295c5e",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 9,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 3,
+    "skipped": 2,
+    "elapsed_s": 94.3,
+    "calls": 25,
+    "tokens": 28620,
+    "cost": 0.035672499999999996,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_13915c1a8430",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 4,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 3,
+    "skipped": 2,
+    "elapsed_s": 83.8,
+    "calls": 24,
+    "tokens": 26457,
+    "cost": 0.031391,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_1bb833926fc7",
+    "status": "partial",
+    "ref_states": "5/7",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S3",
+      "S4"
+    ],
+    "states": 6,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 0,
+    "elapsed_s": 75.7,
+    "calls": 23,
+    "tokens": 24502,
+    "cost": 0.028883499999999996,
+    "conf_detail": []
+  }
+]

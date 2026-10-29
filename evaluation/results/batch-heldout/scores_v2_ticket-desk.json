@@ -1,0 +1,907 @@
+[
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_89aacf588084",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 44.4,
+    "calls": 8,
+    "tokens": 10009,
+    "cost": 0.009067,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Jane Doe",
+          "Email": "jane@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_a0330fd04e52",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 43.1,
+    "calls": 8,
+    "tokens": 9444,
+    "cost": 0.007354500000000001,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_752841a5f4a2",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 1,
+    "elapsed_s": 60.0,
+    "calls": 16,
+    "tokens": 15760,
+    "cost": 0.015305,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_719cf38603fa",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 7,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 1,
+    "skipped": 1,
+    "elapsed_s": 69.2,
+    "calls": 20,
+    "tokens": 21725,
+    "cost": 0.02399,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob Jones",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_0fd89bd968c1",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 32.9,
+    "calls": 7,
+    "tokens": 8138,
+    "cost": 0.0064164999999999995,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_ad4a91bb2ef6",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 32.6,
+    "calls": 7,
+    "tokens": 8122,
+    "cost": 0.006426,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_58536cf9a18f",
+    "status": "partial",
+    "ref_states": "6/6",
+    "ref_states_n": 6,
+    "ref_transitions": "5/5",
+    "ref_transitions_n": 5,
+    "missing_states": [],
+    "states": 9,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 1,
+    "skipped": 2,
+    "elapsed_s": 71.5,
+    "calls": 19,
+    "tokens": 20734,
+    "cost": 0.0216895,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_c2ec24272a2a",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 8,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 2,
+    "elapsed_s": 53.6,
+    "calls": 14,
+    "tokens": 14763,
+    "cost": 0.015739,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_26fc02e2b3f1",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 44.1,
+    "calls": 8,
+    "tokens": 9552,
+    "cost": 0.007683499999999999,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_ee4c6b1d8e67",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 43.4,
+    "calls": 8,
+    "tokens": 9556,
+    "cost": 0.007485499999999999,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "John Doe",
+          "Email": "john@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_5b2ea9435680",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 7,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 1,
+    "skipped": 1,
+    "elapsed_s": 71.1,
+    "calls": 20,
+    "tokens": 21329,
+    "cost": 0.022777000000000002,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob Jones",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_22d825814f8f",
+    "status": "partial",
+    "ref_states": "6/6",
+    "ref_states_n": 6,
+    "ref_transitions": "5/5",
+    "ref_transitions_n": 5,
+    "missing_states": [],
+    "states": 7,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 1,
+    "skipped": 1,
+    "elapsed_s": 74.5,
+    "calls": 19,
+    "tokens": 20513,
+    "cost": 0.022289,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob Jones",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_3f6a84b87676",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 32.3,
+    "calls": 7,
+    "tokens": 7918,
+    "cost": 0.0060290000000000005,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_d46a29d984a1",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 32.1,
+    "calls": 7,
+    "tokens": 7998,
+    "cost": 0.006109,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_2b9fedd4aca4",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 8,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 2,
+    "elapsed_s": 54.7,
+    "calls": 15,
+    "tokens": 16287,
+    "cost": 0.018341,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_09826f32fea5",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 8,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 2,
+    "elapsed_s": 56.4,
+    "calls": 15,
+    "tokens": 15441,
+    "cost": 0.0156605,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_aecb63b74b76",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 47.2,
+    "calls": 8,
+    "tokens": 10359,
+    "cost": 0.0100045,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_85088c2ea00d",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 4,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 43.4,
+    "calls": 8,
+    "tokens": 9597,
+    "cost": 0.0077385,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "John Doe",
+          "Email": "john@example.com",
+          "Tickets": "7"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_934601f563c7",
+    "status": "partial",
+    "ref_states": "6/6",
+    "ref_states_n": 6,
+    "ref_transitions": "5/5",
+    "ref_transitions_n": 5,
+    "missing_states": [],
+    "states": 8,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 1,
+    "elapsed_s": 71.8,
+    "calls": 19,
+    "tokens": 20377,
+    "cost": 0.022156,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Alice",
+          "Email": "alice@test.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_9a27e3bd00ab",
+    "status": "partial",
+    "ref_states": "6/6",
+    "ref_states_n": 6,
+    "ref_transitions": "5/5",
+    "ref_transitions_n": 5,
+    "missing_states": [],
+    "states": 8,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "DT2"
+    ],
+    "missed": [
+      "DT5"
+    ],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 2,
+    "skipped": 1,
+    "elapsed_s": 69.4,
+    "calls": 19,
+    "tokens": 20813,
+    "cost": 0.023089,
+    "conf_detail": [
+      {
+        "req": "T2",
+        "inputs": {
+          "Name": "Bob Jones",
+          "Email": "bob@example.com",
+          "Tickets": "7"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_c82ef252af27",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 30.8,
+    "calls": 6,
+    "tokens": 6562,
+    "cost": 0.005106,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_d28ddbf6faee",
+    "status": "completed",
+    "ref_states": "4/6",
+    "ref_states_n": 4,
+    "ref_transitions": "3/5",
+    "ref_transitions_n": 3,
+    "missing_states": [
+      "S5",
+      "S6"
+    ],
+    "states": 5,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 31.9,
+    "calls": 7,
+    "tokens": 7995,
+    "cost": 0.0061125,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_29b63c697e8d",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 8,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 1,
+    "skipped": 2,
+    "elapsed_s": 67.9,
+    "calls": 19,
+    "tokens": 20517,
+    "cost": 0.021353499999999994,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_15340d0fb62e",
+    "status": "completed",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/5",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S6"
+    ],
+    "states": 8,
+    "duplicates": 3,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 2,
+    "elapsed_s": 74.8,
+    "calls": 21,
+    "tokens": 21930,
+    "cost": 0.021034999999999998,
+    "conf_detail": []
+  }
+]

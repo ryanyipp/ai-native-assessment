@@ -114,3 +114,11 @@ Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery t
   - `queue_review` cost about 3× more (US$0.025–0.038 vs US$0.008–0.012) and always ended partial with 5–7 unfinished explore tasks.
   - Coverage saturated at 100%, so it does not discriminate.
 - **Report:** `docs/evaluation.md`. Records: `evaluation/results/batch-cp5/`.
+
+## 2026-10-29: Evaluation part 2
+
+- **Bounded calls:** each model call is cut off at the timeout + 2 s, and the lease heartbeat stops at the same deadline (`8d330fa`).
+- **Frontier filtering:** filled-field variations and already-tested outcomes become recorded `skipped` tasks; states are never merged.
+- **Held-out app:** `ticket-desk` with its v2 scorer, frozen in `25a6701` before any run.
+- **Runs:** `batch-heldout` (24 runs) and `batch-cs-queue-rerun` (12 runs). Two concurrent batch processes ran by accident (a process that appeared killed kept running), so each cell has 6 runs. All are kept; US$0.718 spent of the US$1 cap.
+- **Results:** `docs/evaluation-2.md`. `docs/evaluation.md` (batch-cp5) is unchanged.

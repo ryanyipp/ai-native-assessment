@@ -140,6 +140,9 @@ def main(out_md: str, pairs: list[str]) -> None:
                                                   f"({c['independence']})" for s in scores for c in s["conf_detail"]) + ".",
               f"Batch total: {len(scores)} runs, {sum(s['calls'] for s in scores)} calls, "
               f"{sum(s['tokens'] for s in scores):,} tokens, US${sum(s['cost'] for s in scores):.4f}.", ""]
+    notes = ROOT / "evaluation" / "notes-v2.md"  # hand-written reading of the results, kept with the generator
+    if notes.exists():
+        L += [notes.read_text("utf-8")]
     (ROOT / out_md).write_text("\n".join(L) + "\n", "utf-8")
     print("wrote", out_md)
 

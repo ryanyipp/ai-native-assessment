@@ -32,3 +32,102 @@ False confirmations: none.
 Confirmed findings: `run_9191ff906668` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (self); `run_1204b1110946` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (independent); `run_08666f8f7aba` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (self); `run_2028e64471e5` R5 {"Post title": "Old Post", "Publish date": "2026-06-14"} (independent); `run_e6af408a1d14` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (self); `run_6250423b8bfc` R5 {"Post title": "Expired Content", "Publish date": "2026-06-14"} (independent).
 Batch total: 12 runs, 197 calls, 219,702 tokens, US$0.2273.
 
+## `batch-cs-queue-rerun` scored with `evaluation/creator-studio/answer_key_v2.json`
+
+| Condition | Build | Rep | Run | Status | Ref states | Ref transitions | States | Duplicates | Unmatched | Defects found | Missed | False conf. | Inconclusive | Unfinished | Skipped | s | Calls | Tokens | US$ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| queue_review | broken | 1 | `run_aac1ddc598bd` | partial | 5/6 | 4/6 | 9 | 4 | 0 | D1 | – | 0 | 2 | 3 | 2 | 94.7 | 25 | 28432 | 0.0342 |
+| queue_review | broken | 1 | `run_eb568166bad0` | partial | 5/6 | 4/6 | 9 | 4 | 0 | D1 | – | 0 | 2 | 3 | 2 | 100.0 | 26 | 30027 | 0.0386 |
+| queue_review | corrected | 1 | `run_a083c875a73f` | partial | 6/7 | 5/6 | 10 | 4 | 0 | – | – | 0 | 0 | 4 | 2 | 86.1 | 24 | 28303 | 0.0355 |
+| queue_review | corrected | 1 | `run_d44261de8dca` | partial | 6/7 | 5/6 | 10 | 4 | 0 | – | – | 0 | 2 | 3 | 2 | 85.7 | 24 | 26128 | 0.0301 |
+| queue_review | broken | 2 | `run_2117356c2fec` | partial | 5/6 | 4/6 | 9 | 4 | 0 | – | D1 | 0 | 2 | 4 | 2 | 87.3 | 25 | 28298 | 0.0360 |
+| queue_review | broken | 2 | `run_c249ce51edbe` | partial | 4/6 | 3/6 | 7 | 3 | 0 | – | D1 | 0 | 2 | 1 | 2 | 76.4 | 23 | 25297 | 0.0310 |
+| queue_review | corrected | 2 | `run_d91130f9ce23` | partial | 6/7 | 5/6 | 10 | 4 | 0 | – | – | 0 | 3 | 4 | 2 | 77.4 | 23 | 25195 | 0.0282 |
+| queue_review | corrected | 2 | `run_f0a1194baec1` | partial | 6/7 | 5/6 | 10 | 4 | 0 | – | – | 0 | 2 | 4 | 2 | 80.9 | 24 | 26038 | 0.0299 |
+| queue_review | broken | 3 | `run_5fefa2f17859` | partial | 5/6 | 4/6 | 9 | 4 | 0 | D1 | – | 0 | 1 | 2 | 2 | 83.6 | 24 | 26004 | 0.0290 |
+| queue_review | broken | 3 | `run_935385295c5e` | partial | 5/6 | 4/6 | 9 | 4 | 0 | D1 | – | 0 | 0 | 3 | 2 | 94.3 | 25 | 28620 | 0.0357 |
+| queue_review | corrected | 3 | `run_13915c1a8430` | partial | 6/7 | 5/6 | 10 | 4 | 0 | – | – | 0 | 2 | 3 | 2 | 83.8 | 24 | 26457 | 0.0314 |
+| queue_review | corrected | 3 | `run_1bb833926fc7` | partial | 5/7 | 4/6 | 6 | 1 | 0 | – | – | 0 | 0 | 2 | 0 | 75.7 | 23 | 24502 | 0.0289 |
+
+Summary, mean (min–max):
+
+| Condition | Build | Runs | Ref states | Ref transitions | Duplicates | Unmatched | Defects found | False conf. | Unfinished | s | Calls | US$ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| queue_review | broken | 6 | 4.8 (4.0–5.0) | 3.8 (3.0–4.0) | 4 (3–4) | 0 (0–0) | 4/6 | 0 | 3 (1–4) | 89 (76–100) | 25 (23–26) | 0.0341 (0.0290–0.0386) |
+| queue_review | corrected | 6 | 5.8 (5.0–6.0) | 4.8 (4.0–5.0) | 4 (1–4) | 0 (0–0) | n/a | 0 | 3 (2–4) | 82 (76–86) | 24 (23–24) | 0.0307 (0.0282–0.0355) |
+
+False confirmations: none.
+Confirmed findings: `run_aac1ddc598bd` R5 {"Post title": "Old Post", "Publish date": "2026-06-14"} (independent); `run_eb568166bad0` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (independent); `run_5fefa2f17859` R5 {"Post title": "Old Post", "Publish date": "2026-06-14"} (independent); `run_935385295c5e` R5 {"Post title": "Past Post", "Publish date": "2026-06-14"} (independent).
+Batch total: 12 runs, 290 calls, 323,301 tokens, US$0.3887.
+
+## `batch-heldout` scored with `evaluation/ticket-desk/answer_key.json`
+
+| Condition | Build | Rep | Run | Status | Ref states | Ref transitions | States | Duplicates | Unmatched | Defects found | Missed | False conf. | Inconclusive | Unfinished | Skipped | s | Calls | Tokens | US$ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| single_agent | broken | 1 | `run_89aacf588084` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 44.4 | 8 | 10009 | 0.0091 |
+| single_agent | broken | 1 | `run_a0330fd04e52` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 43.1 | 8 | 9444 | 0.0074 |
+| queue_review | broken | 1 | `run_752841a5f4a2` | completed | 4/6 | 3/5 | 5 | 1 | 0 | DT2 | DT5 | 0 | 0 | 0 | 1 | 60.0 | 16 | 15760 | 0.0153 |
+| queue_review | broken | 1 | `run_719cf38603fa` | partial | 5/6 | 4/5 | 7 | 2 | 0 | DT2 | DT5 | 0 | 0 | 1 | 1 | 69.2 | 20 | 21725 | 0.0240 |
+| single_agent | corrected | 1 | `run_0fd89bd968c1` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 32.9 | 7 | 8138 | 0.0064 |
+| single_agent | corrected | 1 | `run_ad4a91bb2ef6` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 32.6 | 7 | 8122 | 0.0064 |
+| queue_review | corrected | 1 | `run_58536cf9a18f` | partial | 6/6 | 5/5 | 9 | 3 | 0 | – | – | 0 | 0 | 1 | 2 | 71.5 | 19 | 20734 | 0.0217 |
+| queue_review | corrected | 1 | `run_c2ec24272a2a` | partial | 5/6 | 4/5 | 8 | 3 | 0 | – | – | 0 | 0 | 2 | 2 | 53.6 | 14 | 14763 | 0.0157 |
+| single_agent | broken | 2 | `run_26fc02e2b3f1` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 44.1 | 8 | 9552 | 0.0077 |
+| single_agent | broken | 2 | `run_ee4c6b1d8e67` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 43.4 | 8 | 9556 | 0.0075 |
+| queue_review | broken | 2 | `run_5b2ea9435680` | partial | 5/6 | 4/5 | 7 | 2 | 0 | DT2 | DT5 | 0 | 0 | 1 | 1 | 71.1 | 20 | 21329 | 0.0228 |
+| queue_review | broken | 2 | `run_22d825814f8f` | partial | 6/6 | 5/5 | 7 | 1 | 0 | DT2 | DT5 | 0 | 0 | 1 | 1 | 74.5 | 19 | 20513 | 0.0223 |
+| single_agent | corrected | 2 | `run_3f6a84b87676` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 32.3 | 7 | 7918 | 0.0060 |
+| single_agent | corrected | 2 | `run_d46a29d984a1` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 32.1 | 7 | 7998 | 0.0061 |
+| queue_review | corrected | 2 | `run_2b9fedd4aca4` | partial | 5/6 | 4/5 | 8 | 3 | 0 | – | – | 0 | 0 | 2 | 2 | 54.7 | 15 | 16287 | 0.0183 |
+| queue_review | corrected | 2 | `run_09826f32fea5` | partial | 5/6 | 4/5 | 8 | 3 | 0 | – | – | 0 | 0 | 2 | 2 | 56.4 | 15 | 15441 | 0.0157 |
+| single_agent | broken | 3 | `run_aecb63b74b76` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 47.2 | 8 | 10359 | 0.0100 |
+| single_agent | broken | 3 | `run_85088c2ea00d` | completed | 4/6 | 3/5 | 4 | 0 | 0 | DT2 | DT5 | 0 | 0 | 0 | 0 | 43.4 | 8 | 9597 | 0.0077 |
+| queue_review | broken | 3 | `run_934601f563c7` | partial | 6/6 | 5/5 | 8 | 2 | 0 | DT2 | DT5 | 0 | 0 | 2 | 1 | 71.8 | 19 | 20377 | 0.0222 |
+| queue_review | broken | 3 | `run_9a27e3bd00ab` | partial | 6/6 | 5/5 | 8 | 2 | 0 | DT2 | DT5 | 0 | 0 | 2 | 1 | 69.4 | 19 | 20813 | 0.0231 |
+| single_agent | corrected | 3 | `run_c82ef252af27` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 30.8 | 6 | 6562 | 0.0051 |
+| single_agent | corrected | 3 | `run_d28ddbf6faee` | completed | 4/6 | 3/5 | 5 | 1 | 0 | – | – | 0 | 0 | 0 | 0 | 31.9 | 7 | 7995 | 0.0061 |
+| queue_review | corrected | 3 | `run_29b63c697e8d` | partial | 5/6 | 4/5 | 8 | 3 | 0 | – | – | 0 | 0 | 1 | 2 | 67.9 | 19 | 20517 | 0.0214 |
+| queue_review | corrected | 3 | `run_15340d0fb62e` | completed | 5/6 | 4/5 | 8 | 3 | 0 | – | – | 0 | 0 | 0 | 2 | 74.8 | 21 | 21930 | 0.0210 |
+
+Summary, mean (min–max):
+
+| Condition | Build | Runs | Ref states | Ref transitions | Duplicates | Unmatched | Defects found | False conf. | Unfinished | s | Calls | US$ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| single_agent | broken | 6 | 4.0 (4.0–4.0) | 3.0 (3.0–3.0) | 0 (0–0) | 0 (0–0) | 6/12 | 0 | 0 (0–0) | 44 (43–47) | 8 (8–8) | 0.0082 (0.0074–0.0100) |
+| single_agent | corrected | 6 | 4.0 (4.0–4.0) | 3.0 (3.0–3.0) | 1 (1–1) | 0 (0–0) | n/a | 0 | 0 (0–0) | 32 (31–33) | 7 (6–7) | 0.0060 (0.0051–0.0064) |
+| queue_review | broken | 6 | 5.3 (4.0–6.0) | 4.3 (3.0–5.0) | 2 (1–2) | 0 (0–0) | 6/12 | 0 | 1 (0–2) | 69 (60–74) | 19 (16–20) | 0.0216 (0.0153–0.0240) |
+| queue_review | corrected | 6 | 5.2 (5.0–6.0) | 4.2 (4.0–5.0) | 3 (3–3) | 0 (0–0) | n/a | 0 | 1 (0–2) | 63 (54–75) | 17 (14–21) | 0.0190 (0.0157–0.0217) |
+
+False confirmations: none.
+Confirmed findings: `run_89aacf588084` T2 {"Name": "Jane Doe", "Email": "jane@example.com", "Tickets": "7"} (self); `run_a0330fd04e52` T2 {"Name": "Bob", "Email": "bob@example.com", "Tickets": "7"} (self); `run_752841a5f4a2` T2 {"Name": "Bob", "Email": "bob@example.com", "Tickets": "7"} (independent); `run_719cf38603fa` T2 {"Name": "Bob Jones", "Email": "bob@example.com", "Tickets": "7"} (independent); `run_26fc02e2b3f1` T2 {"Name": "Bob", "Email": "bob@example.com", "Tickets": "7"} (self); `run_ee4c6b1d8e67` T2 {"Name": "John Doe", "Email": "john@example.com", "Tickets": "7"} (self); `run_5b2ea9435680` T2 {"Name": "Bob Jones", "Email": "bob@example.com", "Tickets": "7"} (independent); `run_22d825814f8f` T2 {"Name": "Bob Jones", "Email": "bob@example.com", "Tickets": "7"} (independent); `run_aecb63b74b76` T2 {"Name": "Bob", "Email": "bob@example.com", "Tickets": "7"} (self); `run_85088c2ea00d` T2 {"Name": "John Doe", "Email": "john@example.com", "Tickets": "7"} (self); `run_934601f563c7` T2 {"Name": "Alice", "Email": "alice@test.com", "Tickets": "7"} (independent); `run_9a27e3bd00ab` T2 {"Name": "Bob Jones", "Email": "bob@example.com", "Tickets": "7"} (independent).
+Batch total: 24 runs, 305 calls, 335,439 tokens, US$0.3290.
+
+## Reading these results
+
+**Held-out app (`batch-heldout`).** ticket-desk was frozen in `25a6701` before either condition ran, and no prompt was changed afterwards.
+- **DT2** (more than 6 tickets accepted) was confirmed in **6/6** single-agent and **6/6** shared-queue broken-build runs. Every confirmation used 7 tickets, and the replays reached the booking confirmation.
+- **DT5** (a cancelled booking is still listed) was **missed in all 12** broken-build runs. It needs a multi-step check through a form with no fields, and neither condition's tester looks at that. This is a capability gap of both conditions.
+- **No false confirmations** in either condition. The corrected build produced no confirmations.
+- **Exploration:** the shared queue recorded more reference states (mean 5.3 vs 4.0 on the broken build), reaching the booking confirmation and cancel dialog more often.
+- **Cost:** the shared queue cost about 2.6× more (US$0.022 vs 0.008 per broken-build run) and took about 1.6× longer. 7 of its 12 runs ended partial with unfinished explore tasks.
+
+**Creator-studio queue re-run after the frontier change (`batch-cs-queue-rerun`).**
+- **Fewer redundant tasks:** duplicate states fell from 5 to about 4 per run, and unfinished tasks from 6–7 to 1–4. Skipped variations are recorded as `skipped` tasks with reasons.
+- **But D1 was found in only 4/6 broken-build runs (3/3 in batch-cp5).** The two misses are queue-mode failures:
+  - `run_2117356c2fec`: the verifier, checking R2 candidates from the draft form, used up the shared call pool before the scheduling tester could assess its cases. The testing reserve is protected from explorers but not from a concurrently running verifier.
+  - `run_c249ce51edbe`: the scheduling-form test plan was rejected as invalid JSON twice, so the task was blocked.
+
+  Neither was fixed or retried after being seen.
+
+**Overall.** On these two small apps, the single-agent baseline matched the shared-queue system on defect detection and false confirmations, at roughly a third of the cost and in less time. The queue observed somewhat more reference states, and it failed in queue-specific ways: unfinished exploration, a budget contention miss, and a blocked tester. These results show **no multi-agent advantage** in detection.
+
+## Limitations
+
+- **Accidental doubled runs.** A first batch process that appeared killed kept running: Git Bash `ps` does not show Windows processes. Two batch processes therefore ran the same plan at the same time. `batch-heldout` and `batch-cs-queue-rerun` hold 6 runs per cell instead of 3, run under doubled load (which affects elapsed time). Every run is kept and scored, and none is excluded. New live spend for this part: US$0.718 of the US$1 cap.
+- **Small sample:** two small apps, three known defects, about six runs per cell. Means are descriptive only.
+- **State matching uses the summary:** the summary carries only the first status or alert message, so a page with several messages can match the wrong reference entry.
+- **No coverage claim:** reference states and transitions are a listed subset of meaningful pages. Unmatched states read 0 because the list covers everything these runs reached, not the whole site.
+- **Boundary inputs only:** every confirmation used the boundary input (one day before the studio date, or 7 tickets). Other invalid values were not exercised.
+- **Self-checks:** single-agent confirmations are self-checks (`independence: self`) that code replayed and evaluated.
+- **Excluded runs:** the checkpoint-4 injected-stall run is recovery evidence and not part of any batch.
+
