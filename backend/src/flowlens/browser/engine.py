@@ -187,6 +187,9 @@ class BrowserEngine:
         self.headless = headless
         self.storage_state = storage_state
         self.cookies = cookies or []  # e.g. a provisioned test-data workspace
+        # Called before every action; raising here refuses the action (lease revoked).
+        self.before_action = None
+        self.closed_by_coordinator = False
         self._pw = None
         self._browser: Browser | None = None
         self.context: BrowserContext | None = None
@@ -206,8 +209,17 @@ class BrowserEngine:
         self.page.set_default_timeout(ACTION_TIMEOUT_MS)
         return self
 
-    async def __aexit__(self, *exc) -> None:
+    async def fence(self) -> None:
+        """Coordinator-side close of an expired attempt's context; later actions fail."""
+        self.closed_by_coordinator = True
         if self.context:
+            try:
+                await self.context.close()
+            except PlaywrightError:
+                pass
+
+    async def __aexit__(self, *exc) -> None:
+        if self.context and not self.closed_by_coordinator:
             await self.context.close()
         if self._browser:
             await self._browser.close()
@@ -245,6 +257,8 @@ class BrowserEngine:
 
     async def execute(self, action) -> Execution:
         """Run one validated action. Failures are returned, not raised, so they are recorded."""
+        if self.before_action is not None:
+            self.before_action()
         assert self.page
         page = self.page
         started = datetime.now(UTC)

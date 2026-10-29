@@ -127,6 +127,8 @@ class ExplorerRun:
         self.history: list[str] = []
         self.reload_seen_after_save = False
         self.step_seq = -1  # one ordered step counter across every worker in the run
+        self.in_flight = 0  # reserved but unfinished model calls
+        self.in_flight_phase: dict[str, int] = {}
         self.stage = "exploring"  # where the review is; used in failure reasons
 
     def next_step(self) -> int:
@@ -247,32 +249,63 @@ class ExplorerRun:
 
     # --- model calls (one budget for every worker in the run) ----------------
 
-    async def call_model(self, messages: list[dict[str, str]], *, agent_id: str, phase: str, task: Task,
-                         reserve: int = 0, max_tokens: int | None = None) -> tuple[str, str]:
-        """Budget-checked call recorded against the run. Returns (content, model_call_id).
+    PHASE_COUNTER = {"explore": "exploration_calls", "input_test": "testing_calls", "verify": "verification_calls"}
 
-        `reserve` holds back calls for later workers (verification) from this caller.
+    def guard_call(self, task: Task) -> None:
+        """Hook: queue mode refuses calls from revoked attempts."""
+
+    def reserve_call(self, phase: str, reserve: int, phase_cap: int | None) -> None:
+        """Check and take one unit of call capacity in one synchronous step.
+
+        No await happens between the check and the increment, so concurrent workers on
+        the run's event loop cannot both pass a check for the last unit (the overshoot
+        seen in checkpoint 3). Calls in flight count as used.
         """
-        lim = self.run.limits
+        lim, u = self.run.limits, self.run.usage
         check_budget(
-            calls_used=self.run.usage.model_calls, max_calls=max(lim.max_model_calls - reserve, 0),
-            run_cost=self.run.usage.reported_cost_usd, run_limit=lim.max_cost_usd,
+            calls_used=u.model_calls + self.in_flight, max_calls=max(lim.max_model_calls - reserve, 0),
+            run_cost=u.reported_cost_usd, run_limit=lim.max_cost_usd,
             pool_spent=self.store.total_reported_cost(), pool_limit=self.settings.flowlens_budget_usd,
         )
+        if phase_cap is not None:
+            used = getattr(u, self.PHASE_COUNTER[phase]) + self.in_flight_phase.get(phase, 0)
+            if used >= phase_cap:
+                raise BudgetExceeded(f"{phase} call share used ({used}/{phase_cap})")
+        self.in_flight += 1
+        self.in_flight_phase[phase] = self.in_flight_phase.get(phase, 0) + 1
+
+    async def call_model(self, messages: list[dict[str, str]], *, agent_id: str, phase: str, task: Task,
+                         reserve: int = 0, max_tokens: int | None = None, phase_cap: int | None = None,
+                         reasoning_tokens: int | None = None) -> tuple[str, str]:
+        """Budget-reserved call recorded against the run. Returns (content, model_call_id).
+
+        `reserve` holds back calls for later workers from the global count; `phase_cap`
+        bounds this phase's own count (queue mode: exploration share).
+        """
+        lim = self.run.limits
+        self.guard_call(task)
+        self.reserve_call(phase, reserve, phase_cap)
         call = ModelCall(run_id=self.run.id, step=max(self.step_seq, 0), model=self.llm.model, latency_ms=0,
                          ok=False, agent_id=agent_id, phase=phase)
         resp = None
         try:
-            resp = await self.llm.complete(messages, max_tokens or lim.max_output_tokens)
+            resp = await self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens)
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply
             call.error = str(e)[:300]
+        finally:
+            self.in_flight -= 1
+            self.in_flight_phase[phase] -= 1
         u = self.run.usage
         u.model_calls += 1
+        setattr(u, self.PHASE_COUNTER[phase], getattr(u, self.PHASE_COUNTER[phase]) + 1)
         if resp:
             call.model, call.provider, call.latency_ms = resp.model, resp.provider, resp.latency_ms
             call.prompt_tokens, call.completion_tokens = resp.prompt_tokens, resp.completion_tokens
             call.total_tokens, call.reported_cost_usd = resp.total_tokens, resp.reported_cost_usd
+            call.finish_reason, call.reasoning_tokens = resp.finish_reason, resp.reasoning_tokens
+            if resp.finish_reason == "length":
+                u.truncated_calls += 1
             u.prompt_tokens += resp.prompt_tokens
             u.completion_tokens += resp.completion_tokens
             u.total_tokens += resp.total_tokens
@@ -283,13 +316,17 @@ class ExplorerRun:
         art = self.ev.save_json("model_call", f"{u.model_calls:03d}-{agent_id}-{call.id}", {
             "agent_id": agent_id, "messages": messages, "response": resp.content if resp else None,
             "usage": resp.raw.get("usage") if resp else None, "error": call.error,
+            "finish_reason": call.finish_reason, "max_tokens": max_tokens or lim.max_output_tokens,
+            "reasoning_tokens_budget": reasoning_tokens,
         })
         call.artifact_id = art.id
         self.store.put(call)
         self._save_run()
         self.event("model_call", f"Model call {u.model_calls} ({agent_id}): {call.total_tokens} tokens"
-                   + (f", US${call.reported_cost_usd:.5f}" if call.reported_cost_usd is not None else ""),
-                   agent_id=agent_id, task=task, model_call_id=call.id, ok=call.ok, phase=phase)
+                   + (f", US${call.reported_cost_usd:.5f}" if call.reported_cost_usd is not None else "")
+                   + (" — TRUNCATED at the output limit" if call.finish_reason == "length" else ""),
+                   agent_id=agent_id, task=task, model_call_id=call.id, ok=call.ok, phase=phase,
+                   finish_reason=call.finish_reason)
         if resp is None:
             raise ValueError(call.error or "model call failed")
         return resp.content, call.id

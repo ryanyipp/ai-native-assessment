@@ -20,6 +20,7 @@ Anything not run at the end is marked `unfinished` with the reason.
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import time
 
 from flowlens.agents import explorer, input_tester, verifier
@@ -44,12 +45,19 @@ from flowlens.orchestration.runner import _action_label, relative_path, semantic
 from flowlens.services.llm import BudgetExceeded
 from flowlens.storage.queue import StaleAttempt, TaskQueue
 
+# The task a worker coroutine is executing; each worker runs in its own asyncio task/context.
+CURRENT_TASK: contextvars.ContextVar[Task | None] = contextvars.ContextVar("current_task", default=None)
+
 EXPLORERS = {"explorer-a": "Explorer A", "explorer-b": "Explorer B"}
 PRIORITY = {"explore": 1, "input_test": 2, "verify": 3}
 
 
 class SetupFailed(Exception):
     pass
+
+
+class AttemptRevoked(Exception):
+    """The worker's attempt is no longer current (lease expired); it may not act or report."""
 
 
 class QueueReviewRun(ReviewRun):
@@ -63,6 +71,12 @@ class QueueReviewRun(ReviewRun):
         self.stopping: str | None = None
         self.explore_exhausted: str | None = None
         self.depth_cut = 0
+        self.revoked: set[str] = set()
+        self.engines: dict[str, list] = {}
+        self.last_seen: dict[str, float] = {}
+        self.faults_left = run.fault_injection.times if run.fault_injection else 0
+        self.workers_running = False
+        self.fault_target_claimed = asyncio.Event()
 
     @property
     def explorer_reserve(self) -> int:
@@ -112,8 +126,82 @@ class QueueReviewRun(ReviewRun):
                          payload={"state_id": st.id}, input_refs=[st.id])
 
     def quiescent(self) -> bool:
-        wanted = set().union(*self.live.values()) if self.live else set()
-        return self.busy == 0 and not (self.queue.claimable_types() & wanted)
+        return self.busy == 0 and not any(self.queue.claimable_for(w, t) for w, t in self.live.items())
+
+    # --- leases ------------------------------------------------------------------
+
+    def other_worker_can_take(self, task: Task, owner: str) -> bool:
+        return any(w != owner and task.type in types and w not in task.excluded_workers
+                   for w, types in self.live.items())
+
+    def engine(self, cookies):
+        eng = super().engine(cookies)
+        task = CURRENT_TASK.get()
+        if task is not None:
+            self.check_attempt(task, "browser context")  # refuse or renew before launching a context
+            eng.before_action = lambda t=task: self.check_attempt(t, "browser action")
+            self.engines.setdefault(task.attempt_id, []).append(eng)
+        return eng
+
+    def check_attempt(self, task: Task, what: str) -> None:
+        """Refuse work from an expired attempt; otherwise renew its lease."""
+        if task.attempt_id in self.revoked:
+            self.event("late_action_rejected", f"Refused {what} from {task.owner} attempt {task.attempt_id}: "
+                       "its lease expired and the task was reassigned", agent_id=COORDINATOR, task=task,
+                       worker=task.owner, attempt_id=task.attempt_id, what=what)
+            raise AttemptRevoked(f"{task.attempt_id} revoked")
+        try:
+            self.queue.renew(task, self.run.limits.task_lease_s)
+        except StaleAttempt as e:
+            self.revoked.add(task.attempt_id or "")
+            raise AttemptRevoked(str(e)) from e
+        self.last_seen[task.attempt_id or ""] = time.monotonic()
+
+    def guard_call(self, task: Task) -> None:
+        current = CURRENT_TASK.get()
+        if current is not None:
+            self.check_attempt(current, "model call")
+
+    async def maybe_stall(self, task: Task, agent: str) -> None:
+        """Labelled fault injection: the worker stops renewing its lease while holding an open context."""
+        fi = self.run.fault_injection
+        if not fi or self.faults_left <= 0 or fi.worker != agent or fi.task_type != task.type:
+            return
+        self.faults_left -= 1
+        self.event("fault_injected", f"[INJECTED FAULT] {agent} stalls for {fi.stall_s}s holding {task.key} "
+                   f"attempt {task.attempt_id} (lease {self.run.limits.task_lease_s}s)", agent_id=agent, task=task,
+                   injected=True, stall_s=fi.stall_s, attempt_id=task.attempt_id)
+        await asyncio.sleep(fi.stall_s)
+        self.event("fault_injected", f"[INJECTED FAULT] {agent} resumes after its stall and tries to continue",
+                   agent_id=agent, task=task, injected=True, attempt_id=task.attempt_id)
+
+    async def watchdog(self) -> None:
+        lease = self.run.limits.task_lease_s
+        while self.workers_running:
+            for t, owner, attempt, retried in self.queue.expire_overdue(can_exclude=self.other_worker_can_take):
+                self.revoked.add(attempt)
+                idle = time.monotonic() - self.last_seen.get(attempt, time.monotonic() - lease)
+                self.event("lease_expired", f"Lease expired: {owner} attempt {attempt} on {t.key} made no action or "
+                           f"model call for {idle:.0f}s (lease {lease}s). Attempt revoked.", agent_id=COORDINATOR,
+                           task=t, worker=owner, attempt_id=attempt, idle_s=round(idle, 1),
+                           injected=bool(self.run.fault_injection))
+                closed = 0
+                for eng in self.engines.get(attempt, []):
+                    await eng.fence()
+                    closed += 1
+                self.event("context_fenced", f"Closed {closed} browser context(s) of {owner} attempt {attempt}; "
+                           "further actions from it fail", agent_id=COORDINATOR, task=t, attempt_id=attempt,
+                           contexts_closed=closed)
+                if retried:
+                    t = self.queue.release(t.id)
+                    who = ("another worker" if owner in t.excluded_workers
+                           else f"a fresh attempt by {owner} (no other {t.type} worker)")
+                    self.event("task_reassigned", f"{t.key} returned to the queue for {who} "
+                               f"(excluded: {', '.join(t.excluded_workers) or 'none'}; attempt {t.attempts}/{t.max_attempts} used)",
+                               agent_id=COORDINATOR, task=t, excluded=t.excluded_workers)
+                else:
+                    self.event("task_failed", f"{t.key}: {t.note}", agent_id=COORDINATOR, task=t)
+            await asyncio.sleep(0.25)
 
     # --- workers -----------------------------------------------------------------
 
@@ -127,6 +215,15 @@ class QueueReviewRun(ReviewRun):
                     break
                 if agent in EXPLORERS and self.explore_exhausted:
                     break
+                fi = self.run.fault_injection
+                if (fi and self.faults_left and agent != fi.worker and fi.task_type in types
+                        and not self.fault_target_claimed.is_set()):
+                    # Labelled injection setup: the faulty worker claims first so the stall hits real work.
+                    try:
+                        await asyncio.wait_for(self.fault_target_claimed.wait(), timeout=15)
+                    except TimeoutError:
+                        self.fault_target_claimed.set()
+                    continue
                 task, blocked = self.queue.claim(agent, types, lim.task_lease_s)
                 for b in blocked:
                     self.event("task_blocked", f"{b.type} task blocked: {b.note}", agent_id=COORDINATOR, task=b)
@@ -136,24 +233,45 @@ class QueueReviewRun(ReviewRun):
                     await asyncio.sleep(0.25)
                     continue
                 self.busy += 1
+                self.last_seen[task.attempt_id or ""] = time.monotonic()
                 self.event("task_claimed", f"{agent} claimed {task.type} task {task.key} (attempt {task.attempts})",
-                           agent_id=agent, task=task, lease_expires_at=task.lease_expires_at.isoformat())
+                           agent_id=agent, task=task, lease_expires_at=task.lease_expires_at.isoformat(),
+                           attempt_id=task.attempt_id)
+                if self.run.fault_injection and agent == self.run.fault_injection.worker:
+                    self.fault_target_claimed.set()
+                token = CURRENT_TASK.set(task)
                 try:
                     refs, note, status = await self.run_task(task, agent)
                     done = self.queue.complete(task, refs, note, status)
                     self.event("task_completed" if done.status == TaskStatus.done else f"task_{done.status.value}",
                                f"{agent} finished {task.type} task {task.key}: {done.status.value}"
                                + (f" ({done.note})" if done.note else ""), agent_id=agent, task=done, result_refs=refs)
-                except StaleAttempt as e:
-                    self.event("result_rejected", f"Stale result rejected: {e}", agent_id=COORDINATOR, task=task)
+                    if done.expired_attempts and done.status == TaskStatus.done:
+                        self.event("task_recovered", f"{task.key} recovered: expired attempt(s) "
+                                   f"{', '.join(done.expired_attempts)}; completed by {agent} attempt {task.attempt_id}",
+                                   agent_id=COORDINATOR, task=done, completed_by=agent)
+                except (AttemptRevoked, StaleAttempt) as e:
+                    self.reject_late_result(task, agent, e)
                 except Exception as e:  # browser/setup errors: bounded retry
                     cur, retried = self.queue.fail(task, f"{type(e).__name__}: {e}")
                     self.event("task_retry" if retried else "task_failed", f"{task.type} task {task.key}: {cur.note}",
                                agent_id=agent, task=cur)
                 finally:
+                    CURRENT_TASK.reset(token)
                     self.busy -= 1
         finally:
             self.live.pop(agent, None)
+
+    def reject_late_result(self, task: Task, agent: str, why: Exception) -> None:
+        """The expired worker still submits what it has; the queue must refuse it."""
+        try:
+            self.queue.complete(task, [], f"late result from {agent}")
+            self.event("run_error", f"BUG: late result from {agent} {task.attempt_id} was accepted", agent_id=COORDINATOR,
+                       task=task)
+        except StaleAttempt as e:
+            self.event("result_rejected", f"Late result from {agent} attempt {task.attempt_id} rejected: {e}",
+                       agent_id=COORDINATOR, task=task, worker=agent, attempt_id=task.attempt_id, cause=str(why)[:200],
+                       injected=bool(self.run.fault_injection))
 
     async def run_task(self, task: Task, agent: str) -> tuple[list[str], str | None, TaskStatus | None]:
         if task.type == "explore":
@@ -224,6 +342,7 @@ class QueueReviewRun(ReviewRun):
                     SemanticStep(type="navigate", path=setup.direct_path)]
             obs, history = ex.observation, []
             self._current_depth = task.depth
+            await self.maybe_stall(task, agent)
             for step in range(1, lim.explore_steps_per_task + 1):
                 if self.stopping:
                     status, note = TaskStatus.unfinished, f"stopped early: {self.stopping}"
@@ -232,8 +351,10 @@ class QueueReviewRun(ReviewRun):
                                                    lim.explore_steps_per_task, self.team_note(agent, current),
                                                    name=EXPLORERS[agent])
                 try:
-                    content, mc_id = await self.call_model(messages, agent_id=agent, phase="explore", task=task,
-                                                           reserve=self.explorer_reserve)
+                    content, mc_id = await self.call_model(
+                        messages, agent_id=agent, phase="explore", task=task,
+                        reserve=lim.reserved_verification_calls,
+                        phase_cap=lim.max_model_calls - lim.reserved_testing_calls - lim.reserved_verification_calls)
                 except BudgetExceeded as e:
                     self.explore_exhausted = f"explorer share of the budget used ({e})"
                     status, note = TaskStatus.unfinished, f"stopped early: {self.explore_exhausted}"
@@ -294,6 +415,11 @@ class QueueReviewRun(ReviewRun):
         self.t_start = time.monotonic()
         error = None
         self.enqueue("explore", "explore:start", by=COORDINATOR, payload={})
+        if run.fault_injection:
+            self.event("fault_injected", f"[INJECTED FAULT] configured: {run.fault_injection.model_dump()}",
+                       agent_id=COORDINATOR, injected=True)
+        self.workers_running = True
+        dog = asyncio.create_task(self.watchdog())
         try:
             await asyncio.gather(
                 *(self.worker(a, {"explore"}) for a in EXPLORERS),
@@ -303,6 +429,14 @@ class QueueReviewRun(ReviewRun):
         except Exception as e:  # coordinator bug: recorded, never hidden
             error = f"{type(e).__name__}: {e}"
             self.event("run_error", f"Coordinator stopped: {error}", agent_id=COORDINATOR)
+        finally:
+            self.workers_running = False
+            await dog
+            for att, engs in self.engines.items():  # cleanup: nothing from a revoked attempt stays open
+                if att in self.revoked:
+                    for eng in engs:
+                        if not eng.closed_by_coordinator:
+                            await eng.fence()
         reason = self.stopping or self.explore_exhausted or (f"stopped: {error}" if error else "queue drained")
         left = self.queue.mark_unfinished(f"not run: {reason}")
         for t in left:

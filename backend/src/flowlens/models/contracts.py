@@ -58,13 +58,13 @@ class RunLimits(BaseModel):
     max_cost_usd: float = Field(0.50, gt=0, le=10)
     max_output_tokens: int = Field(800, ge=100, le=4000)
     # Tester plans/assessments and verifier choices: hidden reasoning shares this cap.
-    max_output_tokens_planning: int = Field(2000, ge=100, le=4000)
+    max_output_tokens_planning: int = Field(1400, ge=100, le=4000)
     max_duration_s: int = Field(600, ge=10, le=3600)
     max_states: int = Field(30, ge=1, le=200)
     # Calls held back from explorer and tester so verification can still run.
     reserved_verification_calls: int = Field(4, ge=0, le=50)
     max_forms_tested: int = Field(3, ge=0, le=10)
-    max_cases_per_form: int = Field(4, ge=1, le=8)
+    max_cases_per_form: int = Field(3, ge=1, le=8)
     verification_replays: int = Field(2, ge=1, le=5)
     # Shared queue (queue_review): explorers leave these calls for tester and verifier.
     reserved_testing_calls: int = Field(8, ge=0, le=50)
@@ -72,7 +72,18 @@ class RunLimits(BaseModel):
     max_depth: int = Field(2, ge=0, le=6)  # frontier depth from the start state
     max_tasks: int = Field(40, ge=1, le=300)
     task_max_attempts: int = Field(2, ge=1, le=5)
-    task_lease_s: int = Field(300, ge=10, le=3600)  # recorded now; expiry is enforced in checkpoint 4
+    task_lease_s: int = Field(300, ge=2, le=3600)  # renewed on every action; expired claims are revoked
+    planning_reasoning_tokens: int = Field(384, ge=0, le=4000)  # hidden-reasoning budget for tester/verifier
+
+
+class FaultInjection(BaseModel):
+    """Evaluation-only fault. Runs that use it are labelled provenance.injected_failure."""
+
+    kind: Literal["stall_after_claim"] = "stall_after_claim"
+    worker: Literal["explorer-a", "explorer-b", "input-tester", "verifier"] = "explorer-a"
+    task_type: Literal["explore", "input_test", "verify"] = "explore"
+    stall_s: int = Field(30, ge=1, le=600)  # should exceed the run's task_lease_s
+    times: int = Field(1, ge=1, le=3)
 
 
 class RunCreate(BaseModel):
@@ -81,6 +92,7 @@ class RunCreate(BaseModel):
     requirements: list[str] = Field(default_factory=list, max_length=20)
     limits: RunLimits | None = None
     mode: Literal["single_explorer", "explore_test_verify", "queue_review"] = "single_explorer"
+    fault_injection: FaultInjection | None = None  # queue_review only
 
 
 class Usage(BaseModel):
@@ -90,6 +102,11 @@ class Usage(BaseModel):
     total_tokens: int = 0
     reported_cost_usd: float = 0.0  # sum of provider-reported cost
     calls_without_cost: int = 0  # calls where the provider gave no cost figure
+    # Per-phase call counts (queue mode reserves capacity per phase).
+    exploration_calls: int = 0
+    testing_calls: int = 0
+    verification_calls: int = 0
+    truncated_calls: int = 0  # replies cut off at the output limit
 
 
 class Run(BaseModel):
@@ -103,6 +120,7 @@ class Run(BaseModel):
     # Evaluation-only label of the target build (e.g. fixture mode). Recorded so
     # runs against different builds are never confused; never sent to agents.
     target_build: str | None = None
+    fault_injection: FaultInjection | None = None
     status: RunStatus = RunStatus.queued
     stop_reason: str | None = None
     provenance: Provenance = Field(default_factory=Provenance)
@@ -149,6 +167,9 @@ class Task(BaseModel):
     created_at: datetime = Field(default_factory=utcnow)
     claimed_at: datetime | None = None
     finished_at: datetime | None = None
+    excluded_workers: list[str] = Field(default_factory=list)  # owners whose lease expired on this task
+    expired_attempts: list[str] = Field(default_factory=list)
+    fencing: bool = False  # expired attempt not yet fenced: not claimable until released
 
 
 # --- Browser commands and observations -------------------------------------
@@ -563,6 +584,8 @@ class ModelCall(BaseModel):
     ok: bool
     error: str | None = None
     artifact_id: str | None = None
+    finish_reason: str | None = None  # "length" = truncated at the output limit
+    reasoning_tokens: int | None = None
     agent_id: str = "explorer-a"
     phase: Phase = "explore"
 

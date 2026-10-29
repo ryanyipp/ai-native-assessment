@@ -153,7 +153,8 @@ class ReviewRun(ExplorerRun):
         for _ in range(2):
             content, mc_id = await self.call_model(note_msgs, agent_id=agent_id, phase=phase, task=task,
                                                    reserve=reserve,
-                                                   max_tokens=self.run.limits.max_output_tokens_planning)
+                                                   max_tokens=self.run.limits.max_output_tokens_planning,
+                                                   reasoning_tokens=self.run.limits.planning_reasoning_tokens)
             try:
                 return parse(content), mc_id
             except ValueError as e:

@@ -46,13 +46,16 @@ class LLMResponse:
     reported_cost_usd: float | None
     latency_ms: int
     raw: dict[str, Any] = field(default_factory=dict)
+    finish_reason: str | None = None
+    reasoning_tokens: int | None = None
 
 
 class LLMClient(Protocol):
     model: str
     is_mock: bool
 
-    async def complete(self, messages: list[dict[str, str]], max_tokens: int) -> LLMResponse: ...
+    async def complete(self, messages: list[dict[str, str]], max_tokens: int,
+                       reasoning_tokens: int | None = None) -> LLMResponse: ...
 
 
 class OpenRouterClient:
@@ -67,7 +70,8 @@ class OpenRouterClient:
         self._timeout = settings.flowlens_model_timeout_s
         self._slots = _slots(settings.flowlens_max_concurrent_model_calls)
 
-    async def complete(self, messages: list[dict[str, str]], max_tokens: int) -> LLMResponse:
+    async def complete(self, messages: list[dict[str, str]], max_tokens: int,
+                       reasoning_tokens: int | None = None) -> LLMResponse:
         body = {
             "model": self.model,
             "messages": messages,
@@ -75,7 +79,9 @@ class OpenRouterClient:
             "temperature": 0,
             "response_format": {"type": "json_object"},
             # Keep hidden reasoning small so it cannot consume the output budget.
-            "reasoning": {"effort": "low", "exclude": True},
+            # A token budget bounds hidden reasoning more tightly than an effort level; it shares the output cap.
+            "reasoning": ({"max_tokens": reasoning_tokens, "exclude": True} if reasoning_tokens is not None
+                          else {"effort": "low", "exclude": True}),
             "usage": {"include": True},
         }
         headers = {
@@ -99,7 +105,9 @@ class OpenRouterClient:
         if "error" in data:
             raise RuntimeError(f"OpenRouter error: {str(data['error'])[:300]}")
         usage = data.get("usage") or {}
-        msg = (data.get("choices") or [{}])[0].get("message") or {}
+        choice = (data.get("choices") or [{}])[0]
+        msg = choice.get("message") or {}
+        details = usage.get("completion_tokens_details") or {}
         return LLMResponse(
             content=msg.get("content") or "",
             model=data.get("model", self.model),
@@ -109,6 +117,8 @@ class OpenRouterClient:
             total_tokens=int(usage.get("total_tokens") or 0),
             reported_cost_usd=float(usage["cost"]) if usage.get("cost") is not None else None,
             latency_ms=latency,
+            finish_reason=choice.get("finish_reason"),
+            reasoning_tokens=details.get("reasoning_tokens"),
             raw={k: v for k, v in data.items() if k != "choices"} | {"message": msg},
         )
 
@@ -122,7 +132,7 @@ class ScriptedClient:
     def __init__(self, script):
         self._script = script  # callable(messages) -> str
 
-    async def complete(self, messages, max_tokens):
+    async def complete(self, messages, max_tokens, reasoning_tokens=None):
         return LLMResponse(
             content=self._script(messages), model=self.model, provider="none",
             prompt_tokens=0, completion_tokens=0, total_tokens=0, reported_cost_usd=0.0, latency_ms=0,

@@ -46,11 +46,15 @@ def create_run(body: RunCreate, request: Request):
         max_cost_usd=s.flowlens_run_budget_usd,
         max_output_tokens=s.flowlens_max_output_tokens,
     )
+    if body.fault_injection and body.mode != "queue_review":
+        raise HTTPException(400, "fault_injection is only supported in queue_review mode")
     llm = OpenRouterClient(s)
     run = Run(
         target_url=target, goal=body.goal, requirements=body.requirements, model=llm.model,
         limits=limits, mode=body.mode,
-        provenance=Provenance(live=not llm.is_mock, mocked_model=llm.is_mock, synthetic_fixture=True),
+        fault_injection=body.fault_injection,
+        provenance=Provenance(live=not llm.is_mock, mocked_model=llm.is_mock, synthetic_fixture=True,
+                              injected_failure=body.fault_injection is not None),
     )
     store.put(run)
     start_run_thread(run, store, s, llm)

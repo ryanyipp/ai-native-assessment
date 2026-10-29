@@ -23,20 +23,20 @@ class PlannedCase(BaseModel):
     inputs: dict[str, str] = Field(max_length=12)  # field name -> exact value
     submit: str | None = Field(None, max_length=160)  # submit control name
     requirement_ref: str | None = Field(None, max_length=20)
-    expected: str = Field(max_length=400)
+    expected: str = Field(max_length=200)
 
 
 class TestPlan(BaseModel):
     __test__ = False
 
-    reasoning: str = Field(max_length=800)
+    reasoning: str = Field(max_length=300)
     cases: list[PlannedCase] = Field(max_length=8)
 
 
 class CaseAssessment(BaseModel):
     case: int = Field(ge=1, le=8)
     verdict: str = Field(pattern=r"^(as_expected|unexpected|unclear)$")
-    observed_summary: str = Field(max_length=400)
+    observed_summary: str = Field(max_length=240)
     requirement_ref: str | None = Field(None, max_length=20)
 
 
@@ -56,7 +56,7 @@ and invalid values the requirements address, plus at least one valid control cas
 in a fresh browser session, submit it, and record what the page does.
 
 Reply with ONE JSON object and nothing else:
-{"reasoning": "<short>", "cases": [
+{"reasoning": "<one sentence>", "cases": [
   {"label": "<short name>", "inputs": {"<field name exactly as listed>": "<value>"},
    "submit": "<submit control name exactly as listed>",
    "requirement_ref": "<requirement id this case checks, or null>",
@@ -67,7 +67,7 @@ Rules:
 - Values are typed exactly. A field with type=date needs YYYY-MM-DD.
 - Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use \
 null and describe your own expectation; it will be treated as a review observation, not a defect.
-- At most {max_cases} cases."""
+- At most {max_cases} cases. Keep labels and expectations to one short line each."""
 
 ASSESS_SYSTEM = """You are the Input Tester inside FlowLens. You designed input cases for a form; code \
 executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts \
@@ -79,7 +79,7 @@ Judge each case only from those recorded facts:
 - "unclear": the facts are insufficient, or the expectation itself is not stated by a requirement.
 
 Reply with ONE JSON object and nothing else:
-{"reasoning": "<short>", "assessments": [
+{"reasoning": "<one sentence>", "assessments": [
   {"case": <case number>, "verdict": "as_expected" | "unexpected" | "unclear",
    "observed_summary": "<what the facts show>", "requirement_ref": "<id or null>"}]}
 

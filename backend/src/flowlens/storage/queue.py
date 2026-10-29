@@ -10,7 +10,10 @@ enqueue or a completion is atomic even across threads or processes:
 - complete / fail: accepted only from the current owner and attempt. A failure
   is retried (back to ready) until `max_attempts` claims have been used.
 
-Leases are recorded on claim. Expiry and reassignment are checkpoint 4.
+- renew: the current attempt extends its lease (called on every action).
+- expire_overdue: claimed tasks past their lease lose their attempt. The task
+  goes back to ready (the expired owner may not reclaim it) or, with no attempts
+  left, to failed. Any later renew/complete/fail by that attempt is stale.
 """
 
 from __future__ import annotations
@@ -87,6 +90,7 @@ class TaskQueue:
                     self._save(c, t)
                     blocked.append(t)
             ready = [t for t in tasks if t.status == TaskStatus.ready and t.type in types
+                     and worker not in t.excluded_workers and not t.fencing
                      and all(by_id.get(d) is not None and by_id[d].status == TaskStatus.done for d in t.depends_on)]
             if not ready:
                 return None, blocked
@@ -134,6 +138,50 @@ class TaskQueue:
             self._save(c, cur)
             return cur, retried
 
+    def renew(self, task: Task, lease_s: int) -> Task:
+        with self._tx() as c:
+            cur = self._current(c, task)
+            cur.lease_expires_at = utcnow() + timedelta(seconds=lease_s)
+            self._save(c, cur)
+            return cur
+
+    def expire_overdue(self, now=None, can_exclude=None) -> list[tuple[Task, str, str, bool]]:
+        """Atomically expire claims past their lease. Returns (task, expired owner, expired attempt, retried).
+
+        `can_exclude(task, owner)` says whether another worker can take the task; if not,
+        the same worker may retry it with a fresh attempt instead of leaving it stranded.
+        """
+        now = now or utcnow()
+        out = []
+        with self._tx() as c:
+            for t in self._all(c):
+                if t.status != TaskStatus.claimed or t.lease_expires_at is None or t.lease_expires_at > now:
+                    continue
+                owner, attempt = t.owner or "", t.attempt_id or ""
+                t.expired_attempts.append(attempt)
+                if owner and owner not in t.excluded_workers and (can_exclude is None or can_exclude(t, owner)):
+                    t.excluded_workers.append(owner)
+                retried = t.attempts < t.max_attempts
+                if retried:
+                    t.status, t.owner, t.attempt_id, t.lease_expires_at = TaskStatus.ready, None, None, None
+                    t.fencing = True  # held until the coordinator has closed the expired attempt's contexts
+                    t.note = f"lease of {owner} attempt {attempt} expired; queued for another worker"
+                else:
+                    t.status, t.finished_at, t.attempt_id = TaskStatus.failed, now, None
+                    t.note = f"lease of {owner} attempt {attempt} expired on the final attempt ({t.attempts}/{t.max_attempts})"
+                self._save(c, t)
+                out.append((t, owner, attempt, retried))
+        return out
+
+    def release(self, task_id: str) -> Task:
+        """After fencing, make an expired task claimable again."""
+        with self._tx() as c:
+            row = c.execute("SELECT data FROM tasks WHERE id=?", (task_id,)).fetchone()
+            t = Task.model_validate_json(row[0])
+            t.fencing = False
+            self._save(c, t)
+            return t
+
     def snapshot(self) -> list[Task]:
         with self._tx() as c:
             return self._all(c)
@@ -148,6 +196,14 @@ class TaskQueue:
                     by_id.get(d) is not None and by_id[d].status in BAD_END for d in t.depends_on):
                 out.add(t.type)
         return out
+
+    def claimable_for(self, worker: str, types: set[str]) -> bool:
+        """Could this worker claim something now or once running dependencies finish?"""
+        tasks = self.snapshot()
+        by_id = {t.id: t for t in tasks}
+        return any(t.status == TaskStatus.ready and t.type in types and worker not in t.excluded_workers
+                   and not any(by_id.get(d) is not None and by_id[d].status in BAD_END for d in t.depends_on)
+                   for t in tasks)
 
     def mark_unfinished(self, reason: str) -> list[Task]:
         """At the end of a run: every task that never ran is explicitly unfinished."""
