@@ -1,3 +1,4 @@
+import { graphlib, layout } from '@dagrejs/dagre'
 import {
   Background,
   BaseEdge,
@@ -5,73 +6,137 @@ import {
   EdgeLabelRenderer,
   Handle,
   MarkerType,
+  MiniMap,
+  Panel,
   Position,
   ReactFlow,
   getBezierPath,
+  getSmoothStepPath,
+  useReactFlow,
   type Edge,
   type EdgeProps,
   type Node,
   type NodeProps,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { useMemo } from 'react'
-import { artifactUrl } from '../../lib/api'
+import { Flag, Image as ImageIcon, MousePointerClick, Navigation, PencilLine, RotateCw } from 'lucide-react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { Thumb } from '../../components/Screenshot'
+import { cx } from '../../components/ui'
 import type { RunDetail, ScreenState, Transition } from '../../lib/types'
 
 export type Selection = { kind: 'state'; id: string } | { kind: 'transition'; id: string } | null
 
-type StateNodeData = { state: ScreenState; selected: boolean }
-type TransitionEdgeData = { transition: Transition; index: number; selected: boolean; onSelect: (id: string) => void }
+const NODE_W = 232
+const NODE_H = 188
 
-function StateNode({ data }: NodeProps<Node<StateNodeData>>) {
+type StateNodeData = { state: ScreenState; selected: boolean; dimmed: boolean; isStart: boolean; showThumb: boolean }
+type TransitionEdgeData = {
+  transition: Transition
+  loopIndex: number
+  parallelIndex: number
+  nodeH: number
+  selected: boolean
+  dimmed: boolean
+  onSelect: (id: string) => void
+}
+
+const actionIcon = (type: string) =>
+  ({ click: MousePointerClick, fill: PencilLine, reload: RotateCw, navigate: Navigation })[type] ?? MousePointerClick
+
+const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData>>) {
   const s = data.state
+  const [heading, ...rest] = s.summary.split(' — ')
   return (
-    <div className={`w-56 overflow-hidden rounded-lg border-2 bg-white shadow-sm ${data.selected ? 'border-pink-500' : 'border-slate-300'}`}>
-      <Handle type="target" position={Position.Left} />
-      {s.screenshot_artifact_id && (
-        <img src={artifactUrl(s.screenshot_artifact_id)} alt={`Screenshot of ${s.summary}`}
-          className="h-28 w-full border-b border-slate-200 object-cover object-top" />
+    <div
+      className={cx(
+        'overflow-hidden rounded-xl border bg-white shadow-sm transition-[box-shadow,opacity,border-color] duration-200',
+        data.selected ? 'border-accent-500 shadow-[0_0_0_3px_var(--color-accent-100)]' : 'border-slate-200 hover:border-slate-300 hover:shadow-md',
+        data.dimmed && 'opacity-60',
       )}
-      <div className="p-2">
-        <div className="text-xs font-semibold leading-tight">{s.summary}</div>
-        <div className="mt-1 font-mono text-[10px] text-slate-500">{s.route} · first seen step {s.first_seen_step}</div>
+      style={{ width: NODE_W }}
+    >
+      <Handle type="target" position={Position.Left} className="!h-2 !w-2 !border-0 !bg-slate-300" />
+      {data.showThumb && <Thumb id={s.screenshot_artifact_id} alt="" className="h-[108px] w-full border-b border-slate-100" />}
+      <div className="space-y-1 px-3 py-2.5">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 text-[13px] font-semibold leading-tight text-slate-900">
+            {heading}
+            {rest.length > 0 && <span className="block truncate text-xs font-normal text-slate-600">{rest.join(' — ')}</span>}
+          </div>
+          {data.isStart && (
+            <span className="inline-flex shrink-0 items-center gap-0.5 rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+              <Flag size={10} aria-hidden /> Start
+            </span>
+          )}
+        </div>
+        <div className="flex items-center justify-between gap-2 font-mono text-[10.5px] text-slate-500">
+          <span className="truncate">{s.route}</span>
+          <span className="shrink-0">step {s.first_seen_step}</span>
+        </div>
       </div>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Right} className="!h-2 !w-2 !border-0 !bg-slate-300" />
     </div>
   )
-}
+})
 
 function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
   const { sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd } = props
-  const t = data!.transition
+  const d = data!
+  const t = d.transition
+  const Icon = actionIcon(t.action.type)
   let path: string
-  let labelX: number
-  let labelY: number
+  let lx: number
+  let ly: number
   if (t.source_state_id === t.target_state_id) {
-    // Self-loop: arc over the node, stacked by index.
-    const h = 60 + data!.index * 34
-    path = `M ${sourceX} ${sourceY} C ${sourceX + 70} ${sourceY - h - 80}, ${targetX - 70} ${targetY - h - 80}, ${targetX} ${targetY}`
-    labelX = (sourceX + targetX) / 2
-    labelY = sourceY - h - 30
+    // Self-loop drawn over the top of the node; stacked if several.
+    const lift = d.nodeH / 2 + 46 + d.loopIndex * 36
+    const top = sourceY - lift
+    path = `M ${sourceX} ${sourceY} C ${sourceX + 46} ${sourceY}, ${sourceX + 30} ${top}, ${(sourceX + targetX) / 2} ${top} S ${targetX - 46} ${targetY}, ${targetX} ${targetY}`
+    lx = (sourceX + targetX) / 2
+    ly = top
+  } else if (targetX < sourceX) {
+    // Wrapped or backward edge: route orthogonally through the gap between rows.
+    ;[path, lx, ly] = getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, borderRadius: 14, offset: 28 + d.parallelIndex * 14 })
   } else {
-    ;[path, labelX, labelY] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition })
-    labelY += data!.index * 26
+    const curvature = 0.25 + d.parallelIndex * 0.25
+    ;[path, lx, ly] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, curvature })
+    ly += d.parallelIndex * 28
   }
-  const color = !t.ok ? '#dc2626' : data!.selected ? '#ec4899' : '#64748b'
+  const stroke = !t.ok ? 'var(--color-red-500)' : d.selected ? 'var(--color-accent-500)' : 'var(--color-slate-400)'
   return (
     <>
-      <BaseEdge path={path} markerEnd={markerEnd} style={{ stroke: color, strokeWidth: data!.selected ? 3 : 1.5 }} />
+      <BaseEdge
+        path={path}
+        markerEnd={markerEnd}
+        style={{
+          stroke,
+          strokeWidth: d.selected ? 2.5 : 1.5,
+          strokeDasharray: t.ok ? undefined : '5 4',
+          opacity: d.dimmed ? 0.35 : 1,
+          transition: 'opacity 200ms, stroke 200ms',
+        }}
+      />
       <EdgeLabelRenderer>
         <button
           type="button"
-          onClick={() => data!.onSelect(t.id)}
-          style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`, pointerEvents: 'all' }}
-          className={`nodrag nopan absolute max-w-48 truncate rounded border bg-white px-1.5 py-0.5 text-[10px] shadow-sm ${
-            t.ok ? 'border-slate-300' : 'border-red-400 text-red-700'
-          } ${data!.selected ? 'ring-2 ring-pink-400' : ''}`}
+          onClick={() => d.onSelect(t.id)}
+          aria-pressed={d.selected}
+          aria-label={`Transition step ${t.step}: ${t.label}${t.ok ? '' : ' (failed)'}`}
           title={t.label}
+          style={{ transform: `translate(-50%, -50%) translate(${lx}px, ${ly}px)`, pointerEvents: 'all', opacity: d.dimmed ? 0.5 : 1 }}
+          className={cx(
+            'nodrag nopan absolute flex max-w-[190px] items-center gap-1.5 rounded-full border bg-white py-0.5 pl-0.5 pr-2 text-[11px] shadow-sm transition-[opacity,box-shadow]',
+            t.ok ? 'border-slate-200 text-slate-700' : 'border-red-300 text-red-800',
+            d.selected && 'border-accent-500 shadow-[0_0_0_3px_var(--color-accent-100)]',
+          )}
         >
-          {t.step}. {t.label}
+          <span className={cx('flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold',
+            d.selected ? 'bg-accent-500 text-white' : t.ok ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-800')}>
+            {t.step}
+          </span>
+          <Icon size={11} aria-hidden className="shrink-0 text-slate-400" />
+          <span className="truncate">{t.label.replace(/^(click|fill) /, '')}</span>
         </button>
       </EdgeLabelRenderer>
     </>
@@ -81,42 +146,169 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
 const nodeTypes = { state: StateNode }
 const edgeTypes = { transition: TransitionEdge }
 
-export function FlowMap({ detail, selection, onSelect }: {
+const COL_GAP = 170
+const ROW_GAP = 150
+const nodeHeight = (thumbs: boolean) => (thumbs ? NODE_H : 80)
+
+/**
+ * Layered left-to-right layout (dagre), then wrapped into rows.
+ *
+ * Dagre keeps branch and back-edge structure inside a rank. A long linear run in one
+ * row would be fitted at an unreadable zoom, so ranks wrap into rows. The column count
+ * is chosen to maximise the fit-to-view zoom for the measured panel size.
+ * Self-loops are excluded from ranking and drawn over their node.
+ */
+function layoutStates(detail: RunDetail, size: { w: number; h: number }, thumbs: boolean) {
+  const nodeH = nodeHeight(thumbs)
+  const g = new graphlib.Graph({ multigraph: true })
+  g.setGraph({ rankdir: 'LR', ranksep: 100, nodesep: 70 })
+  g.setDefaultEdgeLabel(() => ({}))
+  for (const s of detail.states) g.setNode(s.id, { width: NODE_W, height: nodeH })
+  for (const t of detail.transitions) {
+    if (t.source_state_id !== t.target_state_id) g.setEdge(t.source_state_id, t.target_state_id, { width: 150, height: 24 }, t.id)
+  }
+  layout(g)
+
+  // Group nodes into ranks by their dagre x position.
+  const xs = [...new Set(g.nodes().map((id) => Math.round(g.node(id).x)))].sort((a, b) => a - b)
+  const ranks = xs.map((x) => g.nodes().filter((id) => Math.round(g.node(id).x) === x))
+  const top = (id: string) => g.node(id).y - nodeH / 2
+
+  const rowsFor = (k: number) => {
+    const rows: string[][][] = []
+    for (let i = 0; i < ranks.length; i += k) rows.push(ranks.slice(i, i + k))
+    return rows.map((row) => {
+      const ids = row.flat()
+      const minTop = Math.min(...ids.map(top))
+      const height = Math.max(...ids.map(top)) - minTop + nodeH
+      return { row, minTop, height }
+    })
+  }
+
+  let best = { k: Math.max(1, ranks.length), zoom: 0 }
+  for (let k = 1; k <= Math.max(1, ranks.length); k++) {
+    const rows = rowsFor(k)
+    const width = k * NODE_W + (k - 1) * COL_GAP
+    const height = rows.reduce((h, r) => h + r.height, 0) + rows.length * ROW_GAP
+    const zoom = Math.min((size.w * 0.86) / width, (size.h * 0.86) / height, 1)
+    if (zoom > best.zoom + 0.02) best = { k, zoom }
+  }
+
+  const pos = new Map<string, { x: number; y: number }>()
+  let y = ROW_GAP // headroom for self-loops above the first row
+  for (const { row, minTop, height } of rowsFor(best.k)) {
+    row.forEach((rank, col) => {
+      for (const id of rank) pos.set(id, { x: col * (NODE_W + COL_GAP), y: y + top(id) - minTop })
+    })
+    y += height + ROW_GAP
+  }
+  return { pos, columns: best.k }
+}
+
+function useSize<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+  const [size, setSize] = useState({ w: 900, h: 600 })
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => {
+      // Round so tiny resizes do not trigger relayout.
+      const w = Math.round(e.contentRect.width / 40) * 40
+      const h = Math.round(e.contentRect.height / 40) * 40
+      setSize((s) => (s.w === w && s.h === h ? s : { w, h }))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+  return [ref, size] as const
+}
+
+function FitOnLayoutChange({ layoutKey }: { layoutKey: string }) {
+  const rf = useReactFlow()
+  useEffect(() => {
+    const id = requestAnimationFrame(() => rf.fitView({ padding: 0.12, duration: 250 }))
+    return () => cancelAnimationFrame(id)
+  }, [layoutKey, rf])
+  return null
+}
+
+export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumbs }: {
   detail: RunDetail
   selection: Selection
   onSelect: (s: Selection) => void
+  showThumbs: boolean
+  onToggleThumbs: () => void
 }) {
+  const [wrapRef, size] = useSize<HTMLDivElement>()
+  const { pos: positions, columns } = useMemo(() => layoutStates(detail, size, showThumbs), [detail, size, showThumbs])
+  const startId = useMemo(() => [...detail.states].sort((a, b) => a.first_seen_step - b.first_seen_step)[0]?.id, [detail])
+
   const { nodes, edges } = useMemo(() => {
-    const ordered = [...detail.states].sort((a, b) => a.first_seen_step - b.first_seen_step)
-    const nodes: Node<StateNodeData>[] = ordered.map((s, i) => ({
+    // Highlight the selection's neighbourhood so the eye can follow it.
+    const selT = selection?.kind === 'transition' ? detail.transitions.find((t) => t.id === selection.id) : undefined
+    const focusStates = new Set<string>()
+    const focusEdges = new Set<string>()
+    if (selT) {
+      focusStates.add(selT.source_state_id).add(selT.target_state_id)
+      focusEdges.add(selT.id)
+    } else if (selection?.kind === 'state') {
+      focusStates.add(selection.id)
+      for (const t of detail.transitions) {
+        if (t.source_state_id === selection.id || t.target_state_id === selection.id) {
+          focusEdges.add(t.id)
+          focusStates.add(t.source_state_id).add(t.target_state_id)
+        }
+      }
+    }
+    const hasFocus = selection !== null
+
+    const nodes: Node<StateNodeData>[] = detail.states.map((s) => ({
       id: s.id,
       type: 'state',
-      position: { x: i * 320, y: i % 2 === 0 ? 140 : 300 },
-      data: { state: s, selected: selection?.kind === 'state' && selection.id === s.id },
+      position: positions.get(s.id) ?? { x: 0, y: 0 },
+      ariaLabel: `State: ${s.summary}, route ${s.route}`,
+      data: {
+        state: s,
+        selected: selection?.kind === 'state' && selection.id === s.id,
+        dimmed: hasFocus && !focusStates.has(s.id),
+        isStart: s.id === startId,
+        showThumb: showThumbs,
+      },
     }))
-    const pairCount = new Map<string, number>()
-    const edges: Edge<TransitionEdgeData>[] = detail.transitions.map((t) => {
-      const key = `${t.source_state_id}->${t.target_state_id}`
-      const index = pairCount.get(key) ?? 0
-      pairCount.set(key, index + 1)
-      return {
-        id: t.id,
-        source: t.source_state_id,
-        target: t.target_state_id,
-        type: 'transition',
-        markerEnd: { type: MarkerType.ArrowClosed },
-        data: {
-          transition: t,
-          index,
-          selected: selection?.kind === 'transition' && selection.id === t.id,
-          onSelect: (id: string) => onSelect({ kind: 'transition', id }),
-        },
-      }
-    })
+    const loops = new Map<string, number>()
+    const pairs = new Map<string, number>()
+    const edges: Edge<TransitionEdgeData>[] = [...detail.transitions]
+      .sort((a, b) => a.step - b.step)
+      .map((t) => {
+        const self = t.source_state_id === t.target_state_id
+        const key = self ? t.source_state_id : `${t.source_state_id}>${t.target_state_id}`
+        const bucket = self ? loops : pairs
+        const index = bucket.get(key) ?? 0
+        bucket.set(key, index + 1)
+        const selected = selection?.kind === 'transition' && selection.id === t.id
+        return {
+          id: t.id,
+          source: t.source_state_id,
+          target: t.target_state_id,
+          type: 'transition',
+          zIndex: selected ? 10 : 0,
+          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : '#94a3b8' },
+          data: {
+            transition: t,
+            loopIndex: self ? index : 0,
+            parallelIndex: self ? 0 : index,
+            nodeH: nodeHeight(showThumbs),
+            selected,
+            dimmed: hasFocus && !focusEdges.has(t.id),
+            onSelect: (id: string) => onSelect({ kind: 'transition', id }),
+          },
+        }
+      })
     return { nodes, edges }
-  }, [detail, selection, onSelect])
+  }, [detail, positions, selection, onSelect, startId, showThumbs])
 
   return (
+    <div ref={wrapRef} className="h-full w-full">
     <ReactFlow
       nodes={nodes}
       edges={edges}
@@ -124,13 +316,46 @@ export function FlowMap({ detail, selection, onSelect }: {
       edgeTypes={edgeTypes}
       onNodeClick={(_, n) => onSelect({ kind: 'state', id: n.id })}
       onEdgeClick={(_, e) => onSelect({ kind: 'transition', id: e.id })}
+      onPaneClick={() => onSelect(null)}
       nodesConnectable={false}
+      nodesDraggable
+      minZoom={0.2}
+      maxZoom={2}
       fitView
-      fitViewOptions={{ padding: 0.25 }}
-      proOptions={{ hideAttribution: false }}
+      fitViewOptions={{ padding: 0.2 }}
+      proOptions={{ hideAttribution: true }}
     >
-      <Background />
-      <Controls showInteractive={false} />
+      <FitOnLayoutChange layoutKey={`${detail.run.id}:${detail.states.length}:${columns}:${showThumbs}:${size.w}x${size.h}`} />
+      <Background gap={20} size={1} color="var(--color-slate-200)" />
+      <Controls showInteractive={false} position="bottom-left" className="!rounded-md !border !border-slate-200 !shadow-sm" fitViewOptions={{ padding: 0.2, duration: 250 }} />
+      {detail.states.length >= 8 && <MiniMap
+        position="bottom-right"
+        pannable
+        zoomable
+        ariaLabel="Map overview"
+        nodeColor={(n) => ((n.data as StateNodeData).selected ? '#3b6ef5' : '#cbd5e1')}
+        nodeBorderRadius={6}
+        className="!rounded-md !border !border-slate-200 !shadow-sm"
+        style={{ width: 160, height: 100 }}
+      />}
+      <Panel position="top-left" className="!m-3">
+        <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs} />
+      </Panel>
     </ReactFlow>
+    </div>
+  )
+}
+
+function MapToolbar({ showThumbs, onToggleThumbs }: { showThumbs: boolean; onToggleThumbs: () => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-white/95 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 shadow-sm backdrop-blur">
+      <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-slate-400" aria-hidden />Action</span>
+      <span className="flex items-center gap-1.5"><span className="h-px w-4 border-t border-dashed border-red-500" aria-hidden />Failed</span>
+      <span className="text-slate-500">Observed states only, not full coverage</span>
+      <button type="button" onClick={onToggleThumbs} aria-pressed={showThumbs}
+        className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900">
+        <ImageIcon size={12} aria-hidden />Thumbnails
+      </button>
+    </div>
   )
 }
