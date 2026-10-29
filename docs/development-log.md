@@ -18,3 +18,18 @@
 - The explorer is stateless per step. It gets the goal, its last 12 actions and a compact observation, which keeps prompt size bounded (about 600–1000 tokens per call in the live run).
 
 **First live run:** `run_e957eab8645e`: 6 calls, 4,386 tokens, reported US$0.004238, completed. Evidence is in `submission-evidence/checkpoint-1/`.
+
+## 2026-10-29: Workspace UI
+
+**Frontend dependencies added:**
+- `lucide-react`: icons.
+- `@dagrejs/dagre`: layered graph layout.
+- `@radix-ui/react-dialog`, `@radix-ui/react-tabs`, `@radix-ui/react-tooltip`: accessible primitives.
+- `@fontsource-variable/inter`, `@fontsource-variable/jetbrains-mono`: self-hosted fonts.
+- `axe-core` (dev): accessibility checks.
+
+shadcn/ui was not adopted. Only three primitives were needed, so I wrote small Tailwind components over Radix instead (`frontend/src/components/ui.tsx`) rather than adding the shadcn CLI and generated files.
+
+**Backend changes:** none. The UI uses only the existing `/api/health`, `/api/runs`, `/api/runs/{id}` and `/api/artifacts/{id}` endpoints.
+
+**Browser check:** `backend\.venv\Scripts\python scripts\ui_check.py run_e957eab8645e docs\ui-iteration` runs 29 checks, including axe, against a saved real run. It needs the backend and frontend running and makes no model calls. The design iteration is recorded in `docs/ui-iteration/README.md`.
