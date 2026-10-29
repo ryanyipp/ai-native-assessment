@@ -20,6 +20,7 @@ from playwright.async_api import Error as PlaywrightError
 
 from flowlens.models.contracts import (
     ClickAction,
+    ControlRef,
     FillAction,
     InspectAction,
     NavigateAction,
@@ -69,6 +70,8 @@ _INSPECT_JS = r"""
     return t;
   };
   const sel = 'a[href], button, input:not([type=hidden]), textarea, select, [role=button], [role=link], [contenteditable=true]';
+  const forms = [...document.forms];
+  const userInvalid = el => { try { return el.matches(':user-invalid'); } catch (e) { return false; } };
   const out = [];
   for (const el of document.querySelectorAll(sel)) {
     if (out.length >= maxElements) break;
@@ -83,18 +86,51 @@ _INSPECT_JS = r"""
       value: isField ? String(el.value ?? '').slice(0, 300) : null,
       href: tag === 'a' ? el.getAttribute('href') : null,
       disabled: !!el.disabled,
+      required: !!el.required,
+      form_index: el.form ? forms.indexOf(el.form) : null,
+      validation_message: (isField && (userInvalid(el) || el.getAttribute('aria-invalid') === 'true'))
+        ? (clean(el.validationMessage) || 'invalid') : null,
     });
   }
   const headings = [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(h => clean(h.innerText)).slice(0, 12);
   const status = [...document.querySelectorAll('[role=status],[role=alert],[aria-live]')]
     .filter(visible).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
-  return { title: document.title, headings, elements: out, status, text: (document.body?.innerText || '').replace(/\s+/g, ' ').trim() };
+  const alerts = [...document.querySelectorAll('[role=alert]')]
+    .filter(visible).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
+  return { title: document.title, headings, elements: out, status, alerts, text: (document.body?.innerText || '').replace(/\s+/g, ' ').trim() };
 }
 """
 
 
 class ActionRejected(Exception):
     """The command failed validation before touching the browser."""
+
+
+class ControlResolutionError(Exception):
+    """A semantic control matched zero or several elements in a fresh observation."""
+
+
+def _norm(t: str) -> str:
+    return " ".join((t or "").split()).casefold()
+
+
+def resolve_control(obs: Observation, control: ControlRef) -> ObservedElement:
+    """Find the one element matching role + accessible name (+ input type) in this observation."""
+    matches = [
+        e for e in obs.elements
+        if _norm(e.role) == _norm(control.role) and _norm(e.name) == _norm(control.name)
+        and (control.input_type is None or (e.input_type or None) == control.input_type)
+    ]
+    if not matches:
+        raise ControlResolutionError(f"no {control.describe()} in the current page ({obs.url})")
+    if len(matches) > 1:
+        ids = ", ".join(m.id for m in matches)
+        raise ControlResolutionError(f"{control.describe()} is ambiguous: {len(matches)} matches ({ids})")
+    return matches[0]
+
+
+def control_of(el: ObservedElement) -> ControlRef:
+    return ControlRef(role=el.role, name=el.name, input_type=el.input_type)
 
 
 @dataclass
@@ -108,6 +144,7 @@ class Execution:
     duration_ms: int
     observation: Observation
     screenshot_png: bytes
+    target_element: ObservedElement | None = None  # resolved element, from the pre-action observation
 
 
 def normalise_route(url: str) -> str:
@@ -144,10 +181,12 @@ def origin_of(url: str) -> str:
 
 
 class BrowserEngine:
-    def __init__(self, allowed_origins: list[str], headless: bool = True, storage_state: str | None = None):
+    def __init__(self, allowed_origins: list[str], headless: bool = True, storage_state: str | None = None,
+                 cookies: list[dict] | None = None):
         self.allowed_origins = {o.lower().rstrip("/") for o in allowed_origins}
         self.headless = headless
         self.storage_state = storage_state
+        self.cookies = cookies or []  # e.g. a provisioned test-data workspace
         self._pw = None
         self._browser: Browser | None = None
         self.context: BrowserContext | None = None
@@ -161,6 +200,8 @@ class BrowserEngine:
         self.context = await self._browser.new_context(
             viewport={"width": 1280, "height": 800}, storage_state=self.storage_state or None
         )
+        if self.cookies:
+            await self.context.add_cookies(self.cookies)
         self.page = await self.context.new_page()
         self.page.set_default_timeout(ACTION_TIMEOUT_MS)
         return self
@@ -187,6 +228,8 @@ class BrowserEngine:
             elements=[ObservedElement(**e) for e in raw["elements"]],
             text_excerpt=raw["text"][:MAX_TEXT],
             status_messages=raw["status"],
+            alert_messages=raw["alerts"],
+            invalid_fields=[e["name"] for e in raw["elements"] if e.get("validation_message")],
         )
         self.last_observation = obs
         return obs
@@ -208,6 +251,7 @@ class BrowserEngine:
         t0 = time.perf_counter()
         url_before = page.url
         target = None
+        target_el = None
         error = None
         try:
             if isinstance(action, InspectAction):
@@ -223,6 +267,7 @@ class BrowserEngine:
                 await page.reload(wait_until="load", timeout=NAV_TIMEOUT_MS)
             elif isinstance(action, (ClickAction, FillAction)):
                 el = self._element(action.element_id)
+                target_el = el
                 target = f"{el.role} '{el.name}'"
                 loc = page.locator(f'[data-flowlens-id="{action.element_id}"]')
                 if isinstance(action, FillAction):
@@ -260,4 +305,5 @@ class BrowserEngine:
             duration_ms=duration_ms,
             observation=obs,
             screenshot_png=png,
+            target_element=target_el,
         )

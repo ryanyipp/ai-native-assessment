@@ -15,15 +15,20 @@ from pydantic import BaseModel
 
 from flowlens.models.contracts import (
     ActionResult,
+    DiscoveredForm,
     Event,
     Evidence,
     Finding,
+    Handoff,
     ModelCall,
     Run,
     RunDetail,
     RunStatus,
     ScreenState,
+    Task,
+    TestCase,
     Transition,
+    VerificationAttempt,
 )
 
 M = TypeVar("M", bound=BaseModel)
@@ -36,6 +41,11 @@ _TABLES: dict[str, type[BaseModel]] = {
     "findings": Finding,
     "evidence": Evidence,
     "model_calls": ModelCall,
+    "tasks": Task,
+    "forms": DiscoveredForm,
+    "handoffs": Handoff,
+    "test_cases": TestCase,
+    "verifications": VerificationAttempt,
 }
 
 
@@ -142,4 +152,9 @@ class Store:
             events=self.events_for_run(run_id),
             evidence=self.list_for_run(Evidence, run_id),
             model_calls=self.list_for_run(ModelCall, run_id),
+            tasks=self.list_for_run(Task, run_id),
+            forms=self.list_for_run(DiscoveredForm, run_id),
+            handoffs=self.list_for_run(Handoff, run_id),
+            test_cases=self.list_for_run(TestCase, run_id),
+            verifications=self.list_for_run(VerificationAttempt, run_id),
         )

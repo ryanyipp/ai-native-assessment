@@ -40,7 +40,15 @@ class Settings(BaseSettings):
     fixture_port: int = 5174
     artifacts_dir: Path = Field(default=REPO_ROOT / "artifacts")
     database_url: str = ""
-    flowlens_allowed_origins: str = "http://localhost:5174,http://127.0.0.1:5174"
+    # :5174 broken build, :5175 corrected build of the reference fixture.
+    flowlens_allowed_origins: str = (
+        "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175"
+    )
+    # Harness endpoint (POST) that provisions an isolated test-data workspace, and
+    # the cookie that selects it. Empty endpoint = no isolation; verification is
+    # then inconclusive because controlled test data cannot be set up.
+    flowlens_workspace_endpoint: str = "/__fixture/workspaces"
+    flowlens_workspace_cookie: str = "cs_ws"
     flowlens_test_session_path: str = ""
     flowlens_headless: bool = True
 
