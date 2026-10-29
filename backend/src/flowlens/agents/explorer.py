@@ -14,10 +14,12 @@ from pydantic import BaseModel, Field, TypeAdapter
 
 from flowlens.agents.common import parse_json_reply
 from flowlens.models.contracts import (
+    CheckAction,
     ClickAction,
     FillAction,
     NavigateAction,
     Observation,
+    PressAction,
     ReloadAction,
 )
 
@@ -37,7 +39,7 @@ class FinishAction(BaseModel):
 
 
 AgentAction = Annotated[
-    ClickAction | FillAction | NavigateAction | ReloadAction | FinishAction,
+    ClickAction | FillAction | PressAction | CheckAction | NavigateAction | ReloadAction | FinishAction,
     Field(discriminator="type"),
 ]
 
@@ -61,6 +63,8 @@ Reply with ONE JSON object and nothing else:
 Allowed actions:
   {"type": "click", "element_id": "e3"}
   {"type": "fill", "element_id": "e4", "value": "text to enter"}
+  {"type": "press", "element_id": "e4", "key": "Enter"}   (submit a field that has no button)
+  {"type": "check", "element_id": "e5", "checked": true}  (tick or untick a checkbox)
   {"type": "navigate", "url": "<absolute URL on the same site>"}
   {"type": "reload"}
   {"type": "finish", "persistence": "retained" | "not_retained" | "unknown",
@@ -92,7 +96,7 @@ def render_observation(obs: Observation) -> str:
         parts = [e.id, e.role, json.dumps(e.name)]
         if e.input_type and e.input_type not in ("text",):
             parts.append(f"type={e.input_type}")
-        if e.value is not None:
+        if e.value is not None and e.checked is None:
             parts.append(f"value={json.dumps(e.value[:200])}")
         if e.href:
             parts.append(f"href={e.href}")
@@ -100,6 +104,10 @@ def render_observation(obs: Observation) -> str:
             parts.append("required")
         if e.validation_message:
             parts.append(f"invalid={json.dumps(e.validation_message[:120])}")
+        if e.checked is not None:
+            parts.append("checked" if e.checked else "unchecked")
+        if e.context:
+            parts.append(f"in={json.dumps(e.context[:80])}")
         if e.disabled:
             parts.append("disabled")
         lines.append("  " + " ".join(parts))

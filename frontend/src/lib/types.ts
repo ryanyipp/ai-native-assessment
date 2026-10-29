@@ -45,6 +45,9 @@ export interface Run {
   mode: 'single_explorer' | 'explore_test_verify' | 'reverify' | string
   target_build: string | null
   fault_injection?: FaultInjection | null
+  /** fixture: configured origin with per-worker harness workspaces. website: launcher-approved, fresh contexts only. */
+  target_profile?: 'fixture' | 'website'
+  scope_origins?: string[]
   limits: RunLimits
   status: RunStatus
   stop_reason: string | null
@@ -59,8 +62,10 @@ export type BrowserAction = {
   test_case_id?: string; finding_id?: string; inputs?: Record<string, string>; assertion?: string; submit?: string | null
 }
 
-export interface ControlRef { role: string; name: string; input_type: string | null }
-export interface SemanticStep { type: string; path: string | null; control: ControlRef | null; value: string | null }
+export interface ControlRef { role: string; name: string; input_type: string | null; context?: string | null }
+export interface SemanticStep {
+  type: string; path: string | null; control: ControlRef | null; value: string | null; key?: string | null; checked?: boolean | null
+}
 export interface SetupRecipe {
   target_state_id: string; expected_signature: string; direct_path: string | null; steps: SemanticStep[]; data_isolation: string
 }
@@ -217,8 +222,11 @@ export interface RunEvent {
 }
 
 export interface PagePreview {
-  ok: boolean; error: string | null; requested_url: string; final_url: string; title: string; headings: string[]
-  captured_at: string; viewport: { width: number; height: number }; image_png_base64: string
+  ok: boolean; error: string | null; requested_url: string; final_url: string | null; title: string | null; headings: string[]
+  captured_at: string; viewport: { width: number; height: number }
+  profile?: 'fixture' | 'website'
+  /** null when the page left the approved scope: nothing from outside it is captured. */
+  image_png_base64: string | null
 }
 
 export interface ModelCall {
@@ -260,6 +268,7 @@ export interface Health {
   model: string
   api_key_configured: boolean
   allowed_origins: string[]
+  approved_origins?: string[]
   budget_usd: number
   spent_reported_usd: number
   default_run_budget_usd: number

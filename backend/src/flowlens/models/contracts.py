@@ -121,6 +121,12 @@ class Run(BaseModel):
     # runs against different builds are never confused; never sent to agents.
     target_build: str | None = None
     fault_injection: FaultInjection | None = None
+    # "fixture": an origin configured in FLOWLENS_ALLOWED_ORIGINS, with harness workspaces for test data.
+    # "website": an origin approved in the launcher; generic fresh browser contexts, no server-side isolation.
+    target_profile: Literal["fixture", "website"] = "fixture"
+    # Origins this run may load, fixed at creation and enforced by the engine (navigations and redirects).
+    # Empty on runs made before this field existed: those used the configured origins.
+    scope_origins: list[str] = Field(default_factory=list)
     status: RunStatus = RunStatus.queued
     stop_reason: str | None = None
     provenance: Provenance = Field(default_factory=Provenance)
@@ -187,6 +193,22 @@ class FillAction(BaseModel):
     value: str = Field(max_length=2000)
 
 
+class PressAction(BaseModel):
+    """Press a key while a control has focus (e.g. Enter to submit a field that has no button)."""
+
+    type: Literal["press"] = "press"
+    element_id: str = Field(pattern=r"^e\d{1,4}$")
+    key: Literal["Enter"] = "Enter"
+
+
+class CheckAction(BaseModel):
+    """Set a checkbox or switch to a given state."""
+
+    type: Literal["check"] = "check"
+    element_id: str = Field(pattern=r"^e\d{1,4}$")
+    checked: bool = True
+
+
 class NavigateAction(BaseModel):
     type: Literal["navigate"] = "navigate"
     url: str = Field(max_length=2000)
@@ -201,7 +223,7 @@ class InspectAction(BaseModel):
 
 
 BrowserAction = Annotated[
-    ClickAction | FillAction | NavigateAction | ReloadAction | InspectAction,
+    ClickAction | FillAction | PressAction | CheckAction | NavigateAction | ReloadAction | InspectAction,
     Field(discriminator="type"),
 ]
 
@@ -219,6 +241,10 @@ class ObservedElement(BaseModel):
     form_index: int | None = None  # index of the enclosing <form> in this observation
     # Browser constraint-validation message shown after user interaction, if any.
     validation_message: str | None = None
+    checked: bool | None = None  # checkboxes, radios and switches only
+    # Text of the enclosing list item or row, set only when another control shares this role and name
+    # (e.g. one "Toggle Todo" checkbox per todo), so the control can be told apart by meaning.
+    context: str | None = None
 
 
 class Observation(BaseModel):
@@ -268,16 +294,19 @@ class ControlRef(BaseModel):
     role: str = Field(max_length=40)
     name: str = Field(max_length=160)
     input_type: str | None = Field(None, max_length=30)
+    context: str | None = Field(None, max_length=160)  # enclosing item text, for same-named controls
 
     def describe(self) -> str:
-        return f"{self.role} '{self.name}'"
+        return f"{self.role} '{self.name}'" + (f" in '{self.context}'" if self.context else "")
 
 
 class SemanticStep(BaseModel):
-    type: Literal["navigate", "reload", "click", "fill"]
+    type: Literal["navigate", "reload", "click", "fill", "press", "check"]
     path: str | None = None  # navigate: path + query relative to the target origin
     control: ControlRef | None = None
     value: str | None = None  # fill value (synthetic test data only, never secrets)
+    key: str | None = None  # press
+    checked: bool | None = None  # check
 
     def describe(self) -> str:
         if self.type == "navigate":
@@ -286,6 +315,10 @@ class SemanticStep(BaseModel):
             return "reload"
         if self.type == "fill":
             return f"fill {self.control.describe() if self.control else '?'} = {self.value!r}"
+        if self.type == "press":
+            return f"press {self.key} in {self.control.describe() if self.control else '?'}"
+        if self.type == "check":
+            return f"{'check' if self.checked else 'uncheck'} {self.control.describe() if self.control else '?'}"
         return f"click {self.control.describe() if self.control else '?'}"
 
 

@@ -63,9 +63,29 @@ class Store:
                 )
                 c.execute(f"CREATE INDEX IF NOT EXISTS ix_{table}_run ON {table}(run_id)")
             c.execute(
+                "CREATE TABLE IF NOT EXISTS approved_origins ("
+                "origin TEXT PRIMARY KEY, approved_at TEXT NOT NULL, note TEXT)"
+            )
+            c.execute(
                 "CREATE TABLE IF NOT EXISTS events ("
                 "seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT NOT NULL, data TEXT NOT NULL)"
             )
+
+    # --- Origins approved in the launcher (in addition to FLOWLENS_ALLOWED_ORIGINS) ---
+
+    def approve_origin(self, origin: str, approved_at: str, note: str | None = None) -> None:
+        with self._conn() as c:
+            c.execute("INSERT OR REPLACE INTO approved_origins (origin, approved_at, note) VALUES (?, ?, ?)",
+                      (origin, approved_at, note))
+
+    def revoke_origin(self, origin: str) -> bool:
+        with self._conn() as c:
+            return c.execute("DELETE FROM approved_origins WHERE origin = ?", (origin,)).rowcount > 0
+
+    def approved_origins(self) -> list[dict]:
+        with self._conn() as c:
+            rows = c.execute("SELECT origin, approved_at FROM approved_origins ORDER BY approved_at").fetchall()
+        return [{"origin": o, "approved_at": t} for o, t in rows]
 
     @contextmanager
     def _conn(self) -> Iterator[sqlite3.Connection]:

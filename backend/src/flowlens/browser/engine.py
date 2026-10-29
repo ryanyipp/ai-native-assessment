@@ -19,6 +19,7 @@ from playwright.async_api import Browser, BrowserContext, Page, async_playwright
 from playwright.async_api import Error as PlaywrightError
 
 from flowlens.models.contracts import (
+    CheckAction,
     ClickAction,
     ControlRef,
     FillAction,
@@ -26,6 +27,7 @@ from flowlens.models.contracts import (
     NavigateAction,
     Observation,
     ObservedElement,
+    PressAction,
     ReloadAction,
 )
 
@@ -90,7 +92,18 @@ _INSPECT_JS = r"""
       form_index: el.form ? forms.indexOf(el.form) : null,
       validation_message: (isField && (userInvalid(el) || el.getAttribute('aria-invalid') === 'true'))
         ? (clean(el.validationMessage) || 'invalid') : null,
+      checked: (tag === 'input' && ['checkbox','radio'].includes(el.type)) ? !!el.checked
+        : (['checkbox','switch','radio'].includes(el.getAttribute('role') || '') ? el.getAttribute('aria-checked') === 'true' : null),
+      _el: el,
     });
+  }
+  // Same role and name more than once (one "Toggle Todo" per row): add the enclosing item's text.
+  const count = {};
+  for (const o of out) { const k = o.role + '|' + o.name; count[k] = (count[k] || 0) + 1; }
+  for (const o of out) {
+    const item = count[o.role + '|' + o.name] > 1 ? o._el.closest('li, tr, [role=row], [role=listitem], [role=option]') : null;
+    o.context = item ? (clean(item.innerText) || null) : null;
+    delete o._el;
   }
   const headings = [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(h => clean(h.innerText)).slice(0, 12);
   const status = [...document.querySelectorAll('[role=status],[role=alert],[aria-live]')]
@@ -120,6 +133,7 @@ def resolve_control(obs: Observation, control: ControlRef) -> ObservedElement:
         e for e in obs.elements
         if _norm(e.role) == _norm(control.role) and _norm(e.name) == _norm(control.name)
         and (control.input_type is None or (e.input_type or None) == control.input_type)
+        and (control.context is None or _norm(e.context or "") == _norm(control.context))
     ]
     if not matches:
         raise ControlResolutionError(f"no {control.describe()} in the current page ({obs.url})")
@@ -130,7 +144,7 @@ def resolve_control(obs: Observation, control: ControlRef) -> ObservedElement:
 
 
 def control_of(el: ObservedElement) -> ControlRef:
-    return ControlRef(role=el.role, name=el.name, input_type=el.input_type)
+    return ControlRef(role=el.role, name=el.name, input_type=el.input_type, context=el.context)
 
 
 @dataclass
@@ -170,7 +184,9 @@ def state_signature(obs: Observation) -> tuple[str, str]:
     """
     route = normalise_route(obs.url)
     controls = sorted(
-        f"{e.role}:{e.name}" + (f":{'filled' if e.value else 'empty'}" if e.value is not None else "")
+        f"{e.role}:{e.name}"
+        + (f":{'checked' if e.checked else 'unchecked'}" if e.checked is not None
+           else f":{'filled' if e.value else 'empty'}" if e.value is not None else "")
         for e in obs.elements
     )
     raw = "|".join([route, ";".join(obs.headings), ";".join(controls), ";".join(sorted(obs.status_messages))])
@@ -214,6 +230,31 @@ class BrowserEngine:
         self.context: BrowserContext | None = None
         self.page: Page | None = None
         self.last_observation: Observation | None = None
+        # Main-frame navigations (including each redirect hop) that left the allowed origins.
+        self._escapes: list[str] = []
+
+    def in_scope(self, url: str) -> bool:
+        return origin_of(url) in self.allowed_origins
+
+    @staticmethod
+    def _main_navigation(request) -> bool:
+        try:
+            return request.is_navigation_request() and request.frame.parent_frame is None
+        except PlaywrightError:
+            return False
+
+    def _on_request(self, request) -> None:
+        if self._main_navigation(request) and request.url.startswith("http") and not self.in_scope(request.url):
+            self._escapes.append(request.url)
+
+    async def _guard_route(self, route) -> None:
+        """Refuse main-frame document requests to other origins before they are sent."""
+        req = route.request
+        if self._main_navigation(req) and req.url.startswith("http") and not self.in_scope(req.url):
+            self._escapes.append(req.url)
+            await route.abort("blockedbyclient")
+        else:
+            await route.fallback()
 
     async def __aenter__(self) -> BrowserEngine:
         self._pw = await async_playwright().start()
@@ -224,6 +265,10 @@ class BrowserEngine:
         )
         if self.cookies:
             await self.context.add_cookies(self.cookies)
+        # Scope is enforced for every main-frame navigation: before it is sent (route), and for
+        # redirect hops, which are followed without routing (request events + a final URL check).
+        await self.context.route("**/*", self._guard_route)
+        self.context.on("request", self._on_request)
         self.page = await self.context.new_page()
         self.page.set_default_timeout(ACTION_TIMEOUT_MS)
         return self
@@ -279,6 +324,8 @@ class BrowserEngine:
         tab = await self.context.new_page()
         try:
             await tab.goto(url, wait_until="load", timeout=NAV_TIMEOUT_MS)
+            if not self.in_scope(tab.url):
+                raise ActionRejected(f"check page redirected out of scope to {origin_of(tab.url)}")
             obs = await self._read(tab)
             png = await tab.screenshot(full_page=True)
         finally:
@@ -307,6 +354,7 @@ class BrowserEngine:
         target_el = None
         target_box = None
         error = None
+        self._escapes.clear()
         try:
             if isinstance(action, InspectAction):
                 pass
@@ -319,7 +367,7 @@ class BrowserEngine:
                 await page.goto(url, wait_until="load", timeout=NAV_TIMEOUT_MS)
             elif isinstance(action, ReloadAction):
                 await page.reload(wait_until="load", timeout=NAV_TIMEOUT_MS)
-            elif isinstance(action, (ClickAction, FillAction)):
+            elif isinstance(action, (ClickAction, FillAction, PressAction, CheckAction)):
                 el = self._element(action.element_id)
                 target_el = el
                 target = f"{el.role} '{el.name}'"
@@ -328,7 +376,24 @@ class BrowserEngine:
                 if isinstance(action, FillAction):
                     if el.role not in ("textbox", "combobox", "searchbox") and el.tag not in ("input", "textarea"):
                         raise ActionRejected(f"element {action.element_id} ({el.role}) is not fillable")
+                    if el.checked is not None:
+                        raise ActionRejected(f"element {action.element_id} is a checkbox; use check")
                     await loc.fill(action.value)
+                elif isinstance(action, CheckAction):
+                    if el.checked is None:
+                        raise ActionRejected(f"element {action.element_id} ({el.role}) is not a checkbox or switch")
+                    if el.context:
+                        target += f" in '{el.context}'"
+                    # A click, not set_checked: many apps re-render the row on change, so Playwright's
+                    # post-click check of the same element fails. The next observation shows the result.
+                    if el.checked != action.checked:
+                        await loc.click()
+                elif isinstance(action, PressAction):
+                    await loc.press(action.key)
+                    try:
+                        await page.wait_for_load_state("load", timeout=NAV_TIMEOUT_MS)
+                    except PlaywrightError:
+                        pass
                 else:
                     if el.href and not el.href.startswith("#"):
                         self.check_origin(urljoin(url_before, el.href))
@@ -343,10 +408,21 @@ class BrowserEngine:
             error = f"rejected: {e}"
         except PlaywrightError as e:
             error = f"browser error: {str(e).splitlines()[0][:300]}"
-        # Guard against a click that escaped to a disallowed origin.
-        if origin_of(page.url) not in self.allowed_origins and page.url != "about:blank":
-            error = (error or "") + f" left allowed origins ({origin_of(page.url)}); returned"
-            await page.go_back()
+        if isinstance(action, (ClickAction, PressAction, CheckAction)) and error is None:
+            await self._settle()
+        # Guard against any navigation or redirect that left the approved scope. Nothing from an
+        # out-of-scope page is observed or captured: go back, or to a blank page if that fails.
+        off_page = not self.in_scope(page.url) and page.url != "about:blank"
+        if off_page or self._escapes:
+            where = origin_of(self._escapes[0] if self._escapes else page.url)
+            error = (f"{error}; " if error else "") + f"rejected: left the approved scope ({where}); blocked"
+            if off_page:
+                try:
+                    await page.go_back(wait_until="load", timeout=NAV_TIMEOUT_MS)
+                except PlaywrightError:
+                    pass
+                if not self.in_scope(page.url):
+                    await page.goto("about:blank")
         duration_ms = int((time.perf_counter() - t0) * 1000)
         obs = await self.observe()
         png = await page.screenshot(full_page=True)
@@ -363,6 +439,14 @@ class BrowserEngine:
             target_element=target_el,
             target_box=target_box,
         )
+
+    async def _settle(self) -> None:
+        """Let single-page apps finish re-rendering (hashchange, state updates) before observing."""
+        try:
+            await self.page.evaluate(
+                "() => new Promise(r => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(r)), 30))")
+        except PlaywrightError:
+            pass
 
     async def _page_box(self, loc) -> dict | None:
         """Bounds in full-page coordinates (viewport box + scroll), or None if not measurable."""

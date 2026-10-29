@@ -46,3 +46,28 @@ class WorkspaceProvider:
             context_id=f"{label}:{ws}",
             cookies=[{"name": cookie, "value": ws, "domain": host, "path": "/"}],
         )
+
+
+class FreshContextProvider:
+    """Generic website sessions: a new, empty browser context per execution and nothing else.
+
+    Cookies, local storage and cache start empty in every context, so client-side data is
+    separated between workers. Data held by the website's own server is NOT isolated: other
+    workers, earlier runs and other people using the site may see or change it.
+    """
+
+    isolation = ("fresh browser context per execution (client-side storage only); "
+                 "the website's server-side data is shared and not isolated")
+
+    def provision(self, origin: str, label: str) -> TestDataContext:
+        return TestDataContext(context_id=f"{label}:fresh-context", cookies=[])
+
+
+WorkspaceProvider.isolation = "fresh browser context and a newly provisioned fixture workspace per execution"
+
+
+def session_provider(run, settings) -> WorkspaceProvider | FreshContextProvider:
+    """Fixture targets get harness workspaces; approved public websites get plain fresh contexts."""
+    if getattr(run, "target_profile", "fixture") == "website":
+        return FreshContextProvider()
+    return WorkspaceProvider(settings.flowlens_workspace_endpoint, settings.flowlens_workspace_cookie)

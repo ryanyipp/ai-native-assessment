@@ -1,4 +1,4 @@
-import { Camera, KeyRound, Play, X } from 'lucide-react'
+import { Camera, Globe, KeyRound, Play, ShieldCheck, X } from 'lucide-react'
 import { useId, useState, type ReactNode } from 'react'
 import { Button, Callout } from '../../components/ui'
 import { cx } from '../../lib/ui-utils'
@@ -46,15 +46,21 @@ const inputCls = (err?: string) =>
   )
 
 /** Persistent run-settings panel (pre-run). The main area beside it shows the browser preview. */
-export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose }: {
+export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose, targetUrl, onTargetUrl, onApproved }: {
   health: Health | null
+  targetUrl: string
+  onTargetUrl: (url: string) => void
+  onApproved: () => void
   onCreated: (run: Run) => void
   onPreview: (url: string) => void
   previewBusy: boolean
   onClose?: () => void
 }) {
   const uid = useId()
-  const [targetUrl, setTargetUrl] = useState('http://localhost:5174/')
+  const setTargetUrl = onTargetUrl
+  const [ack, setAck] = useState(false)
+  const [approving, setApproving] = useState(false)
+  const [approveError, setApproveError] = useState<string | null>(null)
   const [goal, setGoal] = useState(DEFAULT_GOAL)
   const [requirements, setRequirements] = useState('')
   const [injectStall, setInjectStall] = useState(false)
@@ -69,11 +75,14 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
   const [apiError, setApiError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const allowed = health?.allowed_origins.map((o) => o.toLowerCase()) ?? []
+  const configured = health?.allowed_origins.map((o) => o.toLowerCase()) ?? []
+  const approved = health?.approved_origins?.map((o) => o.toLowerCase()) ?? []
   const origin = originOf(targetUrl)
+  const profile = origin && configured.includes(origin) ? 'fixture' : origin && approved.includes(origin) ? 'website' : null
+  const needsApproval = !!health && !!origin && /^https?:/.test(targetUrl) && profile === null
   const errors: Partial<Record<'url' | 'goal' | LimitKey, string>> = {}
   if (!origin || !/^https?:/.test(targetUrl)) errors.url = 'Enter a full http:// or https:// URL.'
-  else if (health && !allowed.includes(origin)) errors.url = `${origin} is not an allowed target. Allowed: ${allowed.join(', ')}. Change FLOWLENS_ALLOWED_ORIGINS in .env to add one.`
+  else if (needsApproval) errors.url = `${origin} is not approved yet. Approve it below to preview it or start a run.`
   if (goal.trim().length < 5) errors.goal = 'Describe the goal in at least 5 characters.'
   else if (goal.length > 2000) errors.goal = 'Keep the goal under 2,000 characters.'
   for (const k of Object.keys(LIMITS) as LimitKey[]) {
@@ -84,6 +93,31 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
   const remaining = health ? Math.max(0, health.budget_usd - health.spent_reported_usd) : null
   const canRun = !!health?.api_key_configured
   const show = (k: keyof typeof errors) => (touched ? errors[k] : undefined)
+
+  async function approve() {
+    if (!origin) return
+    setApproving(true)
+    setApproveError(null)
+    try {
+      await api.approveOrigin(targetUrl.trim())
+      setAck(false)
+      onApproved()
+    } catch (err) {
+      setApproveError((err as Error).message)
+    } finally {
+      setApproving(false)
+    }
+  }
+
+  async function revoke() {
+    if (!origin) return
+    try {
+      await api.revokeOrigin(origin)
+      onApproved()
+    } catch (err) {
+      setApproveError((err as Error).message)
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -124,11 +158,39 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             )}
           </div>
           <form id={`${uid}-form`} onSubmit={submit} noValidate className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            <FormField id={`${uid}-url`} label="Target website" error={show('url')} hint="Only authorised local or staging origins are accepted.">
+            <FormField id={`${uid}-url`} label="Target website" error={needsApproval ? undefined : show('url')}
+              hint={profile === 'fixture' ? 'Configured fixture origin: each worker gets its own test-data workspace.'
+                : profile === 'website' ? 'Approved website: fresh browser context per worker; the site\'s server data is shared.'
+                : 'Only origins configured in .env or approved here are accepted.'}>
               <input id={`${uid}-url`} className={cx(inputCls(show('url')), 'font-mono text-[13px]')} value={targetUrl} inputMode="url" autoComplete="off" spellCheck={false}
                 aria-invalid={!!show('url')} aria-describedby={show('url') ? `${uid}-url-err` : `${uid}-url-hint`}
-                onChange={(e) => setTargetUrl(e.target.value)} />
+                onChange={(e) => { setTargetUrl(e.target.value); setAck(false); setApproveError(null) }} />
             </FormField>
+            {needsApproval && (
+              <div className="space-y-2 rounded-lg border border-amber-300 bg-amber-50/60 px-3 py-2.5 text-[13px]" role="group" aria-label="Approve target origin">
+                <p className="flex items-center gap-1.5 font-medium text-slate-900"><Globe size={14} aria-hidden />Approve <code className="font-mono">{origin}</code>?</p>
+                <ul className="list-disc space-y-0.5 pl-5 text-xs text-slate-700">
+                  <li>Previews and runs may load pages on this origin only. Links or redirects to any other origin are blocked and not captured.</li>
+                  <li>Agents act on the real site: typing, clicking and submitting are real. Use only a site you are authorised to test.</li>
+                  <li>Each worker gets a fresh browser context (empty cookies and storage). Data the site stores on its server is not isolated
+                    and may be shared with other workers, earlier runs and other people.</li>
+                </ul>
+                <label className="flex items-start gap-2 text-xs text-slate-800">
+                  <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} className="mt-0.5" />
+                  I am authorised to test this site and understand that its server data is not isolated.
+                </label>
+                {approveError && <p className="text-xs text-red-700">{approveError}</p>}
+                <Button type="button" size="sm" disabled={!ack || approving} onClick={approve}>
+                  <ShieldCheck size={13} aria-hidden />{approving ? 'Approving…' : 'Approve this origin'}
+                </Button>
+              </div>
+            )}
+            {profile === 'website' && (
+              <p className="-mt-2 text-xs text-slate-500">
+                <code className="font-mono">{origin}</code> was approved in the launcher.{' '}
+                <button type="button" className="underline hover:text-slate-800" onClick={revoke}>Revoke approval</button>
+              </p>
+            )}
             <FormField id={`${uid}-goal`} label="Review goal" error={show('goal')}>
               <textarea id={`${uid}-goal`} className={inputCls(show('goal'))} rows={3} value={goal}
                 aria-invalid={!!show('goal')} aria-describedby={show('goal') ? `${uid}-goal-err` : undefined}
@@ -203,10 +265,11 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             {apiError && <Callout tone="red" title="The server rejected the run">{apiError}</Callout>}
           </form>
           <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-5 py-3">
-            <Button type="button" disabled={previewBusy || !!errors.url} onClick={() => { setTouched(true); if (!errors.url) onPreview(targetUrl.trim()) }}>
+            <Button type="button" disabled={previewBusy || !!errors.url} onClick={() => { setTouched(true); if (!errors.url) onPreview(targetUrl.trim()) }}
+              title={needsApproval ? 'Approve the origin first' : undefined}>
               <Camera size={14} aria-hidden /> {previewBusy ? 'Capturing…' : 'Preview page'}
             </Button>
-            <Button variant="primary" type="submit" form={`${uid}-form`} disabled={busy || !canRun}>
+            <Button variant="primary" type="submit" form={`${uid}-form`} disabled={busy || !canRun || needsApproval}>
               <Play size={14} aria-hidden /> {busy ? 'Starting…' : 'Start live run'}
             </Button>
           </div>

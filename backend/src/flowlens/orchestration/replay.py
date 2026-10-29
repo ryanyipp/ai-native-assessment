@@ -12,9 +12,11 @@ from dataclasses import dataclass
 
 from flowlens.browser.engine import BrowserEngine, ControlResolutionError, Execution, resolve_control, state_signature
 from flowlens.models.contracts import (
+    CheckAction,
     ClickAction,
     FillAction,
     NavigateAction,
+    PressAction,
     ReloadAction,
     SemanticStep,
     SetupRecipe,
@@ -41,8 +43,14 @@ async def execute_step(eng: BrowserEngine, origin: str, step: SemanticStep) -> t
         assert step.control is not None
         obs = eng.last_observation or await eng.observe()
         el = resolve_control(obs, step.control)
-        action = (FillAction(element_id=el.id, value=step.value or "") if step.type == "fill"
-                  else ClickAction(element_id=el.id))
+        if step.type == "fill":
+            action = FillAction(element_id=el.id, value=step.value or "")
+        elif step.type == "press":
+            action = PressAction(element_id=el.id, key=step.key or "Enter")
+        elif step.type == "check":
+            action = CheckAction(element_id=el.id, checked=step.checked is not False)
+        else:
+            action = ClickAction(element_id=el.id)
     return action.model_dump(), await eng.execute(action)
 
 

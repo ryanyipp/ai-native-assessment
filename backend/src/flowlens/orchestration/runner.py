@@ -63,6 +63,10 @@ def _action_label(action: dict[str, Any], target: str | None) -> str:
         return f"fill {target or action.get('element_id')} = \"{v[:40]}\""
     if t == "click":
         return f"click {target or action.get('element_id')}"
+    if t == "press":
+        return f"press {action.get('key', 'Enter')} in {target or action.get('element_id')}"
+    if t == "check":
+        return f"{'check' if action.get('checked', True) else 'uncheck'} {target or action.get('element_id')}"
     if t == "navigate":
         return f"navigate {action.get('url')}"
     return str(t)
@@ -80,7 +84,8 @@ def _state_summary(obs) -> str:
 
 def relative_path(url: str) -> str:
     s = urlsplit(url)
-    return (s.path or "/") + (f"?{s.query}" if s.query else "")
+    # The fragment is kept: single-page apps route on it (e.g. a "#/active" filter).
+    return (s.path or "/") + (f"?{s.query}" if s.query else "") + (f"#{s.fragment}" if s.fragment else "")
 
 
 def semantic_step(action: dict[str, Any], ex: Execution) -> SemanticStep | None:
@@ -90,9 +95,11 @@ def semantic_step(action: dict[str, Any], ex: Execution) -> SemanticStep | None:
         return SemanticStep(type="navigate", path=relative_path(ex.url_after if ex.ok else action["url"]))
     if t == "reload":
         return SemanticStep(type="reload")
-    if t in ("click", "fill") and ex.target_element is not None:
+    if t in ("click", "fill", "press", "check") and ex.target_element is not None:
         return SemanticStep(type=t, control=control_of(ex.target_element),
-                            value=action.get("value") if t == "fill" else None)
+                            value=action.get("value") if t == "fill" else None,
+                            key=action.get("key") if t == "press" else None,
+                            checked=action.get("checked") if t == "check" else None)
     return None
 
 
@@ -240,6 +247,11 @@ class ExplorerRun:
         return target
 
     explore_context_id = "explorer-a:default"
+
+    @property
+    def scope_origins(self) -> list[str]:
+        """Origins the engine may load for this run (recorded at creation; older runs: configured origins)."""
+        return self.run.scope_origins or self.settings.allowed_origins
 
     def explore_cookies(self) -> list[dict]:
         """Hook: the single-agent baseline explores in a fresh workspace, like queue explorers."""
@@ -470,7 +482,7 @@ class ExplorerRun:
         invalid_streak = 0
         note = None
         saw_successful_click = False
-        async with BrowserEngine(self.settings.allowed_origins, self.settings.flowlens_headless,
+        async with BrowserEngine(self.scope_origins, self.settings.flowlens_headless,
                                  self.settings.flowlens_test_session_path or None,
                                  cookies=self.explore_cookies()) as eng:
             start = NavigateAction(url=run.target_url)

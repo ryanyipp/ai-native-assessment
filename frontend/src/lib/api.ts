@@ -45,6 +45,12 @@ export const api = {
   health: () => request<Health>('/api/health'),
   listRuns: () => request<Run[]>('/api/runs'),
   getRun: (id: string) => request<RunDetail>(`/api/runs/${encodeURIComponent(id)}`),
+  approveOrigin: (url: string) =>
+    request<{ origin: string; profile: 'fixture' | 'website'; already_configured: boolean }>('/api/origins', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }),
+    }),
+  revokeOrigin: (origin: string) =>
+    request<{ origin: string; revoked: boolean }>(`/api/origins?origin=${encodeURIComponent(origin)}`, { method: 'DELETE' }),
   preview: (url: string) =>
     request<PagePreview>('/api/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) }),
   createRun: (body: { target_url: string; goal: string; requirements: string[]; limits?: Partial<Run['limits']>; mode?: 'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'; fault_injection?: { worker: string; task_type: string; stall_s: number } }) =>

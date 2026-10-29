@@ -22,6 +22,10 @@ import type { Health, Run, RunDetail } from './lib/types'
 const ACTIVE = new Set(['queued', 'running'])
 type Tab = 'browser' | 'evidence' | 'activity' | 'findings'
 
+function originOf(url: string) {
+  try { return new URL(url).origin.toLowerCase() } catch { return null }
+}
+
 const STOPPED = new Set(['failed', 'partial', 'interrupted'])
 
 const MODE_LABEL: Record<string, string> = {
@@ -41,6 +45,11 @@ function RunHeader({ detail }: { detail: RunDetail }) {
         <span className="truncate">{shortUrl(r.target_url)}</span><ExternalLink size={11} aria-hidden className="shrink-0" />
       </a>
       <StatusBadge status={r.status} withTooltip />
+      {r.target_profile === 'website' && (
+        <Tooltip content={`Public website approved in the launcher. Allowed origin: ${(r.scope_origins ?? []).join(', ')}. Each worker used a fresh browser context; the site's server data is not isolated.`}>
+          <span tabIndex={0} className="inline-flex"><Badge tone="blue">Public website</Badge></span>
+        </Tooltip>
+      )}
       {r.fault_injection && (
         <Tooltip content={`Evaluation fault: ${r.fault_injection.worker} stalls ${r.fault_injection.stall_s}s after claiming a ${r.fault_injection.task_type} task. Recovery events in Activity are real coordinator behaviour.`}>
           <span tabIndex={0} className="inline-flex"><Badge tone="amber">Injected fault</Badge></span>
@@ -55,6 +64,12 @@ function RunHeader({ detail }: { detail: RunDetail }) {
           <dl className="grid grid-cols-[7rem_minmax(0,1fr)] gap-x-3 gap-y-1.5">
             <dt className="text-slate-500">Run</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.id}</dd>
             <dt className="text-slate-500">Workflow</dt><dd>{MODE_LABEL[r.mode] ?? r.mode}</dd>
+            <dt className="text-slate-500">Sessions</dt>
+            <dd>{r.target_profile === 'website'
+              ? "Fresh browser context per worker; the website's server data is shared, not isolated"
+              : 'Fixture: fresh browser context and test-data workspace per worker'}</dd>
+            {r.scope_origins && r.scope_origins.length > 0 && (<><dt className="text-slate-500">Allowed origins</dt>
+              <dd className="font-mono [overflow-wrap:anywhere]">{r.scope_origins.join(', ')}</dd></>)}
             <dt className="text-slate-500">Provenance</dt><dd><ProvenanceBadge run={r} /></dd>
             <dt className="text-slate-500">Model</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.model}</dd>
             <dt className="text-slate-500">Usage</dt>
@@ -138,11 +153,25 @@ export default function App() {
     }
   }, [runId, refreshRuns, reloadKey])
 
+  // Only the latest capture may fill the preview: an older one finishing late is dropped.
+  const captureSeq = useRef(0)
   const capture = useCallback((url: string) => {
+    const seq = ++captureSeq.current
     setPreview({ kind: 'loading', url })
     api.preview(url)
-      .then((data) => setPreview({ kind: 'ready', data }))
-      .catch((e: Error) => setPreview({ kind: 'error', url, message: e.message }))
+      .then((data) => { if (seq === captureSeq.current) setPreview({ kind: 'ready', data }) })
+      .catch((e: Error) => { if (seq === captureSeq.current) setPreview({ kind: 'error', url, message: e.message }) })
+  }, [])
+  const [launcherUrl, setLauncherUrl] = useState('http://localhost:5174/')
+  const changeTarget = useCallback((url: string) => {
+    setLauncherUrl(url)
+    // A different origin clears the old screenshot (and drops a capture in flight); same origin marks it out of date.
+    setPreview((p) => {
+      const was = p.kind === 'ready' ? p.data.requested_url : p.kind === 'idle' ? null : p.url
+      if (was == null || originOf(was) === originOf(url)) return p
+      captureSeq.current++
+      return { kind: 'idle', cleared: was }
+    })
   }, [])
 
   const openRun = useCallback((id: string) => {
@@ -252,11 +281,11 @@ export default function App() {
             {setupOpen || !runId ? (
               <div className="flex min-h-0 flex-1 max-lg:flex-col">
                 <RunLauncher health={health} previewBusy={preview.kind === 'loading'} onPreview={capture}
+                  targetUrl={launcherUrl} onTargetUrl={changeTarget} onApproved={refreshRuns}
                   onClose={runId ? () => setSetupOpen(false) : undefined}
                   onCreated={(r) => { refreshRuns(); setTab('browser'); openRun(r.id) }} />
                 <div className="min-h-0 min-w-0 flex-1 max-lg:min-h-[50vh]">
-                  <PagePreview state={preview} onRefresh={() => preview.kind !== 'idle' && capture(
-                    preview.kind === 'ready' ? preview.data.requested_url : preview.url)} />
+                  <PagePreview state={preview} currentUrl={launcherUrl} onRefresh={() => preview.kind !== 'idle' && capture(launcherUrl.trim())} />
                 </div>
               </div>
             ) : detailError && !detail ? (

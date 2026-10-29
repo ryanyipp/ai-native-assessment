@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
@@ -24,6 +25,78 @@ from flowlens.services.llm import OpenRouterClient
 router = APIRouter(prefix="/api")
 
 
+def normalise_origin(url: str) -> str:
+    """scheme://host[:port] for an http(s) URL; raises ValueError for anything else."""
+    try:
+        u = urlsplit(url.strip())
+        port = u.port
+    except ValueError as e:
+        raise ValueError(f"not a valid URL: {e}") from e
+    if u.scheme not in ("http", "https") or not u.hostname:
+        raise ValueError("only http and https URLs with a host can be approved")
+    if u.username or u.password:
+        raise ValueError("URLs with embedded credentials cannot be approved")
+    host = u.hostname.lower()
+    if ":" in host:
+        host = f"[{host}]"
+    default = {"http": 80, "https": 443}[u.scheme]
+    return f"{u.scheme}://{host}" + (f":{port}" if port and port != default else "")
+
+
+def fixture_origins(s) -> set[str]:
+    return {o.lower() for o in s.allowed_origins}
+
+
+def scope_for(origin: str, s, store) -> tuple[str, list[str]] | None:
+    """(profile, origins the engine may load) for a target origin, or None if it is not approved.
+
+    Configured fixture origins keep their workspace setup and shared scope. A launcher-approved
+    website may load only its own origin; other origins, including redirect targets, are refused.
+    """
+    if origin in fixture_origins(s):
+        return "fixture", s.allowed_origins
+    if origin in {a["origin"] for a in store.approved_origins()}:
+        return "website", [origin]
+    return None
+
+
+class OriginApproval(BaseModel):
+    url: str = Field(max_length=2000)
+
+
+@router.get("/origins")
+def list_origins(request: Request):
+    s, store = request.app.state.settings, request.app.state.store
+    return {"configured": s.allowed_origins, "approved": store.approved_origins()}
+
+
+@router.post("/origins", status_code=201)
+def approve_origin(body: OriginApproval, request: Request):
+    """Approve one origin for preview and runs. Stored in the database; .env is not changed."""
+    s, store = request.app.state.settings, request.app.state.store
+    try:
+        origin = normalise_origin(body.url)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    if origin in fixture_origins(s):
+        return {"origin": origin, "profile": "fixture", "already_configured": True}
+    store.approve_origin(origin, utcnow().isoformat())
+    return {"origin": origin, "profile": "website", "already_configured": False}
+
+
+@router.delete("/origins")
+def revoke_origin(origin: str, request: Request):
+    """Revoke a launcher approval. Runs already started keep the scope recorded at creation."""
+    s, store = request.app.state.settings, request.app.state.store
+    try:
+        o = normalise_origin(origin)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    if o in fixture_origins(s):
+        raise HTTPException(400, "configured fixture origins are set in FLOWLENS_ALLOWED_ORIGINS")
+    return {"origin": o, "revoked": store.revoke_origin(o)}
+
+
 @router.get("/health")
 def health(request: Request):
     s = request.app.state.settings
@@ -33,6 +106,7 @@ def health(request: Request):
         "model": s.openrouter_model,
         "api_key_configured": s.has_api_key,
         "allowed_origins": s.allowed_origins,
+        "approved_origins": [a["origin"] for a in store.approved_origins()],
         "budget_usd": s.flowlens_budget_usd,
         "spent_reported_usd": round(store.total_reported_cost(), 6),
         "default_run_budget_usd": s.flowlens_run_budget_usd,
@@ -45,8 +119,13 @@ def create_run(body: RunCreate, request: Request):
     s = request.app.state.settings
     store = request.app.state.store
     target = str(body.target_url)
-    if origin_of(target) not in {o.lower() for o in s.allowed_origins}:
-        raise HTTPException(400, f"target origin {origin_of(target)} is not in FLOWLENS_ALLOWED_ORIGINS")
+    try:
+        scope = scope_for(normalise_origin(target), s, store)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    if scope is None:
+        raise HTTPException(400, f"target origin {origin_of(target)} is not approved; approve it in the launcher first")
+    profile, scope_origins = scope
     try:
         check_code_current()
     except StaleCodeError as e:
@@ -66,7 +145,8 @@ def create_run(body: RunCreate, request: Request):
         target_url=target, goal=body.goal, requirements=body.requirements, model=llm.model,
         limits=limits, mode=body.mode,
         fault_injection=body.fault_injection,
-        provenance=Provenance(live=not llm.is_mock, mocked_model=llm.is_mock, synthetic_fixture=True,
+        target_profile=profile, scope_origins=scope_origins,
+        provenance=Provenance(live=not llm.is_mock, mocked_model=llm.is_mock, synthetic_fixture=profile == "fixture",
                               injected_failure=body.fault_injection is not None),
     )
     store.put(run)
@@ -78,19 +158,24 @@ class PreviewRequest(BaseModel):
     url: str = Field(max_length=2000)
 
 
-def _capture(url: str, settings) -> dict:
+def _capture(url: str, settings, scope: list[str], profile: str) -> dict:
     """One static screenshot in a throwaway browser context (own thread and loop; Playwright on Windows)."""
 
     async def go():
-        async with BrowserEngine(settings.allowed_origins, settings.flowlens_headless) as eng:
+        async with BrowserEngine(scope, settings.flowlens_headless) as eng:
             ex = await eng.execute(NavigateAction(url=url))
             return ex
 
     ex = asyncio.run(go())
-    return {"ok": ex.ok, "error": ex.error, "requested_url": url, "final_url": ex.url_after,
-            "title": ex.observation.title, "headings": ex.observation.headings,
+    left_scope = bool(ex.error and "approved scope" in ex.error)
+    return {"ok": ex.ok, "error": ex.error, "requested_url": url,
+            "final_url": None if left_scope else ex.url_after,
+            "title": None if left_scope else ex.observation.title,
+            "headings": [] if left_scope else ex.observation.headings,
             "captured_at": utcnow().isoformat(), "viewport": {"width": 1280, "height": 800},
-            "image_png_base64": base64.b64encode(ex.screenshot_png).decode()}
+            "profile": profile,
+            # Nothing from outside the approved scope is captured or returned.
+            "image_png_base64": None if left_scope else base64.b64encode(ex.screenshot_png).decode()}
 
 
 @router.post("/preview")
@@ -100,10 +185,15 @@ async def preview(body: PreviewRequest, request: Request):
     Uses a fresh browser context with no test session and no workspace; nothing is stored.
     """
     s = request.app.state.settings
-    if origin_of(body.url) not in {o.lower() for o in s.allowed_origins}:
-        raise HTTPException(400, f"origin {origin_of(body.url)} is not in FLOWLENS_ALLOWED_ORIGINS")
     try:
-        return await asyncio.wait_for(asyncio.to_thread(_capture, body.url, s), timeout=40)
+        scope = scope_for(normalise_origin(body.url), s, request.app.state.store)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    if scope is None:
+        raise HTTPException(400, f"origin {origin_of(body.url)} is not approved; approve it in the launcher first")
+    profile, origins = scope
+    try:
+        return await asyncio.wait_for(asyncio.to_thread(_capture, body.url, s, origins, profile), timeout=40)
     except TimeoutError as e:
         raise HTTPException(504, "the page did not load within 40 s") from e
 

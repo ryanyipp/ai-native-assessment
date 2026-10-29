@@ -44,7 +44,7 @@ from flowlens.models.contracts import (
 from flowlens.orchestration.replay import execute_step, reach_state
 from flowlens.orchestration.runner import ExplorerRun, relative_path
 from flowlens.services.llm import BudgetExceeded
-from flowlens.services.test_data import SetupError, WorkspaceProvider
+from flowlens.services.test_data import SetupError, session_provider
 from flowlens.verification.assertions import AssertionInvalid, evaluate, validate_assertion
 
 COORDINATOR = "coordinator"
@@ -99,7 +99,7 @@ class ReviewRun(ExplorerRun):
         super().__init__(run, store, settings, llm)
         self.reqs = requirement_refs(run.requirements)
         self.req_ids = {r.id: r for r in self.reqs}
-        self.provider = WorkspaceProvider(settings.flowlens_workspace_endpoint, settings.flowlens_workspace_cookie)
+        self.provider = session_provider(run, settings)
         self.budget_note: str | None = None
         self.summary: dict[str, Any] = {"forms_tested": 0, "cases": 0, "candidates": 0, "outcomes": []}
 
@@ -116,7 +116,7 @@ class ReviewRun(ExplorerRun):
         return lim.reserved_verification_calls + 2 * min(lim.max_forms_tested, 1)
 
     def engine(self, cookies: list[dict]) -> BrowserEngine:
-        return BrowserEngine(self.settings.allowed_origins, self.settings.flowlens_headless,
+        return BrowserEngine(self.scope_origins, self.settings.flowlens_headless,
                              self.settings.flowlens_test_session_path or None, cookies=cookies)
 
     def state_by_id(self, state_id: str) -> ScreenState | None:
@@ -124,7 +124,8 @@ class ReviewRun(ExplorerRun):
 
     def setup_for(self, state: ScreenState) -> SetupRecipe:
         return SetupRecipe(target_state_id=state.id, expected_signature=state.signature,
-                           direct_path=relative_path(state.url), steps=list(state.semantic_recipe))
+                           direct_path=relative_path(state.url), steps=list(state.semantic_recipe),
+                           data_isolation=self.provider.isolation)
 
     def new_task(self, type_: str, key: str, owner: str, input_refs: list[str]) -> Task:
         t = Task(run_id=self.run.id, type=type_, key=key, owner=owner, attempt_id="att_1", status="claimed",
