@@ -1,0 +1,18 @@
+# Never send secrets, runtime data or local installs into an image build.
+.env
+.env.*
+!.env.example
+**/.auth
+**/storageState*.json
+artifacts
+**/*.db
+**/node_modules
+**/.venv
+**/__pycache__
+**/dist
+fixtures/*/data
+evaluation/.batch.lock
+.git
+docs
+submission-evidence
+*.docx

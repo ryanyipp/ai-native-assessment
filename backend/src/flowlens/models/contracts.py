@@ -127,6 +127,9 @@ class Run(BaseModel):
     # Origins this run may load, fixed at creation and enforced by the engine (navigations and redirects).
     # Empty on runs made before this field existed: those used the configured origins.
     scope_origins: list[str] = Field(default_factory=list)
+    # Set only when the run was loaded from a recorded bundle (python -m flowlens.demo load): a recorded
+    # result made elsewhere, not a run made by this installation.
+    imported_from: str | None = None
     status: RunStatus = RunStatus.queued
     stop_reason: str | None = None
     provenance: Provenance = Field(default_factory=Provenance)

@@ -1,0 +1,106 @@
+{
+  "url": "http://localhost:5174/",
+  "title": "Dashboard \u00b7 Creator Studio",
+  "headings": [
+    "Dashboard",
+    "Your drafts",
+    "Scheduled posts"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "New draft",
+      "input_type": null,
+      "value": null,
+      "href": "/drafts/new",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Schedule a post",
+      "input_type": null,
+      "value": null,
+      "href": "/schedule/new",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "a",
+      "role": "link",
+      "name": "Test Draft Title 123",
+      "input_type": null,
+      "value": null,
+      "href": "/drafts/cb7f04ce",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e5",
+      "tag": "a",
+      "role": "link",
+      "name": "Test Draft Title",
+      "input_type": null,
+      "value": null,
+      "href": "/drafts/7ceb16cd",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e6",
+      "tag": "a",
+      "role": "link",
+      "name": "Past Date Test Post",
+      "input_type": null,
+      "value": null,
+      "href": "/scheduled/8b5a6e72",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e7",
+      "tag": "a",
+      "role": "link",
+      "name": "Past Date Validation Test",
+      "input_type": null,
+      "value": null,
+      "href": "/scheduled/104189c5",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Dashboard New draft Schedule a post Your drafts Test Draft Title 123 Test Draft Title Scheduled posts Past Date Test Post \u00b7 2026-06-10 Past Date Validation Test \u00b7 2026-06-10",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

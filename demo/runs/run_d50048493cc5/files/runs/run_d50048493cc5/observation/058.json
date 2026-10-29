@@ -1,0 +1,52 @@
+{
+  "url": "http://localhost:5177/bookings/fd01717c/cancel",
+  "title": "Cancel booking \u00b7 Ticket Desk",
+  "headings": [
+    "Cancel this booking?"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "button",
+      "role": "button",
+      "name": "Yes, cancel booking",
+      "input_type": null,
+      "value": null,
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Keep booking",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Ticket Desk \u00b7 Events Cancel this booking? Yes, cancel booking Keep booking",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

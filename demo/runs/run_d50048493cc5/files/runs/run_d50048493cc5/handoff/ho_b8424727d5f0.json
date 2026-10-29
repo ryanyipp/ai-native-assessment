@@ -1,0 +1,84 @@
+{
+  "id": "ho_b8424727d5f0",
+  "run_id": "run_d50048493cc5",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-a",
+  "to_agent": "input-tester",
+  "task_id": "task_a84c15e71fa9",
+  "source_state_id": "state_7f8e3e8cfb78",
+  "form_id": "form_08ca2191ca8f",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_7f8e3e8cfb78",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Book tickets for Harbour Jazz Night",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "T1",
+      "text": "A visitor can open the booking form for an event from the events list."
+    },
+    {
+      "id": "T2",
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    },
+    {
+      "id": "T3",
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message."
+    },
+    {
+      "id": "T4",
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets."
+    },
+    {
+      "id": "T5",
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A visitor can open the booking form for an event from the events list.",
+      "source": "T1"
+    },
+    {
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+      "source": "T2"
+    },
+    {
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message.",
+      "source": "T3"
+    },
+    {
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets.",
+      "source": "T4"
+    },
+    {
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.",
+      "source": "T5"
+    }
+  ],
+  "evidence_refs": [
+    "art_dfc315c904d0",
+    "art_12674263e959"
+  ],
+  "created_at": "2026-10-29T13:15:30.140685Z"
+}

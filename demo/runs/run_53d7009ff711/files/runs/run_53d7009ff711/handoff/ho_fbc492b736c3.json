@@ -1,0 +1,47 @@
+{
+  "id": "ho_fbc492b736c3",
+  "run_id": "run_53d7009ff711",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-a",
+  "to_agent": "input-tester",
+  "task_id": "task_c20f1c7b5804",
+  "source_state_id": "state_e7cf2ac21762",
+  "form_id": "form_80dd2227a75d",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_e7cf2ac21762",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Schedule a post",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [],
+  "expected_behaviour": [
+    {
+      "text": "No requirement supplied.",
+      "source": "none supplied"
+    }
+  ],
+  "evidence_refs": [
+    "art_08ad4ac634d3",
+    "art_14e8a5da0515"
+  ],
+  "created_at": "2026-10-29T07:44:14.101108Z"
+}

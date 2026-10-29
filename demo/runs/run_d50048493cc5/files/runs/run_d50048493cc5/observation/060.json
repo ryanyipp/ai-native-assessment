@@ -1,0 +1,55 @@
+{
+  "url": "http://localhost:5177/?cancelled=1",
+  "title": "Events \u00b7 Ticket Desk",
+  "headings": [
+    "Events",
+    "My bookings"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null,
+      "value": null,
+      "href": "/events/1/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Open-Air Cinema",
+      "input_type": null,
+      "value": null,
+      "href": "/events/2/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Ticket Desk \u00b7 Events Events Booking cancelled. Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings No bookings yet.",
+  "status_messages": [
+    "Booking cancelled."
+  ],
+  "alert_messages": [],
+  "invalid_fields": []
+}

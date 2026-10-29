@@ -1,0 +1,38 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens. You designed input cases for a form; code executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts the browser recorded afterwards (URLs, headings, status and alert messages, invalid fields, visible text).\n\nJudge each case only from those recorded facts:\n- \"as_expected\": the facts match the expectation.\n- \"unexpected\": the facts contradict the expectation.\n- \"unclear\": the facts are insufficient, or the expectation itself is not stated by a requirement.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<short>\", \"assessments\": [\n  {\"case\": <case number>, \"verdict\": \"as_expected\" | \"unexpected\" | \"unclear\",\n   \"observed_summary\": \"<what the facts show>\", \"requirement_ref\": \"<id or null>\"}]}\n\nYour verdicts are unverified candidates. A separate verifier checks them independently."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- R1: A creator can start a new draft from the dashboard.\n- R2: A draft has a title and a caption.\n- R3: Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.\n- R4: A creator can schedule a post from the dashboard by giving a post title and a publish date.\n- R5: A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.\n\nForm: http://localhost:5174/schedule/new (Schedule a post)\n\nCase 1: Valid future post\n  inputs: {\"Post title\": \"My Future Post\", \"Publish date\": \"2026-06-20\"}\n  requirement: R4\n  expected: The post is successfully scheduled for the future date.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/schedule/new\", \"url_after\": \"http://localhost:5174/scheduled/d89b2508?scheduled=1\", \"title\": \"Scheduled post \u00b7 Creator Studio\", \"headings\": [\"Scheduled post\"], \"status_messages\": [\"Post scheduled.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Scheduled post Post scheduled. Post title My Future Post Publish date 2026-06-20 Back to dashboard\"}\n\nCase 2: Past date rejection\n  inputs: {\"Post title\": \"Yesterday's News\", \"Publish date\": \"2026-06-14\"}\n  requirement: R5\n  expected: The form shows a validation message and no post is scheduled because the date is before the studio date.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/schedule/new\", \"url_after\": \"http://localhost:5174/scheduled/e1670999?scheduled=1\", \"title\": \"Scheduled post \u00b7 Creator Studio\", \"headings\": [\"Scheduled post\"], \"status_messages\": [\"Post scheduled.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Scheduled post Post scheduled. Post title Yesterday's News Publish date 2026-06-14 Back to dashboard\"}\n\nCase 3: Studio date boundary\n  inputs: {\"Post title\": \"Today's Post\", \"Publish date\": \"2026-06-15\"}\n  requirement: R5\n  expected: The post is scheduled successfully because the date is not before the studio date.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/schedule/new\", \"url_after\": \"http://localhost:5174/scheduled/cbe6d395?scheduled=1\", \"title\": \"Scheduled post \u00b7 Creator Studio\", \"headings\": [\"Scheduled post\"], \"status_messages\": [\"Post scheduled.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Scheduled post Post scheduled. Post title Today's Post Publish date 2026-06-15 Back to dashboard\"}\n\nCase 4: Missing title validation\n  inputs: {\"Post title\": \"\", \"Publish date\": \"2026-06-20\"}\n  requirement: none\n  expected: The browser or form prevents submission due to the required title field being empty.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/schedule/new\", \"url_after\": \"http://localhost:5174/schedule/new\", \"title\": \"Schedule a post \u00b7 Creator Studio\", \"headings\": [\"Schedule a post\"], \"status_messages\": [], \"alert_messages\": [], \"invalid_fields\": [\"Post title\"], \"text_excerpt\": \"Creator Studio Dashboard Schedule a post Studio date: 2026-06-15 Post title Publish date Schedule post\"}"
+    }
+  ],
+  "response": "{\n  \"reasoning\": \"Case 1 and 3 followed the requirements for valid scheduling. Case 2 failed because the system accepted a past date (2026-06-14) relative to the studio date (2026-06-15) instead of rejecting it as per R5. Case 4 is unclear as there is no requirement defining behavior for missing titles.\",\n  \"assessments\": [\n    {\n      \"case\": 1,\n      \"verdict\": \"as_expected\",\n      \"observed_summary\": \"The post was successfully scheduled for a future date, and the URL changed to a success page.\",\n      \"requirement_ref\": \"R4\"\n    },\n    {\n      \"case\": 2,\n      \"verdict\": \"unexpected\",\n      \"observed_summary\": \"The system scheduled the post for 2026-06-14 despite the studio date being 2026-06-15, violating the past-date rejection rule.\",\n      \"requirement_ref\": \"R5\"\n    },\n    {\n      \"case\": 3,\n      \"verdict\": \"as_expected\",\n      \"observed_summary\": \"The post was successfully scheduled for the current studio date (2026-06-15).\",\n      \"requirement_ref\": \"R5\"\n    },\n    {\n      \"case\": 4,\n      \"verdict\": \"unclear\",\n      \"observed_summary\": \"The form prevented submission and flagged the field as invalid, but no requirement specifies the behavior for empty titles.\",\n      \"requirement_ref\": null\n    }\n  ]\n}",
+  "usage": {
+    "prompt_tokens": 1115,
+    "completion_tokens": 373,
+    "total_tokens": 1488,
+    "cost": 0.0016765,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0016765,
+      "upstream_inference_prompt_cost": 0.0005575,
+      "upstream_inference_completions_cost": 0.001119
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null
+}

@@ -1,0 +1,70 @@
+{
+  "id": "ver_681d620de358",
+  "run_id": "run_a54099283d9d",
+  "finding_id": "fnd_77aa5a29b4ff",
+  "handoff_id": "ho_cebadd197038",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_681d620de358:ws_05992b6595",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "text_contains": null,
+      "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed for the Publish date field because 2026-06-14 is before the studio date 2026-06-15.",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "text_contains": null,
+        "field": "Publish date"
+      },
+      "requirement_ref": "R5",
+      "expected": "A validation message should be displayed for the Publish date field because 2026-06-14 is before the studio date 2026-06-15.",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5174/scheduled/7e8f26a2?scheduled=1",
+      "route": "/scheduled/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Post scheduled."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+  "action_result_ids": [
+    "act_659696aa8efb",
+    "act_f379329da103",
+    "act_2616ce3e54bd",
+    "act_121755d6ac50"
+  ],
+  "evidence_refs": [
+    "art_25c7d7eaa7d8",
+    "art_50d69f98b37f",
+    "art_3a7ebe2244bc",
+    "art_5171ce71120c",
+    "art_f8903966ef99",
+    "art_af46ed7b1dc0",
+    "art_3430a00f5606",
+    "art_0263eb7b8c3f"
+  ],
+  "model_call_id": "mc_1f3ce303502f",
+  "started_at": "2026-10-29T13:42:52.241973Z",
+  "finished_at": "2026-10-29T13:42:58.735052Z"
+}

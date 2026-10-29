@@ -1,0 +1,3193 @@
+{
+ "runs": [
+  {
+   "id": "run_15f19bf8bb46",
+   "target_url": "https://demo.playwright.dev/todomvc/",
+   "goal": "Add two todos named 'FlowLens milk' and 'FlowLens dog', mark 'FlowLens milk' as completed, then view the Active, Completed and All filters, reload the page, and report whether both todos and the completed state are still shown after the reload.",
+   "requirements": [],
+   "model": "google/gemini-3-flash-preview",
+   "mode": "single_explorer",
+   "limits": {
+    "max_steps": 20,
+    "max_model_calls": 22,
+    "max_cost_usd": 0.1,
+    "max_output_tokens": 800,
+    "max_output_tokens_planning": 1400,
+    "max_duration_s": 600,
+    "max_states": 30,
+    "reserved_verification_calls": 4,
+    "max_forms_tested": 3,
+    "max_cases_per_form": 3,
+    "verification_replays": 2,
+    "reserved_testing_calls": 8,
+    "explore_steps_per_task": 4,
+    "max_depth": 2,
+    "max_tasks": 40,
+    "task_max_attempts": 2,
+    "task_lease_s": 300,
+    "planning_reasoning_tokens": 384
+   },
+   "target_build": null,
+   "fault_injection": null,
+   "target_profile": "website",
+   "scope_origins": [
+    "https://demo.playwright.dev"
+   ],
+   "status": "completed",
+   "stop_reason": "explorer finished the goal",
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "usage": {
+    "model_calls": 10,
+    "prompt_tokens": 9588,
+    "completion_tokens": 686,
+    "total_tokens": 10274,
+    "reported_cost_usd": 0.006852,
+    "calls_without_cost": 0,
+    "exploration_calls": 10,
+    "testing_calls": 0,
+    "verification_calls": 0,
+    "truncated_calls": 0
+   },
+   "created_at": "2026-10-29T16:30:16.728866Z",
+   "finished_at": "2026-10-29T16:30:43.331654Z"
+  }
+ ],
+ "states": [
+  {
+   "id": "state_6ea53f99ab03",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "66ccfbb20c3c14f3",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (0/1 fields filled)",
+   "screenshot_artifact_id": "art_31325914bb41",
+   "first_seen_step": 0,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_f914973015c3"
+    }
+   ],
+   "structure": "d47953e2940a56d4",
+   "layout": "81f2fd01d8cfdc22"
+  },
+  {
+   "id": "state_d504d5928f5f",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "65015c5e61b7c12b",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (1/1 fields filled)",
+   "screenshot_artifact_id": "art_8492ed9e68b1",
+   "first_seen_step": 1,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_7003c2ef9577"
+    }
+   ],
+   "structure": "d47953e2940a56d4",
+   "layout": "81f2fd01d8cfdc22"
+  },
+  {
+   "id": "state_6e6f9f946d2e",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "92d15bb4d11e0d39",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (2/3 fields filled)",
+   "screenshot_artifact_id": "art_fd8c883c1e6a",
+   "first_seen_step": 2,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_bcd7a3855ee0"
+    }
+   ],
+   "structure": "f4f0dc7dd253fe2f",
+   "layout": "ba428687975f7577"
+  },
+  {
+   "id": "state_6a5dc0107f6d",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "39e434f38d679b16",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (3/3 fields filled)",
+   "screenshot_artifact_id": "art_581428c4b503",
+   "first_seen_step": 3,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_083e78466d68"
+    }
+   ],
+   "structure": "f4f0dc7dd253fe2f",
+   "layout": "ba428687975f7577"
+  },
+  {
+   "id": "state_82c048a4762a",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "11753cbad885e003",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (3/4 fields filled)",
+   "screenshot_artifact_id": "art_a56e05e5f9a3",
+   "first_seen_step": 4,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_7de5ad635c85"
+    }
+   ],
+   "structure": "780c8cd71aa622c8",
+   "layout": "6a2192e4c20938ea"
+  },
+  {
+   "id": "state_881c0525dee9",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "5daf1f5a7845fb17",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (3/4 fields filled)",
+   "screenshot_artifact_id": "art_b2b09b748eb4",
+   "first_seen_step": 5,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "check",
+     "path": null,
+     "control": {
+      "role": "checkbox",
+      "name": "Toggle Todo",
+      "input_type": "checkbox",
+      "context": "FlowLens milk"
+     },
+     "value": null,
+     "key": null,
+     "checked": true
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_296781eb6694"
+    }
+   ],
+   "structure": "695854cfd580a2b1",
+   "layout": "5666af26491a27df"
+  },
+  {
+   "id": "state_ce9d9e8f9276",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "8b01a71b8881ee12",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/active",
+   "title": "React • TodoMVC",
+   "summary": "todos (2/3 fields filled)",
+   "screenshot_artifact_id": "art_c4fcf7d556e8",
+   "first_seen_step": 6,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    },
+    {
+     "type": "click",
+     "element_id": "e8"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "check",
+     "path": null,
+     "control": {
+      "role": "checkbox",
+      "name": "Toggle Todo",
+      "input_type": "checkbox",
+      "context": "FlowLens milk"
+     },
+     "value": null,
+     "key": null,
+     "checked": true
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Active",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_69761dc0beb3"
+    }
+   ],
+   "structure": "60e24fd61f9a1230",
+   "layout": "798437956b145282"
+  },
+  {
+   "id": "state_c0ce55e11b6f",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "763b497a37af8132",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/completed",
+   "title": "React • TodoMVC",
+   "summary": "todos (2/3 fields filled)",
+   "screenshot_artifact_id": "art_c71135dcdc73",
+   "first_seen_step": 7,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    },
+    {
+     "type": "click",
+     "element_id": "e8"
+    },
+    {
+     "type": "click",
+     "element_id": "e7"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "check",
+     "path": null,
+     "control": {
+      "role": "checkbox",
+      "name": "Toggle Todo",
+      "input_type": "checkbox",
+      "context": "FlowLens milk"
+     },
+     "value": null,
+     "key": null,
+     "checked": true
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Active",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Completed",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_b5da395249cb"
+    }
+   ],
+   "structure": "60e24fd61f9a1230",
+   "layout": "798437956b145282"
+  },
+  {
+   "id": "state_ba852f66ee20",
+   "run_id": "run_15f19bf8bb46",
+   "signature": "07d9b376a8fcf840",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/todomvc/",
+   "url": "https://demo.playwright.dev/todomvc/#/",
+   "title": "React • TodoMVC",
+   "summary": "todos (3/4 fields filled)",
+   "screenshot_artifact_id": "art_ce0049a71f5c",
+   "first_seen_step": 9,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    },
+    {
+     "type": "click",
+     "element_id": "e8"
+    },
+    {
+     "type": "click",
+     "element_id": "e7"
+    },
+    {
+     "type": "click",
+     "element_id": "e5"
+    },
+    {
+     "type": "reload"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/todomvc/#/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens milk",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": "FlowLens dog",
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "press",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "context": null
+     },
+     "value": null,
+     "key": "Enter",
+     "checked": null
+    },
+    {
+     "type": "check",
+     "path": null,
+     "control": {
+      "role": "checkbox",
+      "name": "Toggle Todo",
+      "input_type": "checkbox",
+      "context": "FlowLens milk"
+     },
+     "value": null,
+     "key": null,
+     "checked": true
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Active",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Completed",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "All",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "reload",
+     "path": null,
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:default",
+     "action_result_id": "act_46a0c8c36986"
+    }
+   ],
+   "structure": "710d7cdf1d3c9efa",
+   "layout": "de5c9dea6fe312e2"
+  }
+ ],
+ "transitions": [
+  {
+   "id": "tr_3999f53c00ad",
+   "run_id": "run_15f19bf8bb46",
+   "step": 1,
+   "source_state_id": "state_6ea53f99ab03",
+   "target_state_id": "state_d504d5928f5f",
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "FlowLens milk"
+   },
+   "label": "fill textbox 'What needs to be done?' = \"FlowLens milk\"",
+   "action_result_id": "act_7003c2ef9577",
+   "ok": true,
+   "duration_ms": 51,
+   "screenshot_artifact_id": "art_8492ed9e68b1",
+   "model_call_id": "mc_bd1045edf8d2",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_0fb8fa8909b2",
+   "run_id": "run_15f19bf8bb46",
+   "step": 2,
+   "source_state_id": "state_d504d5928f5f",
+   "target_state_id": "state_6e6f9f946d2e",
+   "action": {
+    "type": "press",
+    "element_id": "e2",
+    "key": "Enter"
+   },
+   "label": "press Enter in textbox 'What needs to be done?'",
+   "action_result_id": "act_bcd7a3855ee0",
+   "ok": true,
+   "duration_ms": 94,
+   "screenshot_artifact_id": "art_fd8c883c1e6a",
+   "model_call_id": "mc_8bbc5c9687d0",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_b585b1de01c2",
+   "run_id": "run_15f19bf8bb46",
+   "step": 3,
+   "source_state_id": "state_6e6f9f946d2e",
+   "target_state_id": "state_6a5dc0107f6d",
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "FlowLens dog"
+   },
+   "label": "fill textbox 'What needs to be done?' = \"FlowLens dog\"",
+   "action_result_id": "act_083e78466d68",
+   "ok": true,
+   "duration_ms": 16,
+   "screenshot_artifact_id": "art_581428c4b503",
+   "model_call_id": "mc_d5b431954dd1",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_198b09088628",
+   "run_id": "run_15f19bf8bb46",
+   "step": 4,
+   "source_state_id": "state_6a5dc0107f6d",
+   "target_state_id": "state_82c048a4762a",
+   "action": {
+    "type": "press",
+    "element_id": "e2",
+    "key": "Enter"
+   },
+   "label": "press Enter in textbox 'What needs to be done?'",
+   "action_result_id": "act_7de5ad635c85",
+   "ok": true,
+   "duration_ms": 53,
+   "screenshot_artifact_id": "art_a56e05e5f9a3",
+   "model_call_id": "mc_ca09e002f5df",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_bcb8b27bfabd",
+   "run_id": "run_15f19bf8bb46",
+   "step": 5,
+   "source_state_id": "state_82c048a4762a",
+   "target_state_id": "state_881c0525dee9",
+   "action": {
+    "type": "check",
+    "element_id": "e4",
+    "checked": true
+   },
+   "label": "check checkbox 'Toggle Todo' in 'FlowLens milk'",
+   "action_result_id": "act_296781eb6694",
+   "ok": true,
+   "duration_ms": 84,
+   "screenshot_artifact_id": "art_b2b09b748eb4",
+   "model_call_id": "mc_c7d082917b09",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_df1047c4759d",
+   "run_id": "run_15f19bf8bb46",
+   "step": 6,
+   "source_state_id": "state_881c0525dee9",
+   "target_state_id": "state_ce9d9e8f9276",
+   "action": {
+    "type": "click",
+    "element_id": "e8"
+   },
+   "label": "click link 'Active'",
+   "action_result_id": "act_69761dc0beb3",
+   "ok": true,
+   "duration_ms": 97,
+   "screenshot_artifact_id": "art_c4fcf7d556e8",
+   "model_call_id": "mc_fcfcb08e6725",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_41195f61798d",
+   "run_id": "run_15f19bf8bb46",
+   "step": 7,
+   "source_state_id": "state_ce9d9e8f9276",
+   "target_state_id": "state_c0ce55e11b6f",
+   "action": {
+    "type": "click",
+    "element_id": "e7"
+   },
+   "label": "click link 'Completed'",
+   "action_result_id": "act_b5da395249cb",
+   "ok": true,
+   "duration_ms": 93,
+   "screenshot_artifact_id": "art_c71135dcdc73",
+   "model_call_id": "mc_8787d69c78ea",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_f49f0d17f8d1",
+   "run_id": "run_15f19bf8bb46",
+   "step": 8,
+   "source_state_id": "state_c0ce55e11b6f",
+   "target_state_id": "state_881c0525dee9",
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "label": "click link 'All'",
+   "action_result_id": "act_7d6a4bdf6518",
+   "ok": true,
+   "duration_ms": 91,
+   "screenshot_artifact_id": "art_3a30eb52f368",
+   "model_call_id": "mc_ce982a4aa695",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_4a21c96fec1a",
+   "run_id": "run_15f19bf8bb46",
+   "step": 9,
+   "source_state_id": "state_881c0525dee9",
+   "target_state_id": "state_ba852f66ee20",
+   "action": {
+    "type": "reload"
+   },
+   "label": "reload",
+   "action_result_id": "act_46a0c8c36986",
+   "ok": true,
+   "duration_ms": 70,
+   "screenshot_artifact_id": "art_ce0049a71f5c",
+   "model_call_id": "mc_dc1bd1a12c39",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  }
+ ],
+ "actions": [
+  {
+   "id": "act_f914973015c3",
+   "run_id": "run_15f19bf8bb46",
+   "step": 0,
+   "action": {
+    "type": "navigate",
+    "url": "https://demo.playwright.dev/todomvc/"
+   },
+   "target_description": "https://demo.playwright.dev/todomvc/",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:17.421967Z",
+   "duration_ms": 184,
+   "screenshot_artifact_id": "art_31325914bb41",
+   "observation_artifact_id": "art_0036616dc89d",
+   "target_box": null,
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_7003c2ef9577",
+   "run_id": "run_15f19bf8bb46",
+   "step": 1,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "FlowLens milk"
+   },
+   "target_description": "textbox 'What needs to be done?'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:19.988141Z",
+   "duration_ms": 51,
+   "screenshot_artifact_id": "art_8492ed9e68b1",
+   "observation_artifact_id": "art_a9aa547f6683",
+   "target_box": {
+    "x": 365,
+    "y": 175,
+    "width": 550,
+    "height": 66
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_bcd7a3855ee0",
+   "run_id": "run_15f19bf8bb46",
+   "step": 2,
+   "action": {
+    "type": "press",
+    "element_id": "e2",
+    "key": "Enter"
+   },
+   "target_description": "textbox 'What needs to be done?'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:22.866270Z",
+   "duration_ms": 94,
+   "screenshot_artifact_id": "art_fd8c883c1e6a",
+   "observation_artifact_id": "art_bf05aa70eef7",
+   "target_box": {
+    "x": 365,
+    "y": 175,
+    "width": 550,
+    "height": 66
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_083e78466d68",
+   "run_id": "run_15f19bf8bb46",
+   "step": 3,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "FlowLens dog"
+   },
+   "target_description": "textbox 'What needs to be done?'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:24.702981Z",
+   "duration_ms": 16,
+   "screenshot_artifact_id": "art_581428c4b503",
+   "observation_artifact_id": "art_8414bb43b0c0",
+   "target_box": {
+    "x": 365,
+    "y": 175,
+    "width": 550,
+    "height": 66
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_7de5ad635c85",
+   "run_id": "run_15f19bf8bb46",
+   "step": 4,
+   "action": {
+    "type": "press",
+    "element_id": "e2",
+    "key": "Enter"
+   },
+   "target_description": "textbox 'What needs to be done?'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:29.740449Z",
+   "duration_ms": 53,
+   "screenshot_artifact_id": "art_a56e05e5f9a3",
+   "observation_artifact_id": "art_cdb3a9fa3165",
+   "target_box": {
+    "x": 365,
+    "y": 175,
+    "width": 550,
+    "height": 66
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_296781eb6694",
+   "run_id": "run_15f19bf8bb46",
+   "step": 5,
+   "action": {
+    "type": "check",
+    "element_id": "e4",
+    "checked": true
+   },
+   "target_description": "checkbox 'Toggle Todo' in 'FlowLens milk'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:32.525465Z",
+   "duration_ms": 84,
+   "screenshot_artifact_id": "art_b2b09b748eb4",
+   "observation_artifact_id": "art_e35357cd86fe",
+   "target_box": {
+    "x": 365,
+    "y": 251,
+    "width": 40,
+    "height": 40
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_69761dc0beb3",
+   "run_id": "run_15f19bf8bb46",
+   "step": 6,
+   "action": {
+    "type": "click",
+    "element_id": "e8"
+   },
+   "target_description": "link 'Active'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/active",
+   "started_at": "2026-10-29T16:30:34.446888Z",
+   "duration_ms": 97,
+   "screenshot_artifact_id": "art_c4fcf7d556e8",
+   "observation_artifact_id": "art_b052f60b2b89",
+   "target_box": {
+    "x": 587,
+    "y": 368,
+    "width": 54,
+    "height": 24
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_b5da395249cb",
+   "run_id": "run_15f19bf8bb46",
+   "step": 7,
+   "action": {
+    "type": "click",
+    "element_id": "e7"
+   },
+   "target_description": "link 'Completed'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/active",
+   "url_after": "https://demo.playwright.dev/todomvc/#/completed",
+   "started_at": "2026-10-29T16:30:36.633391Z",
+   "duration_ms": 93,
+   "screenshot_artifact_id": "art_c71135dcdc73",
+   "observation_artifact_id": "art_5c2e8736a2fc",
+   "target_box": {
+    "x": 651,
+    "y": 308,
+    "width": 84,
+    "height": 24
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_7d6a4bdf6518",
+   "run_id": "run_15f19bf8bb46",
+   "step": 8,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "link 'All'",
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/completed",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:38.585162Z",
+   "duration_ms": 91,
+   "screenshot_artifact_id": "art_3a30eb52f368",
+   "observation_artifact_id": "art_d21381c7ca49",
+   "target_box": {
+    "x": 545,
+    "y": 308,
+    "width": 32,
+    "height": 24
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  },
+  {
+   "id": "act_46a0c8c36986",
+   "run_id": "run_15f19bf8bb46",
+   "step": 9,
+   "action": {
+    "type": "reload"
+   },
+   "target_description": null,
+   "ok": true,
+   "error": null,
+   "url_before": "https://demo.playwright.dev/todomvc/#/",
+   "url_after": "https://demo.playwright.dev/todomvc/#/",
+   "started_at": "2026-10-29T16:30:40.788611Z",
+   "duration_ms": 70,
+   "screenshot_artifact_id": "art_ce0049a71f5c",
+   "observation_artifact_id": "art_b2843be80180",
+   "target_box": null,
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "task_id": "task_d0050271b73e"
+  }
+ ],
+ "findings": [
+  {
+   "id": "fnd_8b624f5cc82a",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "persistence_check",
+   "reported_by": "explorer-a",
+   "description": "Saved draft content persists after page reload (explorer observation)",
+   "expected": "Values entered and saved are shown again after a reload",
+   "observed": "After reloading, both 'FlowLens milk' (completed) and 'FlowLens dog' (active) are still present in the list.",
+   "agent_claim": "retained",
+   "same_context_check": {
+    "assertion": {
+     "type": "text_or_value_retained",
+     "params": {
+      "values": [
+       {
+        "field": "FlowLens milk",
+        "expected": "completed"
+       },
+       {
+        "field": "FlowLens dog",
+        "expected": "active"
+       }
+      ],
+      "requires_reload_in_trace": true
+     },
+     "requirement_ref": null,
+     "expected": null,
+     "chosen_by": null
+    },
+    "passed": false,
+    "observed": {
+     "fields": [
+      {
+       "field": "FlowLens milk",
+       "expected": "completed",
+       "actual_value": null,
+       "matched": true
+      },
+      {
+       "field": "FlowLens dog",
+       "expected": "active",
+       "actual_value": null,
+       "matched": false
+      }
+     ],
+     "reload_in_trace": true,
+     "url": "https://demo.playwright.dev/todomvc/#/"
+    },
+    "evaluated_by": "engine"
+   },
+   "evidence_refs": [
+    "act_f914973015c3",
+    "act_7003c2ef9577",
+    "act_bcd7a3855ee0",
+    "act_083e78466d68",
+    "act_7de5ad635c85",
+    "act_296781eb6694",
+    "act_69761dc0beb3",
+    "act_b5da395249cb",
+    "act_7d6a4bdf6518",
+    "act_46a0c8c36986"
+   ],
+   "verification_status": "unverified",
+   "replay_recipe": [
+    {
+     "type": "navigate",
+     "url": "https://demo.playwright.dev/todomvc/"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    },
+    {
+     "type": "click",
+     "element_id": "e8"
+    },
+    {
+     "type": "click",
+     "element_id": "e7"
+    },
+    {
+     "type": "click",
+     "element_id": "e5"
+    },
+    {
+     "type": "reload"
+    }
+   ],
+   "requirement_ref": null,
+   "requirement_text": null,
+   "inputs": {},
+   "reproduction": null,
+   "reproduction_steps": [],
+   "check_path": null,
+   "form_id": null,
+   "test_case_id": null,
+   "handoff_ids": [],
+   "verification_ids": [],
+   "verified_by": null,
+   "verification_reason": null,
+   "source_finding_id": null,
+   "verification_independence": null
+  }
+ ],
+ "evidence": [
+  {
+   "id": "art_31325914bb41",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/000-navigate.png",
+   "sha256": "7a1ebd576fadd0924c38714cd123f06de0ce3d62b0d3e20f83557b3de2a89916",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:17.669499Z"
+  },
+  {
+   "id": "art_0036616dc89d",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/000.json",
+   "sha256": "db5de5c57abcedcdab576f0960d0e3118c62a69474880e0831d885f83959399e",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:17.687298Z"
+  },
+  {
+   "id": "art_9aa159526839",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/001-explorer-a-mc_bd1045edf8d2.json",
+   "sha256": "974824df71029717349b2dbace35f046ca21336a681239bf5792628df2a7ec51",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:19.921161Z"
+  },
+  {
+   "id": "art_8492ed9e68b1",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/001-fill.png",
+   "sha256": "fc4d29e370fee7b9f3f855774022cfd33919387eff80948c50dcfc5092c090be",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:20.088718Z"
+  },
+  {
+   "id": "art_a9aa547f6683",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/001.json",
+   "sha256": "279b76267abc2190b1ae50762fd4244f3122e347ddd0f00557d9a93c7d2acf24",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:20.105464Z"
+  },
+  {
+   "id": "art_718ef76bed40",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/002-explorer-a-mc_8bbc5c9687d0.json",
+   "sha256": "a3e761dc3c287472ac38e4cdbbe7ae1b5806b7f6b5146a02ab28af287277d5cd",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:22.785085Z"
+  },
+  {
+   "id": "art_fd8c883c1e6a",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/002-press.png",
+   "sha256": "0b347945820e2398ee1a9a1ee1a6ab29e7484451c558f7ef0e5a071c155a09a3",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:23.004095Z"
+  },
+  {
+   "id": "art_bf05aa70eef7",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/002.json",
+   "sha256": "8b628f675d83addcec3259d6b67ef3ea79adffa01bf588c278cb85d9189b17e4",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:23.020875Z"
+  },
+  {
+   "id": "art_654c73dd82a8",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/003-explorer-a-mc_d5b431954dd1.json",
+   "sha256": "4c9253ab6928df956182987a8d9775b93a3d277a8b73cfd8e9dbbb9ff393c433",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:24.617366Z"
+  },
+  {
+   "id": "art_581428c4b503",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/003-fill.png",
+   "sha256": "21ac8a8ab86cec774bd55ca0fae7fba24660afd35e3c1a78337bd78133883cbe",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:24.776298Z"
+  },
+  {
+   "id": "art_8414bb43b0c0",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/003.json",
+   "sha256": "f4802665bea1ad1f1b29e5072235c5a37ddf843e977cb546d39b6839353f3965",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:24.793347Z"
+  },
+  {
+   "id": "art_4591ed978af8",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/004-explorer-a-mc_ca09e002f5df.json",
+   "sha256": "5c9adffa4626ce9c7356550692a280a4eb489739fd5529539983ce40c0508121",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:29.652585Z"
+  },
+  {
+   "id": "art_a56e05e5f9a3",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/004-press.png",
+   "sha256": "c0e21557301b28d35e3ea96256978e14698f8ed06d099eff1b9877299cfe4276",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:29.835899Z"
+  },
+  {
+   "id": "art_cdb3a9fa3165",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/004.json",
+   "sha256": "da5a5c191bae7c90c35580eaaec3e9eea9021e3b20a764d6135091f1f252d80d",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:29.853955Z"
+  },
+  {
+   "id": "art_8866f778cc18",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/005-explorer-a-mc_c7d082917b09.json",
+   "sha256": "8f42aac93f20494ec5baee12e4df3f1ceff6d17074cd7654aa4cadc01d45cc1b",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:32.451497Z"
+  },
+  {
+   "id": "art_b2b09b748eb4",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/005-check.png",
+   "sha256": "bf22f2d466bb1b0f5cceccf1f7ca0336fe8c75adaff2a850c9e13b59b5e83db7",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:32.652946Z"
+  },
+  {
+   "id": "art_e35357cd86fe",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/005.json",
+   "sha256": "7a1a8e5bbcbf512239f3eaae8ab4773b7791f367eddcb0b751ec0a3d24356961",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:32.671311Z"
+  },
+  {
+   "id": "art_3907bbed384c",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/006-explorer-a-mc_fcfcb08e6725.json",
+   "sha256": "9c0410b6590be62045a6265691d4a7b09825023de9f3e3a2dec56228b31a02c7",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:34.351788Z"
+  },
+  {
+   "id": "art_c4fcf7d556e8",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/006-click.png",
+   "sha256": "943deaf3d129fa9d31d0ff701f722453d21ac20614269444f9d546021184ef33",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:34.585581Z"
+  },
+  {
+   "id": "art_b052f60b2b89",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/006.json",
+   "sha256": "122e47a60288e4cc04265f410f3b70cfba8ce1614f8d2a26b74ef25d54050c69",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:34.603318Z"
+  },
+  {
+   "id": "art_88e87226a0e7",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/007-explorer-a-mc_8787d69c78ea.json",
+   "sha256": "49491fcfe2efb0bffee86dd5c3f8f15ef9f2cd9b0ff1f836dc480b1449b2f89e",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:36.545521Z"
+  },
+  {
+   "id": "art_c71135dcdc73",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/007-click.png",
+   "sha256": "d4bd29d2eb780c56e5968f1471aba7f94b8035864cdf6ebb19f1bc0ac3d985da",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:36.772117Z"
+  },
+  {
+   "id": "art_5c2e8736a2fc",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/007.json",
+   "sha256": "9b0f417da5c179db7934b479224a2b864332a875f2e773ec4d6454ee3924b64b",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:36.788959Z"
+  },
+  {
+   "id": "art_c0902fa0d60b",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/008-explorer-a-mc_ce982a4aa695.json",
+   "sha256": "45e7b861acc122d81cae7e1435700c9721665d49992adad4dc1ab1b4796b84da",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:38.498930Z"
+  },
+  {
+   "id": "art_3a30eb52f368",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/008-click.png",
+   "sha256": "9ceb7ae2857449e1cf242210c38d53c4d31dd497802cfcbce502fe7026973f25",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:38.727529Z"
+  },
+  {
+   "id": "art_d21381c7ca49",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/008.json",
+   "sha256": "f2a7ad11521e4ae2bd94b19d4d68a9eeeb1a341bb310f31a02c752d1bf5b3872",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:38.756702Z"
+  },
+  {
+   "id": "art_6c304c05aa78",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/009-explorer-a-mc_dc1bd1a12c39.json",
+   "sha256": "9ac7b2f07ca4d02b8478d8a2435783aed4a16ce399352ef7a623b283ff000ec9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:40.707966Z"
+  },
+  {
+   "id": "art_ce0049a71f5c",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "screenshot",
+   "path": "runs/run_15f19bf8bb46/screenshots/009-reload.png",
+   "sha256": "8fee738f0e58bebfbbdbead9c6a1bfab7e3173f8c2bd19bb365bc255bb97aec1",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T16:30:40.927097Z"
+  },
+  {
+   "id": "art_b2843be80180",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "observation",
+   "path": "runs/run_15f19bf8bb46/observation/009.json",
+   "sha256": "1c3dc56048521ea04f33b43b5c8b78f39b7277bfed9a765be4443de9917e0452",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:40.944573Z"
+  },
+  {
+   "id": "art_13beae1ad4c0",
+   "run_id": "run_15f19bf8bb46",
+   "kind": "model_call",
+   "path": "runs/run_15f19bf8bb46/model_call/010-explorer-a-mc_3a7523e20f49.json",
+   "sha256": "fe23bcfc9101582a6d8cd8a577569a3379e2de21c3236b3235a807a34d8667c6",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T16:30:43.097755Z"
+  }
+ ],
+ "model_calls": [
+  {
+   "id": "mc_bd1045edf8d2",
+   "run_id": "run_15f19bf8bb46",
+   "step": 0,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 727,
+   "completion_tokens": 128,
+   "total_tokens": 855,
+   "reported_cost_usd": 0.0007475,
+   "latency_ms": 2151,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_9aa159526839",
+   "finish_reason": "stop",
+   "reasoning_tokens": 77,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_8bbc5c9687d0",
+   "run_id": "run_15f19bf8bb46",
+   "step": 1,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 768,
+   "completion_tokens": 76,
+   "total_tokens": 844,
+   "reported_cost_usd": 0.000612,
+   "latency_ms": 2577,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_718ef76bed40",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_d5b431954dd1",
+   "run_id": "run_15f19bf8bb46",
+   "step": 2,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 874,
+   "completion_tokens": 54,
+   "total_tokens": 928,
+   "reported_cost_usd": 0.000599,
+   "latency_ms": 1503,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_654c73dd82a8",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_ca09e002f5df",
+   "run_id": "run_15f19bf8bb46",
+   "step": 3,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 915,
+   "completion_tokens": 58,
+   "total_tokens": 973,
+   "reported_cost_usd": 0.0006315,
+   "latency_ms": 4757,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_4591ed978af8",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_c7d082917b09",
+   "run_id": "run_15f19bf8bb46",
+   "step": 4,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 973,
+   "completion_tokens": 52,
+   "total_tokens": 1025,
+   "reported_cost_usd": 0.0006425,
+   "latency_ms": 2491,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_8866f778cc18",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_fcfcb08e6725",
+   "run_id": "run_15f19bf8bb46",
+   "step": 5,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1028,
+   "completion_tokens": 53,
+   "total_tokens": 1081,
+   "reported_cost_usd": 0.000673,
+   "latency_ms": 1574,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_3907bbed384c",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_8787d69c78ea",
+   "run_id": "run_15f19bf8bb46",
+   "step": 6,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1019,
+   "completion_tokens": 47,
+   "total_tokens": 1066,
+   "reported_cost_usd": 0.0006505,
+   "latency_ms": 1845,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_88e87226a0e7",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_ce982a4aa695",
+   "run_id": "run_15f19bf8bb46",
+   "step": 7,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1047,
+   "completion_tokens": 50,
+   "total_tokens": 1097,
+   "reported_cost_usd": 0.0006735,
+   "latency_ms": 1612,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_c0902fa0d60b",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_dc1bd1a12c39",
+   "run_id": "run_15f19bf8bb46",
+   "step": 8,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1111,
+   "completion_tokens": 42,
+   "total_tokens": 1153,
+   "reported_cost_usd": 0.0006815,
+   "latency_ms": 1883,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_6c304c05aa78",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_3a7523e20f49",
+   "run_id": "run_15f19bf8bb46",
+   "step": 9,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1126,
+   "completion_tokens": 126,
+   "total_tokens": 1252,
+   "reported_cost_usd": 0.000941,
+   "latency_ms": 2038,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_13beae1ad4c0",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "task_d0050271b73e",
+   "run_id": "run_15f19bf8bb46",
+   "type": "explore",
+   "key": "run_15f19bf8bb46:explore:start",
+   "depends_on": [],
+   "input_refs": [],
+   "owner": "explorer-a",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T16:30:16.746469Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  }
+ ],
+ "forms": [],
+ "handoffs": [],
+ "test_cases": [],
+ "verifications": [],
+ "events": [
+  {
+   "seq": 9754,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "run_started",
+   "message": "Run started with model google/gemini-3-flash-preview (single_explorer)",
+   "data": {
+    "mocked_model": false
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:16.776434Z"
+  },
+  {
+   "seq": 9755,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (0/1 fields filled)",
+   "data": {
+    "state_id": "state_6ea53f99ab03",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:17.730922Z"
+  },
+  {
+   "seq": 9756,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 0: navigate https://demo.playwright.dev/todomvc/",
+   "data": {
+    "action_result_id": "act_f914973015c3",
+    "ok": true,
+    "duration_ms": 184,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:17.746228Z"
+  },
+  {
+   "seq": 9757,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 1 (explorer-a): 855 tokens, US$0.00075",
+   "data": {
+    "model_call_id": "mc_bd1045edf8d2",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:19.972056Z"
+  },
+  {
+   "seq": 9758,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I will start by adding the first todo item 'FlowLens milk' as requested in the goal.",
+   "data": {
+    "step": 1,
+    "action": {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens milk"
+    },
+    "model_call_id": "mc_bd1045edf8d2"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:19.983108Z"
+  },
+  {
+   "seq": 9759,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (1/1 fields filled)",
+   "data": {
+    "state_id": "state_d504d5928f5f",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:20.150949Z"
+  },
+  {
+   "seq": 9760,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 1: fill textbox 'What needs to be done?' = \"FlowLens milk\"",
+   "data": {
+    "action_result_id": "act_7003c2ef9577",
+    "ok": true,
+    "duration_ms": 51,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:20.164952Z"
+  },
+  {
+   "seq": 9761,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 2 (explorer-a): 844 tokens, US$0.00061",
+   "data": {
+    "model_call_id": "mc_8bbc5c9687d0",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:22.836415Z"
+  },
+  {
+   "seq": 9762,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have filled the first todo item 'FlowLens milk' into the input field. Now I need to press Enter to add it to the list.",
+   "data": {
+    "step": 2,
+    "action": {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    "model_call_id": "mc_8bbc5c9687d0"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:22.851021Z"
+  },
+  {
+   "seq": 9763,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (2/3 fields filled)",
+   "data": {
+    "state_id": "state_6e6f9f946d2e",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:23.065517Z"
+  },
+  {
+   "seq": 9764,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 2: press Enter in textbox 'What needs to be done?'",
+   "data": {
+    "action_result_id": "act_bcd7a3855ee0",
+    "ok": true,
+    "duration_ms": 94,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:23.081726Z"
+  },
+  {
+   "seq": 9765,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 3 (explorer-a): 928 tokens, US$0.00060",
+   "data": {
+    "model_call_id": "mc_d5b431954dd1",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:24.671679Z"
+  },
+  {
+   "seq": 9766,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have added 'FlowLens milk'. Now I need to add 'FlowLens dog' as per the goal.",
+   "data": {
+    "step": 3,
+    "action": {
+     "type": "fill",
+     "element_id": "e2",
+     "value": "FlowLens dog"
+    },
+    "model_call_id": "mc_d5b431954dd1"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:24.684567Z"
+  },
+  {
+   "seq": 9767,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (3/3 fields filled)",
+   "data": {
+    "state_id": "state_6a5dc0107f6d",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:24.841864Z"
+  },
+  {
+   "seq": 9768,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 3: fill textbox 'What needs to be done?' = \"FlowLens dog\"",
+   "data": {
+    "action_result_id": "act_083e78466d68",
+    "ok": true,
+    "duration_ms": 16,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:24.857194Z"
+  },
+  {
+   "seq": 9769,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 4 (explorer-a): 973 tokens, US$0.00063",
+   "data": {
+    "model_call_id": "mc_ca09e002f5df",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:29.707448Z"
+  },
+  {
+   "seq": 9770,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have entered the text for the second todo, 'FlowLens dog', and now I need to press Enter to add it to the list.",
+   "data": {
+    "step": 4,
+    "action": {
+     "type": "press",
+     "element_id": "e2",
+     "key": "Enter"
+    },
+    "model_call_id": "mc_ca09e002f5df"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:29.724449Z"
+  },
+  {
+   "seq": 9771,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (3/4 fields filled)",
+   "data": {
+    "state_id": "state_82c048a4762a",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:29.903955Z"
+  },
+  {
+   "seq": 9772,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 4: press Enter in textbox 'What needs to be done?'",
+   "data": {
+    "action_result_id": "act_7de5ad635c85",
+    "ok": true,
+    "duration_ms": 53,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:29.919174Z"
+  },
+  {
+   "seq": 9773,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 5 (explorer-a): 1025 tokens, US$0.00064",
+   "data": {
+    "model_call_id": "mc_c7d082917b09",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:32.487473Z"
+  },
+  {
+   "seq": 9774,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have added both todos. Now I need to mark 'FlowLens milk' as completed by checking its toggle checkbox.",
+   "data": {
+    "step": 5,
+    "action": {
+     "type": "check",
+     "element_id": "e4",
+     "checked": true
+    },
+    "model_call_id": "mc_c7d082917b09"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:32.498465Z"
+  },
+  {
+   "seq": 9775,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (3/4 fields filled)",
+   "data": {
+    "state_id": "state_881c0525dee9",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:32.722903Z"
+  },
+  {
+   "seq": 9776,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 5: check checkbox 'Toggle Todo' in 'FlowLens milk'",
+   "data": {
+    "action_result_id": "act_296781eb6694",
+    "ok": true,
+    "duration_ms": 84,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:32.739731Z"
+  },
+  {
+   "seq": 9777,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 6 (explorer-a): 1081 tokens, US$0.00067",
+   "data": {
+    "model_call_id": "mc_fcfcb08e6725",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:34.408651Z"
+  },
+  {
+   "seq": 9778,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have added both todos and marked 'FlowLens milk' as completed. Now I need to view the 'Active' filter as per the goal.",
+   "data": {
+    "step": 6,
+    "action": {
+     "type": "click",
+     "element_id": "e8"
+    },
+    "model_call_id": "mc_fcfcb08e6725"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:34.428277Z"
+  },
+  {
+   "seq": 9779,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (2/3 fields filled)",
+   "data": {
+    "state_id": "state_ce9d9e8f9276",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:34.649839Z"
+  },
+  {
+   "seq": 9780,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 6: click link 'Active'",
+   "data": {
+    "action_result_id": "act_69761dc0beb3",
+    "ok": true,
+    "duration_ms": 97,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:34.664726Z"
+  },
+  {
+   "seq": 9781,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 7 (explorer-a): 1066 tokens, US$0.00065",
+   "data": {
+    "model_call_id": "mc_8787d69c78ea",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:36.602532Z"
+  },
+  {
+   "seq": 9782,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have viewed the 'Active' filter. Now I need to view the 'Completed' filter to continue the sequence.",
+   "data": {
+    "step": 7,
+    "action": {
+     "type": "click",
+     "element_id": "e7"
+    },
+    "model_call_id": "mc_8787d69c78ea"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:36.618307Z"
+  },
+  {
+   "seq": 9783,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (2/3 fields filled)",
+   "data": {
+    "state_id": "state_c0ce55e11b6f",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:36.836391Z"
+  },
+  {
+   "seq": 9784,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 7: click link 'Completed'",
+   "data": {
+    "action_result_id": "act_b5da395249cb",
+    "ok": true,
+    "duration_ms": 93,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:36.851585Z"
+  },
+  {
+   "seq": 9785,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 8 (explorer-a): 1097 tokens, US$0.00067",
+   "data": {
+    "model_call_id": "mc_ce982a4aa695",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:38.552262Z"
+  },
+  {
+   "seq": 9786,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have viewed the Active and Completed filters. Now I need to view the 'All' filter before reloading the page to verify persistence.",
+   "data": {
+    "step": 8,
+    "action": {
+     "type": "click",
+     "element_id": "e5"
+    },
+    "model_call_id": "mc_ce982a4aa695"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:38.569309Z"
+  },
+  {
+   "seq": 9787,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 8: click link 'All'",
+   "data": {
+    "action_result_id": "act_7d6a4bdf6518",
+    "ok": true,
+    "duration_ms": 91,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:38.786890Z"
+  },
+  {
+   "seq": 9788,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 9 (explorer-a): 1153 tokens, US$0.00068",
+   "data": {
+    "model_call_id": "mc_dc1bd1a12c39",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:40.758939Z"
+  },
+  {
+   "seq": 9789,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have added both todos, marked one as completed, and viewed all filters. Now I need to reload the page to check for persistence.",
+   "data": {
+    "step": 9,
+    "action": {
+     "type": "reload"
+    },
+    "model_call_id": "mc_dc1bd1a12c39"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:40.773982Z"
+  },
+  {
+   "seq": 9790,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: todos (3/4 fields filled)",
+   "data": {
+    "state_id": "state_ba852f66ee20",
+    "route": "/todomvc/",
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:41.006908Z"
+  },
+  {
+   "seq": 9791,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 9: reload",
+   "data": {
+    "action_result_id": "act_46a0c8c36986",
+    "ok": true,
+    "duration_ms": 70,
+    "phase": "explore",
+    "context_id": "explorer-a:default"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:41.024205Z"
+  },
+  {
+   "seq": 9792,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 10 (explorer-a): 1252 tokens, US$0.00094",
+   "data": {
+    "model_call_id": "mc_3a7523e20f49",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:43.152747Z"
+  },
+  {
+   "seq": 9793,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "I have added both todos, marked 'FlowLens milk' as completed, cycled through the filters, and reloaded the page. I can now verify that both todos and their states persist.",
+   "data": {
+    "step": 10,
+    "action": {
+     "type": "finish",
+     "persistence": "retained",
+     "checked_values": [
+      {
+       "field": "FlowLens milk",
+       "expected": "completed"
+      },
+      {
+       "field": "FlowLens dog",
+       "expected": "active"
+      }
+     ],
+     "summary": "After reloading, both 'FlowLens milk' (completed) and 'FlowLens dog' (active) are still present in the list."
+    },
+    "model_call_id": "mc_3a7523e20f49"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:43.171416Z"
+  },
+  {
+   "seq": 9794,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "explorer-a",
+   "type": "explorer_finished",
+   "message": "Explorer reports persistence: retained (unverified)",
+   "data": {
+    "finding_id": "fnd_8b624f5cc82a",
+    "same_context_check_passed": false,
+    "model_call_id": "mc_3a7523e20f49"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:43.210554Z"
+  },
+  {
+   "seq": 9795,
+   "run_id": "run_15f19bf8bb46",
+   "task_id": "task_d0050271b73e",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_finished",
+   "message": "Run completed: explorer finished the goal",
+   "data": {
+    "status": "completed"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": false,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T16:30:43.347661Z"
+  }
+ ]
+}

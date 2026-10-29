@@ -1,0 +1,2 @@
+# Recorded demo evidence must stay byte-identical (records carry SHA-256 hashes).
+demo/** -text

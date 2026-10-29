@@ -48,6 +48,8 @@ export interface Run {
   /** fixture: configured origin with per-worker harness workspaces. website: launcher-approved, fresh contexts only. */
   target_profile?: 'fixture' | 'website'
   scope_origins?: string[]
+  /** Set when loaded from a recorded demo bundle: a recorded result, not run by this installation. */
+  imported_from?: string | null
   limits: RunLimits
   status: RunStatus
   stop_reason: string | null

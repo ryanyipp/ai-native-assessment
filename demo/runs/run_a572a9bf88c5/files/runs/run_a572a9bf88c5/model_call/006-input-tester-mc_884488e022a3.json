@@ -1,0 +1,38 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens. You designed input cases for a form; code executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts the browser recorded afterwards (URLs, headings, status and alert messages, invalid fields, visible text).\n\nJudge each case only from those recorded facts:\n- \"as_expected\": the facts match the expectation.\n- \"unexpected\": the facts contradict the expectation.\n- \"unclear\": the facts are insufficient, or the expectation itself is not stated by a requirement.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<short>\", \"assessments\": [\n  {\"case\": <case number>, \"verdict\": \"as_expected\" | \"unexpected\" | \"unclear\",\n   \"observed_summary\": \"<what the facts show>\", \"requirement_ref\": \"<id or null>\"}]}\n\nYour verdicts are unverified candidates. A separate verifier checks them independently."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- R1: A creator can start a new draft from the dashboard.\n- R2: A draft has a title and a caption.\n- R3: Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.\n- R4: A creator can schedule a post from the dashboard by giving a post title and a publish date.\n- R5: A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.\n\nForm: http://localhost:5174/drafts/new (New draft)\n\nCase 1: Valid Draft Submission\n  inputs: {\"Title\": \"Summer Vacation\", \"Caption\": \"A collection of photos from the beach.\"}\n  requirement: R3\n  expected: The draft is saved and the title and caption are persisted on the page.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/28bc0770?saved=1\", \"title\": \"Edit draft \u00b7 Creator Studio\", \"headings\": [\"Edit draft\"], \"status_messages\": [\"Draft saved.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes\"}\n\nCase 2: Empty Title Validation\n  inputs: {\"Title\": \"\", \"Caption\": \"Valid caption text\"}\n  requirement: R2\n  expected: The system should indicate that a title is required to satisfy the draft definition.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/8625a6d5?saved=1\", \"title\": \"Edit draft \u00b7 Creator Studio\", \"headings\": [\"Edit draft\"], \"status_messages\": [\"Draft saved.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes\"}\n\nCase 3: Empty Caption Validation\n  inputs: {\"Title\": \"Valid Title\", \"Caption\": \"\"}\n  requirement: R2\n  expected: The system should indicate that a caption is required to satisfy the draft definition.\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/af22cc8c?saved=1\", \"title\": \"Edit draft \u00b7 Creator Studio\", \"headings\": [\"Edit draft\"], \"status_messages\": [\"Draft saved.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes\"}"
+    }
+  ],
+  "response": "{\n  \"reasoning\": \"The system successfully saved drafts even when required fields (Title or Caption) were empty, contradicting the expectation that these fields are required for a valid draft definition.\",\n  \"assessments\": [\n    {\n      \"case\": 1,\n      \"verdict\": \"as_expected\",\n      \"observed_summary\": \"The draft was saved successfully and redirected to an edit page with a success message.\",\n      \"requirement_ref\": \"R3\"\n    },\n    {\n      \"case\": 2,\n      \"verdict\": \"unexpected\",\n      \"observed_summary\": \"The system saved the draft despite an empty title, providing no validation error.\",\n      \"requirement_ref\": \"R2\"\n    },\n    {\n      \"case\": 3,\n      \"verdict\": \"unexpected\",\n      \"observed_summary\": \"The system saved the draft despite an empty caption, providing no validation error.\",\n      \"requirement_ref\": \"R2\"\n    }\n  ]\n}",
+  "usage": {
+    "prompt_tokens": 854,
+    "completion_tokens": 225,
+    "total_tokens": 1079,
+    "cost": 0.001102,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.001102,
+      "upstream_inference_prompt_cost": 0.000427,
+      "upstream_inference_completions_cost": 0.000675
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null
+}

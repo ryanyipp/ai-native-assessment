@@ -1,0 +1,38 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens, a website reviewer. An explorer found a form on an authorised test website and handed it to you with the supplied requirements.\n\nDesign a small set of input cases that check what the requirements say about this form: include boundary and invalid values the requirements address, plus at least one valid control case. Code will enter each case in a fresh browser session, submit it, and record what the page does.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<short>\", \"cases\": [\n  {\"label\": \"<short name>\", \"inputs\": {\"<field name exactly as listed>\": \"<value>\"},\n   \"submit\": \"<submit control name exactly as listed>\",\n   \"requirement_ref\": \"<requirement id this case checks, or null>\",\n   \"expected\": \"<what should happen, according to that requirement>\"}]}\n\nRules:\n- Use only the field and submit names listed. Unlisted fields keep their current value.\n- Values are typed exactly. A field with type=date needs YYYY-MM-DD.\n- Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use null and describe your own expectation; it will be treated as a review observation, not a defect.\n- At most 4 cases."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- R1: A creator can start a new draft from the dashboard.\n- R2: A draft has a title and a caption.\n- R3: Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.\n- R4: A creator can schedule a post from the dashboard by giving a post title and a publish date.\n- R5: A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.\n\nForm handed over by explorer-a:\nPage: http://localhost:5174/drafts/new\nHeadings: New draft\nFields:\n  - \"Title\" (textbox, type=text)\n  - \"Caption\" (textbox)\nSubmit controls: \"Save draft\"\nVisible page text (truncated): Creator Studio Dashboard New draft Title Caption Save draft"
+    }
+  ],
+  "response": "{\n  \"reasoning\": \"The test cases focus on the draft creation and persistence requirements (R1, R2, R3). Requirements R4 and R5 are not tested as the provided form lacks the 'publish date' field mentioned in those requirements.\",\n  \"cases\": [\n    {\n      \"label\": \"Valid Draft Submission\",\n      \"inputs\": {\n        \"Title\": \"Summer Vacation\",\n        \"Caption\": \"A collection of photos from the beach.\"\n      },\n      \"submit\": \"Save draft\",\n      \"requirement_ref\": \"R3\",\n      \"expected\": \"The draft is saved and the title and caption are persisted on the page.\"\n    },\n    {\n      \"label\": \"Empty Title Validation\",\n      \"inputs\": {\n        \"Title\": \"\",\n        \"Caption\": \"Valid caption text\"\n      },\n      \"submit\": \"Save draft\",\n      \"requirement_ref\": \"R2\",\n      \"expected\": \"The system should indicate that a title is required to satisfy the draft definition.\"\n    },\n    {\n      \"label\": \"Empty Caption Validation\",\n      \"inputs\": {\n        \"Title\": \"Valid Title\",\n        \"Caption\": \"\"\n      },\n      \"submit\": \"Save draft\",\n      \"requirement_ref\": \"R2\",\n      \"expected\": \"The system should indicate that a caption is required to satisfy the draft definition.\"\n    }\n  ]\n}",
+  "usage": {
+    "prompt_tokens": 482,
+    "completion_tokens": 1410,
+    "total_tokens": 1892,
+    "cost": 0.004471,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.004471,
+      "upstream_inference_prompt_cost": 0.000241,
+      "upstream_inference_completions_cost": 0.00423
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1093,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null
+}

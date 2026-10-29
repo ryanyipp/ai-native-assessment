@@ -1,0 +1,66 @@
+{
+  "url": "http://localhost:5177/",
+  "title": "Events \u00b7 Ticket Desk",
+  "headings": [
+    "Events",
+    "My bookings"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null,
+      "value": null,
+      "href": "/events/1/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Open-Air Cinema",
+      "input_type": null,
+      "value": null,
+      "href": "/events/2/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "a",
+      "role": "link",
+      "name": "Harbour Jazz Night \u00b7 2 ticket(s)",
+      "input_type": null,
+      "value": null,
+      "href": "/bookings/2801bc92",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Ticket Desk \u00b7 Events Events Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings Harbour Jazz Night \u00b7 2 ticket(s)",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

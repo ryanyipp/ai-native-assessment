@@ -1,0 +1,74 @@
+{
+  "runs": [
+    {
+      "run_id": "run_a572a9bf88c5",
+      "status": "completed",
+      "mode": "explore_test_verify",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T07:53:56.285953Z",
+      "reported_cost_usd": 0.023625000000000004,
+      "note": "Sequential review of creator-studio (broken build): past-date defect confirmed by an independent verifier",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_d50048493cc5",
+      "status": "completed",
+      "mode": "queue_review",
+      "target_url": "http://localhost:5177/",
+      "recorded_at": "2026-10-29T13:15:24.124486Z",
+      "reported_cost_usd": 0.023266500000000006,
+      "note": "Shared-queue review of ticket-desk (corrected build) that drained its queue",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_a54099283d9d",
+      "status": "partial",
+      "mode": "queue_review",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T13:41:46.584065Z",
+      "reported_cost_usd": 0.023028,
+      "note": "Shared-queue review stopped early (partial) at its exploration budget share",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_53d7009ff711",
+      "status": "failed",
+      "mode": "explore_test_verify",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T07:43:27.018813Z",
+      "reported_cost_usd": 0.016613000000000003,
+      "note": "Run that stopped on an internal error (failed), kept as a failure example",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_fc9eba62a54c",
+      "status": "completed",
+      "mode": "single_agent",
+      "target_url": "http://localhost:5176/",
+      "recorded_at": "2026-10-29T13:16:40.010027Z",
+      "reported_cost_usd": 0.007088500000000001,
+      "note": "Single-agent baseline on ticket-desk: a finding confirmed only by self-check",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_15f19bf8bb46",
+      "status": "completed",
+      "mode": "single_explorer",
+      "target_url": "https://demo.playwright.dev/todomvc/",
+      "recorded_at": "2026-10-29T16:30:16.728866Z",
+      "reported_cost_usd": 0.006852,
+      "note": "Public website (TodoMVC) explorer run; checkbox claims not evaluated",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_40e786578fef",
+      "status": "completed",
+      "mode": "reverify",
+      "target_url": "http://localhost:5175/",
+      "recorded_at": "2026-10-29T07:27:52.501500Z",
+      "reported_cost_usd": 0.0,
+      "note": "Re-check of an earlier finding against the corrected creator-studio build: not reproduced",
+      "missing_files": 0
+    }
+  ]
+}

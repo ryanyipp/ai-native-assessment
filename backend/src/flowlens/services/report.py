@@ -328,6 +328,7 @@ class ReportBuilder:
         return {
             "title": "Website review report", "goal": no_ids(r.goal), "target": r.target_url,
             "date": r.created_at.strftime("%d %b %Y, %H:%M UTC"), "workflow": WORKFLOW.get(r.mode, r.mode),
+            "recorded": r.imported_from,
             "status_label": status_label, "status_text": status_text, "incomplete": incomplete,
             "summary": lines, "groups": groups, "requirements": reqs, "gaps": gaps,
             "evidence_note": (
@@ -336,6 +337,7 @@ class ReportBuilder:
                 "is not shared or version-controlled, so links will not open for someone without access to that server."
                 + (" Some files are missing from the artifacts folder and are marked as missing." if any_missing else "")),
             "diagnostics": {
+                "Imported from": r.imported_from or "— (run by this installation)",
                 "Run id": r.id, "Goal as stored": r.goal, "Workflow (internal name)": r.mode, "Model": r.model,
                 "Status (internal)": r.status.value, "Stop reason (raw)": r.stop_reason or "—",
                 "Started": r.created_at.isoformat(), "Finished": r.finished_at.isoformat() if r.finished_at else "—",
@@ -372,7 +374,10 @@ def to_markdown(rep: dict) -> str:
     out = [f"# {rep['title']}", "",
            f"**Goal:** {_md(rep['goal'])}  ", f"**Website:** {rep['target']}  ",
            f"**Reviewed:** {rep['date']}  ", f"**How it was reviewed:** {rep['workflow']}  ",
-           f"**Status:** {rep['status_label']}. {rep['status_text']}", "", "## Summary", ""]
+           f"**Status:** {rep['status_label']}. {rep['status_text']}", ""]
+    if rep.get("recorded"):
+        out += [f"> **Recorded result.** Loaded from {rep['recorded']}; it was not run by this installation.", ""]
+    out += ["## Summary", ""]
     out += [f"- {_md(x)}" for x in rep["summary"]] + [""]
 
     def finding(x: dict, n: int) -> list[str]:
@@ -508,6 +513,8 @@ def to_html(rep: dict, md_href: str) -> str:
             '<dl class="meta">' + "".join(f"<dt>{k}</dt><dd>{_e(v)}</dd>" for k, v in (
                 ("Goal", rep["goal"]), ("Website", rep["target"]), ("Reviewed", rep["date"]),
                 ("How it was reviewed", rep["workflow"]), ("Status", f'{rep["status_label"]}. {rep["status_text"]}'))) + "</dl>"]
+    if rep.get("recorded"):
+        body.append(f'<div class="banner"><b>Recorded result.</b> Loaded from {_e(rep["recorded"])}; it was not run by this installation.</div>')
     if rep["incomplete"]:
         body.append('<div class="banner"><b>Incomplete review.</b> Some areas were not checked; see “What was not checked”.</div>')
     body.append('<h2>Summary</h2><div class="summary"><ul>' + "".join(f"<li>{_e(s)}</li>" for s in rep["summary"]) + "</ul></div>")

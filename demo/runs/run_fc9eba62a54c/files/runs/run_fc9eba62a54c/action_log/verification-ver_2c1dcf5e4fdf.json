@@ -1,0 +1,71 @@
+{
+  "id": "ver_2c1dcf5e4fdf",
+  "run_id": "run_fc9eba62a54c",
+  "finding_id": "fnd_85abff2dee04",
+  "handoff_id": "ho_8f2bbafe83c3",
+  "verifier_id": "single-agent",
+  "replay_index": 1,
+  "target_origin": "http://localhost:5176",
+  "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "field": "Tickets"
+    },
+    "requirement_ref": "T2",
+    "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+    "chosen_by": "single-agent"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "field": "Tickets"
+      },
+      "requirement_ref": "T2",
+      "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+      "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5176/bookings/ae6bfcbc?booked=1",
+      "route": "/bookings/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Booking confirmed."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated T2 in this fresh replay.",
+  "action_result_ids": [
+    "act_29f25f318744",
+    "act_513005c48f7f",
+    "act_ff916e0e2edd",
+    "act_0795509b977e",
+    "act_e8f3392d6c85"
+  ],
+  "evidence_refs": [
+    "art_55c373ecc1b6",
+    "art_a448d0959410",
+    "art_31b962a55b83",
+    "art_ac5e5e5a9e1f",
+    "art_8e9da2d74edc",
+    "art_790cd62e2948",
+    "art_19c33ea7e277",
+    "art_afa317876ff3",
+    "art_b9639f4fdfea",
+    "art_ea9aa6c82843"
+  ],
+  "model_call_id": null,
+  "started_at": "2026-10-29T13:17:18.433140Z",
+  "finished_at": "2026-10-29T13:17:22.223575Z"
+}

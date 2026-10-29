@@ -1,0 +1,54 @@
+{
+  "url": "http://localhost:5176/bookings/dd2fd430?booked=1",
+  "title": "Booking \u00b7 Ticket Desk",
+  "headings": [
+    "Your booking"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "Cancel booking",
+      "input_type": null,
+      "value": null,
+      "href": "/bookings/dd2fd430/cancel",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Back to events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Ticket Desk \u00b7 Events Your booking Booking confirmed. Event Harbour Jazz Night Name Bob Tickets 7 Cancel booking Back to events",
+  "status_messages": [
+    "Booking confirmed."
+  ],
+  "alert_messages": [],
+  "invalid_fields": []
+}

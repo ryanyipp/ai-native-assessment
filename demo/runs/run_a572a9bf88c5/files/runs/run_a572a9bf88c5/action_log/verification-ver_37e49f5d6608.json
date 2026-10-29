@@ -1,0 +1,29 @@
+{
+  "id": "ver_37e49f5d6608",
+  "run_id": "run_a572a9bf88c5",
+  "finding_id": "fnd_11663c88da31",
+  "handoff_id": "ho_644ee0cb02f7",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_37e49f5d6608:ws_9c45086494",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": "expectation",
+  "assertion": null,
+  "result": null,
+  "outcome": "inconclusive",
+  "reason": "Verifier judged that R2 does not explicitly state this behaviour: The requirement describes the data structure of a draft (what it has) but does not explicitly state that these fields are mandatory or that the system must prevent saving if they are empty. According to the instructions, a requirement descr",
+  "action_result_ids": [
+    "act_00d7aca6f2b1"
+  ],
+  "evidence_refs": [
+    "art_c2745f3d4e8e",
+    "art_6c5b6538e230"
+  ],
+  "model_call_id": "mc_e78199786e49",
+  "started_at": "2026-10-29T07:55:10.675255Z",
+  "finished_at": "2026-10-29T07:55:21.847871Z"
+}

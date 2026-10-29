@@ -1,0 +1,77 @@
+{
+  "url": "https://demo.playwright.dev/todomvc/#/",
+  "title": "React \u2022 TodoMVC",
+  "headings": [
+    "todos"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "real TodoMVC app.",
+      "input_type": null,
+      "value": null,
+      "href": "https://todomvc.com/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "context": null,
+      "name_shared": false
+    },
+    {
+      "id": "e2",
+      "tag": "input",
+      "role": "textbox",
+      "name": "What needs to be done?",
+      "input_type": "text",
+      "value": "",
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "context": null,
+      "name_shared": false
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Remo H. Jansen",
+      "input_type": null,
+      "value": null,
+      "href": "http://github.com/remojansen/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "context": null,
+      "name_shared": false
+    },
+    {
+      "id": "e4",
+      "tag": "a",
+      "role": "link",
+      "name": "TodoMVC",
+      "input_type": null,
+      "value": null,
+      "href": "http://todomvc.com",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "context": null,
+      "name_shared": false
+    }
+  ],
+  "text_excerpt": "This is just a demo of TodoMVC for testing, not the real TodoMVC app. todos Double-click to edit a todo Created by Remo H. Jansen Part of TodoMVC",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

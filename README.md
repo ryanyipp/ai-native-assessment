@@ -4,34 +4,23 @@ An AI website reviewer. It explores an authorised staging site and builds an evi
 
 Status: **Checkpoint 4** (shared task queue with enforced leases, fencing and stalled-worker recovery; labelled fault injection; the sequential checkpoint 2 workflow remains selectable). See `docs/architecture.md`.
 
-## Prerequisites (Windows)
+## Setup
 
-- Python 3.12 (`py -3.12`), Node 22+ / npm 10+, Git
-- uv: `py -3.12 -m pip install --user uv` (then call it as `py -3.12 -m uv`)
+Full instructions, configuration and the recorded demo runs are in **[docs/setup.md](docs/setup.md)**. In short:
 
-## Setup (PowerShell, from the repository root)
+```sh
+docker compose up --build          # FlowLens + both fixture apps; open http://localhost:5173
+```
+
+or natively (Python 3.12 + uv, Node 22+):
 
 ```powershell
-Copy-Item .env.example .env   # only if .env does not exist yet; then set OPENROUTER_API_KEY
-cd backend; py -3.12 -m uv sync; .\.venv\Scripts\python -m playwright install chromium; cd ..
+cd backend; py -3.12 -m uv sync --frozen; .\.venv\Scripts\python -m playwright install chromium; .\.venv\Scripts\python -m flowlens.demo load; cd ..
 cd frontend; npm ci; cd ..
+# then start the fixtures, backend and frontend as in docs/setup.md
 ```
 
-Empty or missing optional `.env` values fall back to defaults in `backend/src/flowlens/config.py`.
-
-## Start (three terminals, from the repository root)
-
-```powershell
-# 1. Fixture (review target): broken build on :5174 and, optionally, the corrected build on :5175
-backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studio --host 127.0.0.1 --port 5174
-$env:CREATOR_STUDIO_MODE='corrected'; $env:CREATOR_STUDIO_DATA='fixtures\creator-studio\data\corrected.json'; backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studio --host 127.0.0.1 --port 5175
-# 2. Backend API on :8000
-cd backend; .\.venv\Scripts\python -m uvicorn flowlens.main:app --host 127.0.0.1 --port 8000
-# 3. Frontend on :5173
-cd frontend; npm run dev
-```
-
-Open http://localhost:5173, keep the default target `http://localhost:5174/` and goal, and click **Start live run**. To run the checkpoint 2 workflow, choose **Explorer → input tester → verifier** in the launcher and paste the lines of `fixtures/creator-studio/requirements.md` as requirements.
+No API key is needed to inspect the recorded demo runs (labelled **Recorded demo result**). Live runs need `OPENROUTER_API_KEY` in `.env` (copy `.env.example`; never commit `.env`). Open http://localhost:5173, keep the default target `http://localhost:5174/` and goal, and click **Start live run**.
 
 ## Checks
 

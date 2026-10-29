@@ -1,0 +1,72 @@
+{
+  "id": "ver_5e5d0f0734c2",
+  "run_id": "run_40e786578fef",
+  "finding_id": "fnd_f3fa653d7784",
+  "handoff_id": "ho_a21e46e6f678",
+  "verifier_id": "verifier",
+  "replay_index": 1,
+  "target_origin": "http://localhost:5175",
+  "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "field": "Publish date"
+      },
+      "requirement_ref": "R5",
+      "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+      "chosen_by": "verifier"
+    },
+    "passed": true,
+    "observed": {
+      "url": "http://localhost:5175/schedule",
+      "route": "/schedule",
+      "alert_messages": [
+        "Publish date cannot be in the past."
+      ],
+      "field_validation": {},
+      "status_messages": [
+        "Publish date cannot be in the past."
+      ],
+      "matching_messages": [
+        "Publish date cannot be in the past."
+      ]
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "not_reproduced",
+  "reason": "Assertion validation_message_present held: the page met R5 in this fresh replay.",
+  "action_result_ids": [
+    "act_8e1c694dd294",
+    "act_d93623f9cd53",
+    "act_b0c092b56fac",
+    "act_860d015a2281"
+  ],
+  "evidence_refs": [
+    "art_3c67cbb0656e",
+    "art_8f0f50746bb2",
+    "art_d0b98e6272c9",
+    "art_b1000145e9ea",
+    "art_3d6c0698b17b",
+    "art_8bbce5ca43a6",
+    "art_d6fd8d66ce15",
+    "art_5dfb95bcbc3b"
+  ],
+  "model_call_id": null,
+  "started_at": "2026-10-29T07:27:56.719178Z",
+  "finished_at": "2026-10-29T07:28:00.708770Z"
+}

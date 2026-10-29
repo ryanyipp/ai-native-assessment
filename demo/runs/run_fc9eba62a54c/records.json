@@ -1,0 +1,4486 @@
+{
+ "runs": [
+  {
+   "id": "run_fc9eba62a54c",
+   "target_url": "http://localhost:5176/",
+   "goal": "Explore this website and open each form a visitor can use, without submitting them. Finish when you have seen them.",
+   "requirements": [
+    "T1. A visitor can open the booking form for an event from the events list.",
+    "T2. A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+    "T3. The email must contain an \"@\". Otherwise the booking is rejected with a validation message.",
+    "T4. After a successful booking, a confirmation page shows the event, the name and the number of tickets.",
+    "T5. A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+   ],
+   "model": "google/gemini-3-flash-preview",
+   "mode": "single_agent",
+   "limits": {
+    "max_steps": 12,
+    "max_model_calls": 30,
+    "max_cost_usd": 0.15,
+    "max_output_tokens": 800,
+    "max_output_tokens_planning": 1400,
+    "max_duration_s": 900,
+    "max_states": 30,
+    "reserved_verification_calls": 5,
+    "max_forms_tested": 3,
+    "max_cases_per_form": 3,
+    "verification_replays": 2,
+    "reserved_testing_calls": 6,
+    "explore_steps_per_task": 3,
+    "max_depth": 2,
+    "max_tasks": 40,
+    "task_max_attempts": 2,
+    "task_lease_s": 45,
+    "planning_reasoning_tokens": 384
+   },
+   "target_build": "creator-studio:broken",
+   "fault_injection": null,
+   "status": "completed",
+   "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "usage": {
+    "model_calls": 8,
+    "prompt_tokens": 8657,
+    "completion_tokens": 920,
+    "total_tokens": 9577,
+    "reported_cost_usd": 0.007088500000000001,
+    "calls_without_cost": 0,
+    "exploration_calls": 5,
+    "testing_calls": 2,
+    "verification_calls": 1,
+    "truncated_calls": 0
+   },
+   "created_at": "2026-10-29T13:16:40.010027Z",
+   "finished_at": "2026-10-29T13:17:22.420720Z"
+  }
+ ],
+ "states": [
+  {
+   "id": "state_b7ee9bf3cdb1",
+   "run_id": "run_fc9eba62a54c",
+   "signature": "c9d5566fbf7ee274",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/",
+   "url": "http://localhost:5176/",
+   "title": "Events · Ticket Desk",
+   "summary": "Events",
+   "screenshot_artifact_id": "art_cfcf87ebc0a5",
+   "first_seen_step": 0,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "http://localhost:5176/"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "explore",
+     "context_id": "single-agent:explore:ws_a1c268b697",
+     "action_result_id": "act_78b8097e5a44"
+    }
+   ],
+   "structure": "c9d5566fbf7ee274",
+   "layout": "600ddef8551a184c"
+  },
+  {
+   "id": "state_079525adbacf",
+   "run_id": "run_fc9eba62a54c",
+   "signature": "3f4a0bf26657e3c4",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/events/:id/book",
+   "url": "http://localhost:5176/events/1/book",
+   "title": "Book tickets · Ticket Desk",
+   "summary": "Book tickets (0/3 fields filled)",
+   "screenshot_artifact_id": "art_2daeb214e0d0",
+   "first_seen_step": 1,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "http://localhost:5176/"
+    },
+    {
+     "type": "click",
+     "element_id": "e2"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "explore",
+     "context_id": "single-agent:explore:ws_a1c268b697",
+     "action_result_id": "act_af4acc135fcf"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+     "action_result_id": "act_9e029b9e1a55"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+     "action_result_id": "act_caaf8dc35bdc"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+     "action_result_id": "act_5cdcd664cea6"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+     "action_result_id": "act_3fc5344ec224"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+     "action_result_id": "act_29f25f318744"
+    }
+   ],
+   "structure": "87c7a3b48c90e37f",
+   "layout": "c37b88bf0cd9d2db"
+  },
+  {
+   "id": "state_00e0aa9772dd",
+   "run_id": "run_fc9eba62a54c",
+   "signature": "729338ce94d4b937",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/bookings/:id",
+   "url": "http://localhost:5176/bookings/686bf6c1?booked=1",
+   "title": "Booking · Ticket Desk",
+   "summary": "Your booking — Booking confirmed.",
+   "screenshot_artifact_id": "art_4ecdf00098bb",
+   "first_seen_step": 9,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Name",
+      "input_type": "text"
+     },
+     "value": "Alice"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Email",
+      "input_type": "text"
+     },
+     "value": "alice@example.com"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Tickets",
+      "input_type": "number"
+     },
+     "value": "2"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Book tickets",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+     "action_result_id": "act_adc811951f68"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+     "action_result_id": "act_e7823254a341"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+     "action_result_id": "act_a06c27d52f14"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+     "action_result_id": "act_e8f3392d6c85"
+    }
+   ],
+   "structure": "729338ce94d4b937",
+   "layout": "508296179a2f52ee"
+  },
+  {
+   "id": "state_31ba831aefca",
+   "run_id": "run_fc9eba62a54c",
+   "signature": "4ad3191659f97ddf",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/events/:id/book",
+   "url": "http://localhost:5176/events/1/book",
+   "title": "Book tickets · Ticket Desk",
+   "summary": "Book tickets — Enter an email address containing @. (3/3 fields filled)",
+   "screenshot_artifact_id": "art_3f26414b5d72",
+   "first_seen_step": 19,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Name",
+      "input_type": "text"
+     },
+     "value": "Charlie"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Email",
+      "input_type": "text"
+     },
+     "value": "charlie-at-example.com"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Tickets",
+      "input_type": "number"
+     },
+     "value": "1"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Book tickets",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+     "action_result_id": "act_0f1b5b9f37c0"
+    }
+   ],
+   "structure": "8b5c697b7f5957d9",
+   "layout": "c37b88bf0cd9d2db"
+  }
+ ],
+ "transitions": [
+  {
+   "id": "tr_af3f65adbe19",
+   "run_id": "run_fc9eba62a54c",
+   "step": 1,
+   "source_state_id": "state_b7ee9bf3cdb1",
+   "target_state_id": "state_079525adbacf",
+   "action": {
+    "type": "click",
+    "element_id": "e2"
+   },
+   "label": "click link 'Book tickets for Harbour Jazz Night'",
+   "action_result_id": "act_af4acc135fcf",
+   "ok": true,
+   "duration_ms": 40,
+   "screenshot_artifact_id": "art_2daeb214e0d0",
+   "model_call_id": "mc_4f709ba9aa14",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_d3de8eb2616e",
+   "run_id": "run_fc9eba62a54c",
+   "step": 2,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_b7ee9bf3cdb1",
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "label": "click link 'Events'",
+   "action_result_id": "act_74053d9380bb",
+   "ok": true,
+   "duration_ms": 46,
+   "screenshot_artifact_id": "art_c76296d8202f",
+   "model_call_id": "mc_5752e6d925cc",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_adbb340310c3",
+   "run_id": "run_fc9eba62a54c",
+   "step": 3,
+   "source_state_id": "state_b7ee9bf3cdb1",
+   "target_state_id": "state_079525adbacf",
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "label": "click link 'Book tickets for Open-Air Cinema'",
+   "action_result_id": "act_57e8d67194b0",
+   "ok": true,
+   "duration_ms": 39,
+   "screenshot_artifact_id": "art_42fe87c6104f",
+   "model_call_id": "mc_9bf329913d67",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_eb3114780166",
+   "run_id": "run_fc9eba62a54c",
+   "step": 4,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_b7ee9bf3cdb1",
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "label": "click link 'Events'",
+   "action_result_id": "act_c4d8fbd14661",
+   "ok": true,
+   "duration_ms": 52,
+   "screenshot_artifact_id": "art_de184a3e66f9",
+   "model_call_id": "mc_9c18d1cb9626",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_101d317d8cb6",
+   "run_id": "run_fc9eba62a54c",
+   "step": 9,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_00e0aa9772dd",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_8b49f1e1b522",
+    "inputs": {
+     "Name": "Alice",
+     "Email": "alice@example.com",
+     "Tickets": "2"
+    },
+    "submit": "Book tickets"
+   },
+   "label": "test: Name='Alice', Email='alice@example.com', Tickets='2'",
+   "action_result_id": "act_adc811951f68",
+   "ok": true,
+   "duration_ms": 125,
+   "screenshot_artifact_id": "art_4ecdf00098bb",
+   "model_call_id": "mc_50f52831f5cc",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "test_case_id": "tc_8b49f1e1b522",
+   "verification_id": null
+  },
+  {
+   "id": "tr_ae375028dcc6",
+   "run_id": "run_fc9eba62a54c",
+   "step": 14,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_00e0aa9772dd",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_250485c2116c",
+    "inputs": {
+     "Name": "Bob",
+     "Email": "bob@example.com",
+     "Tickets": "7"
+    },
+    "submit": "Book tickets"
+   },
+   "label": "test: Name='Bob', Email='bob@example.com', Tickets='7'",
+   "action_result_id": "act_e7823254a341",
+   "ok": true,
+   "duration_ms": 114,
+   "screenshot_artifact_id": "art_77a84552f977",
+   "model_call_id": "mc_50f52831f5cc",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "test_case_id": "tc_250485c2116c",
+   "verification_id": null
+  },
+  {
+   "id": "tr_8be7c3619acd",
+   "run_id": "run_fc9eba62a54c",
+   "step": 19,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_31ba831aefca",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_604445d18dc3",
+    "inputs": {
+     "Name": "Charlie",
+     "Email": "charlie-at-example.com",
+     "Tickets": "1"
+    },
+    "submit": "Book tickets"
+   },
+   "label": "test: Name='Charlie', Email='charlie-at-example.com', Tickets='1'",
+   "action_result_id": "act_0f1b5b9f37c0",
+   "ok": true,
+   "duration_ms": 104,
+   "screenshot_artifact_id": "art_3f26414b5d72",
+   "model_call_id": "mc_50f52831f5cc",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "test_case_id": "tc_604445d18dc3",
+   "verification_id": null
+  },
+  {
+   "id": "tr_bb1e82f92e68",
+   "run_id": "run_fc9eba62a54c",
+   "step": 24,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_00e0aa9772dd",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_85abff2dee04",
+    "inputs": {
+     "Name": "Bob",
+     "Email": "bob@example.com",
+     "Tickets": "7"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Name='Bob', Email='bob@example.com', Tickets='7'",
+   "action_result_id": "act_a06c27d52f14",
+   "ok": true,
+   "duration_ms": 115,
+   "screenshot_artifact_id": "art_6d594d1ecd50",
+   "model_call_id": "mc_a92b115217bb",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "test_case_id": null,
+   "verification_id": "ver_0518212b9403"
+  },
+  {
+   "id": "tr_c0aae0830ca2",
+   "run_id": "run_fc9eba62a54c",
+   "step": 29,
+   "source_state_id": "state_079525adbacf",
+   "target_state_id": "state_00e0aa9772dd",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_85abff2dee04",
+    "inputs": {
+     "Name": "Bob",
+     "Email": "bob@example.com",
+     "Tickets": "7"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Name='Bob', Email='bob@example.com', Tickets='7'",
+   "action_result_id": "act_e8f3392d6c85",
+   "ok": true,
+   "duration_ms": 124,
+   "screenshot_artifact_id": "art_b9639f4fdfea",
+   "model_call_id": null,
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "test_case_id": null,
+   "verification_id": "ver_2c1dcf5e4fdf"
+  }
+ ],
+ "actions": [
+  {
+   "id": "act_78b8097e5a44",
+   "run_id": "run_fc9eba62a54c",
+   "step": 0,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/"
+   },
+   "target_description": "http://localhost:5176/",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/",
+   "started_at": "2026-10-29T13:16:43.130064Z",
+   "duration_ms": 25,
+   "screenshot_artifact_id": "art_cfcf87ebc0a5",
+   "observation_artifact_id": "art_25b333a69a93",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "task_id": "task_8a93ab90c727"
+  },
+  {
+   "id": "act_af4acc135fcf",
+   "run_id": "run_fc9eba62a54c",
+   "step": 1,
+   "action": {
+    "type": "click",
+    "element_id": "e2"
+   },
+   "target_description": "link 'Book tickets for Harbour Jazz Night'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:16:45.077489Z",
+   "duration_ms": 40,
+   "screenshot_artifact_id": "art_2daeb214e0d0",
+   "observation_artifact_id": "art_7b6a439e75e4",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "task_id": "task_8a93ab90c727"
+  },
+  {
+   "id": "act_74053d9380bb",
+   "run_id": "run_fc9eba62a54c",
+   "step": 2,
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "target_description": "link 'Events'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/",
+   "started_at": "2026-10-29T13:16:46.873148Z",
+   "duration_ms": 46,
+   "screenshot_artifact_id": "art_c76296d8202f",
+   "observation_artifact_id": "art_bc9fa256bf81",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "task_id": "task_8a93ab90c727"
+  },
+  {
+   "id": "act_57e8d67194b0",
+   "run_id": "run_fc9eba62a54c",
+   "step": 3,
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "target_description": "link 'Book tickets for Open-Air Cinema'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/",
+   "url_after": "http://localhost:5176/events/2/book",
+   "started_at": "2026-10-29T13:16:49.183666Z",
+   "duration_ms": 39,
+   "screenshot_artifact_id": "art_42fe87c6104f",
+   "observation_artifact_id": "art_ebd44c8b4888",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "task_id": "task_8a93ab90c727"
+  },
+  {
+   "id": "act_c4d8fbd14661",
+   "run_id": "run_fc9eba62a54c",
+   "step": 4,
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "target_description": "link 'Events'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/2/book",
+   "url_after": "http://localhost:5176/",
+   "started_at": "2026-10-29T13:16:52.890966Z",
+   "duration_ms": 52,
+   "screenshot_artifact_id": "art_de184a3e66f9",
+   "observation_artifact_id": "art_8fbf29ebcda6",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_a1c268b697",
+   "task_id": "task_8a93ab90c727"
+  },
+  {
+   "id": "act_9e029b9e1a55",
+   "run_id": "run_fc9eba62a54c",
+   "step": 5,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/events/1/book"
+   },
+   "target_description": "http://localhost:5176/events/1/book",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:00.917760Z",
+   "duration_ms": 35,
+   "screenshot_artifact_id": "art_add132a70ad8",
+   "observation_artifact_id": "art_5f56bd872a51",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_45a9fa5dcf8f",
+   "run_id": "run_fc9eba62a54c",
+   "step": 6,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Alice"
+   },
+   "target_description": "textbox 'Name'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:01.124785Z",
+   "duration_ms": 19,
+   "screenshot_artifact_id": "art_8efbb8a62884",
+   "observation_artifact_id": "art_a01642c111d5",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_e428341c9b9d",
+   "run_id": "run_fc9eba62a54c",
+   "step": 7,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "alice@example.com"
+   },
+   "target_description": "textbox 'Email'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:01.263667Z",
+   "duration_ms": 10,
+   "screenshot_artifact_id": "art_d43a76f9ef60",
+   "observation_artifact_id": "art_73e1dadc135d",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_46bfd4ae0e7b",
+   "run_id": "run_fc9eba62a54c",
+   "step": 8,
+   "action": {
+    "type": "fill",
+    "element_id": "e4",
+    "value": "2"
+   },
+   "target_description": "textbox 'Tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:01.374215Z",
+   "duration_ms": 8,
+   "screenshot_artifact_id": "art_4197ea6fe2a9",
+   "observation_artifact_id": "art_c4571690b311",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_adc811951f68",
+   "run_id": "run_fc9eba62a54c",
+   "step": 9,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "button 'Book tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/bookings/686bf6c1?booked=1",
+   "started_at": "2026-10-29T13:17:01.492101Z",
+   "duration_ms": 53,
+   "screenshot_artifact_id": "art_4ecdf00098bb",
+   "observation_artifact_id": "art_90105159d22e",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_caaf8dc35bdc",
+   "run_id": "run_fc9eba62a54c",
+   "step": 10,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/events/1/book"
+   },
+   "target_description": "http://localhost:5176/events/1/book",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:04.937392Z",
+   "duration_ms": 32,
+   "screenshot_artifact_id": "art_7e4a815f1ce5",
+   "observation_artifact_id": "art_f2c79a74e74b",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_fdf0797977c4",
+   "run_id": "run_fc9eba62a54c",
+   "step": 11,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Bob"
+   },
+   "target_description": "textbox 'Name'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:05.139838Z",
+   "duration_ms": 13,
+   "screenshot_artifact_id": "art_5ffc1c21bc97",
+   "observation_artifact_id": "art_8f0c6db03df9",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_7445df6a111a",
+   "run_id": "run_fc9eba62a54c",
+   "step": 12,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "bob@example.com"
+   },
+   "target_description": "textbox 'Email'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:05.261931Z",
+   "duration_ms": 7,
+   "screenshot_artifact_id": "art_c8a79f452ecf",
+   "observation_artifact_id": "art_72595bd14ac6",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_f5e5dd0d04bf",
+   "run_id": "run_fc9eba62a54c",
+   "step": 13,
+   "action": {
+    "type": "fill",
+    "element_id": "e4",
+    "value": "7"
+   },
+   "target_description": "textbox 'Tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:05.376980Z",
+   "duration_ms": 6,
+   "screenshot_artifact_id": "art_8d73ad4e68c7",
+   "observation_artifact_id": "art_714f331b74a3",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_e7823254a341",
+   "run_id": "run_fc9eba62a54c",
+   "step": 14,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "button 'Book tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/bookings/d3f14204?booked=1",
+   "started_at": "2026-10-29T13:17:05.494677Z",
+   "duration_ms": 56,
+   "screenshot_artifact_id": "art_77a84552f977",
+   "observation_artifact_id": "art_3130c11edd6c",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_5cdcd664cea6",
+   "run_id": "run_fc9eba62a54c",
+   "step": 15,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/events/1/book"
+   },
+   "target_description": "http://localhost:5176/events/1/book",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:09.124746Z",
+   "duration_ms": 35,
+   "screenshot_artifact_id": "art_0b2de53a21bf",
+   "observation_artifact_id": "art_91395679b208",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_5594bd331fdb",
+   "run_id": "run_fc9eba62a54c",
+   "step": 16,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Charlie"
+   },
+   "target_description": "textbox 'Name'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:09.339987Z",
+   "duration_ms": 18,
+   "screenshot_artifact_id": "art_9151495552c7",
+   "observation_artifact_id": "art_8e6c593d7dd6",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_fd2e19b0e105",
+   "run_id": "run_fc9eba62a54c",
+   "step": 17,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "charlie-at-example.com"
+   },
+   "target_description": "textbox 'Email'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:09.490778Z",
+   "duration_ms": 9,
+   "screenshot_artifact_id": "art_c1b82965833d",
+   "observation_artifact_id": "art_e61d66cc0c8e",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_0767aaa36ba6",
+   "run_id": "run_fc9eba62a54c",
+   "step": 18,
+   "action": {
+    "type": "fill",
+    "element_id": "e4",
+    "value": "1"
+   },
+   "target_description": "textbox 'Tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:09.606966Z",
+   "duration_ms": 6,
+   "screenshot_artifact_id": "art_0d1fd282f2a3",
+   "observation_artifact_id": "art_78ce5d69fb59",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_0f1b5b9f37c0",
+   "run_id": "run_fc9eba62a54c",
+   "step": 19,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "button 'Book tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:09.733542Z",
+   "duration_ms": 36,
+   "screenshot_artifact_id": "art_3f26414b5d72",
+   "observation_artifact_id": "art_cc273e101243",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "task_id": "task_f01e502e02fe"
+  },
+  {
+   "id": "act_3fc5344ec224",
+   "run_id": "run_fc9eba62a54c",
+   "step": 20,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/events/1/book"
+   },
+   "target_description": "http://localhost:5176/events/1/book",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:15.633622Z",
+   "duration_ms": 30,
+   "screenshot_artifact_id": "art_dfe4992ecc86",
+   "observation_artifact_id": "art_b98f8ff2549e",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_acd17248c85f",
+   "run_id": "run_fc9eba62a54c",
+   "step": 21,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Bob"
+   },
+   "target_description": "textbox 'Name'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:17.723204Z",
+   "duration_ms": 14,
+   "screenshot_artifact_id": "art_847c329cc4bb",
+   "observation_artifact_id": "art_55b81c07deea",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_56712314cab4",
+   "run_id": "run_fc9eba62a54c",
+   "step": 22,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "bob@example.com"
+   },
+   "target_description": "textbox 'Email'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:17.846959Z",
+   "duration_ms": 7,
+   "screenshot_artifact_id": "art_41a7a9cf5563",
+   "observation_artifact_id": "art_08f822a013df",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_5846b4860cab",
+   "run_id": "run_fc9eba62a54c",
+   "step": 23,
+   "action": {
+    "type": "fill",
+    "element_id": "e4",
+    "value": "7"
+   },
+   "target_description": "textbox 'Tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:17.975222Z",
+   "duration_ms": 6,
+   "screenshot_artifact_id": "art_5ef82ca9bb8a",
+   "observation_artifact_id": "art_df4dd73890b1",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_a06c27d52f14",
+   "run_id": "run_fc9eba62a54c",
+   "step": 24,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "button 'Book tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/bookings/dd2fd430?booked=1",
+   "started_at": "2026-10-29T13:17:18.086868Z",
+   "duration_ms": 58,
+   "screenshot_artifact_id": "art_6d594d1ecd50",
+   "observation_artifact_id": "art_baefd46c6369",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_29f25f318744",
+   "run_id": "run_fc9eba62a54c",
+   "step": 25,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5176/events/1/book"
+   },
+   "target_description": "http://localhost:5176/events/1/book",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:21.458269Z",
+   "duration_ms": 32,
+   "screenshot_artifact_id": "art_55c373ecc1b6",
+   "observation_artifact_id": "art_a448d0959410",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_513005c48f7f",
+   "run_id": "run_fc9eba62a54c",
+   "step": 26,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Bob"
+   },
+   "target_description": "textbox 'Name'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:21.655879Z",
+   "duration_ms": 18,
+   "screenshot_artifact_id": "art_31b962a55b83",
+   "observation_artifact_id": "art_ac5e5e5a9e1f",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_ff916e0e2edd",
+   "run_id": "run_fc9eba62a54c",
+   "step": 27,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "bob@example.com"
+   },
+   "target_description": "textbox 'Email'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:21.786655Z",
+   "duration_ms": 20,
+   "screenshot_artifact_id": "art_8e9da2d74edc",
+   "observation_artifact_id": "art_790cd62e2948",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_0795509b977e",
+   "run_id": "run_fc9eba62a54c",
+   "step": 28,
+   "action": {
+    "type": "fill",
+    "element_id": "e4",
+    "value": "7"
+   },
+   "target_description": "textbox 'Tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/events/1/book",
+   "started_at": "2026-10-29T13:17:21.912822Z",
+   "duration_ms": 7,
+   "screenshot_artifact_id": "art_19c33ea7e277",
+   "observation_artifact_id": "art_afa317876ff3",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "task_id": "task_491fde694b7e"
+  },
+  {
+   "id": "act_e8f3392d6c85",
+   "run_id": "run_fc9eba62a54c",
+   "step": 29,
+   "action": {
+    "type": "click",
+    "element_id": "e5"
+   },
+   "target_description": "button 'Book tickets'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5176/events/1/book",
+   "url_after": "http://localhost:5176/bookings/ae6bfcbc?booked=1",
+   "started_at": "2026-10-29T13:17:22.029140Z",
+   "duration_ms": 47,
+   "screenshot_artifact_id": "art_b9639f4fdfea",
+   "observation_artifact_id": "art_ea9aa6c82843",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "task_id": "task_491fde694b7e"
+  }
+ ],
+ "findings": [
+  {
+   "id": "fnd_85abff2dee04",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "defect_candidate",
+   "reported_by": "single-agent",
+   "description": "Book tickets: Invalid tickets (high)",
+   "expected": "Validation message appears and no booking is created.",
+   "observed": "The system accepted a booking for 7 tickets, which violates the requirement to reject counts outside the 1-6 range.",
+   "agent_claim": null,
+   "same_context_check": null,
+   "evidence_refs": [
+    "art_7e4a815f1ce5",
+    "art_f2c79a74e74b",
+    "art_5ffc1c21bc97",
+    "art_8f0c6db03df9",
+    "art_c8a79f452ecf",
+    "art_72595bd14ac6",
+    "art_8d73ad4e68c7",
+    "art_714f331b74a3",
+    "art_77a84552f977",
+    "art_3130c11edd6c"
+   ],
+   "verification_status": "confirmed",
+   "replay_recipe": [],
+   "requirement_ref": "T2",
+   "requirement_text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+   "inputs": {
+    "Name": "Bob",
+    "Email": "bob@example.com",
+    "Tickets": "7"
+   },
+   "reproduction": {
+    "target_state_id": "state_079525adbacf",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Book tickets for Harbour Jazz Night",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "reproduction_steps": [
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Name",
+      "input_type": "text"
+     },
+     "value": "Bob"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Email",
+      "input_type": "text"
+     },
+     "value": "bob@example.com"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Tickets",
+      "input_type": "number"
+     },
+     "value": "7"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Book tickets",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "check_path": null,
+   "form_id": "form_ec8fae375711",
+   "test_case_id": "tc_250485c2116c",
+   "handoff_ids": [
+    "ho_c856af686295",
+    "ho_8f2bbafe83c3"
+   ],
+   "verification_ids": [
+    "ver_0518212b9403",
+    "ver_2c1dcf5e4fdf"
+   ],
+   "verified_by": "single-agent",
+   "verification_reason": "All 2 fresh replays violated T2.",
+   "source_finding_id": null,
+   "verification_independence": "self"
+  }
+ ],
+ "evidence": [
+  {
+   "id": "art_cfcf87ebc0a5",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/000-navigate.png",
+   "sha256": "cd928e966876d22c3e0f51da47b49b513488a453b6fa16c3de9ce38f67b4c760",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:16:43.247781Z"
+  },
+  {
+   "id": "art_25b333a69a93",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/000.json",
+   "sha256": "5647f251127d1a85b72b9e8e00a90e702ef15afdffaf236300e7b995dba5be2a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:43.265948Z"
+  },
+  {
+   "id": "art_95615cc097a6",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/001-single-agent-mc_4f709ba9aa14.json",
+   "sha256": "91627f0813f4b345853a39272492a75daad9c48a9acd042da3801d11f59f31d8",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:45.003074Z"
+  },
+  {
+   "id": "art_2daeb214e0d0",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/001-click.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:16:45.180518Z"
+  },
+  {
+   "id": "art_7b6a439e75e4",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/001.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:45.199295Z"
+  },
+  {
+   "id": "art_9f6af562776b",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/002-single-agent-mc_5752e6d925cc.json",
+   "sha256": "a0396edaa50c6c0cb92107cbe51d3dd21753fcab951dc37da50abde22bf06e70",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:46.789449Z"
+  },
+  {
+   "id": "art_c76296d8202f",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/002-click.png",
+   "sha256": "cd928e966876d22c3e0f51da47b49b513488a453b6fa16c3de9ce38f67b4c760",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:16:47.020716Z"
+  },
+  {
+   "id": "art_bc9fa256bf81",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/002.json",
+   "sha256": "5647f251127d1a85b72b9e8e00a90e702ef15afdffaf236300e7b995dba5be2a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:47.037619Z"
+  },
+  {
+   "id": "art_6f19666062ec",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/003-single-agent-mc_9bf329913d67.json",
+   "sha256": "399fdaaa95a25afa4c679913b4538464e6d578c84a916915e1aeabaa71343b62",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:49.100063Z"
+  },
+  {
+   "id": "art_42fe87c6104f",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/003-click.png",
+   "sha256": "7c2ec5b6a9745b9224a08c43abfe0f0ef085f374f36279eed04660c57a6a0154",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:16:49.280394Z"
+  },
+  {
+   "id": "art_ebd44c8b4888",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/003.json",
+   "sha256": "84a4c073201f19352b869ca4701170b4a8777447fd2bda0636e0eb3033677d69",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:49.361619Z"
+  },
+  {
+   "id": "art_60b52b63e7af",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/004-single-agent-mc_9c18d1cb9626.json",
+   "sha256": "8e5d5ba63a439a5effa0c458dc640f5d3051580fc89cb97024b922db8d562966",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:52.809046Z"
+  },
+  {
+   "id": "art_de184a3e66f9",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/004-click.png",
+   "sha256": "cd928e966876d22c3e0f51da47b49b513488a453b6fa16c3de9ce38f67b4c760",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:16:53.033476Z"
+  },
+  {
+   "id": "art_8fbf29ebcda6",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/004.json",
+   "sha256": "5647f251127d1a85b72b9e8e00a90e702ef15afdffaf236300e7b995dba5be2a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:53.049481Z"
+  },
+  {
+   "id": "art_d7d11ce09f42",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/005-single-agent-mc_fa6a84abb5da.json",
+   "sha256": "911276fc499bb71459e9ca7684e04a9c3683bab74b135eecd0756c9ed3f874cf",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:54.956642Z"
+  },
+  {
+   "id": "art_2f53bb5a2b61",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "handoff",
+   "path": "runs/run_fc9eba62a54c/handoff/ho_c856af686295.json",
+   "sha256": "dc238a6eb7bbf21a1ab5b7f323cbd4bb7ee7ca66971a3c479e225f707fc81984",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:55.142648Z"
+  },
+  {
+   "id": "art_44ad18213c4c",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/006-single-agent-mc_50f52831f5cc.json",
+   "sha256": "1f3d58411a84aa92c0412502eef12df993afa17740ba64213382a0cd0fe66934",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:16:57.562228Z"
+  },
+  {
+   "id": "art_add132a70ad8",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/005-navigate.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:01.053144Z"
+  },
+  {
+   "id": "art_5f56bd872a51",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/005.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:01.070804Z"
+  },
+  {
+   "id": "art_8efbb8a62884",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/006-fill.png",
+   "sha256": "afa0a7daaa34f1eff9e28c37af80f7c172eaab517b3bebe21292cc59e7d04398",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:01.203004Z"
+  },
+  {
+   "id": "art_a01642c111d5",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/006.json",
+   "sha256": "261d135561fc1141b63e0bf52de7d1daf720bbe0f177c2d225f46bec81fb2a27",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:01.219526Z"
+  },
+  {
+   "id": "art_d43a76f9ef60",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/007-fill.png",
+   "sha256": "093dcf347d008b279d93fa4660180238c79a37dbffc03127661ab3cb0674ccea",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:01.322872Z"
+  },
+  {
+   "id": "art_73e1dadc135d",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/007.json",
+   "sha256": "0c23a2d3bf8ed85f0ae6f85e0e3df9285ba06f58e005ad1447dcdc44e9eac56a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:01.340472Z"
+  },
+  {
+   "id": "art_4197ea6fe2a9",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/008-fill.png",
+   "sha256": "3724896e3ced862e1525b369f69ff787a6d5577955257bd393cf627fedd16bfe",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:01.431376Z"
+  },
+  {
+   "id": "art_c4571690b311",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/008.json",
+   "sha256": "07059890ff21534507ea3b4b255d0bc33bd3170682929bcf7720f679da00ea16",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:01.447556Z"
+  },
+  {
+   "id": "art_4ecdf00098bb",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/009-click.png",
+   "sha256": "48a96a77cd681ee9bcece69a27fba35fc9d93b046e588bfd7da3c48945e064ff",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:01.603232Z"
+  },
+  {
+   "id": "art_90105159d22e",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/009.json",
+   "sha256": "5a93ee20860c13739be91b9d23a0d528c5bc30540c73de449df4a934d6603987",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:01.619445Z"
+  },
+  {
+   "id": "art_7e4a815f1ce5",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/010-navigate.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:05.065209Z"
+  },
+  {
+   "id": "art_f2c79a74e74b",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/010.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:05.082018Z"
+  },
+  {
+   "id": "art_5ffc1c21bc97",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/011-fill.png",
+   "sha256": "073b3f85f4b6748ef0b2de70e1f77ef0795495e354259eba69144afff0b50847",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:05.198695Z"
+  },
+  {
+   "id": "art_8f0c6db03df9",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/011.json",
+   "sha256": "e04a99880eba3286a0e44867d96602c390ef06159bcd2384d52f1ef35ae954a8",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:05.214135Z"
+  },
+  {
+   "id": "art_c8a79f452ecf",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/012-fill.png",
+   "sha256": "1d360134ecab0ad606ad5ea707e1d1cb0a0b1fed12d77d2d5b77d2901e4923c2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:05.314569Z"
+  },
+  {
+   "id": "art_72595bd14ac6",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/012.json",
+   "sha256": "415a83016ba74cc58892d1ee293ce58f0e08e65fe1a55a22491f0fce0c3d8ab3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:05.330062Z"
+  },
+  {
+   "id": "art_8d73ad4e68c7",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/013-fill.png",
+   "sha256": "2e9a79dd057fafe88c9d6059c14e6b13d530a2be96031d4b9af5487a0e6cad32",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:05.433128Z"
+  },
+  {
+   "id": "art_714f331b74a3",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/013.json",
+   "sha256": "8b9d5da7cc124515c1e3f1d620e14339d73355b0137ae4d6c1bcf547fbb3f4e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:05.449175Z"
+  },
+  {
+   "id": "art_77a84552f977",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/014-click.png",
+   "sha256": "0b000bb235b9708f71ee097a989fdef1a5137a829077e44a23bc9929384f6339",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:05.613740Z"
+  },
+  {
+   "id": "art_3130c11edd6c",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/014.json",
+   "sha256": "ca77dfbc8503e21cc16295389172d31cc305354a81f9fc6edb2d3bfdfbdb1aeb",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:05.631208Z"
+  },
+  {
+   "id": "art_0b2de53a21bf",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/015-navigate.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:09.264631Z"
+  },
+  {
+   "id": "art_91395679b208",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/015.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:09.281639Z"
+  },
+  {
+   "id": "art_9151495552c7",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/016-fill.png",
+   "sha256": "aa1d230e4fb0adcff071d3067c56ce17c5ff7652f79de84dd2485f960cfb5f71",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:09.420808Z"
+  },
+  {
+   "id": "art_8e6c593d7dd6",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/016.json",
+   "sha256": "eb2fbe37ce5121ea983635169d1cf4c2301047066c91ee714f232969937f27bb",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:09.441993Z"
+  },
+  {
+   "id": "art_c1b82965833d",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/017-fill.png",
+   "sha256": "d60ee09553cd80687b31aef9df10d2690432c8454108b5031dc2f923cbeb4bd3",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:09.553650Z"
+  },
+  {
+   "id": "art_e61d66cc0c8e",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/017.json",
+   "sha256": "4390478620ee3115894823389a99b75f2ba6936c611823565fc1382fcd7faead",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:09.571057Z"
+  },
+  {
+   "id": "art_0d1fd282f2a3",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/018-fill.png",
+   "sha256": "2401ee67b4c8428af583ad39178d58832151ce572d48a78907261f9df88c56e5",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:09.662797Z"
+  },
+  {
+   "id": "art_78ce5d69fb59",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/018.json",
+   "sha256": "5a2431b5771afbcd23dd64afb56ee7c34b8b6b21052e1e8f2e7e98107a2644cc",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:09.680494Z"
+  },
+  {
+   "id": "art_3f26414b5d72",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/019-click.png",
+   "sha256": "b065213a2e06be534ddee8547cae3608cfa8b475aa7bf7916728bc5ba69a6f7b",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:09.830364Z"
+  },
+  {
+   "id": "art_cc273e101243",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/019.json",
+   "sha256": "e0a1f2d868254c9aa8fd3c396a6cfefd91a043d2512fcd880c3c70949eaecde7",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:09.848953Z"
+  },
+  {
+   "id": "art_d42110e434a3",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/007-single-agent-mc_4c85e654f0fe.json",
+   "sha256": "27e9ba7f988c350b667f1ab118827d68a231bebe2a12311f2add9054050b4c97",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:12.366272Z"
+  },
+  {
+   "id": "art_85cbca0bcd87",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "handoff",
+   "path": "runs/run_fc9eba62a54c/handoff/ho_8f2bbafe83c3.json",
+   "sha256": "16b225054e916b6e78a7b2bd1aac45facc8d7ebb94c23956f4df27344dc83bc0",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:12.568652Z"
+  },
+  {
+   "id": "art_dfe4992ecc86",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/020-navigate.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:15.746679Z"
+  },
+  {
+   "id": "art_b98f8ff2549e",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/020.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:15.761833Z"
+  },
+  {
+   "id": "art_8c06ef0e432f",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "model_call",
+   "path": "runs/run_fc9eba62a54c/model_call/008-single-agent-mc_a92b115217bb.json",
+   "sha256": "b7d856a60b564e53f28d638ae3895d57a320011851e2d0c7152f487e19862b22",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:17.640603Z"
+  },
+  {
+   "id": "art_847c329cc4bb",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/021-fill.png",
+   "sha256": "073b3f85f4b6748ef0b2de70e1f77ef0795495e354259eba69144afff0b50847",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:17.785620Z"
+  },
+  {
+   "id": "art_55b81c07deea",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/021.json",
+   "sha256": "e04a99880eba3286a0e44867d96602c390ef06159bcd2384d52f1ef35ae954a8",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:17.802287Z"
+  },
+  {
+   "id": "art_41a7a9cf5563",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/022-fill.png",
+   "sha256": "1d360134ecab0ad606ad5ea707e1d1cb0a0b1fed12d77d2d5b77d2901e4923c2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:17.895778Z"
+  },
+  {
+   "id": "art_08f822a013df",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/022.json",
+   "sha256": "415a83016ba74cc58892d1ee293ce58f0e08e65fe1a55a22491f0fce0c3d8ab3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:17.924734Z"
+  },
+  {
+   "id": "art_5ef82ca9bb8a",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/023-fill.png",
+   "sha256": "2e9a79dd057fafe88c9d6059c14e6b13d530a2be96031d4b9af5487a0e6cad32",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:18.012882Z"
+  },
+  {
+   "id": "art_df4dd73890b1",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/023.json",
+   "sha256": "8b9d5da7cc124515c1e3f1d620e14339d73355b0137ae4d6c1bcf547fbb3f4e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:18.032001Z"
+  },
+  {
+   "id": "art_6d594d1ecd50",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/024-click.png",
+   "sha256": "0b000bb235b9708f71ee097a989fdef1a5137a829077e44a23bc9929384f6339",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:18.197540Z"
+  },
+  {
+   "id": "art_baefd46c6369",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/024.json",
+   "sha256": "af910716ff3703b3ae75ef50d0572436f3d836b9cb9d9d37936672d531eb3e1e",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:18.214955Z"
+  },
+  {
+   "id": "art_2d2efe2e542a",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "action_log",
+   "path": "runs/run_fc9eba62a54c/action_log/verification-ver_0518212b9403.json",
+   "sha256": "aea693246e96e77f5999392a0b98f2ba3ca5f4eb450357fe5cc7bbe19220ce1c",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:18.299530Z"
+  },
+  {
+   "id": "art_55c373ecc1b6",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/025-navigate.png",
+   "sha256": "491dda3cee9f08fc57f5d787262eac0368c0c50ab62d95468f580651fd0234cc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:21.579989Z"
+  },
+  {
+   "id": "art_a448d0959410",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/025.json",
+   "sha256": "afa6ce7d98d1f5a2bda2922736f48345247df2a46928ed03049d81ca316223d2",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:21.596497Z"
+  },
+  {
+   "id": "art_31b962a55b83",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/026-fill.png",
+   "sha256": "073b3f85f4b6748ef0b2de70e1f77ef0795495e354259eba69144afff0b50847",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:21.722458Z"
+  },
+  {
+   "id": "art_ac5e5e5a9e1f",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/026.json",
+   "sha256": "e04a99880eba3286a0e44867d96602c390ef06159bcd2384d52f1ef35ae954a8",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:21.740843Z"
+  },
+  {
+   "id": "art_8e9da2d74edc",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/027-fill.png",
+   "sha256": "1d360134ecab0ad606ad5ea707e1d1cb0a0b1fed12d77d2d5b77d2901e4923c2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:21.850720Z"
+  },
+  {
+   "id": "art_790cd62e2948",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/027.json",
+   "sha256": "415a83016ba74cc58892d1ee293ce58f0e08e65fe1a55a22491f0fce0c3d8ab3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:21.867242Z"
+  },
+  {
+   "id": "art_19c33ea7e277",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/028-fill.png",
+   "sha256": "2e9a79dd057fafe88c9d6059c14e6b13d530a2be96031d4b9af5487a0e6cad32",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:21.963923Z"
+  },
+  {
+   "id": "art_afa317876ff3",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/028.json",
+   "sha256": "8b9d5da7cc124515c1e3f1d620e14339d73355b0137ae4d6c1bcf547fbb3f4e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:21.980426Z"
+  },
+  {
+   "id": "art_b9639f4fdfea",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "screenshot",
+   "path": "runs/run_fc9eba62a54c/screenshots/029-click.png",
+   "sha256": "0b000bb235b9708f71ee097a989fdef1a5137a829077e44a23bc9929384f6339",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T13:17:22.128606Z"
+  },
+  {
+   "id": "art_ea9aa6c82843",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "observation",
+   "path": "runs/run_fc9eba62a54c/observation/029.json",
+   "sha256": "7d72384806e76f697da3ebb579d419a16d8a5feb5ffbccc58313ba8a23466b1e",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:22.144613Z"
+  },
+  {
+   "id": "art_0f70560f133d",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "action_log",
+   "path": "runs/run_fc9eba62a54c/action_log/verification-ver_2c1dcf5e4fdf.json",
+   "sha256": "eecaa08257d1682758724bd4c5d8d6c30c9862b1ec1b082c2b17306ca4af305e",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T13:17:22.225576Z"
+  }
+ ],
+ "model_calls": [
+  {
+   "id": "mc_4f709ba9aa14",
+   "run_id": "run_fc9eba62a54c",
+   "step": 0,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 809,
+   "completion_tokens": 60,
+   "total_tokens": 869,
+   "reported_cost_usd": 0.0005845,
+   "latency_ms": 1618,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_95615cc097a6",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_5752e6d925cc",
+   "run_id": "run_fc9eba62a54c",
+   "step": 1,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 877,
+   "completion_tokens": 69,
+   "total_tokens": 946,
+   "reported_cost_usd": 0.0006455,
+   "latency_ms": 1455,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_9f6af562776b",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_9bf329913d67",
+   "run_id": "run_fc9eba62a54c",
+   "step": 2,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 973,
+   "completion_tokens": 76,
+   "total_tokens": 1049,
+   "reported_cost_usd": 0.0007145,
+   "latency_ms": 1973,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_6f19666062ec",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_9c18d1cb9626",
+   "run_id": "run_fc9eba62a54c",
+   "step": 3,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1064,
+   "completion_tokens": 74,
+   "total_tokens": 1138,
+   "reported_cost_usd": 0.000754,
+   "latency_ms": 3381,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_60b52b63e7af",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_fa6a84abb5da",
+   "run_id": "run_fc9eba62a54c",
+   "step": 4,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1164,
+   "completion_tokens": 122,
+   "total_tokens": 1286,
+   "reported_cost_usd": 0.000948,
+   "latency_ms": 1841,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_d7d11ce09f42",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_50f52831f5cc",
+   "run_id": "run_fc9eba62a54c",
+   "step": 4,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1043,
+   "completion_tokens": 219,
+   "total_tokens": 1262,
+   "reported_cost_usd": 0.0011785,
+   "latency_ms": 2359,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_44ad18213c4c",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_4c85e654f0fe",
+   "run_id": "run_fc9eba62a54c",
+   "step": 19,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1411,
+   "completion_tokens": 176,
+   "total_tokens": 1587,
+   "reported_cost_usd": 0.0012335,
+   "latency_ms": 2250,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_d42110e434a3",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_a92b115217bb",
+   "run_id": "run_fc9eba62a54c",
+   "step": 20,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1316,
+   "completion_tokens": 124,
+   "total_tokens": 1440,
+   "reported_cost_usd": 0.00103,
+   "latency_ms": 1811,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_8c06ef0e432f",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "verify"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "task_8a93ab90c727",
+   "run_id": "run_fc9eba62a54c",
+   "type": "explore",
+   "key": "run_fc9eba62a54c:explore:start",
+   "depends_on": [],
+   "input_refs": [],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T13:16:40.025773Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_f01e502e02fe",
+   "run_id": "run_fc9eba62a54c",
+   "type": "input_test",
+   "key": "run_fc9eba62a54c:input_test:06b07ffbe805c747",
+   "depends_on": [],
+   "input_refs": [
+    "form_ec8fae375711",
+    "ho_c856af686295"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "tc_8b49f1e1b522",
+    "tc_250485c2116c",
+    "tc_604445d18dc3",
+    "fnd_85abff2dee04"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T13:16:55.121962Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_90620df7d194",
+   "run_id": "run_fc9eba62a54c",
+   "type": "explore",
+   "key": "run_fc9eba62a54c:explore:729338ce94d4b937",
+   "depends_on": [],
+   "input_refs": [
+    "state_00e0aa9772dd"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3.",
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T13:17:01.811060Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_59892f32699b",
+   "run_id": "run_fc9eba62a54c",
+   "type": "explore",
+   "key": "run_fc9eba62a54c:explore:4ad3191659f97ddf",
+   "depends_on": [],
+   "input_refs": [
+    "state_31ba831aefca"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3.",
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T13:17:10.077965Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_491fde694b7e",
+   "run_id": "run_fc9eba62a54c",
+   "type": "verify",
+   "key": "run_fc9eba62a54c:verify:fnd_85abff2dee04",
+   "depends_on": [],
+   "input_refs": [
+    "fnd_85abff2dee04"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "ver_0518212b9403",
+    "ver_2c1dcf5e4fdf"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T13:17:12.549637Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  }
+ ],
+ "forms": [
+  {
+   "id": "form_ec8fae375711",
+   "run_id": "run_fc9eba62a54c",
+   "key": "06b07ffbe805c747",
+   "state_id": "state_079525adbacf",
+   "url": "http://localhost:5176/events/1/book",
+   "route": "/events/:id/book",
+   "headings": [
+    "Book tickets"
+   ],
+   "fields": [
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Name",
+      "input_type": "text"
+     },
+     "required": false,
+     "observed_value": ""
+    },
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Email",
+      "input_type": "text"
+     },
+     "required": false,
+     "observed_value": ""
+    },
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Tickets",
+      "input_type": "number"
+     },
+     "required": false,
+     "observed_value": ""
+    }
+   ],
+   "submit_controls": [
+    {
+     "role": "button",
+     "name": "Book tickets",
+     "input_type": null
+    }
+   ],
+   "page_text": "Ticket Desk · Events Book tickets Harbour Jazz Night Name Email Tickets Book tickets",
+   "page_links": [
+    "/"
+   ],
+   "action_only": false,
+   "discovered_by": "single-agent",
+   "action_result_id": "act_af4acc135fcf",
+   "evidence_refs": [
+    "art_2daeb214e0d0",
+    "art_7b6a439e75e4"
+   ]
+  }
+ ],
+ "handoffs": [
+  {
+   "id": "ho_c856af686295",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "form_to_tester",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_f01e502e02fe",
+   "source_state_id": "state_079525adbacf",
+   "form_id": "form_ec8fae375711",
+   "finding_id": null,
+   "setup": {
+    "target_state_id": "state_079525adbacf",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Book tickets for Harbour Jazz Night",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "T1",
+     "text": "A visitor can open the booking form for an event from the events list."
+    },
+    {
+     "id": "T2",
+     "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    },
+    {
+     "id": "T3",
+     "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message."
+    },
+    {
+     "id": "T4",
+     "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets."
+    },
+    {
+     "id": "T5",
+     "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A visitor can open the booking form for an event from the events list.",
+     "source": "T1"
+    },
+    {
+     "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+     "source": "T2"
+    },
+    {
+     "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message.",
+     "source": "T3"
+    },
+    {
+     "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets.",
+     "source": "T4"
+    },
+    {
+     "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.",
+     "source": "T5"
+    }
+   ],
+   "evidence_refs": [
+    "art_2daeb214e0d0",
+    "art_7b6a439e75e4",
+    "art_2f53bb5a2b61"
+   ],
+   "created_at": "2026-10-29T13:16:55.141088Z"
+  },
+  {
+   "id": "ho_8f2bbafe83c3",
+   "run_id": "run_fc9eba62a54c",
+   "kind": "candidate_to_verifier",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_491fde694b7e",
+   "source_state_id": "state_079525adbacf",
+   "form_id": "form_ec8fae375711",
+   "finding_id": "fnd_85abff2dee04",
+   "setup": {
+    "target_state_id": "state_079525adbacf",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Book tickets for Harbour Jazz Night",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "T2",
+     "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+     "source": "T2"
+    }
+   ],
+   "evidence_refs": [
+    "art_7e4a815f1ce5",
+    "art_f2c79a74e74b",
+    "art_5ffc1c21bc97",
+    "art_8f0c6db03df9",
+    "art_c8a79f452ecf",
+    "art_72595bd14ac6",
+    "art_8d73ad4e68c7",
+    "art_714f331b74a3",
+    "art_77a84552f977",
+    "art_3130c11edd6c",
+    "art_85cbca0bcd87"
+   ],
+   "created_at": "2026-10-29T13:17:12.567649Z"
+  }
+ ],
+ "test_cases": [
+  {
+   "id": "tc_8b49f1e1b522",
+   "run_id": "run_fc9eba62a54c",
+   "form_id": "form_ec8fae375711",
+   "handoff_id": "ho_c856af686295",
+   "designed_by": "single-agent",
+   "label": "Valid booking",
+   "inputs": {
+    "Name": "Alice",
+    "Email": "alice@example.com",
+    "Tickets": "2"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Book tickets",
+    "input_type": null
+   },
+   "check_path": null,
+   "requirement_ref": "T4",
+   "expected": "Confirmation page shows event, name, and 2 tickets.",
+   "expectation_source": "T4",
+   "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_9e029b9e1a55",
+    "act_45a9fa5dcf8f",
+    "act_e428341c9b9d",
+    "act_46bfd4ae0e7b",
+    "act_adc811951f68"
+   ],
+   "evidence_refs": [
+    "art_add132a70ad8",
+    "art_5f56bd872a51",
+    "art_8efbb8a62884",
+    "art_a01642c111d5",
+    "art_d43a76f9ef60",
+    "art_73e1dadc135d",
+    "art_4197ea6fe2a9",
+    "art_c4571690b311",
+    "art_4ecdf00098bb",
+    "art_90105159d22e"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5176/events/1/book",
+    "url_after": "http://localhost:5176/bookings/686bf6c1?booked=1",
+    "title": "Booking · Ticket Desk",
+    "headings": [
+     "Your booking"
+    ],
+    "status_messages": [
+     "Booking confirmed."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Ticket Desk · Events Your booking Booking confirmed. Event Harbour Jazz Night Name Alice Tickets 2 Cancel booking Back to events"
+   },
+   "resulting_state_id": "state_00e0aa9772dd",
+   "tester_verdict": "as_expected",
+   "tester_note": "The booking was successful, showing the confirmation page with the correct event, name, and ticket count.",
+   "model_call_ids": [
+    "mc_50f52831f5cc",
+    "mc_4c85e654f0fe"
+   ]
+  },
+  {
+   "id": "tc_250485c2116c",
+   "run_id": "run_fc9eba62a54c",
+   "form_id": "form_ec8fae375711",
+   "handoff_id": "ho_c856af686295",
+   "designed_by": "single-agent",
+   "label": "Invalid tickets (high)",
+   "inputs": {
+    "Name": "Bob",
+    "Email": "bob@example.com",
+    "Tickets": "7"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Book tickets",
+    "input_type": null
+   },
+   "check_path": null,
+   "requirement_ref": "T2",
+   "expected": "Validation message appears and no booking is created.",
+   "expectation_source": "T2",
+   "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_caaf8dc35bdc",
+    "act_fdf0797977c4",
+    "act_7445df6a111a",
+    "act_f5e5dd0d04bf",
+    "act_e7823254a341"
+   ],
+   "evidence_refs": [
+    "art_7e4a815f1ce5",
+    "art_f2c79a74e74b",
+    "art_5ffc1c21bc97",
+    "art_8f0c6db03df9",
+    "art_c8a79f452ecf",
+    "art_72595bd14ac6",
+    "art_8d73ad4e68c7",
+    "art_714f331b74a3",
+    "art_77a84552f977",
+    "art_3130c11edd6c"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5176/events/1/book",
+    "url_after": "http://localhost:5176/bookings/d3f14204?booked=1",
+    "title": "Booking · Ticket Desk",
+    "headings": [
+     "Your booking"
+    ],
+    "status_messages": [
+     "Booking confirmed."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Ticket Desk · Events Your booking Booking confirmed. Event Harbour Jazz Night Name Bob Tickets 7 Cancel booking Back to events"
+   },
+   "resulting_state_id": "state_00e0aa9772dd",
+   "tester_verdict": "unexpected",
+   "tester_note": "The system accepted a booking for 7 tickets, which violates the requirement to reject counts outside the 1-6 range.",
+   "model_call_ids": [
+    "mc_50f52831f5cc",
+    "mc_4c85e654f0fe"
+   ]
+  },
+  {
+   "id": "tc_604445d18dc3",
+   "run_id": "run_fc9eba62a54c",
+   "form_id": "form_ec8fae375711",
+   "handoff_id": "ho_c856af686295",
+   "designed_by": "single-agent",
+   "label": "Invalid email",
+   "inputs": {
+    "Name": "Charlie",
+    "Email": "charlie-at-example.com",
+    "Tickets": "1"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Book tickets",
+    "input_type": null
+   },
+   "check_path": null,
+   "requirement_ref": "T3",
+   "expected": "Validation message appears and booking is rejected.",
+   "expectation_source": "T3",
+   "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_5cdcd664cea6",
+    "act_5594bd331fdb",
+    "act_fd2e19b0e105",
+    "act_0767aaa36ba6",
+    "act_0f1b5b9f37c0"
+   ],
+   "evidence_refs": [
+    "art_0b2de53a21bf",
+    "art_91395679b208",
+    "art_9151495552c7",
+    "art_8e6c593d7dd6",
+    "art_c1b82965833d",
+    "art_e61d66cc0c8e",
+    "art_0d1fd282f2a3",
+    "art_78ce5d69fb59",
+    "art_3f26414b5d72",
+    "art_cc273e101243"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5176/events/1/book",
+    "url_after": "http://localhost:5176/events/1/book",
+    "title": "Book tickets · Ticket Desk",
+    "headings": [
+     "Book tickets"
+    ],
+    "status_messages": [
+     "Enter an email address containing @."
+    ],
+    "alert_messages": [
+     "Enter an email address containing @."
+    ],
+    "invalid_fields": [],
+    "text_excerpt": "Ticket Desk · Events Book tickets Harbour Jazz Night Enter an email address containing @. Name Email Tickets Book tickets"
+   },
+   "resulting_state_id": "state_31ba831aefca",
+   "tester_verdict": "as_expected",
+   "tester_note": "The booking was rejected with a validation message because the email address lacked an '@' symbol.",
+   "model_call_ids": [
+    "mc_50f52831f5cc",
+    "mc_4c85e654f0fe"
+   ]
+  }
+ ],
+ "verifications": [
+  {
+   "id": "ver_0518212b9403",
+   "run_id": "run_fc9eba62a54c",
+   "finding_id": "fnd_85abff2dee04",
+   "handoff_id": "ho_8f2bbafe83c3",
+   "verifier_id": "single-agent",
+   "replay_index": 0,
+   "target_origin": "http://localhost:5176",
+   "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "field": "Tickets"
+    },
+    "requirement_ref": "T2",
+    "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+    "chosen_by": "single-agent"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "field": "Tickets"
+     },
+     "requirement_ref": "T2",
+     "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+     "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+     "url": "http://localhost:5176/bookings/dd2fd430?booked=1",
+     "route": "/bookings/:id",
+     "alert_messages": [],
+     "field_validation": {},
+     "status_messages": [
+      "Booking confirmed."
+     ],
+     "matching_messages": []
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "confirmed",
+   "reason": "Assertion validation_message_present failed: the page violated T2 in this fresh replay.",
+   "action_result_ids": [
+    "act_3fc5344ec224",
+    "act_acd17248c85f",
+    "act_56712314cab4",
+    "act_5846b4860cab",
+    "act_a06c27d52f14"
+   ],
+   "evidence_refs": [
+    "art_dfe4992ecc86",
+    "art_b98f8ff2549e",
+    "art_847c329cc4bb",
+    "art_55b81c07deea",
+    "art_41a7a9cf5563",
+    "art_08f822a013df",
+    "art_5ef82ca9bb8a",
+    "art_df4dd73890b1",
+    "art_6d594d1ecd50",
+    "art_baefd46c6369",
+    "art_2d2efe2e542a"
+   ],
+   "model_call_id": "mc_a92b115217bb",
+   "started_at": "2026-10-29T13:17:12.614872Z",
+   "finished_at": "2026-10-29T13:17:18.297521Z"
+  },
+  {
+   "id": "ver_2c1dcf5e4fdf",
+   "run_id": "run_fc9eba62a54c",
+   "finding_id": "fnd_85abff2dee04",
+   "handoff_id": "ho_8f2bbafe83c3",
+   "verifier_id": "single-agent",
+   "replay_index": 1,
+   "target_origin": "http://localhost:5176",
+   "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "field": "Tickets"
+    },
+    "requirement_ref": "T2",
+    "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+    "chosen_by": "single-agent"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "field": "Tickets"
+     },
+     "requirement_ref": "T2",
+     "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+     "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+     "url": "http://localhost:5176/bookings/ae6bfcbc?booked=1",
+     "route": "/bookings/:id",
+     "alert_messages": [],
+     "field_validation": {},
+     "status_messages": [
+      "Booking confirmed."
+     ],
+     "matching_messages": []
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "confirmed",
+   "reason": "Assertion validation_message_present failed: the page violated T2 in this fresh replay.",
+   "action_result_ids": [
+    "act_29f25f318744",
+    "act_513005c48f7f",
+    "act_ff916e0e2edd",
+    "act_0795509b977e",
+    "act_e8f3392d6c85"
+   ],
+   "evidence_refs": [
+    "art_55c373ecc1b6",
+    "art_a448d0959410",
+    "art_31b962a55b83",
+    "art_ac5e5e5a9e1f",
+    "art_8e9da2d74edc",
+    "art_790cd62e2948",
+    "art_19c33ea7e277",
+    "art_afa317876ff3",
+    "art_b9639f4fdfea",
+    "art_ea9aa6c82843",
+    "art_0f70560f133d"
+   ],
+   "model_call_id": null,
+   "started_at": "2026-10-29T13:17:18.433140Z",
+   "finished_at": "2026-10-29T13:17:22.223575Z"
+  }
+ ],
+ "events": [
+  {
+   "seq": 8960,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "run_started",
+   "message": "Run started with model google/gemini-3-flash-preview (single_agent)",
+   "data": {
+    "mocked_model": false
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:40.057375Z"
+  },
+  {
+   "seq": 8961,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Events",
+   "data": {
+    "state_id": "state_b7ee9bf3cdb1",
+    "route": "/",
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:43.324832Z"
+  },
+  {
+   "seq": 8962,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 0: navigate http://localhost:5176/",
+   "data": {
+    "action_result_id": "act_78b8097e5a44",
+    "ok": true,
+    "duration_ms": 25,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:43.356962Z"
+  },
+  {
+   "seq": 8963,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 1 (single-agent): 869 tokens, US$0.00058",
+   "data": {
+    "model_call_id": "mc_4f709ba9aa14",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:45.048410Z"
+  },
+  {
+   "seq": 8964,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I will start by opening the booking form for the first event listed to satisfy the goal of exploring available forms.",
+   "data": {
+    "step": 1,
+    "action": {
+     "type": "click",
+     "element_id": "e2"
+    },
+    "model_call_id": "mc_4f709ba9aa14"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:45.063452Z"
+  },
+  {
+   "seq": 8965,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Book tickets (0/3 fields filled)",
+   "data": {
+    "state_id": "state_079525adbacf",
+    "route": "/events/:id/book",
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:45.257739Z"
+  },
+  {
+   "seq": 8966,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 1: click link 'Book tickets for Harbour Jazz Night'",
+   "data": {
+    "action_result_id": "act_af4acc135fcf",
+    "ok": true,
+    "duration_ms": 40,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:45.276075Z"
+  },
+  {
+   "seq": 8967,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "form_discovered",
+   "message": "Form on /events/:id/book: Name, Email, Tickets",
+   "data": {
+    "form_id": "form_ec8fae375711",
+    "state_id": "state_079525adbacf",
+    "action_result_id": "act_af4acc135fcf",
+    "evidence_refs": [
+     "art_2daeb214e0d0",
+     "art_7b6a439e75e4"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:45.311990Z"
+  },
+  {
+   "seq": 8968,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 2 (single-agent): 946 tokens, US$0.00065",
+   "data": {
+    "model_call_id": "mc_5752e6d925cc",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:46.831103Z"
+  },
+  {
+   "seq": 8969,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have opened the booking form for the first event. Now I will return to the events list to see if there are other events or forms to explore.",
+   "data": {
+    "step": 2,
+    "action": {
+     "type": "click",
+     "element_id": "e1"
+    },
+    "model_call_id": "mc_5752e6d925cc"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:46.851950Z"
+  },
+  {
+   "seq": 8970,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 2: click link 'Events'",
+   "data": {
+    "action_result_id": "act_74053d9380bb",
+    "ok": true,
+    "duration_ms": 46,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:47.070863Z"
+  },
+  {
+   "seq": 8971,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 3 (single-agent): 1049 tokens, US$0.00071",
+   "data": {
+    "model_call_id": "mc_9bf329913d67",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:49.141981Z"
+  },
+  {
+   "seq": 8972,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have already explored the booking form for the first event. Now I will open the booking form for the second event, 'Open-Air Cinema', to ensure all available forms are explored.",
+   "data": {
+    "step": 3,
+    "action": {
+     "type": "click",
+     "element_id": "e3"
+    },
+    "model_call_id": "mc_9bf329913d67"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:49.162802Z"
+  },
+  {
+   "seq": 8973,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 3: click link 'Book tickets for Open-Air Cinema'",
+   "data": {
+    "action_result_id": "act_57e8d67194b0",
+    "ok": true,
+    "duration_ms": 39,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:49.391582Z"
+  },
+  {
+   "seq": 8974,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 4 (single-agent): 1138 tokens, US$0.00075",
+   "data": {
+    "model_call_id": "mc_9c18d1cb9626",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:52.861362Z"
+  },
+  {
+   "seq": 8975,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have explored the booking forms for both events listed on the home page. I will now return to the home page to check if there are any other links or forms I missed.",
+   "data": {
+    "step": 4,
+    "action": {
+     "type": "click",
+     "element_id": "e1"
+    },
+    "model_call_id": "mc_9c18d1cb9626"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:52.875453Z"
+  },
+  {
+   "seq": 8976,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 4: click link 'Events'",
+   "data": {
+    "action_result_id": "act_c4d8fbd14661",
+    "ok": true,
+    "duration_ms": 52,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_a1c268b697"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:53.077898Z"
+  },
+  {
+   "seq": 8977,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 5 (single-agent): 1286 tokens, US$0.00095",
+   "data": {
+    "model_call_id": "mc_fa6a84abb5da",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:55.001697Z"
+  },
+  {
+   "seq": 8978,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have explored the booking forms for all listed events and checked the 'My bookings' section, which currently has no forms. I have completed the exploration of available forms.",
+   "data": {
+    "step": 5,
+    "action": {
+     "type": "finish",
+     "persistence": "unknown",
+     "checked_values": [],
+     "summary": "I navigated the events list and opened the booking forms for 'Harbour Jazz Night' and 'Open-Air Cinema'. I also verified the 'My bookings' section, which is currently empty."
+    },
+    "model_call_id": "mc_fa6a84abb5da"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:55.016077Z"
+  },
+  {
+   "seq": 8979,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "explorer_finished",
+   "message": "Explorer finished: I navigated the events list and opened the booking forms for 'Harbour Jazz Night' and 'Open-Air Cinema'. I also verified the 'My bookings' section, which is currently empty.",
+   "data": {
+    "model_call_id": "mc_fa6a84abb5da"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:55.019059Z"
+  },
+  {
+   "seq": 8980,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_c856af686295: form form_ec8fae375711 from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_c856af686295",
+    "kind": "form_to_tester",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_ec8fae375711",
+    "finding_id": null,
+    "task_id": "task_f01e502e02fe",
+    "artifact_id": "art_2f53bb5a2b61"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:55.163387Z"
+  },
+  {
+   "seq": 8981,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 6 (single-agent): 1262 tokens, US$0.00118",
+   "data": {
+    "model_call_id": "mc_50f52831f5cc",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:57.615409Z"
+  },
+  {
+   "seq": 8982,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_plan",
+   "message": "Input tester planned 3 case(s): I will test the ticket quantity boundaries and email format requirements to ensure proper validation and successful booking.",
+   "data": {
+    "model_call_id": "mc_50f52831f5cc",
+    "cases": [
+     {
+      "label": "Valid booking",
+      "inputs": {
+       "Name": "Alice",
+       "Email": "alice@example.com",
+       "Tickets": "2"
+      },
+      "submit": "Book tickets",
+      "requirement_ref": "T4",
+      "expected": "Confirmation page shows event, name, and 2 tickets.",
+      "check_page": null
+     },
+     {
+      "label": "Invalid tickets (high)",
+      "inputs": {
+       "Name": "Bob",
+       "Email": "bob@example.com",
+       "Tickets": "7"
+      },
+      "submit": "Book tickets",
+      "requirement_ref": "T2",
+      "expected": "Validation message appears and no booking is created.",
+      "check_page": null
+     },
+     {
+      "label": "Invalid email",
+      "inputs": {
+       "Name": "Charlie",
+       "Email": "charlie-at-example.com",
+       "Tickets": "1"
+      },
+      "submit": "Book tickets",
+      "requirement_ref": "T3",
+      "expected": "Validation message appears and booking is rejected.",
+      "check_page": null
+     }
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:16:57.630436Z"
+  },
+  {
+   "seq": 8983,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 5: setup: open /events/1/book",
+   "data": {
+    "action_result_id": "act_9e029b9e1a55",
+    "ok": true,
+    "duration_ms": 35,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.097845Z"
+  },
+  {
+   "seq": 8984,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 6: fill textbox 'Name' = 'Alice'",
+   "data": {
+    "action_result_id": "act_45a9fa5dcf8f",
+    "ok": true,
+    "duration_ms": 19,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.249622Z"
+  },
+  {
+   "seq": 8985,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 7: fill textbox 'Email' = 'alice@example.com'",
+   "data": {
+    "action_result_id": "act_e428341c9b9d",
+    "ok": true,
+    "duration_ms": 10,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.372253Z"
+  },
+  {
+   "seq": 8986,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 8: fill textbox 'Tickets' = '2'",
+   "data": {
+    "action_result_id": "act_46bfd4ae0e7b",
+    "ok": true,
+    "duration_ms": 8,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.477928Z"
+  },
+  {
+   "seq": 8987,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 9: click button 'Book tickets'",
+   "data": {
+    "action_result_id": "act_adc811951f68",
+    "ok": true,
+    "duration_ms": 53,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.640922Z"
+  },
+  {
+   "seq": 8988,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Your booking — Booking confirmed.",
+   "data": {
+    "state_id": "state_00e0aa9772dd",
+    "route": "/bookings/:id",
+    "phase": "input_test",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.679249Z"
+  },
+  {
+   "seq": 8989,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Valid booking' (Name='Alice', Email='alice@example.com', Tickets='2'): executed",
+   "data": {
+    "test_case_id": "tc_8b49f1e1b522",
+    "status": "executed",
+    "context_id": "single-agent:tc_8b49f1e1b522:ws_fb3bba4f5f",
+    "resulting_state_id": "state_00e0aa9772dd",
+    "evidence_refs": [
+     "art_4ecdf00098bb",
+     "art_90105159d22e"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.795255Z"
+  },
+  {
+   "seq": 8990,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from single-agent queued for exploration (deferred): Your booking — Booking confirmed.",
+   "data": {
+    "state_id": "state_00e0aa9772dd",
+    "deferred_task_id": "task_90620df7d194"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:01.826688Z"
+  },
+  {
+   "seq": 8991,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 10: setup: open /events/1/book",
+   "data": {
+    "action_result_id": "act_caaf8dc35bdc",
+    "ok": true,
+    "duration_ms": 32,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.107338Z"
+  },
+  {
+   "seq": 8992,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 11: fill textbox 'Name' = 'Bob'",
+   "data": {
+    "action_result_id": "act_fdf0797977c4",
+    "ok": true,
+    "duration_ms": 13,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.244649Z"
+  },
+  {
+   "seq": 8993,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 12: fill textbox 'Email' = 'bob@example.com'",
+   "data": {
+    "action_result_id": "act_7445df6a111a",
+    "ok": true,
+    "duration_ms": 7,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.362803Z"
+  },
+  {
+   "seq": 8994,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 13: fill textbox 'Tickets' = '7'",
+   "data": {
+    "action_result_id": "act_f5e5dd0d04bf",
+    "ok": true,
+    "duration_ms": 6,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.480090Z"
+  },
+  {
+   "seq": 8995,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 14: click button 'Book tickets'",
+   "data": {
+    "action_result_id": "act_e7823254a341",
+    "ok": true,
+    "duration_ms": 56,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.657142Z"
+  },
+  {
+   "seq": 8996,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Invalid tickets (high)' (Name='Bob', Email='bob@example.com', Tickets='7'): executed",
+   "data": {
+    "test_case_id": "tc_250485c2116c",
+    "status": "executed",
+    "context_id": "single-agent:tc_250485c2116c:ws_b49d1ade94",
+    "resulting_state_id": "state_00e0aa9772dd",
+    "evidence_refs": [
+     "art_77a84552f977",
+     "art_3130c11edd6c"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:05.804549Z"
+  },
+  {
+   "seq": 8997,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 15: setup: open /events/1/book",
+   "data": {
+    "action_result_id": "act_5cdcd664cea6",
+    "ok": true,
+    "duration_ms": 35,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.307913Z"
+  },
+  {
+   "seq": 8998,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 16: fill textbox 'Name' = 'Charlie'",
+   "data": {
+    "action_result_id": "act_5594bd331fdb",
+    "ok": true,
+    "duration_ms": 18,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.473431Z"
+  },
+  {
+   "seq": 8999,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 17: fill textbox 'Email' = 'charlie-at-example.com'",
+   "data": {
+    "action_result_id": "act_fd2e19b0e105",
+    "ok": true,
+    "duration_ms": 9,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.604963Z"
+  },
+  {
+   "seq": 9000,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 18: fill textbox 'Tickets' = '1'",
+   "data": {
+    "action_result_id": "act_0767aaa36ba6",
+    "ok": true,
+    "duration_ms": 6,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.715740Z"
+  },
+  {
+   "seq": 9001,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 19: click button 'Book tickets'",
+   "data": {
+    "action_result_id": "act_0f1b5b9f37c0",
+    "ok": true,
+    "duration_ms": 36,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.883975Z"
+  },
+  {
+   "seq": 9002,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Book tickets — Enter an email address containing @. (3/3 fields filled)",
+   "data": {
+    "state_id": "state_31ba831aefca",
+    "route": "/events/:id/book",
+    "phase": "input_test",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:09.919683Z"
+  },
+  {
+   "seq": 9003,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Invalid email' (Name='Charlie', Email='charlie-at-example.com', Tickets='1'): executed",
+   "data": {
+    "test_case_id": "tc_604445d18dc3",
+    "status": "executed",
+    "context_id": "single-agent:tc_604445d18dc3:ws_7f6e1acad7",
+    "resulting_state_id": "state_31ba831aefca",
+    "evidence_refs": [
+     "art_3f26414b5d72",
+     "art_cc273e101243"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:10.063915Z"
+  },
+  {
+   "seq": 9004,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from single-agent queued for exploration (deferred): Book tickets — Enter an email address containing @. (3/3 fields filled)",
+   "data": {
+    "state_id": "state_31ba831aefca",
+    "deferred_task_id": "task_59892f32699b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:10.093738Z"
+  },
+  {
+   "seq": 9005,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 7 (single-agent): 1587 tokens, US$0.00123",
+   "data": {
+    "model_call_id": "mc_4c85e654f0fe",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:12.424432Z"
+  },
+  {
+   "seq": 9006,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_f01e502e02fe",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "candidate_reported",
+   "message": "Input tester reports candidate defect: Book tickets: Invalid tickets (high)",
+   "data": {
+    "finding_id": "fnd_85abff2dee04",
+    "test_case_id": "tc_250485c2116c",
+    "kind": "defect_candidate",
+    "verdict": "unexpected",
+    "requirement_ref": "T2",
+    "model_call_id": "mc_4c85e654f0fe"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:12.484353Z"
+  },
+  {
+   "seq": 9007,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_8f2bbafe83c3: candidate fnd_85abff2dee04 from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_8f2bbafe83c3",
+    "kind": "candidate_to_verifier",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_ec8fae375711",
+    "finding_id": "fnd_85abff2dee04",
+    "task_id": "task_491fde694b7e",
+    "artifact_id": "art_85cbca0bcd87"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:12.598716Z"
+  },
+  {
+   "seq": 9008,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 20: setup: open /events/1/book",
+   "data": {
+    "action_result_id": "act_3fc5344ec224",
+    "ok": true,
+    "duration_ms": 30,
+    "phase": "verify",
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:15.789735Z"
+  },
+  {
+   "seq": 9009,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 8 (single-agent): 1440 tokens, US$0.00103",
+   "data": {
+    "model_call_id": "mc_a92b115217bb",
+    "ok": true,
+    "phase": "verify",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:17.689042Z"
+  },
+  {
+   "seq": 9010,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "assertion_selected",
+   "message": "Verifier selected validation_message_present for T2: The requirement explicitly states that ticket quantities outside the 1-6 range must be rejected with a validation message and no booking created. Inputting 7 tickets should trigger a validation message.",
+   "data": {
+    "finding_id": "fnd_85abff2dee04",
+    "model_call_id": "mc_a92b115217bb",
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "field": "Tickets"
+     },
+     "requirement_ref": "T2",
+     "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+     "chosen_by": "single-agent"
+    }
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:17.707143Z"
+  },
+  {
+   "seq": 9011,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 21: fill textbox 'Name' = 'Bob'",
+   "data": {
+    "action_result_id": "act_acd17248c85f",
+    "ok": true,
+    "duration_ms": 14,
+    "phase": "verify",
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:17.831901Z"
+  },
+  {
+   "seq": 9012,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 22: fill textbox 'Email' = 'bob@example.com'",
+   "data": {
+    "action_result_id": "act_56712314cab4",
+    "ok": true,
+    "duration_ms": 7,
+    "phase": "verify",
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:17.959598Z"
+  },
+  {
+   "seq": 9013,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 23: fill textbox 'Tickets' = '7'",
+   "data": {
+    "action_result_id": "act_5846b4860cab",
+    "ok": true,
+    "duration_ms": 6,
+    "phase": "verify",
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:18.066788Z"
+  },
+  {
+   "seq": 9014,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 24: click button 'Book tickets'",
+   "data": {
+    "action_result_id": "act_a06c27d52f14",
+    "ok": true,
+    "duration_ms": 58,
+    "phase": "verify",
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:18.249635Z"
+  },
+  {
+   "seq": 9015,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "verification_executed",
+   "message": "Verification replay 1 of fnd_85abff2dee04: confirmed (assertion validation_message_present failed)",
+   "data": {
+    "verification_id": "ver_0518212b9403",
+    "finding_id": "fnd_85abff2dee04",
+    "outcome": "confirmed",
+    "failure_class": null,
+    "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+    "evidence_refs": [
+     "art_baefd46c6369",
+     "art_2d2efe2e542a"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:18.333424Z"
+  },
+  {
+   "seq": 9016,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 25: setup: open /events/1/book",
+   "data": {
+    "action_result_id": "act_29f25f318744",
+    "ok": true,
+    "duration_ms": 32,
+    "phase": "verify",
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:21.626317Z"
+  },
+  {
+   "seq": 9017,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 26: fill textbox 'Name' = 'Bob'",
+   "data": {
+    "action_result_id": "act_513005c48f7f",
+    "ok": true,
+    "duration_ms": 18,
+    "phase": "verify",
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:21.771479Z"
+  },
+  {
+   "seq": 9018,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 27: fill textbox 'Email' = 'bob@example.com'",
+   "data": {
+    "action_result_id": "act_ff916e0e2edd",
+    "ok": true,
+    "duration_ms": 20,
+    "phase": "verify",
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:21.898710Z"
+  },
+  {
+   "seq": 9019,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 28: fill textbox 'Tickets' = '7'",
+   "data": {
+    "action_result_id": "act_0795509b977e",
+    "ok": true,
+    "duration_ms": 7,
+    "phase": "verify",
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:22.014090Z"
+  },
+  {
+   "seq": 9020,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 29: click button 'Book tickets'",
+   "data": {
+    "action_result_id": "act_e8f3392d6c85",
+    "ok": true,
+    "duration_ms": 47,
+    "phase": "verify",
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:22.176972Z"
+  },
+  {
+   "seq": 9021,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "verification_executed",
+   "message": "Verification replay 2 of fnd_85abff2dee04: confirmed (assertion validation_message_present failed)",
+   "data": {
+    "verification_id": "ver_2c1dcf5e4fdf",
+    "finding_id": "fnd_85abff2dee04",
+    "outcome": "confirmed",
+    "failure_class": null,
+    "context_id": "single-agent:ver_2c1dcf5e4fdf:ws_6eb02279e5",
+    "evidence_refs": [
+     "art_ea9aa6c82843",
+     "art_0f70560f133d"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:22.257801Z"
+  },
+  {
+   "seq": 9022,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_491fde694b7e",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "result_accepted",
+   "message": "Accepted confirmed for fnd_85abff2dee04: All 2 fresh replays violated T2.",
+   "data": {
+    "finding_id": "fnd_85abff2dee04",
+    "outcome": "confirmed",
+    "verification_ids": [
+     "ver_0518212b9403",
+     "ver_2c1dcf5e4fdf"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:22.404682Z"
+  },
+  {
+   "seq": 9023,
+   "run_id": "run_fc9eba62a54c",
+   "task_id": "task_8a93ab90c727",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_finished",
+   "message": "Run completed: explorer finished the goal; 1 form(s) tested with 3 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+   "data": {
+    "status": "completed"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T13:17:22.436229Z"
+  }
+ ]
+}

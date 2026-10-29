@@ -1,0 +1,41 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens, a website reviewer. An explorer found a form on an authorised test website and handed it to you with the supplied requirements.\n\nDesign a small set of input cases that check what the requirements say about this form: include boundary and invalid values the requirements address, plus at least one valid control case. Code will enter each case in a fresh browser session, submit it, and record what the page does.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<one sentence>\", \"cases\": [\n  {\"label\": \"<short name>\", \"inputs\": {\"<field name exactly as listed>\": \"<value>\"},\n   \"submit\": \"<submit control name exactly as listed>\",\n   \"requirement_ref\": \"<requirement id this case checks, or null>\",\n   \"expected\": \"<what should happen, according to that requirement>\",\n   \"check_page\": \"<optional: a page path from 'Links' where the effect should be visible, or null>\"}]}\n\nRules:\n- Use only the field and submit names listed. Unlisted fields keep their current value.\n- A form with no fields performs an action (confirm, delete, cancel ...). Use \"inputs\": {} for it.\n- If a requirement says the action changes another page (for example, an item disappears from a list),\n  set check_page to that page's path. Code opens it in the same session before and after the action.\n- Values are typed exactly. A field with type=date needs YYYY-MM-DD.\n- Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use null and describe your own expectation; it will be treated as a review observation, not a defect.\n- At most 3 cases. Keep labels and expectations to one short line each.\n- Reply with compact JSON on a single line (no indentation)."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- T1: A visitor can open the booking form for an event from the events list.\n- T2: A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.\n- T3: The email must contain an \"@\". Otherwise the booking is rejected with a validation message.\n- T4: After a successful booking, a confirmation page shows the event, the name and the number of tickets.\n- T5: A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.\n\nForm handed over by explorer-a:\nPage: http://localhost:5177/events/1/book\nHeadings: Book tickets\nFields:\n  - \"Name\" (textbox, type=text)\n  - \"Email\" (textbox, type=text)\n  - \"Tickets\" (textbox, type=number)\nSubmit controls: \"Book tickets\"\nLinks on this page: /\nVisible page text (truncated): Ticket Desk \u00b7 Events Book tickets Harbour Jazz Night Name Email Tickets Book tickets"
+    }
+  ],
+  "response": "{\"reasoning\": \"Testing valid booking confirmation and boundary/invalid inputs for ticket count and email format as per requirements T2, T3, and T4.\", \"cases\": [{\"label\": \"Valid Booking\", \"inputs\": {\"Name\": \"Alice\", \"Email\": \"alice@example.com\", \"Tickets\": \"2\"}, \"submit\": \"Book tickets\", \"requirement_ref\": \"T4\", \"expected\": \"Confirmation page shows event, name, and 2 tickets\", \"check_page\": null}, {\"label\": \"Invalid Tickets High\", \"inputs\": {\"Name\": \"Bob\", \"Email\": \"bob@example.com\", \"Tickets\": \"7\"}, \"submit\": \"Book tickets\", \"requirement_ref\": \"T2\", \"expected\": \"Validation message rejected, no booking created\", \"check_page\": null}, {\"label\": \"Invalid Email Format\", \"inputs\": {\"Name\": \"Charlie\", \"Email\": \"charlie-no-at\", \"Tickets\": \"1\"}, \"submit\": \"Book tickets\", \"requirement_ref\": \"T3\", \"expected\": \"Validation message rejected, no booking created\", \"check_page\": null}]}",
+  "usage": {
+    "prompt_tokens": 644,
+    "completion_tokens": 1021,
+    "total_tokens": 1665,
+    "cost": 0.003385,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.003385,
+      "upstream_inference_prompt_cost": 0.000322,
+      "upstream_inference_completions_cost": 0.003063
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 776,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null,
+  "finish_reason": "stop",
+  "max_tokens": 1400,
+  "reasoning_tokens_budget": 384
+}

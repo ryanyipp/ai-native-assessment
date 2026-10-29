@@ -45,6 +45,11 @@ function RunHeader({ detail }: { detail: RunDetail }) {
         <span className="truncate">{shortUrl(r.target_url)}</span><ExternalLink size={11} aria-hidden className="shrink-0" />
       </a>
       <StatusBadge status={r.status} withTooltip />
+      {r.imported_from && (
+        <Tooltip content={`Recorded result loaded from ${r.imported_from}. It was not run by this installation; nothing is re-run.`}>
+          <span tabIndex={0} className="inline-flex"><Badge tone="amber">Recorded demo result</Badge></span>
+        </Tooltip>
+      )}
       {r.target_profile === 'website' && (
         <Tooltip content={`Public website approved in the launcher. Allowed origin: ${(r.scope_origins ?? []).join(', ')}. Each worker used a fresh browser context; the site's server data is not isolated.`}>
           <span tabIndex={0} className="inline-flex"><Badge tone="blue">Public website</Badge></span>
@@ -75,6 +80,7 @@ function RunHeader({ detail }: { detail: RunDetail }) {
           <dl className="grid grid-cols-[7rem_minmax(0,1fr)] gap-x-3 gap-y-1.5">
             <dt className="text-slate-500">Run</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.id}</dd>
             <dt className="text-slate-500">Workflow</dt><dd>{MODE_LABEL[r.mode] ?? r.mode}</dd>
+            {r.imported_from && (<><dt className="text-slate-500">Imported from</dt><dd>{r.imported_from} (recorded result; not run here)</dd></>)}
             <dt className="text-slate-500">Sessions</dt>
             <dd>{r.target_profile === 'website'
               ? "Fresh browser context per worker; the website's server data is shared, not isolated"

@@ -1,0 +1,84 @@
+{
+  "id": "ho_bb5ade1b4e8b",
+  "run_id": "run_a54099283d9d",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-a",
+  "to_agent": "input-tester",
+  "task_id": "task_a875167eed20",
+  "source_state_id": "state_a4e1ba873560",
+  "form_id": "form_b336efe84e4a",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_a4e1ba873560",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "A creator can start a new draft from the dashboard."
+    },
+    {
+      "id": "R2",
+      "text": "A draft has a title and a caption."
+    },
+    {
+      "id": "R3",
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown."
+    },
+    {
+      "id": "R4",
+      "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date."
+    },
+    {
+      "id": "R5",
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A creator can start a new draft from the dashboard.",
+      "source": "R1"
+    },
+    {
+      "text": "A draft has a title and a caption.",
+      "source": "R2"
+    },
+    {
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+      "source": "R3"
+    },
+    {
+      "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+      "source": "R4"
+    },
+    {
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+      "source": "R5"
+    }
+  ],
+  "evidence_refs": [
+    "art_d4a1a0f231a7",
+    "art_66af02e87d4b"
+  ],
+  "created_at": "2026-10-29T13:41:52.388710Z"
+}

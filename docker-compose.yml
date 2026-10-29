@@ -1,0 +1,78 @@
+# FlowLens with both fixture apps (broken and corrected builds of each).
+#
+#   docker compose up --build        then open http://localhost:5173
+#
+# All services share the backend's network namespace, so "http://localhost:5174" means the same
+# fixture to the browser engine inside the backend as it does in the launcher. Recorded demo runs
+# are loaded at start (no API key, no model calls). Live runs need OPENROUTER_API_KEY in .env
+# (optional file; never copied into images). Host ports can be changed with the *_PORT variables.
+
+x-backend-image: &backend-image
+  build: { context: ., dockerfile: docker/backend.Dockerfile }
+  image: flowlens-backend:local
+
+services:
+  backend:
+    <<: *backend-image
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: sqlite:////data/flowlens.db
+      ARTIFACTS_DIR: /data/artifacts
+      FLOWLENS_ALLOWED_ORIGINS: >-
+        http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177
+      FLOWLENS_LOAD_DEMO: ${FLOWLENS_LOAD_DEMO:-1}
+    command: >-
+      sh -c 'if [ "$$FLOWLENS_LOAD_DEMO" = "1" ]; then python -m flowlens.demo load --bundle /app/demo; fi;
+      exec uvicorn flowlens.main:app --host 0.0.0.0 --port 8000'
+    volumes:
+      - flowlens-data:/data
+    ports:
+      - "${FRONTEND_HOST_PORT:-5173}:5173"
+      - "${BACKEND_HOST_PORT:-8000}:8000"
+      - "${CREATOR_BROKEN_HOST_PORT:-5174}:5174"
+      - "${CREATOR_CORRECTED_HOST_PORT:-5175}:5175"
+      - "${TICKET_BROKEN_HOST_PORT:-5176}:5176"
+      - "${TICKET_CORRECTED_HOST_PORT:-5177}:5177"
+
+  creator-studio-broken:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { CREATOR_STUDIO_MODE: broken, CREATOR_STUDIO_DATA: /data/fixtures/creator-studio-broken.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/creator-studio --host 0.0.0.0 --port 5174
+
+  creator-studio-corrected:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { CREATOR_STUDIO_MODE: corrected, CREATOR_STUDIO_DATA: /data/fixtures/creator-studio-corrected.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/creator-studio --host 0.0.0.0 --port 5175
+
+  ticket-desk-broken:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { TICKET_DESK_MODE: broken, TICKET_DESK_DATA: /data/fixtures/ticket-desk-broken.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/ticket-desk --host 0.0.0.0 --port 5176
+
+  ticket-desk-corrected:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { TICKET_DESK_MODE: corrected, TICKET_DESK_DATA: /data/fixtures/ticket-desk-corrected.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/ticket-desk --host 0.0.0.0 --port 5177
+
+  frontend:
+    build: { context: ., dockerfile: docker/frontend.Dockerfile }
+    image: flowlens-frontend:local
+    network_mode: service:backend
+    depends_on: [backend]
+
+volumes:
+  flowlens-data:

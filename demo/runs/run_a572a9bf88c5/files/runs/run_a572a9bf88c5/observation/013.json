@@ -1,0 +1,65 @@
+{
+  "url": "http://localhost:5174/drafts/new",
+  "title": "New draft \u00b7 Creator Studio",
+  "headings": [
+    "New draft"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "input",
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text",
+      "value": "Valid Title",
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "textarea",
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null,
+      "value": "",
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "button",
+      "role": "button",
+      "name": "Save draft",
+      "input_type": null,
+      "value": null,
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard New draft Title Caption Save draft",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

@@ -1,0 +1,71 @@
+{
+  "id": "ver_0518212b9403",
+  "run_id": "run_fc9eba62a54c",
+  "finding_id": "fnd_85abff2dee04",
+  "handoff_id": "ho_8f2bbafe83c3",
+  "verifier_id": "single-agent",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5176",
+  "context_id": "single-agent:ver_0518212b9403:ws_40385029a9",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "field": "Tickets"
+    },
+    "requirement_ref": "T2",
+    "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+    "chosen_by": "single-agent"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "field": "Tickets"
+      },
+      "requirement_ref": "T2",
+      "expected": "A validation message indicating that the ticket quantity must be between 1 and 6.",
+      "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5176/bookings/dd2fd430?booked=1",
+      "route": "/bookings/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Booking confirmed."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated T2 in this fresh replay.",
+  "action_result_ids": [
+    "act_3fc5344ec224",
+    "act_acd17248c85f",
+    "act_56712314cab4",
+    "act_5846b4860cab",
+    "act_a06c27d52f14"
+  ],
+  "evidence_refs": [
+    "art_dfe4992ecc86",
+    "art_b98f8ff2549e",
+    "art_847c329cc4bb",
+    "art_55b81c07deea",
+    "art_41a7a9cf5563",
+    "art_08f822a013df",
+    "art_5ef82ca9bb8a",
+    "art_df4dd73890b1",
+    "art_6d594d1ecd50",
+    "art_baefd46c6369"
+  ],
+  "model_call_id": "mc_a92b115217bb",
+  "started_at": "2026-10-29T13:17:12.614872Z",
+  "finished_at": "2026-10-29T13:17:18.297521Z"
+}

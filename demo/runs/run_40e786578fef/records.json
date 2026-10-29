@@ -1,0 +1,1372 @@
+{
+ "runs": [
+  {
+   "id": "run_40e786578fef",
+   "target_url": "http://localhost:5175/",
+   "goal": "Re-check fnd_b2da8101d83d from run_db4f36872772 on the corrected build",
+   "requirements": [
+    "R1. A creator can start a new draft from the dashboard.",
+    "R2. A draft has a title and a caption.",
+    "R3. Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+    "R4. A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+    "R5. A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+   ],
+   "model": "none (browser-only re-check)",
+   "mode": "reverify",
+   "limits": {
+    "max_steps": 15,
+    "max_model_calls": 40,
+    "max_cost_usd": 0.5,
+    "max_output_tokens": 800,
+    "max_output_tokens_planning": 2000,
+    "max_duration_s": 600,
+    "max_states": 30,
+    "reserved_verification_calls": 4,
+    "max_forms_tested": 3,
+    "max_cases_per_form": 4,
+    "verification_replays": 2
+   },
+   "target_build": "creator-studio:corrected",
+   "status": "completed",
+   "stop_reason": "re-check finished: not_reproduced",
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "usage": {
+    "model_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0,
+    "reported_cost_usd": 0.0,
+    "calls_without_cost": 0
+   },
+   "created_at": "2026-10-29T07:27:52.501500Z",
+   "finished_at": "2026-10-29T07:28:00.875333Z"
+  }
+ ],
+ "states": [
+  {
+   "id": "state_3d2e7db50511",
+   "run_id": "run_40e786578fef",
+   "signature": "d88f89ed7886b427",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/schedule/new",
+   "url": "http://localhost:5175/schedule/new",
+   "title": "Schedule a post · Creator Studio",
+   "summary": "Schedule a post (0/2 fields filled)",
+   "screenshot_artifact_id": "art_915273961c36",
+   "first_seen_step": 0,
+   "setup_recipe": [],
+   "semantic_recipe": [],
+   "discovered_by": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "sightings": [
+    {
+     "agent_id": "verifier",
+     "phase": "verify",
+     "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+     "action_result_id": "act_c9606c0b40b4"
+    },
+    {
+     "agent_id": "verifier",
+     "phase": "verify",
+     "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+     "action_result_id": "act_8e1c694dd294"
+    }
+   ]
+  },
+  {
+   "id": "state_e606c5d9df29",
+   "run_id": "run_40e786578fef",
+   "signature": "7bdad788cadca381",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/schedule",
+   "url": "http://localhost:5175/schedule",
+   "title": "Schedule a post · Creator Studio",
+   "summary": "Schedule a post — Publish date cannot be in the past. (2/2 fields filled)",
+   "screenshot_artifact_id": "art_0b2b431ff6db",
+   "first_seen_step": 3,
+   "setup_recipe": [],
+   "semantic_recipe": [],
+   "discovered_by": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "sightings": [
+    {
+     "agent_id": "verifier",
+     "phase": "verify",
+     "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+     "action_result_id": "act_1bf0035be7f7"
+    },
+    {
+     "agent_id": "verifier",
+     "phase": "verify",
+     "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+     "action_result_id": "act_860d015a2281"
+    }
+   ]
+  }
+ ],
+ "transitions": [
+  {
+   "id": "tr_8860ad144fc3",
+   "run_id": "run_40e786578fef",
+   "step": 3,
+   "source_state_id": "state_3d2e7db50511",
+   "target_state_id": "state_e606c5d9df29",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_f3fa653d7784",
+    "inputs": {
+     "Post title": "Yesterday's News",
+     "Publish date": "2026-06-14"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Post title=\"Yesterday's News\", Publish date='2026-06-14'",
+   "action_result_id": "act_1bf0035be7f7",
+   "ok": true,
+   "duration_ms": 98,
+   "screenshot_artifact_id": "art_0b2b431ff6db",
+   "model_call_id": null,
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "test_case_id": null,
+   "verification_id": "ver_0aebe8d3c05b"
+  },
+  {
+   "id": "tr_c1a4afd33084",
+   "run_id": "run_40e786578fef",
+   "step": 7,
+   "source_state_id": "state_3d2e7db50511",
+   "target_state_id": "state_e606c5d9df29",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_f3fa653d7784",
+    "inputs": {
+     "Post title": "Yesterday's News",
+     "Publish date": "2026-06-14"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Post title=\"Yesterday's News\", Publish date='2026-06-14'",
+   "action_result_id": "act_860d015a2281",
+   "ok": true,
+   "duration_ms": 108,
+   "screenshot_artifact_id": "art_d6fd8d66ce15",
+   "model_call_id": null,
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "test_case_id": null,
+   "verification_id": "ver_5e5d0f0734c2"
+  }
+ ],
+ "actions": [
+  {
+   "id": "act_c9606c0b40b4",
+   "run_id": "run_40e786578fef",
+   "step": 0,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5175/schedule/new"
+   },
+   "target_description": "http://localhost:5175/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:27:55.861583Z",
+   "duration_ms": 36,
+   "screenshot_artifact_id": "art_915273961c36",
+   "observation_artifact_id": "art_cff3a7faddcb",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_85b3d1e56877",
+   "run_id": "run_40e786578fef",
+   "step": 1,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Yesterday's News"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:27:56.071735Z",
+   "duration_ms": 14,
+   "screenshot_artifact_id": "art_bc3a3849c141",
+   "observation_artifact_id": "art_5b99144a4413",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_33ebb9ee44c6",
+   "run_id": "run_40e786578fef",
+   "step": 2,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-14"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:27:56.201265Z",
+   "duration_ms": 6,
+   "screenshot_artifact_id": "art_d2dd2568765f",
+   "observation_artifact_id": "art_ca516efb1d2b",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_1bf0035be7f7",
+   "run_id": "run_40e786578fef",
+   "step": 3,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule",
+   "started_at": "2026-10-29T07:27:56.319341Z",
+   "duration_ms": 42,
+   "screenshot_artifact_id": "art_0b2b431ff6db",
+   "observation_artifact_id": "art_6ed91480f193",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_8e1c694dd294",
+   "run_id": "run_40e786578fef",
+   "step": 4,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5175/schedule/new"
+   },
+   "target_description": "http://localhost:5175/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:28:00.034657Z",
+   "duration_ms": 40,
+   "screenshot_artifact_id": "art_3c67cbb0656e",
+   "observation_artifact_id": "art_8f0f50746bb2",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_d93623f9cd53",
+   "run_id": "run_40e786578fef",
+   "step": 5,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Yesterday's News"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:28:00.251832Z",
+   "duration_ms": 21,
+   "screenshot_artifact_id": "art_d0b98e6272c9",
+   "observation_artifact_id": "art_b1000145e9ea",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_b0c092b56fac",
+   "run_id": "run_40e786578fef",
+   "step": 6,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-14"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule/new",
+   "started_at": "2026-10-29T07:28:00.394860Z",
+   "duration_ms": 7,
+   "screenshot_artifact_id": "art_3d6c0698b17b",
+   "observation_artifact_id": "art_8bbce5ca43a6",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "task_id": "task_db4439122d13"
+  },
+  {
+   "id": "act_860d015a2281",
+   "run_id": "run_40e786578fef",
+   "step": 7,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5175/schedule/new",
+   "url_after": "http://localhost:5175/schedule",
+   "started_at": "2026-10-29T07:28:00.516471Z",
+   "duration_ms": 40,
+   "screenshot_artifact_id": "art_d6fd8d66ce15",
+   "observation_artifact_id": "art_5dfb95bcbc3b",
+   "agent_id": "verifier",
+   "phase": "verify",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "task_id": "task_db4439122d13"
+  }
+ ],
+ "findings": [
+  {
+   "id": "fnd_f3fa653d7784",
+   "run_id": "run_40e786578fef",
+   "kind": "defect_candidate",
+   "reported_by": "input-tester",
+   "description": "Re-check of fnd_b2da8101d83d: Schedule a post: Past date rejection",
+   "expected": "The form shows a validation message and no post is scheduled because the date is before the studio date.",
+   "observed": "The post was scheduled successfully despite the date (2026-06-14) being before the studio date (2026-06-15).",
+   "agent_claim": null,
+   "same_context_check": null,
+   "evidence_refs": [
+    "art_15ccd3f28327",
+    "art_2b995a6167e6",
+    "art_f9b8ed20d30f",
+    "art_df5d96079710",
+    "art_417c735a02e3",
+    "art_3289fea66303",
+    "art_9bef559040ae",
+    "art_452a8031c15b"
+   ],
+   "verification_status": "not_reproduced",
+   "replay_recipe": [],
+   "requirement_ref": "R5",
+   "requirement_text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+   "inputs": {
+    "Post title": "Yesterday's News",
+    "Publish date": "2026-06-14"
+   },
+   "reproduction": {
+    "target_state_id": "state_3eef75972938",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Dashboard",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "reproduction_steps": [
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text"
+     },
+     "value": "Yesterday's News"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date"
+     },
+     "value": "2026-06-14"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Schedule post",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "form_id": "form_7ac8bf6ceea4",
+   "test_case_id": "tc_d168d435a078",
+   "handoff_ids": [
+    "ho_a21e46e6f678"
+   ],
+   "verification_ids": [
+    "ver_0aebe8d3c05b",
+    "ver_5e5d0f0734c2"
+   ],
+   "verified_by": "verifier",
+   "verification_reason": "All 2 fresh replays met R5; this does not prove there is no intermittent bug.",
+   "source_finding_id": "fnd_b2da8101d83d"
+  }
+ ],
+ "evidence": [
+  {
+   "id": "art_0fd0880dc1c3",
+   "run_id": "run_40e786578fef",
+   "kind": "handoff",
+   "path": "runs/run_40e786578fef/handoff/ho_a21e46e6f678.json",
+   "sha256": "c98bf1bd7a308d419a39b051e5064696bba74b8a9869366e60836e979aefb489",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:52.619163Z"
+  },
+  {
+   "id": "art_915273961c36",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/000-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:27:55.976443Z"
+  },
+  {
+   "id": "art_cff3a7faddcb",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/000.json",
+   "sha256": "592c666a7c87f1d011b4f4618beff3908e55d162bb1da6443eb1af165856ee43",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:55.992861Z"
+  },
+  {
+   "id": "art_bc3a3849c141",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/001-fill.png",
+   "sha256": "31e1594d5bbfa0fca079691d91afd1ab4846236b88f7584d794ea2075453b7f0",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:27:56.139045Z"
+  },
+  {
+   "id": "art_5b99144a4413",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/001.json",
+   "sha256": "5666647cf884fae198138297849c0df346676841a12cfbc7ce99c2c83f68d885",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:56.156191Z"
+  },
+  {
+   "id": "art_d2dd2568765f",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/002-fill.png",
+   "sha256": "33e27cd76cee9194c0664d98ae227dee85144eed2ac951e3be84909dc65f3e6d",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:27:56.257177Z"
+  },
+  {
+   "id": "art_ca516efb1d2b",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/002.json",
+   "sha256": "e4c3cc2e80186b194c5519b867845b7937ff15446f9c2e9cb5d6620ba7803df9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:56.273730Z"
+  },
+  {
+   "id": "art_0b2b431ff6db",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/003-click.png",
+   "sha256": "6d27027b0530773a27e1753c4ffe3c4905a2e435b4ce6979fb50081d72f5f2f3",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:27:56.423487Z"
+  },
+  {
+   "id": "art_6ed91480f193",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/003.json",
+   "sha256": "f92d060680a4df05e0f032f38223b5e09fa49fe388520d37e5980ef07254afcb",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:56.441944Z"
+  },
+  {
+   "id": "art_9079fe3d773d",
+   "run_id": "run_40e786578fef",
+   "kind": "action_log",
+   "path": "runs/run_40e786578fef/action_log/verification-ver_0aebe8d3c05b.json",
+   "sha256": "704b010329093e85d2176130c1a50adb714ab6c6ac7d68f75a34ebdb7bccae0f",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:27:56.542312Z"
+  },
+  {
+   "id": "art_3c67cbb0656e",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/004-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:28:00.172068Z"
+  },
+  {
+   "id": "art_8f0f50746bb2",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/004.json",
+   "sha256": "592c666a7c87f1d011b4f4618beff3908e55d162bb1da6443eb1af165856ee43",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:28:00.192662Z"
+  },
+  {
+   "id": "art_d0b98e6272c9",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/005-fill.png",
+   "sha256": "31e1594d5bbfa0fca079691d91afd1ab4846236b88f7584d794ea2075453b7f0",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:28:00.329856Z"
+  },
+  {
+   "id": "art_b1000145e9ea",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/005.json",
+   "sha256": "5666647cf884fae198138297849c0df346676841a12cfbc7ce99c2c83f68d885",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:28:00.349072Z"
+  },
+  {
+   "id": "art_3d6c0698b17b",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/006-fill.png",
+   "sha256": "33e27cd76cee9194c0664d98ae227dee85144eed2ac951e3be84909dc65f3e6d",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:28:00.454604Z"
+  },
+  {
+   "id": "art_8bbce5ca43a6",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/006.json",
+   "sha256": "e4c3cc2e80186b194c5519b867845b7937ff15446f9c2e9cb5d6620ba7803df9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:28:00.470962Z"
+  },
+  {
+   "id": "art_d6fd8d66ce15",
+   "run_id": "run_40e786578fef",
+   "kind": "screenshot",
+   "path": "runs/run_40e786578fef/screenshots/007-click.png",
+   "sha256": "6d27027b0530773a27e1753c4ffe3c4905a2e435b4ce6979fb50081d72f5f2f3",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T07:28:00.616996Z"
+  },
+  {
+   "id": "art_5dfb95bcbc3b",
+   "run_id": "run_40e786578fef",
+   "kind": "observation",
+   "path": "runs/run_40e786578fef/observation/007.json",
+   "sha256": "f92d060680a4df05e0f032f38223b5e09fa49fe388520d37e5980ef07254afcb",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:28:00.633061Z"
+  },
+  {
+   "id": "art_46c82a6dc4bd",
+   "run_id": "run_40e786578fef",
+   "kind": "action_log",
+   "path": "runs/run_40e786578fef/action_log/verification-ver_5e5d0f0734c2.json",
+   "sha256": "1e2ad953d8779a2ab67a08b54b35ae764e578ab905f37253fb2f3ad7489d2de5",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T07:28:00.708770Z"
+  }
+ ],
+ "model_calls": [],
+ "tasks": [
+  {
+   "id": "task_ce7282348fe9",
+   "run_id": "run_40e786578fef",
+   "type": "explore",
+   "key": "run_40e786578fef:explore:start",
+   "depends_on": [],
+   "input_refs": [],
+   "owner": "explorer-a",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [],
+   "note": null
+  },
+  {
+   "id": "task_db4439122d13",
+   "run_id": "run_40e786578fef",
+   "type": "verify",
+   "key": "run_40e786578fef:verify:fnd_f3fa653d7784",
+   "depends_on": [],
+   "input_refs": [
+    "fnd_f3fa653d7784"
+   ],
+   "owner": "verifier",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "ver_0aebe8d3c05b",
+    "ver_5e5d0f0734c2"
+   ],
+   "note": null
+  },
+  {
+   "id": "task_36bbc8ba5538",
+   "run_id": "run_40e786578fef",
+   "type": "explore",
+   "key": "run_40e786578fef:explore:d88f89ed7886b427",
+   "depends_on": [],
+   "input_refs": [
+    "state_3d2e7db50511"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+  },
+  {
+   "id": "task_0e59eae05b84",
+   "run_id": "run_40e786578fef",
+   "type": "explore",
+   "key": "run_40e786578fef:explore:7bdad788cadca381",
+   "depends_on": [],
+   "input_refs": [
+    "state_e606c5d9df29"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3."
+  }
+ ],
+ "forms": [],
+ "handoffs": [
+  {
+   "id": "ho_a21e46e6f678",
+   "run_id": "run_40e786578fef",
+   "kind": "candidate_to_verifier",
+   "from_agent": "coordinator",
+   "to_agent": "verifier",
+   "task_id": "task_db4439122d13",
+   "source_state_id": "state_3eef75972938",
+   "form_id": "form_7ac8bf6ceea4",
+   "finding_id": "fnd_f3fa653d7784",
+   "setup": {
+    "target_state_id": "state_3eef75972938",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Dashboard",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "R5",
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+     "source": "R5"
+    }
+   ],
+   "evidence_refs": [
+    "art_15ccd3f28327",
+    "art_2b995a6167e6",
+    "art_f9b8ed20d30f",
+    "art_df5d96079710",
+    "art_417c735a02e3",
+    "art_3289fea66303",
+    "art_9bef559040ae",
+    "art_452a8031c15b",
+    "art_0fd0880dc1c3"
+   ],
+   "created_at": "2026-10-29T07:27:52.617685Z"
+  }
+ ],
+ "test_cases": [],
+ "verifications": [
+  {
+   "id": "ver_0aebe8d3c05b",
+   "run_id": "run_40e786578fef",
+   "finding_id": "fnd_f3fa653d7784",
+   "handoff_id": "ho_a21e46e6f678",
+   "verifier_id": "verifier",
+   "replay_index": 0,
+   "target_origin": "http://localhost:5175",
+   "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+    "chosen_by": "verifier"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "field": "Publish date"
+     },
+     "requirement_ref": "R5",
+     "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+     "chosen_by": "verifier"
+    },
+    "passed": true,
+    "observed": {
+     "url": "http://localhost:5175/schedule",
+     "route": "/schedule",
+     "alert_messages": [
+      "Publish date cannot be in the past."
+     ],
+     "field_validation": {},
+     "status_messages": [
+      "Publish date cannot be in the past."
+     ],
+     "matching_messages": [
+      "Publish date cannot be in the past."
+     ]
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "not_reproduced",
+   "reason": "Assertion validation_message_present held: the page met R5 in this fresh replay.",
+   "action_result_ids": [
+    "act_c9606c0b40b4",
+    "act_85b3d1e56877",
+    "act_33ebb9ee44c6",
+    "act_1bf0035be7f7"
+   ],
+   "evidence_refs": [
+    "art_915273961c36",
+    "art_cff3a7faddcb",
+    "art_bc3a3849c141",
+    "art_5b99144a4413",
+    "art_d2dd2568765f",
+    "art_ca516efb1d2b",
+    "art_0b2b431ff6db",
+    "art_6ed91480f193",
+    "art_9079fe3d773d"
+   ],
+   "model_call_id": null,
+   "started_at": "2026-10-29T07:27:52.665589Z",
+   "finished_at": "2026-10-29T07:27:56.542312Z"
+  },
+  {
+   "id": "ver_5e5d0f0734c2",
+   "run_id": "run_40e786578fef",
+   "finding_id": "fnd_f3fa653d7784",
+   "handoff_id": "ho_a21e46e6f678",
+   "verifier_id": "verifier",
+   "replay_index": 1,
+   "target_origin": "http://localhost:5175",
+   "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+    "chosen_by": "verifier"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "field": "Publish date"
+     },
+     "requirement_ref": "R5",
+     "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+     "chosen_by": "verifier"
+    },
+    "passed": true,
+    "observed": {
+     "url": "http://localhost:5175/schedule",
+     "route": "/schedule",
+     "alert_messages": [
+      "Publish date cannot be in the past."
+     ],
+     "field_validation": {},
+     "status_messages": [
+      "Publish date cannot be in the past."
+     ],
+     "matching_messages": [
+      "Publish date cannot be in the past."
+     ]
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "not_reproduced",
+   "reason": "Assertion validation_message_present held: the page met R5 in this fresh replay.",
+   "action_result_ids": [
+    "act_8e1c694dd294",
+    "act_d93623f9cd53",
+    "act_b0c092b56fac",
+    "act_860d015a2281"
+   ],
+   "evidence_refs": [
+    "art_3c67cbb0656e",
+    "art_8f0f50746bb2",
+    "art_d0b98e6272c9",
+    "art_b1000145e9ea",
+    "art_3d6c0698b17b",
+    "art_8bbce5ca43a6",
+    "art_d6fd8d66ce15",
+    "art_5dfb95bcbc3b",
+    "art_46c82a6dc4bd"
+   ],
+   "model_call_id": null,
+   "started_at": "2026-10-29T07:27:56.719178Z",
+   "finished_at": "2026-10-29T07:28:00.708770Z"
+  }
+ ],
+ "events": [
+  {
+   "seq": 592,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_ce7282348fe9",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_started",
+   "message": "Re-check of fnd_b2da8101d83d from run run_db4f36872772 on http://localhost:5175 (browser only, reused assertion, no model call)",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:52.553192Z"
+  },
+  {
+   "seq": 593,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_ce7282348fe9",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_a21e46e6f678: candidate fnd_f3fa653d7784 from coordinator to verifier",
+   "data": {
+    "handoff_id": "ho_a21e46e6f678",
+    "kind": "candidate_to_verifier",
+    "from_agent": "coordinator",
+    "to_agent": "verifier",
+    "form_id": "form_7ac8bf6ceea4",
+    "finding_id": "fnd_f3fa653d7784",
+    "task_id": "task_db4439122d13",
+    "artifact_id": "art_0fd0880dc1c3"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:52.649351Z"
+  },
+  {
+   "seq": 594,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 0: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_c9606c0b40b4",
+    "ok": true,
+    "duration_ms": 36,
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.021845Z"
+  },
+  {
+   "seq": 595,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "state_discovered",
+   "message": "New state: Schedule a post (0/2 fields filled)",
+   "data": {
+    "state_id": "state_3d2e7db50511",
+    "route": "/schedule/new",
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.055545Z"
+  },
+  {
+   "seq": 596,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 1: fill textbox 'Post title' = \"Yesterday's News\"",
+   "data": {
+    "action_result_id": "act_85b3d1e56877",
+    "ok": true,
+    "duration_ms": 14,
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.186300Z"
+  },
+  {
+   "seq": 597,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 2: fill textbox 'Publish date' = '2026-06-14'",
+   "data": {
+    "action_result_id": "act_33ebb9ee44c6",
+    "ok": true,
+    "duration_ms": 6,
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.304837Z"
+  },
+  {
+   "seq": 598,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 3: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_1bf0035be7f7",
+    "ok": true,
+    "duration_ms": 42,
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.475072Z"
+  },
+  {
+   "seq": 599,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "state_discovered",
+   "message": "New state: Schedule a post — Publish date cannot be in the past. (2/2 fields filled)",
+   "data": {
+    "state_id": "state_e606c5d9df29",
+    "route": "/schedule",
+    "phase": "verify",
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.508904Z"
+  },
+  {
+   "seq": 600,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "verification_executed",
+   "message": "Verification replay 1 of fnd_f3fa653d7784: not_reproduced (assertion validation_message_present passed)",
+   "data": {
+    "verification_id": "ver_0aebe8d3c05b",
+    "finding_id": "fnd_f3fa653d7784",
+    "outcome": "not_reproduced",
+    "failure_class": null,
+    "context_id": "verifier:ver_0aebe8d3c05b:ws_b8a78f23d1",
+    "evidence_refs": [
+     "art_6ed91480f193",
+     "art_9079fe3d773d"
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.573283Z"
+  },
+  {
+   "seq": 601,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from verifier queued for exploration (deferred): Schedule a post (0/2 fields filled)",
+   "data": {
+    "state_id": "state_3d2e7db50511",
+    "deferred_task_id": "task_36bbc8ba5538"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.671916Z"
+  },
+  {
+   "seq": 602,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from verifier queued for exploration (deferred): Schedule a post — Publish date cannot be in the past. (2/2 fields filled)",
+   "data": {
+    "state_id": "state_e606c5d9df29",
+    "deferred_task_id": "task_0e59eae05b84"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:27:56.703449Z"
+  },
+  {
+   "seq": 603,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 4: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_8e1c694dd294",
+    "ok": true,
+    "duration_ms": 40,
+    "phase": "verify",
+    "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.224084Z"
+  },
+  {
+   "seq": 604,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 5: fill textbox 'Post title' = \"Yesterday's News\"",
+   "data": {
+    "action_result_id": "act_d93623f9cd53",
+    "ok": true,
+    "duration_ms": 21,
+    "phase": "verify",
+    "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.378778Z"
+  },
+  {
+   "seq": 605,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 6: fill textbox 'Publish date' = '2026-06-14'",
+   "data": {
+    "action_result_id": "act_b0c092b56fac",
+    "ok": true,
+    "duration_ms": 7,
+    "phase": "verify",
+    "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.502330Z"
+  },
+  {
+   "seq": 606,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "action_executed",
+   "message": "Step 7: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_860d015a2281",
+    "ok": true,
+    "duration_ms": 40,
+    "phase": "verify",
+    "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.661840Z"
+  },
+  {
+   "seq": 607,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "verifier",
+   "type": "verification_executed",
+   "message": "Verification replay 2 of fnd_f3fa653d7784: not_reproduced (assertion validation_message_present passed)",
+   "data": {
+    "verification_id": "ver_5e5d0f0734c2",
+    "finding_id": "fnd_f3fa653d7784",
+    "outcome": "not_reproduced",
+    "failure_class": null,
+    "context_id": "verifier:ver_5e5d0f0734c2:ws_2133c6dac2",
+    "evidence_refs": [
+     "art_5dfb95bcbc3b",
+     "art_46c82a6dc4bd"
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.743368Z"
+  },
+  {
+   "seq": 608,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_db4439122d13",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "result_accepted",
+   "message": "Accepted not_reproduced for fnd_f3fa653d7784: All 2 fresh replays met R5; this does not prove there is no intermittent bug.",
+   "data": {
+    "finding_id": "fnd_f3fa653d7784",
+    "outcome": "not_reproduced",
+    "verification_ids": [
+     "ver_0aebe8d3c05b",
+     "ver_5e5d0f0734c2"
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.856932Z"
+  },
+  {
+   "seq": 609,
+   "run_id": "run_40e786578fef",
+   "task_id": "task_ce7282348fe9",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_finished",
+   "message": "Run completed: re-check finished: not_reproduced",
+   "data": {
+    "status": "completed"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T07:28:00.888834Z"
+  }
+ ]
+}

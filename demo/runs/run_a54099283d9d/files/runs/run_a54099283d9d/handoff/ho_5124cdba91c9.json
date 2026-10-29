@@ -1,0 +1,53 @@
+{
+  "id": "ho_5124cdba91c9",
+  "run_id": "run_a54099283d9d",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_2f80fc20bd4d",
+  "source_state_id": "state_a4e1ba873560",
+  "form_id": "form_b336efe84e4a",
+  "finding_id": "fnd_ddcd1a78a381",
+  "setup": {
+    "target_state_id": "state_a4e1ba873560",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [],
+  "expected_behaviour": [
+    {
+      "text": "System handles empty draft creation.",
+      "source": "none supplied"
+    }
+  ],
+  "evidence_refs": [
+    "art_e6005d4dc5b1",
+    "art_3b2979bec965",
+    "art_f8008df2f0ad",
+    "art_3e54f5a43a4a",
+    "art_7c3b5e8fa4de",
+    "art_f23d7e49a49e",
+    "art_0b11a87cde59",
+    "art_4fc6aa29f660"
+  ],
+  "created_at": "2026-10-29T13:42:27.958109Z"
+}

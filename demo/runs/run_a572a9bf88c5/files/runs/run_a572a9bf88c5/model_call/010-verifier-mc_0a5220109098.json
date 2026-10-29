@@ -1,0 +1,38 @@
+{
+  "agent_id": "verifier",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Verifier inside FlowLens, a website reviewer. A candidate defect was reported against an explicit requirement. Code will repeat the reported inputs in fresh browser sessions with fresh test data and then evaluate ONE assertion that you choose against the resulting page.\n\nFirst decide whether the requirement text explicitly states what must happen for these inputs. A requirement that only describes what something has or contains does not make a value mandatory or forbidden. If it is not explicit, reply with \"explicit\": false and no assertion; the candidate stays a review observation.\n\nOtherwise choose the assertion that the page must satisfy if the requirement is met after the actions. Code decides the outcome: if the assertion fails, the requirement violation is confirmed; if it passes, the candidate is not reproduced. Do not try to predict the outcome; encode the requirement faithfully.\n\nAssertion vocabulary (type and params):\n- element_visible {\"name\": str, \"role\": str|null, \"expect_visible\": bool}: a control or heading whose\n  name contains `name` is (or, with expect_visible=false, is not) on the page.\n- validation_message_present {\"text_contains\": str|null, \"field\": str|null}: the page shows a\n  validation/alert message (optionally containing text). With `field`, only that field's own\n  validation message or a page alert naming the field counts.\n- navigation_reached {\"route\": str, \"expect_reached\": bool}: the final page's normalised route equals\n  `route` (ids shown as :id), or with expect_reached=false does not.\n- text_or_value_retained {\"expected\": str, \"field\": str|null}: a field holds `expected`, or the\n  visible page text contains it.\n- state_condition {\"condition\": \"remained_on_start_route\" | \"left_start_route\"}: whether the page\n  route after the actions equals the route before them.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<short>\", \"requirement_ref\": \"<the requirement id>\", \"explicit\": true | false,\n  \"requirement_quote\": \"<exact words from the requirement that state the expected behaviour>\",\n  \"assertion\": {\"type\": \"<one type above>\", \"params\": {...}} | null,\n  \"expected\": \"<the expected value in plain words>\"}"
+    },
+    {
+      "role": "user",
+      "content": "Requirement R2: A draft has a title and a caption.\n\nInputs to repeat: {\"Title\": \"Valid Title\", \"Caption\": \"\"}\nSteps code will repeat after reaching the start page:\n  1. fill textbox 'Title' = 'Valid Title'\n  2. fill textbox 'Caption' = ''\n  3. click button 'Save draft'\n\nStart page as you observed it in a fresh session (before the steps):\nURL: http://localhost:5174/drafts/new\nTitle: New draft \u00b7 Creator Studio\nHeadings: New draft\nInteractive elements:\n  e1 link \"Dashboard\" href=/\n  e2 textbox \"Title\" value=\"\"\n  e3 textbox \"Caption\" value=\"\"\n  e4 button \"Save draft\"\nVisible text (truncated): Creator Studio Dashboard New draft Title Caption Save draft"
+    }
+  ],
+  "response": "{\n  \"reasoning\": \"The requirement describes the data structure of a draft (what it contains) but does not explicitly state that these fields are mandatory or define the expected behavior when a field is left empty during the save action.\",\n  \"requirement_ref\": \"R2\",\n  \"explicit\": false,\n  \"requirement_quote\": \"A draft has a title and a caption.\",\n  \"assertion\": null,\n  \"expected\": \"The requirement does not explicitly forbid an empty caption or mandate a validation error.\"\n}",
+  "usage": {
+    "prompt_tokens": 685,
+    "completion_tokens": 759,
+    "total_tokens": 1444,
+    "cost": 0.0026195,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0026195,
+      "upstream_inference_prompt_cost": 0.0003425,
+      "upstream_inference_completions_cost": 0.002277
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 646,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null
+}
