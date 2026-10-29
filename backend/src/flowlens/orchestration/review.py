@@ -539,9 +539,12 @@ class ReviewRun(ExplorerRun):
                     att.model_call_id = mc_id
                     quote = " ".join(decision.requirement_quote.split()).casefold()
                     quote_ok = bool(quote) and quote in " ".join((f.requirement_text or "").split()).casefold()
-                    if not decision.explicit or decision.assertion is None:
+                    if not decision.explicit:
                         return done("inconclusive", f"Verifier judged that {f.requirement_ref} does not explicitly "
                                     f"state this behaviour: {decision.reasoning[:240]}", "expectation")
+                    if decision.assertion is None:  # explicit, but no assertion: a verifier failure, not an expectation one
+                        return done("inconclusive", f"Verifier said {f.requirement_ref} is explicit but supplied no "
+                                    "assertion", "verifier")
                     if not quote_ok:
                         return done("inconclusive", "The verifier's quoted requirement text was not found in "
                                     f"{f.requirement_ref}: {decision.requirement_quote[:120]!r}", "verifier")

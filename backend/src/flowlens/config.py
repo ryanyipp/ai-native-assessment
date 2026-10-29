@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     flowlens_max_output_tokens: int = 800
     flowlens_max_steps: int = 15
     flowlens_model_timeout_s: float = 60.0
+    flowlens_provider_json_schema: bool = False  # send reply schemas to the provider (off: see llm.py)
 
     app_env: str = "development"
     backend_port: int = 8000

@@ -197,3 +197,28 @@ async def test_admitted_test_keeps_its_capacity_against_verification(fixture_ser
                             task=t, hold_key="tt")
     qr.release("tt")
     assert u.model_calls == 6 and qr.holds == {}  # the global limit was never exceeded
+
+
+def test_provider_json_schema_is_off_by_default():
+    from flowlens.services.llm import OpenRouterClient
+    s = Settings(_env_file=None, openrouter_api_key="test-placeholder-not-a-key")
+    assert OpenRouterClient(s).supports_schema is False
+    assert OpenRouterClient(Settings(_env_file=None, openrouter_api_key="x", flowlens_provider_json_schema=True)).supports_schema
+
+
+async def test_explicit_requirement_without_assertion_is_a_verifier_failure(fixture_server, tmp_path):
+    from test_review import make_review, make_script
+    base, _ = make_script()
+
+    def script(messages):
+        if "You are the Verifier" in messages[0]["content"]:
+            return json.dumps({"reasoning": "explicit", "requirement_ref": "R5", "explicit": True,
+                               "requirement_quote": "A publish date in the past must be rejected"})
+        return base(messages)
+
+    rr, store, _ = make_review(fixture_server, tmp_path, script)
+    await rr.execute()
+    d = store.detail(rr.run.id)
+    (f,) = d.findings
+    assert f.verification_status == "inconclusive" and "supplied no assertion" in f.verification_reason
+    assert {v.failure_class for v in d.verifications} == {"verifier"}

@@ -94,13 +94,15 @@ def other_batch_processes() -> list[str]:
         out = subprocess.run(["ps", "-eo", "pid,args"], capture_output=True, text=True).stdout.splitlines()
         rows = [line.strip().split(None, 1) for line in out[1:]]
     else:
-        cmd = ("Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'eval_batch\\.py' } | "
+        # Only Python interpreters running the script count; shells that merely launch it do not.
+        cmd = ("Get-CimInstance Win32_Process | Where-Object { $_.Name -match '^python' -and "
+               "$_.CommandLine -match 'eval_batch\\.py' } | "
                "ForEach-Object { \"$($_.ProcessId) $($_.CommandLine)\" }")
         out = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True).stdout
         rows = [line.strip().split(None, 1) for line in out.splitlines() if line.strip()]
     me = {str(os.getpid()), str(os.getppid())}
     return [f"{r[0]} {r[1][:160]}" for r in rows if len(r) == 2 and r[0] not in me and "eval_batch.py" in r[1]
-            and "powershell" not in r[1].lower()]
+            and "python" in r[1].split("eval_batch.py")[0].lower()]
 
 
 def acquire_lock(batch: str) -> None:

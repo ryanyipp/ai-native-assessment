@@ -64,7 +64,7 @@ class LLMClient(Protocol):
 
 class OpenRouterClient:
     is_mock = False
-    supports_schema = True
+    supports_schema = False  # set from FLOWLENS_PROVIDER_JSON_SCHEMA; off by default (see __init__)
 
     def __init__(self, settings: Settings):
         if not settings.has_api_key:
@@ -74,6 +74,9 @@ class OpenRouterClient:
         self._key = settings.openrouter_api_key.get_secret_value().strip()  # type: ignore[union-attr]
         self._timeout = settings.flowlens_model_timeout_s
         self._slots = _slots(settings.flowlens_max_concurrent_model_calls)
+        # Provider-side JSON schema made gemini-3-flash loop inside string fields and omit optional
+        # fields (batch-postfix-ticket-desk). Replies are validated locally either way.
+        self.supports_schema = settings.flowlens_provider_json_schema
 
     async def complete(self, messages: list[dict[str, str]], max_tokens: int,
                        reasoning_tokens: int | None = None, schema: dict | None = None) -> LLMResponse:
