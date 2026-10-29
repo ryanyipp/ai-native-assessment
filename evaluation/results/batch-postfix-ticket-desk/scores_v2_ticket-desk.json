@@ -25,6 +25,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 1,
+    "inconclusive_by_cause": {
+      "verifier_output": 1,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 55.8,
@@ -56,6 +63,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 2,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 2,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 1,
     "skipped": 1,
     "elapsed_s": 80.8,
@@ -87,6 +101,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 31.8,
@@ -115,6 +136,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 2,
     "elapsed_s": 74.0,
@@ -149,6 +177,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 1,
+    "inconclusive_by_cause": {
+      "verifier_output": 1,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 58.9,
@@ -180,6 +215,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 2,
+    "inconclusive_by_cause": {
+      "verifier_output": 1,
+      "requirement": 1,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 1,
     "skipped": 1,
     "elapsed_s": 85.8,
@@ -211,6 +253,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 29.9,
@@ -239,6 +288,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 2,
     "elapsed_s": 64.1,
@@ -273,6 +329,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 1,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 1,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 36.6,
@@ -307,6 +370,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 1,
+    "inconclusive_by_cause": {
+      "verifier_output": 1,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 1,
     "elapsed_s": 66.7,
@@ -338,6 +408,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 0,
     "skipped": 0,
     "elapsed_s": 32.5,
@@ -366,6 +443,13 @@
     "false_confirmations": [],
     "confirmed": 0,
     "inconclusive": 0,
+    "inconclusive_by_cause": {
+      "verifier_output": 0,
+      "requirement": 0,
+      "setup": 0,
+      "application": 0,
+      "other": 0
+    },
     "unfinished": 1,
     "skipped": 2,
     "elapsed_s": 62.5,
