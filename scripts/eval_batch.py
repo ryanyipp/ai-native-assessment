@@ -5,7 +5,7 @@ Reads the frozen scenario in evaluation/creator-studio/scenario.json. Every run
 is appended to evaluation/results/<batch>/runs.jsonl as soon as it ends,
 including failures. The batch stops before a run that could exceed the cap.
 
-Usage (repo root, fixtures on :5174 broken and :5175 corrected):
+Usage (repo root, with the scenario builds running):
   backend\.venv\Scripts\python scripts\eval_batch.py [BATCH_ID]
 """
 
@@ -28,12 +28,15 @@ from flowlens.orchestration.launch import run_class  # noqa: E402
 from flowlens.services.llm import OpenRouterClient  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
 
-SCENARIO = json.loads((ROOT / "evaluation" / "creator-studio" / "scenario.json").read_text("utf-8"))
+SCENARIO_PATH = (ROOT / sys.argv[2]) if len(sys.argv) > 2 else ROOT / "evaluation" / "creator-studio" / "scenario.json"
+SCENARIO = json.loads(SCENARIO_PATH.read_text("utf-8"))
+CONDITIONS = sys.argv[3].split(",") if len(sys.argv) > 3 else list(SCENARIO["conditions"])
 
 
 def requirements() -> list[str]:
-    text = (ROOT / "fixtures" / "creator-studio" / "requirements.md").read_text("utf-8")
-    return [" ".join(i.strip()[2:].split()) for i in re.split(r"\n(?=- R\d)", text) if i.strip().startswith("- R")]
+    text = (ROOT / SCENARIO["requirements_source"].split(" (")[0]).read_text("utf-8")
+    items = re.split(r"\n(?=- [A-Z]+\d)", text)
+    return [" ".join(i.strip()[2:].split()) for i in items if re.match(r"- [A-Z]+\d", i.strip())]
 
 
 async def one(store, s, condition: str, build: str, rep: int, batch: str) -> dict:
@@ -49,7 +52,7 @@ async def one(store, s, condition: str, build: str, rep: int, batch: str) -> dic
     except Exception as e:  # recorded, never dropped
         error = f"{type(e).__name__}: {e}"
     final = store.get(Run, run.id)
-    return {"batch": batch, "condition": condition, "build": build, "rep": rep, "run_id": run.id,
+    return {"batch": batch, "scenario": str(SCENARIO_PATH.relative_to(ROOT)), "condition": condition, "build": build, "rep": rep, "run_id": run.id,
             "status": final.status, "stop_reason": final.stop_reason, "harness_error": error,
             "wall_s": round(time.monotonic() - t0, 1), "reported_cost_usd": final.usage.reported_cost_usd,
             "recorded_at": datetime.now(UTC).isoformat()}
@@ -65,7 +68,7 @@ async def main(batch: str) -> None:
     spent = sum(d["reported_cost_usd"] for d in done)
     cap, per_run = SCENARIO["batch_cap_usd"], SCENARIO["limits"]["max_cost_usd"]
     plan = [(c, b, r) for r in range(1, SCENARIO["repetitions"] + 1) for b in ("broken", "corrected")
-            for c in SCENARIO["conditions"]]
+            for c in CONDITIONS]
     for condition, build, rep in plan:
         if any((d["condition"], d["build"], d["rep"]) == (condition, build, rep) for d in done):
             continue

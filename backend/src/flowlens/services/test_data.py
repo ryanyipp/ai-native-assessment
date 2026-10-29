@@ -36,11 +36,13 @@ class WorkspaceProvider:
         try:
             r = httpx.post(origin.rstrip("/") + self.endpoint_path, timeout=10)
             r.raise_for_status()
-            ws = r.json()["workspace"]
+            body = r.json()
+            ws = body["workspace"]
+            cookie = body.get("cookie") or self.cookie_name  # the harness may name its own cookie
         except (httpx.HTTPError, KeyError, ValueError) as e:
             raise SetupError(f"could not provision a test-data workspace: {type(e).__name__}: {str(e)[:200]}") from e
         host = urlsplit(origin).hostname or "localhost"
         return TestDataContext(
             context_id=f"{label}:{ws}",
-            cookies=[{"name": self.cookie_name, "value": ws, "domain": host, "path": "/"}],
+            cookies=[{"name": cookie, "value": ws, "domain": host, "path": "/"}],
         )

@@ -40,9 +40,10 @@ class Settings(BaseSettings):
     fixture_port: int = 5174
     artifacts_dir: Path = Field(default=REPO_ROOT / "artifacts")
     database_url: str = ""
-    # :5174 broken build, :5175 corrected build of the reference fixture.
+    # creator-studio :5174 broken / :5175 corrected; ticket-desk (held out) :5176 broken / :5177 corrected.
     flowlens_allowed_origins: str = (
-        "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175"
+        "http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,"
+        "http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177"
     )
     # Harness endpoint (POST) that provisions an isolated test-data workspace, and
     # the cookie that selects it. Empty endpoint = no isolation; verification is

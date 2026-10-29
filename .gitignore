@@ -50,3 +50,6 @@ Thumbs.db
 
 # Fixture runtime data
 fixtures/creator-studio/data/
+
+# ticket-desk fixture runtime data
+fixtures/ticket-desk/data/

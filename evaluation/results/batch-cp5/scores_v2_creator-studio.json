@@ -1,0 +1,432 @@
+[
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_9191ff906668",
+    "status": "completed",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 6,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 1,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 56.4,
+    "calls": 9,
+    "tokens": 10752,
+    "cost": 0.0088485,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 1,
+    "run_id": "run_1204b1110946",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 2,
+    "unfinished": 5,
+    "skipped": 0,
+    "elapsed_s": 93.8,
+    "calls": 26,
+    "tokens": 29868,
+    "cost": 0.03814649999999999,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_e36317467007",
+    "status": "completed",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 7,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 1,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 45.3,
+    "calls": 8,
+    "tokens": 9328,
+    "cost": 0.007719,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 1,
+    "run_id": "run_67acd134314d",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 11,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 6,
+    "skipped": 0,
+    "elapsed_s": 69.2,
+    "calls": 23,
+    "tokens": 23598,
+    "cost": 0.023159000000000003,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_08666f8f7aba",
+    "status": "completed",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 6,
+    "duplicates": 1,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 2,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 58.3,
+    "calls": 10,
+    "tokens": 12732,
+    "cost": 0.010533500000000001,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 2,
+    "run_id": "run_2028e64471e5",
+    "status": "partial",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 10,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 5,
+    "skipped": 0,
+    "elapsed_s": 79.7,
+    "calls": 24,
+    "tokens": 26280,
+    "cost": 0.029917499999999996,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Old Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_5cef4cedf0c5",
+    "status": "completed",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 8,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 46.9,
+    "calls": 8,
+    "tokens": 9377,
+    "cost": 0.007938500000000001,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 2,
+    "run_id": "run_1acebb45c8a3",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 11,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 7,
+    "skipped": 0,
+    "elapsed_s": 69.7,
+    "calls": 23,
+    "tokens": 24530,
+    "cost": 0.026134999999999995,
+    "conf_detail": []
+  },
+  {
+    "condition": "single_agent",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_e6af408a1d14",
+    "status": "completed",
+    "ref_states": "5/6",
+    "ref_states_n": 5,
+    "ref_transitions": "4/6",
+    "ref_transitions_n": 4,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 7,
+    "duplicates": 2,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 3,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 61.1,
+    "calls": 10,
+    "tokens": 13054,
+    "cost": 0.012222,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Past Post",
+          "Publish date": "2026-06-14"
+        },
+        "by": "single-agent",
+        "independence": "self"
+      }
+    ]
+  },
+  {
+    "condition": "queue_review",
+    "build": "broken",
+    "rep": 3,
+    "run_id": "run_6250423b8bfc",
+    "status": "partial",
+    "ref_states": "6/6",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [],
+    "states": 11,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [
+      "D1"
+    ],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 1,
+    "inconclusive": 0,
+    "unfinished": 7,
+    "skipped": 0,
+    "elapsed_s": 82.0,
+    "calls": 25,
+    "tokens": 26878,
+    "cost": 0.030121499999999996,
+    "conf_detail": [
+      {
+        "req": "R5",
+        "inputs": {
+          "Post title": "Expired Content",
+          "Publish date": "2026-06-14"
+        },
+        "by": "verifier",
+        "independence": "independent"
+      }
+    ]
+  },
+  {
+    "condition": "single_agent",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_c636babfc447",
+    "status": "completed",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 6,
+    "duplicates": 0,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 0,
+    "unfinished": 0,
+    "skipped": 0,
+    "elapsed_s": 40.9,
+    "calls": 8,
+    "tokens": 9085,
+    "cost": 0.0074875,
+    "conf_detail": []
+  },
+  {
+    "condition": "queue_review",
+    "build": "corrected",
+    "rep": 3,
+    "run_id": "run_0a7f995ed09a",
+    "status": "partial",
+    "ref_states": "6/7",
+    "ref_states_n": 6,
+    "ref_transitions": "5/6",
+    "ref_transitions_n": 5,
+    "missing_states": [
+      "S4"
+    ],
+    "states": 11,
+    "duplicates": 5,
+    "unmatched": 0,
+    "unmatched_examples": [],
+    "found": [],
+    "missed": [],
+    "false_confirmations": [],
+    "confirmed": 0,
+    "inconclusive": 2,
+    "unfinished": 7,
+    "skipped": 0,
+    "elapsed_s": 70.0,
+    "calls": 23,
+    "tokens": 24220,
+    "cost": 0.025089999999999998,
+    "conf_detail": []
+  }
+]

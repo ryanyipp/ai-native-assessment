@@ -1,0 +1,21 @@
+{
+  "note": "Evaluation-only. Read by scripts/eval_report_v2.py; never passed to runtime agents or prompts.",
+  "reference_states": [
+    {"id": "S1", "name": "Events list", "route": "/", "heading": "Events", "no_status": true},
+    {"id": "S2", "name": "Booking form", "route": "/events/:id/book", "heading": "Book tickets", "no_alert": true},
+    {"id": "S3", "name": "Booking rejected with validation alert", "route": "/events/:id/book", "heading": "Book tickets", "needs_alert": true},
+    {"id": "S4", "name": "Booking confirmation", "route": "/bookings/:id", "heading": "Your booking"},
+    {"id": "S5", "name": "Cancel confirmation dialog", "route": "/bookings/:id/cancel", "heading": "Cancel this booking?"},
+    {"id": "S6", "name": "Events after cancellation", "route": "/", "heading": "Events", "status_contains": "cancelled"}
+  ],
+  "reference_transitions": [["S1", "S2"], ["S2", "S4"], ["S2", "S3"], ["S4", "S5"], ["S5", "S6"]],
+  "known_defects": [
+    {"id": "DT2", "builds": ["broken"], "requirement": "T2", "field": "Tickets", "predicate": "int_gt", "value": 6,
+     "description": "More than 6 tickets are accepted and a booking is created."},
+    {"id": "DT5", "builds": ["broken"], "requirement": "T5", "field": null, "predicate": "requirement_only",
+     "description": "A cancelled booking still appears under My bookings (multi-step; no form fields)."}
+  ],
+  "ambiguous": [
+    {"id": "AT1", "requirement": null, "description": "An empty name is accepted; no requirement states otherwise."}
+  ]
+}

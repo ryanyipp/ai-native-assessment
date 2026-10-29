@@ -1,0 +1,22 @@
+{
+  "note": "Refined reference map (v2) for creator-studio, used by scripts/eval_report_v2.py. The v1 key and its batch-cp5 conclusions are unchanged.",
+  "reference_states": [
+    {"id": "S1", "name": "Dashboard", "route": "/", "heading": "Dashboard"},
+    {"id": "S2", "name": "New draft form", "route": "/drafts/new", "heading": "New draft"},
+    {"id": "S3", "name": "Draft saved (edit page with saved banner)", "route": "/drafts/:id", "heading": "Edit draft", "status_contains": "saved"},
+    {"id": "S4", "name": "Saved draft reopened (no banner)", "route": "/drafts/:id", "heading": "Edit draft", "no_status": true},
+    {"id": "S5", "name": "Schedule form", "route": "/schedule/new", "heading": "Schedule a post", "no_alert": true},
+    {"id": "S6", "name": "Schedule rejected with validation alert", "route": "/schedule", "heading": "Schedule a post", "needs_alert": true,
+     "optional_on": ["broken"]},
+    {"id": "S7", "name": "Scheduled post confirmation", "route": "/scheduled/:id", "heading": "Scheduled post"}
+  ],
+  "reference_transitions": [["S1", "S2"], ["S2", "S3"], ["S1", "S5"], ["S5", "S7"], ["S5", "S6"], ["S1", "S4"]],
+  "known_defects": [
+    {"id": "D1", "builds": ["broken"], "requirement": "R5", "field": "Publish date", "predicate": "date_lt", "value": "2026-06-15",
+     "description": "A publish date before the studio date is accepted."}
+  ],
+  "ambiguous": [
+    {"id": "A1", "requirement": "R2", "description": "Empty title/caption"},
+    {"id": "A2", "requirement": null, "description": "Empty post title on the schedule form"}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "frozen_at": "2026-10-29",
+  "note": "Re-run of queue_review only, after the frontier-filtering change (8d330fa). Same goal, requirements, limits and builds as batch-cp5; single_agent is unaffected by that change and is not re-run.",
+  "goal": "Explore the creator dashboard and open each form a creator can use, without submitting them. Finish when you have seen them.",
+  "requirements_source": "fixtures/creator-studio/requirements.md (R1-R5, supplied verbatim)",
+  "builds": {
+    "broken": "http://localhost:5174/",
+    "corrected": "http://localhost:5175/"
+  },
+  "studio_date": "2026-06-15",
+  "starting_data": "every exploration, test case and replay starts in a newly provisioned empty workspace",
+  "conditions": {
+    "queue_review": "explorer-a, explorer-b, input-tester, verifier on the shared queue; independent verifier"
+  },
+  "limits": {
+    "max_model_calls": 30,
+    "max_cost_usd": 0.15,
+    "max_steps": 12,
+    "explore_steps_per_task": 3,
+    "max_depth": 2,
+    "reserved_testing_calls": 6,
+    "reserved_verification_calls": 5,
+    "max_duration_s": 900,
+    "task_lease_s": 45
+  },
+  "repetitions": 3,
+  "batch_cap_usd": 0.35,
+  "fault_injection": null
+}
