@@ -90,3 +90,39 @@ All workers call the model through `ExplorerRun.call_model`, which is checked ag
 ## Ready for later checkpoints
 
 `Task` already has `owner`, `attempt_id`, `lease_expires_at` and `depends_on`, and every record carries agent and context ids. Handoffs are standalone records. Adding the shared queue, leases, the second explorer and stale-result rejection replaces the sequential loop in `ReviewRun.after_explore` without changing the record shapes.
+
+# Checkpoint 3: shared queue (`queue_review` mode)
+
+The sequential `explore_test_verify` mode above is unchanged and stays selectable for regression checks.
+
+## Queue (`storage/queue.py`)
+
+Tasks live in the SQLite `tasks` table. Every operation runs in one `BEGIN IMMEDIATE` transaction:
+
+| Operation | Behaviour |
+|---|---|
+| `enqueue` | Deduplicated by `(run_id, key)`, checked inside the transaction and backed by a unique expression index. Returns the existing task if the key is taken. |
+| `claim(worker, types)` | Picks the highest-priority `ready` task of those types whose `depends_on` tasks are all `done`. Sets owner, a new `attempt_id`, `attempts += 1`, `claimed_at` and `lease_expires_at`. Ready tasks whose dependency ended failed, blocked or unfinished become `blocked`. |
+| `complete` / `fail` | Accepted only if owner and attempt are still current (`StaleAttempt` otherwise). `fail` puts the task back to `ready` until `max_attempts` claims are used, then marks it `failed`. |
+| `mark_unfinished` | At the end of a run, every task that never ran becomes `unfinished`, with the reason. |
+
+Leases are recorded but not yet enforced. Expiry, reassignment and stale-result rejection under an injected stall are checkpoint 4.
+
+## Workers (`orchestration/queue_review.py`)
+
+Four coroutines share one event loop: `explorer-a`, `explorer-b` (type `explore`), `input-tester` (`input_test`) and `verifier` (`verify`).
+
+| Task | Queued by | Work | Produces |
+|---|---|---|---|
+| `explore:start` | coordinator | Open the target in a fresh context and workspace | States, transitions, forms |
+| `explore:<signature>` | whichever worker first recorded the state | Reach the state by direct path or semantic recipe (signature must match), then up to `explore_steps_per_task` model-chosen actions. The prompt lists states the team already has. | New states (depth + 1, up to `max_depth`; deeper ones are recorded `unfinished`), forms |
+| `input_test:<form key>` | the explorer that saw the form | The checkpoint 2 tester on the stored `form_to_tester` handoff | Test cases; outcome states queued as explore tasks; candidates |
+| `verify:<finding>` | input-tester; `depends_on` the test task | The checkpoint 2 verifier on the stored `candidate_to_verifier` handoff | Verification attempts and the accepted result |
+
+- **Shared discoveries:** every worker records into one signature-keyed state map. A merge appends a sighting (agent, phase, context), so provenance is kept.
+- **Isolation:** each task, test case and replay gets its own browser context and a newly provisioned fixture workspace. A state found by one explorer is reproduced by another through the stored recipe, not through shared server data.
+- **Budget:**
+  - One run budget is shared by every worker.
+  - Explorers stop when total calls reach `max_model_calls − reserved_testing_calls − reserved_verification_calls`; the tester leaves the verification reserve.
+  - The check happens before each call, so concurrent workers can overshoot by one call (seen live: 20/19).
+- **Termination:** a worker exits when no task it can claim is ready, no task is in progress, and nothing in progress could produce more. It also exits when the time limit is hit or the explorer budget share is used. The run is `partial` if anything is unfinished, blocked or failed, or if a budget limit was hit.

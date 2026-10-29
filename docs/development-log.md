@@ -62,3 +62,22 @@ shadcn/ui was not adopted. Only three primitives were needed, so I wrote small T
 - Regression tests cover the API review path with default settings, the stale-code refusal, and a crash mid-review.
 
 **Verification:** backend restarted while idle. A fresh live run through the API, `run_a572a9bf88c5`, completed: 11 calls (explorer 4, tester 4, verifier 3), 14,820 tokens, US$0.023625 reported. R5 was confirmed in 2/2 fresh replays; two R2 candidates and one observation without a requirement were inconclusive.
+
+## 2026-10-29: Checkpoint 3 (shared queue and second explorer)
+
+**Built:** persistent queue (`storage/queue.py`) and the `queue_review` mode (`orchestration/queue_review.py`) with explorer-a, explorer-b, input-tester and verifier. Tester-discovered states are now actionable explore tasks. The Activity tab has a task board. Design: `docs/architecture.md`.
+
+**Bug found while designing:** the model-slot semaphore was a blocking `threading` semaphore. With several workers on one event loop, a third concurrent call would have frozen the loop while the slot holders awaited I/O. Slots are now acquired with `asyncio.to_thread`.
+
+**Checks:** backend pytest 44 passed. New tests cover:
+- atomic claims from 8 threads over 30 tasks;
+- deduplication, dependency gating, stale completion and bounded retries;
+- a scripted two-explorer run: both explorers claim, tester frontier is consumed, verify tasks wait for the test task, one context per explore task, shared sightings;
+- the explorer budget share leaving room for the tester and verifier.
+
+Frontend build and lint are clean. UI checks: `ui_check.py` 29/29, `ui_check_review.py` 22/22, `ui_check_queue.py` 13/13.
+
+**Live run:** `run_72e3868cc54e` through the API (limits: 30 calls, US$0.30, 3 steps per explore task, depth 2, 6 testing + 5 verification calls reserved). It ended **partial**: 21 calls (explorer-a 10, explorer-b 6, input-tester 4, verifier 1), 25,431 tokens, US$0.0361 reported.
+- **Tasks:** 8 done, 1 blocked (the draft-form tester plan was truncated again), 2 unfinished (the explorer budget share was used).
+- **Handoffs:** two forms explorer-a → input-tester; two candidates input-tester → verifier. R5 confirmed; one observation without a requirement inconclusive.
+- **Tester frontier consumed:** "Scheduled post — Post scheduled." was queued by the tester and explored by explorer-b.
