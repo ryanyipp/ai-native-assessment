@@ -108,6 +108,8 @@ def extract_forms(obs) -> list[tuple[str, list[FormField], list[ControlRef]]]:
 
 class ExplorerRun:
     persist_root_task = True
+    explorer_id = explorer.AGENT_ID
+    explorer_name = "Explorer A"
 
     def __init__(self, run: Run, store: Store, settings: Settings, llm: LLMClient):
         self.run = run
@@ -116,7 +118,7 @@ class ExplorerRun:
         self.llm = llm
         self.ev = EvidenceStore(settings.artifacts_path, store, run.id)
         self.origin = origin_of(run.target_url)
-        self.task = Task(run_id=run.id, key=f"{run.id}:explore:start", owner=explorer.AGENT_ID,
+        self.task = Task(run_id=run.id, key=f"{run.id}:explore:start", owner=self.explorer_id,
                          attempt_id="att_1", status="claimed")
         if self.persist_root_task:
             self.store.put(self.task)
@@ -142,7 +144,7 @@ class ExplorerRun:
         task = task or self.task
         self.store.append_event(Event(
             run_id=self.run.id, task_id=task.id, attempt_id=task.attempt_id,
-            agent_id=agent_id or explorer.AGENT_ID, type=type_, message=message, data=data,
+            agent_id=agent_id or self.explorer_id, type=type_, message=message, data=data,
             provenance=self.run.provenance,
         ))
 
@@ -204,7 +206,7 @@ class ExplorerRun:
             if sem:
                 self.semantic.append(sem)
         result, target, _, obs_art = self.record_execution(
-            action, ex, agent_id=explorer.AGENT_ID, phase="explore", context_id="explorer-a:default",
+            action, ex, agent_id=self.explorer_id, phase="explore", context_id=self.explore_context_id,
             task=self.task)
         if source is not None:
             self.store.put(Transition(
@@ -218,8 +220,18 @@ class ExplorerRun:
         self.history.append(f"{result.step}. {_action_label(action, ex.target_description)} -> {outcome}; "
                             f"now at {ex.url_after}")
         if ex.ok:
-            self._discover_forms(ex, target, result, obs_art)
+            self._discover_forms(ex, target, result, obs_art, agent_id=self.explorer_id)
         return target
+
+    explore_context_id = "explorer-a:default"
+
+    def explore_cookies(self) -> list[dict]:
+        """Hook: the single-agent baseline explores in a fresh workspace, like queue explorers."""
+        return []
+
+    def start_heartbeat(self, task: Task):
+        """Hook: queue mode keeps the lease alive while a bounded model call is in flight."""
+        return None
 
     def on_form_discovered(self, form: DiscoveredForm) -> None:
         """Hook: the queue coordinator turns each new form into a tester task."""
@@ -288,12 +300,15 @@ class ExplorerRun:
         call = ModelCall(run_id=self.run.id, step=max(self.step_seq, 0), model=self.llm.model, latency_ms=0,
                          ok=False, agent_id=agent_id, phase=phase)
         resp = None
+        heartbeat = self.start_heartbeat(task)
         try:
             resp = await self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens)
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply
             call.error = str(e)[:300]
         finally:
+            if heartbeat is not None:
+                heartbeat.cancel()
             self.in_flight -= 1
             self.in_flight_phase[phase] -= 1
         u = self.run.usage
@@ -338,8 +353,8 @@ class ExplorerRun:
     async def _decide(self, step: int, obs, note: str | None):
         lim = self.run.limits
         messages = explorer.build_messages(self.run.goal, self.run.requirements, self.history, obs,
-                                           step, lim.max_steps, note)
-        content, mc_id = await self.call_model(messages, agent_id=explorer.AGENT_ID, phase="explore",
+                                           step, lim.max_steps, note, name=self.explorer_name)
+        content, mc_id = await self.call_model(messages, agent_id=self.explorer_id, phase="explore",
                                                task=self.task, reserve=self.explorer_reserve)
         return explorer.parse_decision(content), mc_id
 
@@ -402,7 +417,8 @@ class ExplorerRun:
         note = None
         saw_successful_click = False
         async with BrowserEngine(self.settings.allowed_origins, self.settings.flowlens_headless,
-                                 self.settings.flowlens_test_session_path or None) as eng:
+                                 self.settings.flowlens_test_session_path or None,
+                                 cookies=self.explore_cookies()) as eng:
             start = NavigateAction(url=run.target_url)
             ex = await eng.execute(start)
             current = self._record_explorer_step(start.model_dump(), ex, None, None)
@@ -443,7 +459,7 @@ class ExplorerRun:
         if self.run.mode == "single_explorer" or act.checked_values or act.persistence != "unknown":
             check = self._same_context_check(act, obs)
             finding = Finding(
-                run_id=self.run.id, kind="persistence_check", reported_by=explorer.AGENT_ID,
+                run_id=self.run.id, kind="persistence_check", reported_by=self.explorer_id,
                 description="Saved draft content persists after page reload (explorer observation)",
                 expected="Values entered and saved are shown again after a reload",
                 observed=act.summary, agent_claim=act.persistence, same_context_check=check,

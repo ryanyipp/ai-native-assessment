@@ -49,7 +49,7 @@ class RunStatus(StrEnum):
     interrupted = "interrupted"
 
 
-RunMode = Literal["single_explorer", "explore_test_verify", "queue_review", "reverify"]
+RunMode = Literal["single_explorer", "explore_test_verify", "queue_review", "single_agent", "reverify"]
 
 
 class RunLimits(BaseModel):
@@ -91,7 +91,7 @@ class RunCreate(BaseModel):
     goal: str = Field(min_length=5, max_length=2000)
     requirements: list[str] = Field(default_factory=list, max_length=20)
     limits: RunLimits | None = None
-    mode: Literal["single_explorer", "explore_test_verify", "queue_review"] = "single_explorer"
+    mode: Literal["single_explorer", "explore_test_verify", "queue_review", "single_agent"] = "single_explorer"
     fault_injection: FaultInjection | None = None  # queue_review only
 
 
@@ -529,16 +529,22 @@ class Finding(BaseModel):
     verified_by: str | None = None
     verification_reason: str | None = None
     source_finding_id: str | None = None  # reverify runs: the finding being re-checked
+    # "self": the single-agent baseline checked its own finding (code still evaluated the assertion).
+    verification_independence: Literal["independent", "self"] | None = None
 
     @model_validator(mode="after")
     def _no_self_confirmation(self) -> Finding:
         if self.verification_status != VerificationStatus.unverified:
             if self.reported_by.startswith("explorer"):
                 raise ValueError("an explorer cannot set a verification outcome on its own finding")
-            if not self.verified_by or not self.verified_by.startswith("verifier"):
-                raise ValueError("only a verifier can set a verification outcome")
-            if self.verified_by == self.reported_by:
-                raise ValueError("a worker cannot verify its own finding")
+            if self.verification_independence == "self":
+                if not (self.reported_by == self.verified_by == "single-agent"):
+                    raise ValueError("only the single-agent baseline records self-checked outcomes")
+            else:
+                if not self.verified_by or not self.verified_by.startswith("verifier"):
+                    raise ValueError("only a verifier can set a verification outcome")
+                if self.verified_by == self.reported_by:
+                    raise ValueError("a worker cannot verify its own finding")
             if not self.verification_ids:
                 raise ValueError("a verification outcome must reference its verification attempts")
         return self

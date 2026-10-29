@@ -157,6 +157,28 @@ class QueueReviewRun(ReviewRun):
             raise AttemptRevoked(str(e)) from e
         self.last_seen[task.attempt_id or ""] = time.monotonic()
 
+    def start_heartbeat(self, task: Task):
+        """Renew the lease while a model call is in flight.
+
+        A healthy call is bounded by the model timeout and must not expire its task;
+        a stalled worker makes no call, so its lease still runs out.
+        """
+        current = CURRENT_TASK.get()
+        if current is None:
+            return None
+        interval = max(0.5, self.run.limits.task_lease_s / 3)
+
+        async def beat():
+            while True:
+                await asyncio.sleep(interval)
+                try:
+                    self.queue.renew(current, self.run.limits.task_lease_s)
+                except StaleAttempt:
+                    return
+                self.last_seen[current.attempt_id or ""] = time.monotonic()
+
+        return asyncio.create_task(beat())
+
     def guard_call(self, task: Task) -> None:
         current = CURRENT_TASK.get()
         if current is not None:

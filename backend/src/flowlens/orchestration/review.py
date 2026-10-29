@@ -89,6 +89,10 @@ class _Attempt:
 
 
 class ReviewRun(ExplorerRun):
+    tester_id = input_tester.AGENT_ID
+    verifier_id = verifier.AGENT_ID
+    # False only for the single-agent baseline, whose checks are self-checks by the reporting agent.
+    independent_verification = True
     def __init__(self, run: Run, store, settings, llm):
         super().__init__(run, store, settings, llm)
         self.reqs = requirement_refs(run.requirements)
@@ -180,7 +184,7 @@ class ReviewRun(ExplorerRun):
             candidates += await self.test_form(form)
         for f in candidates:
             self.stage = f"verifying finding {f.id} as verifier"
-            await self.verify_finding(f, from_agent=input_tester.AGENT_ID)
+            await self.verify_finding(f, from_agent=self.tester_id)
         self.stage = "finishing"
         s = self.summary
         outcome_counts = {o: s["outcomes"].count(o) for o in sorted(set(s["outcomes"]))}
@@ -197,7 +201,7 @@ class ReviewRun(ExplorerRun):
         state = self.state_by_id(form.state_id)
         assert state is not None
         return Handoff(
-            run_id=self.run.id, kind="form_to_tester", from_agent=form.discovered_by, to_agent=input_tester.AGENT_ID,
+            run_id=self.run.id, kind="form_to_tester", from_agent=form.discovered_by, to_agent=self.tester_id,
             task_id=task_id, source_state_id=state.id, form_id=form.id, setup=self.setup_for(state),
             requirements=self.reqs,
             expected_behaviour=[Expectation(text=r.text, source=r.id) for r in self.reqs]
@@ -212,7 +216,7 @@ class ReviewRun(ExplorerRun):
         state = self.state_by_id(form.state_id)
         assert state is not None
         if task is None:
-            task = self.new_task("input_test", f"{self.run.id}:input_test:{form.key}", input_tester.AGENT_ID, [form.id])
+            task = self.new_task("input_test", f"{self.run.id}:input_test:{form.key}", self.tester_id, [form.id])
         if handoff is None:
             handoff = self.form_handoff(form, task.id)
             self.publish_handoff(handoff)
@@ -222,21 +226,21 @@ class ReviewRun(ExplorerRun):
         try:
             plan, plan_mc = await self.model(
                 input_tester.plan_messages(handoff, form, lim.max_cases_per_form),
-                agent_id=input_tester.AGENT_ID, phase="input_test", task=task, parse=input_tester.parse_plan,
+                agent_id=self.tester_id, phase="input_test", task=task, parse=input_tester.parse_plan,
                 reserve=lim.reserved_verification_calls)
         except BudgetExceeded as e:
             return self._block(task, f"tester not run: {e}")
         except ValueError as e:
             return self._block(task, str(e), budget=False)
         self.event("test_plan", f"Input tester planned {len(plan.cases)} case(s): {plan.reasoning[:300]}",
-                   agent_id=input_tester.AGENT_ID, task=task, model_call_id=plan_mc,
+                   agent_id=self.tester_id, task=task, model_call_id=plan_mc,
                    cases=[c.model_dump() for c in plan.cases])
         cases: list[TestCase] = []
         for pc in plan.cases[: lim.max_cases_per_form]:
             submit = self._submit_control(form, pc.submit)
             ref = pc.requirement_ref if pc.requirement_ref in self.req_ids else None
             tc = TestCase(run_id=self.run.id, form_id=form.id, handoff_id=handoff.id,
-                          designed_by=input_tester.AGENT_ID, label=pc.label, inputs=pc.inputs, submit=submit,
+                          designed_by=self.tester_id, label=pc.label, inputs=pc.inputs, submit=submit,
                           requirement_ref=ref, expected=pc.expected, expectation_source=ref or "unspecified",
                           model_call_ids=[plan_mc])
             await self.execute_case(tc, form, handoff, task, state)
@@ -251,7 +255,7 @@ class ReviewRun(ExplorerRun):
                     for c in cases]
         try:
             assessment, assess_mc = await self.model(
-                input_tester.assess_messages(handoff, form, executed), agent_id=input_tester.AGENT_ID,
+                input_tester.assess_messages(handoff, form, executed), agent_id=self.tester_id,
                 phase="input_test", task=task, parse=input_tester.parse_assessment,
                 reserve=lim.reserved_verification_calls)
         except BudgetExceeded as e:
@@ -295,15 +299,15 @@ class ReviewRun(ExplorerRun):
                            state: ScreenState) -> None:
         """Run one case in a fresh context with its own workspace. Everything is recorded."""
         try:
-            ctx = self.provider.provision(self.origin, f"{input_tester.AGENT_ID}:{tc.id}")
+            ctx = self.provider.provision(self.origin, f"{self.tester_id}:{tc.id}")
         except SetupError as e:
             tc.status, tc.setup_error = "setup_failed", str(e)
             self.store.put(tc)
             self.event("test_executed", f"Test case {tc.id} '{tc.label}': setup failed ({e})",
-                       agent_id=input_tester.AGENT_ID, task=task, test_case_id=tc.id, status=tc.status)
+                       agent_id=self.tester_id, task=task, test_case_id=tc.id, status=tc.status)
             return
         tc.context_id = ctx.context_id
-        att = _Attempt(self, input_tester.AGENT_ID, "input_test", ctx.context_id, task)
+        att = _Attempt(self, self.tester_id, "input_test", ctx.context_id, task)
         async with self.engine(ctx.cookies) as eng:
             reached = await reach_state(eng, self.origin, handoff.setup, att.record)
             tc.setup_strategy = reached.strategy
@@ -330,17 +334,17 @@ class ReviewRun(ExplorerRun):
                         label=f"test: {_short_inputs(tc.inputs)}", action_result_id=last.id,
                         ok=tc.status == "executed", duration_ms=att.duration_ms,
                         screenshot_artifact_id=last.screenshot_artifact_id, model_call_id=tc.model_call_ids[0],
-                        agent_id=input_tester.AGENT_ID, phase="input_test", context_id=ctx.context_id,
+                        agent_id=self.tester_id, phase="input_test", context_id=ctx.context_id,
                         test_case_id=tc.id))
         tc.action_result_ids = [r.id for r in att.results]
         tc.evidence_refs = att.evidence
         self.store.put(tc)
         self.event("test_executed", f"Test case '{tc.label}' ({_short_inputs(tc.inputs)}): {tc.status}"
                    + (f" ({tc.setup_error})" if tc.setup_error else ""),
-                   agent_id=input_tester.AGENT_ID, task=task, test_case_id=tc.id, status=tc.status,
+                   agent_id=self.tester_id, task=task, test_case_id=tc.id, status=tc.status,
                    context_id=ctx.context_id, resulting_state_id=tc.resulting_state_id,
                    evidence_refs=tc.evidence_refs[-2:])
-        self.defer_frontier(att.new_states, input_tester.AGENT_ID, task)
+        self.defer_frontier(att.new_states, self.tester_id, task)
 
     @staticmethod
     def _case_steps(tc: TestCase, form: DiscoveredForm) -> list[SemanticStep]:
@@ -373,7 +377,7 @@ class ReviewRun(ExplorerRun):
         req = self.req_ids.get(tc.requirement_ref or "")
         f = Finding(
             run_id=self.run.id, kind="defect_candidate" if explicit else "review_observation",
-            reported_by=input_tester.AGENT_ID,
+            reported_by=self.tester_id,
             description=f"{form.headings[0] if form.headings else form.route}: {tc.label}",
             expected=tc.expected, observed=observed, evidence_refs=list(tc.evidence_refs),
             requirement_ref=tc.requirement_ref, requirement_text=req.text if req else None,
@@ -384,7 +388,7 @@ class ReviewRun(ExplorerRun):
         self.summary["candidates"] += 1
         label = "candidate defect" if explicit else "review observation (expectation not backed by a requirement)"
         self.event("candidate_reported", f"Input tester reports {label}: {f.description}",
-                   agent_id=input_tester.AGENT_ID, task=task, finding_id=f.id, test_case_id=tc.id,
+                   agent_id=self.tester_id, task=task, finding_id=f.id, test_case_id=tc.id,
                    kind=f.kind, verdict=verdict, requirement_ref=f.requirement_ref, model_call_id=mc_id)
         return f
 
@@ -393,7 +397,7 @@ class ReviewRun(ExplorerRun):
     def candidate_handoff(self, f: Finding, from_agent: str, task_id: str) -> Handoff:
         req = self.req_ids.get(f.requirement_ref or "")
         return Handoff(
-            run_id=self.run.id, kind="candidate_to_verifier", from_agent=from_agent, to_agent=verifier.AGENT_ID,
+            run_id=self.run.id, kind="candidate_to_verifier", from_agent=from_agent, to_agent=self.verifier_id,
             task_id=task_id, source_state_id=f.reproduction.target_state_id if f.reproduction else "",
             form_id=f.form_id, finding_id=f.id, setup=f.reproduction or SetupRecipe(target_state_id="", expected_signature=""),
             requirements=[req] if req else [],
@@ -407,7 +411,7 @@ class ReviewRun(ExplorerRun):
         lim = self.run.limits
         req = self.req_ids.get(f.requirement_ref or "")
         if task is None:
-            task = self.new_task("verify", f"{self.run.id}:verify:{f.id}", verifier.AGENT_ID, [f.id])
+            task = self.new_task("verify", f"{self.run.id}:verify:{f.id}", self.verifier_id, [f.id])
         if handoff is None:
             handoff = self.candidate_handoff(f, from_agent, task.id)
             self.publish_handoff(handoff)
@@ -419,7 +423,7 @@ class ReviewRun(ExplorerRun):
             why = ("No supplied requirement states the expected behaviour" if req is None else
                    f"The tester could not judge the outcome against {req.id} (verdict unclear)")
             att = VerificationAttempt(
-                run_id=self.run.id, finding_id=f.id, handoff_id=handoff.id, verifier_id=verifier.AGENT_ID,
+                run_id=self.run.id, finding_id=f.id, handoff_id=handoff.id, verifier_id=self.verifier_id,
                 replay_index=0, target_origin=self.origin, failure_class="expectation", outcome="inconclusive",
                 reason=f"{why}, so there is no explicit assertion to evaluate. Kept as a review observation.",
                 evidence_refs=[handoff_art], finished_at=utcnow())
@@ -444,14 +448,14 @@ class ReviewRun(ExplorerRun):
         detail = (f"assertion {att.assertion.type.value} {'passed' if att.result.passed else 'failed'}"
                   if att.result and att.assertion else (att.failure_class or ""))
         self.event("verification_executed", f"Verification replay {att.replay_index + 1} of {att.finding_id}: "
-                   f"{att.outcome} ({detail})", agent_id=verifier.AGENT_ID, task=task, verification_id=att.id,
+                   f"{att.outcome} ({detail})", agent_id=self.verifier_id, task=task, verification_id=att.id,
                    finding_id=att.finding_id, outcome=att.outcome, failure_class=att.failure_class,
                    context_id=att.context_id, evidence_refs=att.evidence_refs[-2:])
 
     async def replay(self, f: Finding, handoff: Handoff, task: Task, idx: int,
                      assertion: Assertion | None) -> VerificationAttempt:
         att = VerificationAttempt(run_id=self.run.id, finding_id=f.id, handoff_id=handoff.id,
-                                  verifier_id=verifier.AGENT_ID, replay_index=idx, target_origin=self.origin,
+                                  verifier_id=self.verifier_id, replay_index=idx, target_origin=self.origin,
                                   outcome="inconclusive", reason="")
 
         def done(outcome: str, reason: str, failure: str | None = None) -> VerificationAttempt:
@@ -461,12 +465,12 @@ class ReviewRun(ExplorerRun):
             return att
 
         try:
-            ctx = self.provider.provision(self.origin, f"{verifier.AGENT_ID}:{att.id}")
+            ctx = self.provider.provision(self.origin, f"{self.verifier_id}:{att.id}")
         except SetupError as e:
             att.setup_error = str(e)
             return done("inconclusive", f"Could not set up controlled test data: {e}", "setup")
         att.context_id = ctx.context_id
-        rec = _Attempt(self, verifier.AGENT_ID, "verify", ctx.context_id, task)
+        rec = _Attempt(self, self.verifier_id, "verify", ctx.context_id, task)
         try:
             async with self.engine(ctx.cookies) as eng:
                 reached = await reach_state(eng, self.origin, handoff.setup, rec.record)
@@ -481,7 +485,7 @@ class ReviewRun(ExplorerRun):
                 if assertion is None:
                     try:
                         decision, mc_id = await self.model(
-                            verifier.build_messages(f, start_obs), agent_id=verifier.AGENT_ID, phase="verify",
+                            verifier.build_messages(f, start_obs), agent_id=self.verifier_id, phase="verify",
                             task=task, parse=verifier.parse_decision)
                     except BudgetExceeded as e:
                         self.budget_note = str(e)
@@ -502,7 +506,7 @@ class ReviewRun(ExplorerRun):
                                     f"requirement {f.requirement_ref}", "verifier")
                     candidate = Assertion(type=decision.assertion.type, params=decision.assertion.params,
                                           requirement_ref=f.requirement_ref, expected=decision.expected,
-                                          chosen_by=verifier.AGENT_ID)
+                                          chosen_by=self.verifier_id)
                     try:
                         validate_assertion(candidate)
                     except AssertionInvalid as e:
@@ -510,7 +514,7 @@ class ReviewRun(ExplorerRun):
                         return done("inconclusive", f"Assertion rejected by the engine: {e}", "verifier")
                     assertion = candidate
                     self.event("assertion_selected", f"Verifier selected {assertion.type.value} for "
-                               f"{f.requirement_ref}: {decision.reasoning[:240]}", agent_id=verifier.AGENT_ID,
+                               f"{f.requirement_ref}: {decision.reasoning[:240]}", agent_id=self.verifier_id,
                                task=task, finding_id=f.id, model_call_id=mc_id, assertion=assertion.model_dump())
                 att.assertion = assertion
                 err, app_err, ex = await self._run_steps(eng, f.reproduction_steps, rec)
@@ -535,7 +539,7 @@ class ReviewRun(ExplorerRun):
                             "assertion": assertion.type.value},
                     label=f"verify: {_short_inputs(f.inputs)}", action_result_id=last.id, ok=True,
                     duration_ms=rec.duration_ms, screenshot_artifact_id=last.screenshot_artifact_id,
-                    model_call_id=att.model_call_id, agent_id=verifier.AGENT_ID, phase="verify",
+                    model_call_id=att.model_call_id, agent_id=self.verifier_id, phase="verify",
                     context_id=ctx.context_id, verification_id=att.id))
                 if result.passed:
                     return done("not_reproduced", f"Assertion {assertion.type.value} held: the page met "
@@ -543,13 +547,14 @@ class ReviewRun(ExplorerRun):
                 return done("confirmed", f"Assertion {assertion.type.value} failed: the page violated "
                             f"{f.requirement_ref} in this fresh replay.")
         finally:
-            self.defer_frontier(rec.new_states, verifier.AGENT_ID, task)
+            self.defer_frontier(rec.new_states, self.verifier_id, task)
 
     def accept(self, f: Finding, attempts: list[VerificationAttempt], task: Task) -> None:
         """Coordinator acceptance: provenance and evidence checks before the finding changes."""
         problems = []
         for a in attempts:
-            if not a.verifier_id.startswith("verifier") or a.verifier_id == f.reported_by:
+            if self.independent_verification and (not a.verifier_id.startswith("verifier")
+                                                  or a.verifier_id == f.reported_by):
                 problems.append(f"{a.id} was not produced by an independent verifier")
             if not a.evidence_refs:
                 problems.append(f"{a.id} has no evidence")
@@ -573,7 +578,8 @@ class ReviewRun(ExplorerRun):
             reason = "; ".join(dict.fromkeys(a.reason for a in attempts if a.outcome == "inconclusive")) or (
                 f"Replays disagreed ({', '.join(a.outcome for a in attempts)}).")
         f.verification_status = status
-        f.verified_by = verifier.AGENT_ID
+        f.verified_by = self.verifier_id
+        f.verification_independence = "independent" if self.independent_verification else "self"
         f.verification_ids = [a.id for a in attempts]
         f.verification_reason = reason
         f = Finding.model_validate(f.model_dump())  # re-run the no-self-confirmation validator
