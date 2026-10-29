@@ -242,9 +242,10 @@ class ObservedElement(BaseModel):
     # Browser constraint-validation message shown after user interaction, if any.
     validation_message: str | None = None
     checked: bool | None = None  # checkboxes, radios and switches only
-    # Text of the enclosing list item or row, set only when another control shares this role and name
-    # (e.g. one "Toggle Todo" checkbox per todo), so the control can be told apart by meaning.
+    # Text of the enclosing list item or row, if any. name_shared: another control in the same
+    # observation has this role and name (one "Toggle Todo" per todo); the context then tells them apart.
     context: str | None = None
+    name_shared: bool = False
 
 
 class Observation(BaseModel):

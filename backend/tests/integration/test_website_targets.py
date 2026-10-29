@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.testclient import TestClient
 
 from flowlens.api.runs import normalise_origin
-from flowlens.browser.engine import BrowserEngine, resolve_control, state_signature
+from flowlens.browser.engine import BrowserEngine, ControlResolutionError, resolve_control, state_signature
 from flowlens.models.contracts import (
     CheckAction,
     ClickAction,
@@ -130,6 +130,7 @@ async def test_enter_checkbox_filters_and_reload(sites):
             assert ex.ok, ex.error
         toggles = [e for e in ex.observation.elements if e.name == "Toggle Todo"]
         assert [t.context for t in toggles] == ["Buy milk", "Walk dog"] and all(t.checked is False for t in toggles)
+        assert all(t.name_shared for t in toggles)
         before = state_signature(ex.observation)[0]
         ex = await eng.execute(CheckAction(element_id=toggles[0].id, checked=True))
         assert ex.ok and "in 'Buy milk'" in ex.target_description
@@ -148,6 +149,11 @@ async def test_enter_checkbox_filters_and_reload(sites):
         ex = await eng.execute(ClickAction(element_id=active.id))
         assert ex.ok and relative_path(ex.url_after) == "/#/active"
         assert [e.name for e in ex.observation.elements].count("Toggle Todo") == 1
+        # Alone under a filter, the row's checkbox still resolves by its recorded row text.
+        only = resolve_control(ex.observation, ControlRef(role="checkbox", name="Toggle Todo", context="Walk dog"))
+        assert only.context == "Walk dog" and not only.name_shared
+        with pytest.raises(ControlResolutionError):  # the completed row is not shown: no guess
+            resolve_control(ex.observation, ControlRef(role="checkbox", name="Toggle Todo", context="Buy milk"))
         ex = await eng.execute(ReloadAction())
         assert ex.ok and "Walk dog" in ex.observation.text_excerpt and "Buy milk" not in ex.observation.text_excerpt
         # A recorded press step replays through the same engine path.

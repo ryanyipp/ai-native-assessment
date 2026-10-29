@@ -106,7 +106,7 @@ def render_observation(obs: Observation) -> str:
             parts.append(f"invalid={json.dumps(e.validation_message[:120])}")
         if e.checked is not None:
             parts.append("checked" if e.checked else "unchecked")
-        if e.context:
+        if e.context and e.name_shared:
             parts.append(f"in={json.dumps(e.context[:80])}")
         if e.disabled:
             parts.append("disabled")

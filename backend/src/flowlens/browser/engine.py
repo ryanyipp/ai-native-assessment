@@ -97,12 +97,14 @@ _INSPECT_JS = r"""
       _el: el,
     });
   }
-  // Same role and name more than once (one "Toggle Todo" per row): add the enclosing item's text.
+  // Controls inside a list item or row carry its text; name_shared marks a role+name seen more than once
+  // (one "Toggle Todo" per row), so those controls are recorded with their row.
   const count = {};
   for (const o of out) { const k = o.role + '|' + o.name; count[k] = (count[k] || 0) + 1; }
   for (const o of out) {
-    const item = count[o.role + '|' + o.name] > 1 ? o._el.closest('li, tr, [role=row], [role=listitem], [role=option]') : null;
+    const item = o._el.closest('li, tr, [role=row], [role=listitem], [role=option]');
     o.context = item ? (clean(item.innerText) || null) : null;
+    o.name_shared = count[o.role + '|' + o.name] > 1;
     delete o._el;
   }
   const headings = [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(h => clean(h.innerText)).slice(0, 12);
@@ -144,7 +146,8 @@ def resolve_control(obs: Observation, control: ControlRef) -> ObservedElement:
 
 
 def control_of(el: ObservedElement) -> ControlRef:
-    return ControlRef(role=el.role, name=el.name, input_type=el.input_type, context=el.context)
+    return ControlRef(role=el.role, name=el.name, input_type=el.input_type,
+                      context=el.context if el.name_shared else None)
 
 
 @dataclass
@@ -382,7 +385,7 @@ class BrowserEngine:
                 elif isinstance(action, CheckAction):
                     if el.checked is None:
                         raise ActionRejected(f"element {action.element_id} ({el.role}) is not a checkbox or switch")
-                    if el.context:
+                    if el.context and el.name_shared:
                         target += f" in '{el.context}'"
                     # A click, not set_checked: many apps re-render the row on change, so Playwright's
                     # post-click check of the same element fails. The next observation shows the result.
