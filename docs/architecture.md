@@ -126,3 +126,29 @@ Four coroutines share one event loop: `explorer-a`, `explorer-b` (type `explore`
   - Explorers stop when total calls reach `max_model_calls − reserved_testing_calls − reserved_verification_calls`; the tester leaves the verification reserve.
   - The check happens before each call, so concurrent workers can overshoot by one call (seen live: 20/19).
 - **Termination:** a worker exits when no task it can claim is ready, no task is in progress, and nothing in progress could produce more. It also exits when the time limit is hit or the explorer budget share is used. The run is `partial` if anything is unfinished, blocked or failed, or if a budget limit was hit.
+
+# Checkpoint 4: leases, fencing and recovery
+
+- **Renewal.** Every browser-context launch, browser action and model call by a queue worker first calls `check_attempt`. A revoked attempt is refused (`late_action_rejected`); otherwise the lease is renewed for `task_lease_s`.
+- **Expiry.** A watchdog coroutine calls `TaskQueue.expire_overdue` every 0.25 s. This is atomic: an expiry and a completion racing on the same attempt have exactly one winner.
+  - **Who may retry:** the expired owner is excluded from the task when another live worker of that type exists. Otherwise the same worker retries with a fresh attempt, so single-worker types are not stranded.
+  - **Fencing hold:** the task is held (`fencing`) until the coordinator has closed every browser context opened by the expired attempt (`context_fenced`). Only then is it released (`task_reassigned`).
+  - **Last attempt:** expiry on the final attempt marks the task `failed`.
+- **Late results.** When the expired worker resumes, its next action or model call is refused. The worker still submits its result, and the queue rejects it because the attempt is no longer current (`result_rejected`). When a reassigned task completes, `task_recovered` records the expired attempts and the recovering worker. Records the expired attempt wrote *before* expiry stay, labelled with its task and context id.
+- **Fault injection.** `fault_injection` on `POST /api/runs` (queue_review only) stalls a chosen worker after a claim, while it holds an open browser context. Such runs carry `provenance.injected_failure = true`, and the events are prefixed `[INJECTED FAULT]`. Setup step: the other explorers wait up to 15 s for the faulty worker's first claim, so the stall lands on real work. Everything after the stall (diagnosis, fencing, reassignment, rejection, recovery) is the normal coordinator path.
+
+## Budget reservation
+
+`reserve_call` checks and takes capacity in one synchronous step: no `await` between check and increment, and in-flight calls count as used. Usage keeps per-phase counters (`exploration_calls`, `testing_calls`, `verification_calls`).
+
+| Worker | Limits |
+|---|---|
+| Explorers | Their own count ≤ `max_model_calls − reserved_testing_calls − reserved_verification_calls`, and the total ≤ `max − reserved_verification_calls` |
+| Tester | Total ≤ `max − reserved_verification_calls` |
+| Verifier | Total ≤ `max` |
+
+Cost is still checked before each call from provider-reported totals; one call's cost can overshoot the cost limit.
+
+## Planning outputs
+
+Tester and verifier calls send `reasoning: {max_tokens: planning_reasoning_tokens (384), exclude: true}` with `max_output_tokens_planning` 1400. Plans have at most 3 cases and shorter fields. The provider's `finish_reason` and reasoning-token count are stored per call, and `Usage.truncated_calls` counts cut-off replies.

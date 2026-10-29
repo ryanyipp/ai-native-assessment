@@ -6,3 +6,4 @@
 - Assistant contributions: Claude (lead session) wrote the checkpoint 0–1 code, tests and docs, the workspace UI redesign and its browser checks, and all of checkpoint 2: the fixture scheduling form, contracts, input-tester and verifier agents, review orchestration, assertion evaluator, UI extensions, tests and evaluation scripts. Ryan reviews it.
 - Checkpoint 2 added no new dependencies.
 - Checkpoint 3 (shared queue, queue_review workers, task board, tests and checks) was written by Claude (lead session) and added no new dependencies.
+- Checkpoint 4 (leases, fencing, recovery, fault injection, call reservation) was written by Claude (lead session) and added no new dependencies.

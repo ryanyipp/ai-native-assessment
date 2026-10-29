@@ -81,3 +81,25 @@ Frontend build and lint are clean. UI checks: `ui_check.py` 29/29, `ui_check_rev
 - **Tasks:** 8 done, 1 blocked (the draft-form tester plan was truncated again), 2 unfinished (the explorer budget share was used).
 - **Handoffs:** two forms explorer-a → input-tester; two candidates input-tester → verifier. R5 confirmed; one observation without a requirement inconclusive.
 - **Tester frontier consumed:** "Scheduled post — Post scheduled." was queued by the tester and explored by explorer-b.
+
+## 2026-10-29: Checkpoint 4 (leases and recovery)
+
+**Built:** lease renewal, atomic expiry, fencing hold, reassignment with exclusion, late action and result rejection, recovery events, labelled fault injection, synchronous call reservation with per-phase accounting, and bounded planning reasoning. Design: `docs/architecture.md`.
+
+**Found while testing:**
+- **Stranded single-worker task:** with a 4 s test lease, the sole verifier's own lease expired during a Chromium launch. Excluding it left the task with no possible worker, so it ended unfinished. Fix: exclude only if another worker of that type is live, and renew on context launch.
+- **Reclaim before fencing:** in 1 of 3 runs, explorer-b claimed the expired task before the watchdog had closed explorer-a's context. Fix: the `fencing` hold. The stall test then passed 5/5 repeated runs.
+
+**Checks:** backend pytest 50 passed. New tests cover:
+- the expiry/completion race (25 iterations, threads);
+- exclusion, and sole-worker retry;
+- stale renew/complete/fail;
+- retry exhaustion;
+- concurrent call reservation (10 concurrent calls, 3 allowed);
+- a full stall-and-recovery run with context cleanup.
+
+Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery trail was checked in the browser with no axe violations.
+
+**Live run:** `run_248eaaa2a5cd` through the API with the injected stall (explorer-a, 75 s; lease 45 s). It ended **partial**: the explorer share was used and 4 explore tasks are unfinished. 26 calls (exploration 19, testing 4, verification 3), 28,903 tokens, US$0.033894 reported, 0 truncated replies.
+- **Recovery:** explorer-a's attempt on `explore:start` expired; its context was closed; the task was reassigned and completed by explorer-b; explorer-a's late model call was refused and its late result rejected.
+- **Handoffs:** both forms (drafts and scheduling) were tested this time with no truncation. 3 candidates were verified: R5 confirmed, two R2 inconclusive (not explicit).

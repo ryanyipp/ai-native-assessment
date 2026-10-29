@@ -2,7 +2,7 @@
 
 An AI website reviewer. It explores an authorised staging site and builds an evidence-linked map of observed states and transitions. See `docs/plan.md` for the full plan and `AGENTS.md` for working rules.
 
-Status: **Checkpoint 3** (shared task queue: two explorers, input tester and verifier; the sequential checkpoint 2 workflow remains selectable). See `docs/architecture.md`.
+Status: **Checkpoint 4** (shared task queue with enforced leases, fencing and stalled-worker recovery; labelled fault injection; the sequential checkpoint 2 workflow remains selectable). See `docs/architecture.md`.
 
 ## Prerequisites (Windows)
 
