@@ -1,6 +1,7 @@
 // Mirrors backend/src/flowlens/models/contracts.py. The backend owns the schema.
 
 export type RunStatus = 'queued' | 'running' | 'completed' | 'partial' | 'failed' | 'interrupted'
+export type Phase = 'explore' | 'input_test' | 'verify'
 export type VerificationStatus = 'unverified' | 'confirmed' | 'not_reproduced' | 'inconclusive'
 
 export interface Provenance {
@@ -35,7 +36,8 @@ export interface Run {
   goal: string
   requirements: string[]
   model: string
-  mode: string
+  mode: 'single_explorer' | 'explore_test_verify' | 'reverify' | string
+  target_build: string | null
   limits: RunLimits
   status: RunStatus
   stop_reason: string | null
@@ -45,7 +47,17 @@ export interface Run {
   finished_at: string | null
 }
 
-export type BrowserAction = { type: string; element_id?: string; value?: string; url?: string }
+export type BrowserAction = {
+  type: string; element_id?: string; value?: string; url?: string
+  test_case_id?: string; finding_id?: string; inputs?: Record<string, string>; assertion?: string; submit?: string | null
+}
+
+export interface ControlRef { role: string; name: string; input_type: string | null }
+export interface SemanticStep { type: string; path: string | null; control: ControlRef | null; value: string | null }
+export interface SetupRecipe {
+  target_state_id: string; expected_signature: string; direct_path: string | null; steps: SemanticStep[]; data_isolation: string
+}
+export interface StateSighting { agent_id: string; phase: Phase; context_id: string | null; action_result_id: string | null }
 
 export interface ScreenState {
   id: string
@@ -59,6 +71,11 @@ export interface ScreenState {
   screenshot_artifact_id: string | null
   first_seen_step: number
   setup_recipe: BrowserAction[]
+  semantic_recipe?: SemanticStep[]
+  discovered_by?: string
+  phase?: Phase
+  context_id?: string | null
+  sightings?: StateSighting[]
 }
 
 export interface Transition {
@@ -74,6 +91,11 @@ export interface Transition {
   duration_ms: number
   screenshot_artifact_id: string | null
   model_call_id: string | null
+  agent_id?: string
+  phase?: Phase
+  context_id?: string | null
+  test_case_id?: string | null
+  verification_id?: string | null
 }
 
 export interface ActionResult {
@@ -89,10 +111,17 @@ export interface ActionResult {
   duration_ms: number
   screenshot_artifact_id: string | null
   observation_artifact_id: string | null
+  agent_id?: string
+  phase?: Phase
+  context_id?: string | null
+}
+
+export interface Assertion {
+  type: string; params: Record<string, unknown>; requirement_ref?: string | null; expected?: string | null; chosen_by?: string | null
 }
 
 export interface AssertionResult {
-  assertion: { type: string; params: Record<string, unknown> }
+  assertion: Assertion
   passed: boolean
   observed: Record<string, unknown>
   evaluated_by: 'engine'
@@ -110,6 +139,49 @@ export interface Finding {
   evidence_refs: string[]
   verification_status: VerificationStatus
   replay_recipe: BrowserAction[]
+  requirement_ref?: string | null
+  requirement_text?: string | null
+  inputs?: Record<string, string>
+  reproduction?: SetupRecipe | null
+  reproduction_steps?: SemanticStep[]
+  form_id?: string | null
+  test_case_id?: string | null
+  handoff_ids?: string[]
+  verification_ids?: string[]
+  verified_by?: string | null
+  verification_reason?: string | null
+  source_finding_id?: string | null
+}
+
+export interface Task { id: string; type: string; key: string; owner: string | null; status: string; input_refs: string[]; note: string | null }
+
+export interface DiscoveredForm {
+  id: string; key: string; state_id: string; url: string; route: string; headings: string[]
+  fields: { control: ControlRef; required: boolean; observed_value: string | null }[]
+  submit_controls: ControlRef[]; discovered_by: string; action_result_id: string; evidence_refs: string[]
+}
+
+export interface Handoff {
+  id: string; kind: 'form_to_tester' | 'candidate_to_verifier'; from_agent: string; to_agent: string; task_id: string
+  source_state_id: string; form_id: string | null; finding_id: string | null; setup: SetupRecipe
+  requirements: { id: string; text: string }[]; expected_behaviour: { text: string; source: string }[]
+  evidence_refs: string[]; created_at: string
+}
+
+export interface TestCase {
+  id: string; form_id: string; handoff_id: string; designed_by: string; label: string; inputs: Record<string, string>
+  submit: ControlRef | null; requirement_ref: string | null; expected: string; expectation_source: string
+  context_id: string | null; status: string; setup_strategy: string | null; setup_error: string | null
+  action_result_ids: string[]; evidence_refs: string[]; observed: Record<string, unknown>
+  resulting_state_id: string | null; tester_verdict: 'as_expected' | 'unexpected' | 'unclear' | null; tester_note: string | null
+}
+
+export interface VerificationAttempt {
+  id: string; finding_id: string; handoff_id: string | null; verifier_id: string; replay_index: number; target_origin: string
+  context_id: string | null; setup_ok: boolean; setup_strategy: string | null; setup_error: string | null
+  failure_class: 'setup' | 'application' | 'expectation' | 'verifier' | null
+  assertion: Assertion | null; result: AssertionResult | null; outcome: 'confirmed' | 'not_reproduced' | 'inconclusive'
+  reason: string; action_result_ids: string[]; evidence_refs: string[]; model_call_id: string | null
 }
 
 export interface Evidence {
@@ -142,6 +214,8 @@ export interface ModelCall {
   ok: boolean
   error: string | null
   artifact_id: string | null
+  agent_id?: string
+  phase?: Phase
 }
 
 export interface RunDetail {
@@ -153,6 +227,11 @@ export interface RunDetail {
   events: RunEvent[]
   evidence: Evidence[]
   model_calls: ModelCall[]
+  tasks?: Task[]
+  forms?: DiscoveredForm[]
+  handoffs?: Handoff[]
+  test_cases?: TestCase[]
+  verifications?: VerificationAttempt[]
 }
 
 export interface Health {

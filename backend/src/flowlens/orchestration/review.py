@@ -64,14 +64,24 @@ class _Attempt:
         self.duration_ms = 0
 
     async def record(self, action: dict, ex: Execution, label: str) -> None:
-        res, st, new, obs_art = self.r.record_execution(action, ex, agent_id=self.agent_id, phase=self.phase,
-                                                        context_id=self.context_id, task=self.task, label=label)
+        # Intermediate setup and fill steps are kept as actions with evidence, not as map states.
+        res, _, _, obs_art = self.r.record_execution(action, ex, agent_id=self.agent_id, phase=self.phase,
+                                                     context_id=self.context_id, task=self.task, label=label,
+                                                     make_state=False)
         self.results.append(res)
+        self.evidence += [x for x in (res.screenshot_artifact_id, obs_art) if x]
+        self.duration_ms += res.duration_ms
+
+    def mark_state(self, ex: Execution) -> ScreenState:
+        """Record the state after the latest action: the reached start state or the outcome."""
+        last = self.results[-1]
+        st, new = self.r.record_state(ex, last.step, last.screenshot_artifact_id, agent_id=self.agent_id,
+                                      phase=self.phase, context_id=self.context_id, action_result_id=last.id,
+                                      task=self.task)
         self.states.append(st)
         if new:
             self.new_states.append(st)
-        self.evidence += [x for x in (res.screenshot_artifact_id, obs_art) if x]
-        self.duration_ms += res.duration_ms
+        return st
 
 
 class ReviewRun(ExplorerRun):
@@ -277,7 +287,7 @@ class ReviewRun(ExplorerRun):
             if not reached.ok:
                 tc.status, tc.setup_error = "setup_failed", reached.error
             else:
-                start_state, start_url = att.states[-1], reached.execution.observation.url
+                start_state, start_url = att.mark_state(reached.execution), reached.execution.observation.url
                 steps = self._case_steps(tc, form)
                 err, app_err, ex = await self._run_steps(eng, steps, att)
                 if err or app_err or ex is None:
@@ -286,7 +296,7 @@ class ReviewRun(ExplorerRun):
                     tc.status = "executed"
                 if ex is not None:
                     tc.observed = outcome_facts(ex.observation, start_url)
-                    end_state = att.states[-1]
+                    end_state = att.mark_state(ex)
                     tc.resulting_state_id = end_state.id
                     last = att.results[-1]
                     self.store.put(Transition(
@@ -435,7 +445,7 @@ class ReviewRun(ExplorerRun):
                     att.setup_error = reached.error
                     return done("inconclusive", f"Could not recreate the starting state: {reached.error}", "setup")
                 att.setup_ok = True
-                start_state, start_obs = rec.states[-1], reached.execution.observation
+                start_state, start_obs = rec.mark_state(reached.execution), reached.execution.observation
                 if assertion is None:
                     try:
                         decision, mc_id = await self.model(
@@ -488,7 +498,7 @@ class ReviewRun(ExplorerRun):
                 last = rec.results[-1]
                 self.store.put(Transition(
                     run_id=self.run.id, step=last.step, source_state_id=start_state.id,
-                    target_state_id=rec.states[-1].id,
+                    target_state_id=rec.mark_state(ex).id,
                     action={"type": "verify_case", "finding_id": f.id, "inputs": f.inputs,
                             "assertion": assertion.type.value},
                     label=f"verify: {_short_inputs(f.inputs)}", action_result_id=last.id, ok=True,

@@ -5,7 +5,16 @@ import { Badge, Button, Field, Kbd, SectionTitle, Tooltip } from '../../componen
 import { cx } from '../../lib/ui-utils'
 import { artifactUrl } from '../../lib/api'
 import { fmtInt, fmtMs, fmtTime, fmtUsd } from '../../lib/format'
-import { agentFor, describeAction, evidenceFor, modelCallFor, reasoningFor, stateById } from '../../lib/run-model'
+import { agentFor, describeAction, evidenceFor, modelCallFor, phaseLabel, reasoningFor, stateById, testCaseFor, verificationFor } from '../../lib/run-model'
+import { verificationMeta } from '../../lib/ui-utils'
+import type { SemanticStep } from '../../lib/types'
+
+function semanticText(s: SemanticStep) {
+  if (s.type === 'navigate') return `open ${s.path}`
+  if (s.type === 'reload') return 'reload'
+  const c = s.control ? `${s.control.role} "${s.control.name}"` : '?'
+  return s.type === 'fill' ? `fill ${c} = "${s.value ?? ''}"` : `click ${c}`
+}
 import type { BrowserAction, RunDetail, ScreenState, Transition } from '../../lib/types'
 import type { Selection } from '../flow-map/FlowMap'
 
@@ -90,13 +99,19 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
   const mc = modelCallFor(detail, t.model_call_id)
   const reasoning = reasoningFor(detail, t.model_call_id)
   const agent = a ? agentFor(detail, a.id) : null
+  const tc = testCaseFor(detail, t.test_case_id)
+  const ver = verificationFor(detail, t.verification_id)
   return (
     <div className="space-y-5">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <Badge tone={t.ok ? 'green' : 'red'}>{t.ok ? 'Action succeeded' : 'Action failed'}</Badge>
           {agent && <Badge icon={<MousePointerClick size={11} />}>{agent}</Badge>}
+          {t.phase && t.phase !== 'explore' && <Badge tone={t.phase === 'verify' ? 'violet' : 'amber'}>{phaseLabel[t.phase]}</Badge>}
         </div>
+        {t.context_id && t.phase !== 'explore' && (
+          <p className="text-xs text-slate-500">Fresh browser context and test-data workspace <span className="font-mono">{t.context_id}</span></p>
+        )}
         <h2 className="text-base font-semibold leading-snug text-slate-900">{describeAction(t.action, a?.target_description)}</h2>
         <div className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-2 gap-y-1 text-xs text-slate-500">
           <span>From</span><StateChip state={stateById(detail, t.source_state_id)} onSelect={onSelect} />
@@ -106,8 +121,37 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
 
       <ScreenshotPreview id={t.screenshot_artifact_id} alt={`Page after step ${t.step}`} caption={`Step ${t.step}: page after "${t.label}"`} />
 
+      {tc && (
+        <section>
+          <SectionTitle>Input test case</SectionTitle>
+          <dl className="divide-y divide-slate-100">
+            <Field label="Case">{tc.label}</Field>
+            <Field label="Inputs" mono><span className="[overflow-wrap:anywhere]">{JSON.stringify(tc.inputs)}</span></Field>
+            <Field label="Requirement">{tc.requirement_ref ?? 'none (tester expectation only)'}</Field>
+            <Field label="Expected">{tc.expected}</Field>
+            <Field label="Status">{tc.status}{tc.setup_error ? ` — ${tc.setup_error}` : ''}</Field>
+            <Field label="Tester verdict">{tc.tester_verdict ?? '—'}{tc.tester_note ? ` — ${tc.tester_note}` : ''}</Field>
+          </dl>
+          <p className="mt-1.5 text-xs text-slate-500">The tester's verdict is an unverified suspicion. See Findings for the verifier's result.</p>
+        </section>
+      )}
+      {ver && (
+        <section>
+          <SectionTitle aside={<Badge tone={verificationMeta[ver.outcome].tone}>{verificationMeta[ver.outcome].label}</Badge>}>
+            Verification replay {ver.replay_index + 1}
+          </SectionTitle>
+          <dl className="divide-y divide-slate-100">
+            <Field label="Assertion" mono><span className="[overflow-wrap:anywhere]">{ver.assertion ? `${ver.assertion.type} ${JSON.stringify(ver.assertion.params)}` : '—'}</span></Field>
+            <Field label="Requirement">{ver.assertion?.requirement_ref ?? '—'}</Field>
+            <Field label="Expected">{ver.assertion?.expected ?? '—'}</Field>
+            <Field label="Result">{ver.result ? (ver.result.passed ? 'Assertion held' : 'Assertion failed') : '—'} · evaluated by code</Field>
+            <Field label="Reason">{ver.reason}</Field>
+          </dl>
+        </section>
+      )}
+
       <section>
-        <SectionTitle>Action</SectionTitle>
+        <SectionTitle>{tc || ver ? 'Last browser action' : 'Action'}</SectionTitle>
         <dl className="divide-y divide-slate-100">
           <Field label="Command"><code className="font-mono text-xs">{t.action.type}</code>{t.action.element_id && <span className="font-mono text-xs text-slate-500"> · {t.action.element_id}</span>}</Field>
           {a?.target_description && <Field label="Target">{a.target_description}</Field>}
@@ -209,16 +253,49 @@ function StateEvidence({ detail, s, onSelect }: { detail: RunDetail; s: ScreenSt
       </section>
       <section>
         <SectionTitle>Replay recipe</SectionTitle>
-        <ol className="space-y-1 text-[13px]">
-          {s.setup_recipe.map((a, i) => (
-            <li key={i} className="flex gap-2">
-              <span className="w-4 shrink-0 text-right font-mono text-[11px] text-slate-500">{i + 1}</span>
-              <span className="min-w-0 font-mono text-xs [overflow-wrap:anywhere]">{recipeStep(a)}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-1.5 text-xs text-slate-500">Element ids refer to the observation at that step. Replay by another worker is not implemented yet.</p>
+        {s.semantic_recipe && s.semantic_recipe.length > 0 ? (
+          <>
+            <ol className="space-y-1 text-[13px]">
+              {s.semantic_recipe.map((st, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="w-4 shrink-0 text-right font-mono text-[11px] text-slate-500">{i + 1}</span>
+                  <span className="min-w-0 font-mono text-xs [overflow-wrap:anywhere]">{semanticText(st)}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-1.5 text-xs text-slate-500">Controls are described by role and name and resolved against a fresh observation on replay. No match or several matches stops the replay.</p>
+          </>
+        ) : s.setup_recipe.length > 0 ? (
+          <>
+            <ol className="space-y-1 text-[13px]">
+              {s.setup_recipe.map((a, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="w-4 shrink-0 text-right font-mono text-[11px] text-slate-500">{i + 1}</span>
+                  <span className="min-w-0 font-mono text-xs [overflow-wrap:anywhere]">{recipeStep(a)}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-1.5 text-xs text-slate-500">Older run: element ids refer to the observation at that step and cannot be replayed in another session.</p>
+          </>
+        ) : (
+          <p className="text-xs text-slate-500">Reached by {s.discovered_by ?? 'a worker'} during {phaseLabel[s.phase ?? 'explore'].toLowerCase()}; see its test case or replay for the steps.</p>
+        )}
       </section>
+      {(s.sightings ?? []).length > 0 && (
+        <section>
+          <SectionTitle>Observed by</SectionTitle>
+          <ul className="space-y-0.5 text-xs">
+            {s.sightings!.map((x, i) => (
+              <li key={i} className="flex flex-wrap gap-x-2">
+                <span className="font-medium text-slate-800">{x.agent_id}</span>
+                <span className="text-slate-500">{phaseLabel[x.phase]}</span>
+                <span className="font-mono text-slate-500 [overflow-wrap:anywhere]">{x.context_id ?? '—'}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1.5 text-xs text-slate-500">Matching page signatures share one node. Each worker and data context that saw it is kept.</p>
+        </section>
+      )}
       <Technical>
         <dl>
           <Field label="State id" mono>{s.id}</Field>

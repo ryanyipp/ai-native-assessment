@@ -168,8 +168,8 @@ class ExplorerRun:
         return st, False
 
     def record_execution(self, action: dict[str, Any], ex: Execution, *, agent_id: str, phase: str,
-                         context_id: str | None, task: Task, label: str | None = None
-                         ) -> tuple[ActionResult, ScreenState, bool, str]:
+                         context_id: str | None, task: Task, label: str | None = None,
+                         make_state: bool = True) -> tuple[ActionResult, ScreenState | None, bool, str]:
         """Store one executed browser action with screenshot and observation evidence."""
         step = self.next_step()
         shot = self.ev.save_screenshot(step, ex.screenshot_png, action["type"])
@@ -182,8 +182,9 @@ class ExplorerRun:
             agent_id=agent_id, phase=phase, context_id=context_id, task_id=task.id,
         )
         self.store.put(result)
-        state, new = self.record_state(ex, step, shot.id, agent_id=agent_id, phase=phase,
-                                       context_id=context_id, action_result_id=result.id, task=task)
+        state, new = (self.record_state(ex, step, shot.id, agent_id=agent_id, phase=phase,
+                                        context_id=context_id, action_result_id=result.id, task=task)
+                      if make_state else (None, False))
         text = label or _action_label(action, ex.target_description)
         self.event("action_executed", f"Step {step}: {text}" + ("" if ex.ok else f" failed: {ex.error}"),
                    agent_id=agent_id, task=task, action_result_id=result.id, ok=ex.ok,

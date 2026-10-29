@@ -28,7 +28,12 @@ function RunHeader({ detail }: { detail: RunDetail }) {
         <h1 className="min-w-0 max-w-full truncate text-[15px] font-semibold text-slate-900" title={r.goal}>{r.goal}</h1>
         <StatusBadge status={r.status} withTooltip />
         <ProvenanceBadge run={r} />
-        <Badge>Single explorer</Badge>
+        <Badge>{r.mode === 'explore_test_verify' ? 'Explorer → tester → verifier' : r.mode === 'reverify' ? 'Re-check of a finding' : 'Single explorer'}</Badge>
+        {r.target_build && (
+          <Tooltip content="Evaluation-only label of the target build. It is recorded for comparison and never given to the agents.">
+            <span tabIndex={0} className="inline-flex"><Badge tone="blue">build: {r.target_build}</Badge></span>
+          </Tooltip>
+        )}
       </div>
       <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
         <span className="font-mono text-slate-500">{r.id}</span>

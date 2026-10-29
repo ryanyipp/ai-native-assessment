@@ -72,8 +72,8 @@ export function Badge({ tone = 'neutral', icon, children, className }: {
 
 const statusMeta: Record<RunStatus, { tone: Tone; label: string; icon: ReactNode; help: string }> = {
   queued: { tone: 'blue', label: 'Queued', icon: <CircleDashed size={12} />, help: 'Waiting to start.' },
-  running: { tone: 'blue', label: 'Running', icon: <Loader2 size={12} className="animate-spin" />, help: 'The explorer is acting in the browser.' },
-  completed: { tone: 'green', label: 'Completed', icon: <CheckCircle2 size={12} />, help: 'The explorer finished its goal within limits. This is not a verdict on the website.' },
+  running: { tone: 'blue', label: 'Running', icon: <Loader2 size={12} className="animate-spin" />, help: 'Workers are acting in the browser.' },
+  completed: { tone: 'green', label: 'Completed', icon: <CheckCircle2 size={12} />, help: 'The workflow finished within limits. This is not a verdict on the website.' },
   partial: { tone: 'amber', label: 'Partial', icon: <PauseCircle size={12} />, help: 'Stopped at a budget limit. Results are incomplete, not passing.' },
   failed: { tone: 'red', label: 'Failed', icon: <XCircle size={12} />, help: 'The run stopped on an error.' },
   interrupted: { tone: 'neutral', label: 'Interrupted', icon: <CircleSlash size={12} />, help: 'The backend stopped before the run finished. Records remain inspectable.' },

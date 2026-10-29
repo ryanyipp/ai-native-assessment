@@ -1,18 +1,47 @@
-import { Bot, CheckCircle2, Users, XCircle } from 'lucide-react'
+import { ArrowRightLeft, Bot, CheckCircle2, Users, XCircle } from 'lucide-react'
 import { Badge, EmptyState } from '../../components/ui'
 import { cx } from '../../lib/ui-utils'
 import { fmtMs, fmtTime } from '../../lib/format'
-import { agentFor, modelCallFor, transitionForAction } from '../../lib/run-model'
+import { agentFor, modelCallFor, phaseLabel, transitionForAction } from '../../lib/run-model'
 import type { RunDetail } from '../../lib/types'
 import type { Selection } from '../flow-map/FlowMap'
 
-/** Recorded browser actions in order. Single explorer only: no simulated multi-agent lanes. */
+const HANDOFF_EVENTS: Record<string, string> = {
+  form_discovered: 'Explorer discovered form',
+  handoff_created: 'Handoff',
+  test_executed: 'Test executed',
+  candidate_reported: 'Candidate reported',
+  assertion_selected: 'Assertion selected',
+  verification_executed: 'Verification executed',
+  result_accepted: 'Result accepted',
+  result_rejected: 'Result rejected',
+  task_blocked: 'Task blocked',
+  frontier_deferred: 'New state deferred',
+}
+
+const agentTone: Record<string, string> = {
+  'explorer-a': 'bg-sky-50 text-sky-800 ring-sky-200',
+  'input-tester': 'bg-amber-50 text-amber-900 ring-amber-200',
+  verifier: 'bg-violet-50 text-violet-800 ring-violet-200',
+  coordinator: 'bg-slate-100 text-slate-700 ring-slate-200',
+}
+
+function AgentChip({ id }: { id: string | null }) {
+  return (
+    <span className={cx('inline-flex items-center rounded px-1.5 text-[11px] font-medium ring-1 ring-inset', agentTone[id ?? ''] ?? agentTone.coordinator)}>
+      {id ?? 'unknown agent'}
+    </span>
+  )
+}
+
+/** Recorded browser actions and handoff events in order. Only recorded events are shown; nothing is simulated. */
 export function RunActivity({ detail, selection, onSelect }: {
   detail: RunDetail
   selection: Selection
   onSelect: (s: Selection) => void
 }) {
   const actions = [...detail.actions].sort((a, b) => a.step - b.step)
+  const handoffs = detail.events.filter((e) => e.type in HANDOFF_EVENTS)
   const agents = [...new Set(actions.map((a) => agentFor(detail, a.id)).filter(Boolean))] as string[]
   if (actions.length === 0) {
     return <EmptyState icon={<Bot size={22} />} title="No actions recorded yet">Actions appear here as the explorer executes them.</EmptyState>
@@ -48,7 +77,9 @@ export function RunActivity({ detail, selection, onSelect }: {
                     <span className="shrink-0 font-mono text-[11px] text-slate-500">{fmtTime(a.started_at)}</span>
                   </span>
                   <span className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-slate-500">
-                    <span>{agentFor(detail, a.id) ?? 'unknown agent'}</span>
+                    <AgentChip id={agentFor(detail, a.id)} />
+                    {a.phase && a.phase !== 'explore' && <span>{phaseLabel[a.phase]}</span>}
+                    {a.context_id && a.phase !== 'explore' && <span className="font-mono">{a.context_id.split(':').pop()}</span>}
                     <span>browser {fmtMs(a.duration_ms)}</span>
                     {mc ? <span>model {fmtMs(mc.latency_ms)}</span> : <span>{a.step === 0 ? 'from run config, no model call' : 'no model call'}</span>}
                   </span>
@@ -59,10 +90,29 @@ export function RunActivity({ detail, selection, onSelect }: {
           )
         })}
       </ol>
-      <div className="flex gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-xs leading-relaxed text-slate-500">
-        <Users size={15} className="mt-0.5 shrink-0" aria-hidden />
-        <p>This run used one explorer. A multi-agent timeline with claims, handoffs and recovery appears once the coordinator records those events.</p>
-      </div>
+      {handoffs.length > 0 ? (
+        <section aria-label="Handoffs between workers">
+          <h3 className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <ArrowRightLeft size={13} aria-hidden /> Handoffs and results ({handoffs.length})
+          </h3>
+          <ol className="space-y-1 text-xs">
+            {handoffs.map((e) => (
+              <li key={e.seq} className="flex flex-wrap items-baseline gap-x-2 rounded-md px-1.5 py-1 hover:bg-slate-50">
+                <span className="font-mono text-[11px] text-slate-500">#{e.seq}</span>
+                <AgentChip id={e.agent_id} />
+                <span className="font-medium text-slate-800">{HANDOFF_EVENTS[e.type]}</span>
+                <span className="min-w-0 flex-1 text-slate-600 [overflow-wrap:anywhere]">{e.message}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-2 text-[11px] text-slate-500">Sequential handoffs (checkpoint 2). The shared queue, claims and leases come later.</p>
+        </section>
+      ) : (
+        <div className="flex gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-xs leading-relaxed text-slate-500">
+          <Users size={15} className="mt-0.5 shrink-0" aria-hidden />
+          <p>This run used one explorer. Handoffs to the input tester and verifier appear for review runs.</p>
+        </div>
+      )}
       <details className="text-xs">
         <summary className="cursor-pointer font-medium text-slate-600 hover:text-slate-900">Raw event log ({detail.events.length})</summary>
         <ol className="mt-2 max-h-72 space-y-0.5 overflow-auto rounded-md bg-slate-50 p-2 font-mono text-[11px]">

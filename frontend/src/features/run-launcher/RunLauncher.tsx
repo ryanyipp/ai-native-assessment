@@ -56,6 +56,7 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
   const [targetUrl, setTargetUrl] = useState('http://localhost:5174/')
   const [goal, setGoal] = useState(DEFAULT_GOAL)
   const [requirements, setRequirements] = useState('')
+  const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify'>('single_explorer')
   const [limits, setLimits] = useState<Record<LimitKey, number>>({
     max_cost_usd: health?.default_run_budget_usd ?? 0.5,
     max_steps: 15,
@@ -94,6 +95,7 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
         goal: goal.trim(),
         requirements: requirements.split('\n').map((r) => r.trim()).filter(Boolean),
         limits,
+        mode,
       })
       onCreated(run)
       onOpenChange(false)
@@ -131,7 +133,19 @@ export function RunLauncher({ health, open, onOpenChange, onCreated }: {
                 aria-invalid={!!show('goal')} aria-describedby={show('goal') ? `${uid}-goal-err` : undefined}
                 onChange={(e) => setGoal(e.target.value)} />
             </FormField>
-            <FormField id={`${uid}-req`} label="Requirements (optional)" hint="One per line. Passed to the explorer as supplied expectations.">
+            <fieldset className="space-y-1.5">
+              <legend className="text-[13px] font-medium text-slate-800">Workflow</legend>
+              {([
+                ['single_explorer', 'Explorer only', 'One explorer pursues the goal. Its result stays unverified.'],
+                ['explore_test_verify', 'Explorer → input tester → verifier', 'Forms the explorer opens are tested; suspected requirement violations are replayed in fresh sessions. Uses more model calls.'],
+              ] as const).map(([value, label, hint]) => (
+                <label key={value} className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-2.5 py-2 text-[13px] has-[:checked]:border-accent-500 has-[:checked]:bg-accent-50">
+                  <input type="radio" name={`${uid}-mode`} value={value} checked={mode === value} onChange={() => setMode(value)} className="mt-0.5" />
+                  <span><span className="font-medium text-slate-900">{label}</span><span className="block text-xs text-slate-600">{hint}</span></span>
+                </label>
+              ))}
+            </fieldset>
+            <FormField id={`${uid}-req`} label="Requirements (optional)" hint="One per line, optionally prefixed with an id such as R5. The tester and verifier only treat these as explicit expectations.">
               <textarea id={`${uid}-req`} className={inputCls()} rows={2} value={requirements} aria-describedby={`${uid}-req-hint`}
                 placeholder="Saved drafts keep their title and caption after reload."
                 onChange={(e) => setRequirements(e.target.value)} />

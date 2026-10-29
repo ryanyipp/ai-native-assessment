@@ -13,8 +13,10 @@ export function modelCallFor(d: RunDetail, id: string | null | undefined): Model
   return id ? d.model_calls.find((m) => m.id === id) : undefined
 }
 
-/** Agent that recorded an action, taken from the action_executed event. */
+/** Agent that recorded an action: the action record, else the action_executed event (old runs). */
 export function agentFor(d: RunDetail, actionResultId: string): string | null {
+  const a = d.actions.find((x) => x.id === actionResultId)
+  if (a?.agent_id) return a.agent_id
   const ev = d.events.find((e) => e.type === 'action_executed' && e.data.action_result_id === actionResultId)
   return ev?.agent_id ?? null
 }
@@ -42,7 +44,21 @@ export function describeAction(a: { type: string; value?: string; url?: string }
       return `Open ${a.url ?? 'page'}`
     case 'reload':
       return 'Reload page'
+    case 'test_case':
+      return 'Input test case'
+    case 'verify_case':
+      return 'Verification replay'
     default:
       return a.type
   }
+}
+
+export const phaseLabel: Record<string, string> = { explore: 'Exploration', input_test: 'Input test', verify: 'Verification' }
+
+export function testCaseFor(d: RunDetail, id: string | null | undefined) {
+  return id ? d.test_cases?.find((t) => t.id === id) : undefined
+}
+
+export function verificationFor(d: RunDetail, id: string | null | undefined) {
+  return id ? d.verifications?.find((v) => v.id === id) : undefined
 }

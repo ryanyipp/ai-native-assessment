@@ -49,15 +49,19 @@ function ActionIcon({ type }: { type: string }) {
   return <MousePointerClick {...props} />
 }
 
+const PHASE_STROKE: Record<string, string> = { input_test: '#d97706', verify: '#7c3aed' }
+const PHASE_SHORT: Record<string, string> = { input_test: 'test', verify: 'verify' }
+
 const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData>>) {
   const s = data.state
   const [heading, ...rest] = s.summary.split(' — ')
+  const contexts = new Set((s.sightings ?? []).map((x) => x.context_id)).size
   return (
     <div
       className={cx(
         'overflow-hidden rounded-xl border bg-white shadow-sm transition-[box-shadow,opacity,border-color] duration-200',
         data.selected ? 'border-accent-500 shadow-[0_0_0_3px_var(--color-accent-100)]' : 'border-slate-200 hover:border-slate-300 hover:shadow-md',
-        data.dimmed && 'opacity-60',
+        data.dimmed && 'opacity-70',
       )}
       style={{ width: NODE_W }}
     >
@@ -70,7 +74,8 @@ const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData
             {rest.length > 0 && <span className="block truncate text-xs font-normal text-slate-600">{rest.join(' — ')}</span>}
           </div>
           {data.isStart && (
-            <span className="inline-flex shrink-0 items-center gap-0.5 rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+            <span className={cx('inline-flex shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium',
+              data.dimmed ? 'bg-slate-200 text-slate-900' : 'bg-slate-900 text-white')}>
               <Flag size={10} aria-hidden /> Start
             </span>
           )}
@@ -79,6 +84,12 @@ const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData
           <span className="truncate">{s.route}</span>
           <span className="shrink-0">step {s.first_seen_step}</span>
         </div>
+        {(s.discovered_by && s.discovered_by !== 'explorer-a') || contexts > 1 ? (
+          <div className="flex flex-wrap gap-x-2 text-[10.5px] text-slate-600">
+            {s.discovered_by && s.discovered_by !== 'explorer-a' && <span>found by {s.discovered_by}</span>}
+            {contexts > 1 && <span>seen in {contexts} contexts</span>}
+          </div>
+        ) : null}
       </div>
       <Handle type="source" position={Position.Right} className="!h-2 !w-2 !border-0 !bg-slate-300" />
     </div>
@@ -107,7 +118,8 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
     ;[path, lx, ly] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, curvature })
     ly += d.parallelIndex * 28
   }
-  const stroke = !t.ok ? 'var(--color-red-500)' : d.selected ? 'var(--color-accent-500)' : 'var(--color-slate-400)'
+  const phaseStroke = PHASE_STROKE[t.phase ?? '']
+  const stroke = !t.ok ? 'var(--color-red-500)' : d.selected ? 'var(--color-accent-500)' : phaseStroke ?? 'var(--color-slate-400)'
   return (
     <>
       <BaseEdge
@@ -136,11 +148,16 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
           )}
         >
           <span className={cx('flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold',
-            d.selected ? 'bg-accent-500 text-white' : t.ok ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-800')}>
+            d.selected ? 'bg-accent-600 text-white' : t.ok ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-800')}>
             <span className="sr-only">Transition step </span>{t.step}
           </span>
+          {PHASE_SHORT[t.phase ?? ''] && (
+            <span className={cx('rounded px-1 text-[10px] font-semibold', t.phase === 'verify' ? 'bg-violet-100 text-violet-800' : 'bg-amber-100 text-amber-900')}>
+              {PHASE_SHORT[t.phase!]}<span className="sr-only"> by {t.agent_id}</span>
+            </span>
+          )}
           <ActionIcon type={t.action.type} />
-          <span className="truncate">{t.label.replace(/^(click|fill) /, '')}</span>
+          <span className="truncate">{t.label.replace(/^(click|fill|test:|verify:) ?/, '')}</span>
           {!t.ok && <span className="sr-only"> (failed)</span>}
         </button>
       </EdgeLabelRenderer>
@@ -296,7 +313,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
           source: t.source_state_id,
           target: t.target_state_id,
           type: 'transition',
-          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : '#94a3b8' },
+          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : PHASE_STROKE[t.phase ?? ''] ?? '#94a3b8' },
           data: {
             transition: t,
             loopIndex: self ? index : 0,
@@ -343,17 +360,20 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         style={{ width: 160, height: 100 }}
       />}
       <Panel position="top-left" className="!m-3">
-        <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs} />
+        <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs}
+          phases={new Set(detail.transitions.map((t) => t.phase ?? 'explore'))} />
       </Panel>
     </ReactFlow>
     </div>
   )
 }
 
-function MapToolbar({ showThumbs, onToggleThumbs }: { showThumbs: boolean; onToggleThumbs: () => void }) {
+function MapToolbar({ showThumbs, onToggleThumbs, phases }: { showThumbs: boolean; onToggleThumbs: () => void; phases: Set<string> }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-white/95 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 shadow-sm backdrop-blur">
-      <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-slate-400" aria-hidden />Action</span>
+      <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-slate-400" aria-hidden />{phases.size > 1 ? 'Explorer' : 'Action'}</span>
+      {phases.has('input_test') && <span className="flex items-center gap-1.5"><span className="h-0.5 w-4 bg-amber-600" aria-hidden />Input test</span>}
+      {phases.has('verify') && <span className="flex items-center gap-1.5"><span className="h-0.5 w-4 bg-violet-600" aria-hidden />Verification</span>}
       <span className="flex items-center gap-1.5"><span className="h-px w-4 border-t border-dashed border-red-500" aria-hidden />Failed</span>
       <span className="hidden text-slate-500 sm:inline">Observed states only, not full coverage</span>
       <button type="button" onClick={onToggleThumbs} aria-pressed={showThumbs}

@@ -3,6 +3,8 @@ import { Badge, Callout, EmptyState, Field, SectionTitle } from '../../component
 import { fmtInt, fmtUsd } from '../../lib/format'
 import type { Finding, RunDetail } from '../../lib/types'
 import type { Selection } from '../flow-map/FlowMap'
+import { CandidateCard } from './CandidateCard'
+import { verificationMeta } from '../../lib/ui-utils'
 
 const claimText = { retained: 'Values retained', not_retained: 'Values not retained', unknown: 'Could not determine' }
 
@@ -67,21 +69,43 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
 export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelect: (s: Selection) => void }) {
   const r = detail.run
   const failed = detail.actions.filter((a) => !a.ok).length
+  const hasVerifier = (detail.verifications ?? []).length > 0 || r.mode !== 'single_explorer'
+  const order = ['confirmed', 'not_reproduced', 'inconclusive', 'unverified']
+  const counts = order.map((s) => [s, detail.findings.filter((f) => f.kind !== 'persistence_check' && f.verification_status === s).length] as const)
+    .filter(([, n]) => n > 0)
   return (
     <div className="space-y-4 px-4 py-4">
-      <Callout title="Completed is not the same as correct">
-        A <strong>completed</strong> run means the explorer finished its goal within the limits. It does not verify the website. Findings
-        stay <strong>unverified</strong> until an independent verifier replays them in a fresh browser. No verifier has run yet.
-      </Callout>
+      {hasVerifier ? (
+        <Callout title="How to read these results">
+          The input tester reports suspicions; a separate verifier replays each one in fresh browser sessions with fresh test data, and code
+          evaluates a typed assertion taken from an explicit requirement. <strong>Confirmed</strong>, <strong>not reproduced</strong> and{' '}
+          <strong>inconclusive</strong> are all shown. An assertion can still encode the wrong expectation, so review the requirement and
+          evidence.
+        </Callout>
+      ) : (
+        <Callout title="Completed is not the same as correct">
+          A <strong>completed</strong> run means the explorer finished its goal within the limits. It does not verify the website. Findings
+          stay <strong>unverified</strong> until an independent verifier replays them in a fresh browser. No verifier ran in this run.
+        </Callout>
+      )}
+      {counts.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-600" aria-label="Verification outcomes">
+          {counts.map(([s, n]) => <Badge key={s} tone={verificationMeta[s].tone}>{n} {verificationMeta[s].label.toLowerCase()}</Badge>)}
+        </div>
+      )}
 
       {detail.findings.length === 0 ? (
         <EmptyState icon={<SearchCheck size={22} />} title="No observations reported">
           {r.status === 'running' || r.status === 'queued'
             ? 'The explorer has not finished yet.'
-            : 'The explorer did not report a result for this run. Check the stop reason and the activity list.'}
+            : hasVerifier
+              ? 'No worker reported a candidate in this run. That is not proof the site meets every requirement; check the test cases in Activity.'
+              : 'The explorer did not report a result for this run. Check the stop reason and the activity list.'}
         </EmptyState>
       ) : (
-        detail.findings.map((f) => <FindingCard key={f.id} f={f} detail={detail} onSelect={onSelect} />)
+        detail.findings.map((f) => f.kind === 'persistence_check'
+          ? <FindingCard key={f.id} f={f} detail={detail} onSelect={onSelect} />
+          : <CandidateCard key={f.id} f={f} detail={detail} onSelect={onSelect} />)
       )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">
@@ -89,7 +113,8 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
         <dl className="divide-y divide-slate-100">
           <Field label="States">{detail.states.length} observed</Field>
           <Field label="Transitions">{detail.transitions.length} ({failed} failed actions)</Field>
-          <Field label="Model calls">{r.usage.model_calls} of {r.limits.max_model_calls} allowed</Field>
+          {(detail.test_cases ?? []).length > 0 && <Field label="Test cases">{detail.test_cases!.length} executed or attempted</Field>}
+          <Field label="Model calls">{r.usage.model_calls} of {r.limits.max_model_calls} allowed (shared by all workers)</Field>
           <Field label="Tokens">{fmtInt(r.usage.prompt_tokens)} in · {fmtInt(r.usage.completion_tokens)} out</Field>
           <Field label="Reported cost">{fmtUsd(r.usage.reported_cost_usd, 6)} of {fmtUsd(r.limits.max_cost_usd, 2)} run limit</Field>
         </dl>
