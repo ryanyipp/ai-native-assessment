@@ -30,7 +30,8 @@ from flowlens.storage.db import Store  # noqa: E402
 
 SCENARIO_PATH = (ROOT / sys.argv[2]) if len(sys.argv) > 2 else ROOT / "evaluation" / "creator-studio" / "scenario.json"
 SCENARIO = json.loads(SCENARIO_PATH.read_text("utf-8"))
-CONDITIONS = sys.argv[3].split(",") if len(sys.argv) > 3 else list(SCENARIO["conditions"])
+CONDITIONS = sys.argv[3].split(",") if len(sys.argv) > 3 and sys.argv[3] != "all" else list(SCENARIO["conditions"])
+MAX_NEW_RUNS = int(sys.argv[4]) if len(sys.argv) > 4 else None  # staged batches: stop after this many new runs
 
 
 def requirements() -> list[str]:
@@ -69,13 +70,18 @@ async def main(batch: str) -> None:
     cap, per_run = SCENARIO["batch_cap_usd"], SCENARIO["limits"]["max_cost_usd"]
     plan = [(c, b, r) for r in range(1, SCENARIO["repetitions"] + 1) for b in ("broken", "corrected")
             for c in CONDITIONS]
+    new_runs = 0
     for condition, build, rep in plan:
+        if MAX_NEW_RUNS is not None and new_runs >= MAX_NEW_RUNS:
+            print(f"stopping: staged limit of {MAX_NEW_RUNS} new run(s) reached")
+            break
         if any((d["condition"], d["build"], d["rep"]) == (condition, build, rep) for d in done):
             continue
         if spent + per_run > cap:
             print(f"stopping: US${spent:.4f} spent; another run could exceed the US${cap} cap")
             break
         rec = await one(store, s, condition, build, rep, batch)
+        new_runs += 1
         spent += rec["reported_cost_usd"]
         with log.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(rec, default=str) + "\n")

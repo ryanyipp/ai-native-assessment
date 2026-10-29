@@ -1,0 +1,32 @@
+{
+  "frozen_at": "2026-10-29",
+  "note": "Staged: first one broken-build run per condition; continue only if both confirm DT2. ticket-desk is a known regression fixture.",
+  "app": "ticket-desk",
+  "goal": "Explore this website and open each form a visitor can use, without submitting them. Finish when you have seen them.",
+  "goal_note": "Neutral wording that names no page or journey of this app; same structure as the creator-studio goal.",
+  "requirements_source": "fixtures/ticket-desk/requirements.md (T1-T5, supplied verbatim)",
+  "builds": {
+    "broken": "http://localhost:5176/",
+    "corrected": "http://localhost:5177/"
+  },
+  "starting_data": "every exploration, test case and replay starts in a newly provisioned empty workspace",
+  "conditions": {
+    "single_agent": "see evaluation/creator-studio/scenario.json",
+    "queue_review": "see evaluation/creator-studio/scenario.json"
+  },
+  "limits": {
+    "max_model_calls": 30,
+    "max_cost_usd": 0.15,
+    "max_steps": 12,
+    "explore_steps_per_task": 3,
+    "max_depth": 2,
+    "reserved_testing_calls": 6,
+    "reserved_verification_calls": 5,
+    "max_duration_s": 900,
+    "task_lease_s": 45
+  },
+  "repetitions": 3,
+  "batch_cap_usd": 0.275,
+  "fault_injection": null,
+  "label": "POST-FIX REGRESSION 2 (not held-out evidence): live validation of 071c86c"
+}

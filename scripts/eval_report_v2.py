@@ -38,6 +38,18 @@ def ref_of(st, refs):
     return None
 
 
+def cause(f, d) -> str:
+    classes = {v.failure_class for v in d.verifications if v.finding_id == f.id}
+    if "verifier" in classes:
+        return "verifier_output"
+    if "expectation" in classes:
+        return "requirement"
+    for c in ("setup", "application"):
+        if c in classes:
+            return c
+    return "other"
+
+
 def defect_hit(f, k) -> bool:
     if f.requirement_ref != k["requirement"]:
         return False
@@ -81,6 +93,10 @@ def score(rec, d, key):
         "found": found, "missed": [k["id"] for k in defects if k["id"] not in found],
         "false_confirmations": [f"{f.requirement_ref}: {f.description[:70]}" for f in false],
         "confirmed": len(conf), "inconclusive": sum(f.verification_status == "inconclusive" for f in cand),
+        # Why inconclusive: verifier output (invalid/truncated/no assertion) vs the requirement (unclear/not explicit).
+        "inconclusive_by_cause": {k: sum(1 for f in cand if f.verification_status == "inconclusive"
+                                         and cause(f, d) == k) for k in ("verifier_output", "requirement", "setup",
+                                                                          "application", "other")},
         "unfinished": sum(t.status in ("unfinished", "blocked", "failed") for t in d.tasks),
         "skipped": sum(t.status == "skipped" for t in d.tasks),
         "elapsed_s": round((run.finished_at - run.created_at).total_seconds(), 1) if run.finished_at else None,
@@ -135,7 +151,11 @@ def main(out_md: str, pairs: list[str]) -> None:
                          f"{mm([s['unfinished'] for s in g])} | {mm([s['elapsed_s'] for s in g])} | "
                          f"{mm([s['calls'] for s in g])} | {mm([s['cost'] for s in g], 4)} |")
         fc = [(s["run_id"], x) for s in scores for x in s["false_confirmations"]]
-        L += ["", "False confirmations: " + ("; ".join(f"`{r}` {x}" for r, x in fc) if fc else "none") + ".",
+        L += ["", "Inconclusive by cause (verifier output = invalid, truncated or missing assertion; requirement = "
+              "unclear verdict or judged not explicit): " + "; ".join(
+                  f"`{s['run_id']}` " + ", ".join(f"{k} {v}" for k, v in s["inconclusive_by_cause"].items() if v)
+                  for s in scores if s["inconclusive"]) + ".",
+              "", "False confirmations: " + ("; ".join(f"`{r}` {x}" for r, x in fc) if fc else "none") + ".",
               "Confirmed findings: " + "; ".join(f"`{s['run_id']}` {c['req']} {json.dumps(c['inputs'], ensure_ascii=False)} "
                                                   f"({c['independence']})" for s in scores for c in s["conf_detail"]) + ".",
               f"Batch total: {len(scores)} runs, {sum(s['calls'] for s in scores)} calls, "

@@ -28,6 +28,8 @@ Summary, mean (min–max):
 | queue_review | broken | 3 | 5.3 (4.0–6.0) | 4.3 (3.0–5.0) | 1 (1–2) | 0 (0–0) | 0/6 | 0 | 1 (0–1) | 78 (67–86) | 21 (15–24) | 0.0313 (0.0245–0.0389) |
 | queue_review | corrected | 3 | 6.0 (6.0–6.0) | 5.0 (5.0–5.0) | 2 (2–2) | 0 (0–0) | n/a | 0 | 0 (0–1) | 67 (62–74) | 20 (19–21) | 0.0212 (0.0180–0.0243) |
 
+Inconclusive by cause (verifier output = invalid, truncated or missing assertion; requirement = unclear verdict or judged not explicit): `run_dd5bbbd2fef9` verifier_output 1; `run_3ed801eeb29b` requirement 2; `run_ff5d2d729c7f` verifier_output 1; `run_b84e1e05a2cf` verifier_output 1, requirement 1; `run_aee59e27b1fe` requirement 1; `run_f821e5e72b0b` verifier_output 1.
+
 False confirmations: none.
 Confirmed findings: .
 Batch total: 12 runs, 170 calls, 215,252 tokens, US$0.2246.
