@@ -8,9 +8,7 @@ verifier; a plain `ExplorerRun` is the checkpoint 1 single-explorer mode.
 
 from __future__ import annotations
 
-import asyncio
 import hashlib
-import threading
 import time
 import traceback
 from typing import Any
@@ -126,6 +124,7 @@ class ExplorerRun:
         self.history: list[str] = []
         self.reload_seen_after_save = False
         self.step_seq = -1  # one ordered step counter across every worker in the run
+        self.stage = "exploring"  # where the review is; used in failure reasons
 
     def next_step(self) -> int:
         self.step_seq += 1
@@ -335,9 +334,17 @@ class ExplorerRun:
             self.store.put(self.task)
             status, reason = await self.after_explore(status, reason)
         except Exception as e:
-            self.event("run_error", f"{type(e).__name__}: {e}", trace=traceback.format_exc()[-1500:])
-            status, reason = RunStatus.failed, f"{type(e).__name__}: {e}"
+            where = self.stage
+            self.event("run_error", f"Stopped while {where}: {type(e).__name__}: {e}", agent_id="coordinator",
+                       stage=where, trace=traceback.format_exc()[-1500:])
+            status = RunStatus.failed
+            reason = (f"failed while {where}: {type(e).__name__}: {e}. "
+                      f"Later review stages did not run; results are incomplete{self.incomplete_note()}")
         self._stop(status, reason)
+
+    def incomplete_note(self) -> str:
+        return ""
+
 
     async def after_explore(self, status: RunStatus, reason: str) -> tuple[RunStatus, str]:
         return status, reason
@@ -409,17 +416,3 @@ class ExplorerRun:
         self.run.finished_at = utcnow()
         self._save_run()
         self.event("run_finished", f"Run {status.value}: {reason}", agent_id="coordinator", status=status.value)
-
-
-def start_run_thread(run: Run, store: Store, settings: Settings, llm: LLMClient) -> threading.Thread:
-    """Each run gets its own thread and event loop (Playwright needs a subprocess-capable loop on Windows)."""
-    from flowlens.orchestration.review import ReviewRun
-
-    cls = ReviewRun if run.mode == "explore_test_verify" else ExplorerRun
-
-    def target():
-        asyncio.run(cls(run, store, settings, llm).execute())
-
-    t = threading.Thread(target=target, name=f"run-{run.id}", daemon=True)
-    t.start()
-    return t

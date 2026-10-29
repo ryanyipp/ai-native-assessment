@@ -93,6 +93,12 @@ class ReviewRun(ExplorerRun):
         self.budget_note: str | None = None
         self.summary: dict[str, Any] = {"forms_tested": 0, "cases": 0, "candidates": 0, "outcomes": []}
 
+    def incomplete_note(self) -> str:
+        s = self.summary
+        return (f" (before stopping: {len(self.forms)} form(s) discovered, {s['forms_tested']} handed to the tester, "
+                f"{s['cases']} case(s) run, {s['candidates']} candidate(s), {len(s['outcomes'])} verified). "
+                "Zero findings here does not mean the website passed")
+
     @property
     def explorer_reserve(self) -> int:
         # Explorer leaves room for the tester (2 calls per form) and verification.
@@ -165,9 +171,12 @@ class ReviewRun(ExplorerRun):
                        agent_id=COORDINATOR)
         candidates: list[Finding] = []
         for form in forms[: lim.max_forms_tested]:
+            self.stage = f"testing form {form.id} ({form.route}) as input-tester"
             candidates += await self.test_form(form)
         for f in candidates:
+            self.stage = f"verifying finding {f.id} as verifier"
             await self.verify_finding(f, from_agent=input_tester.AGENT_ID)
+        self.stage = "finishing"
         s = self.summary
         outcome_counts = {o: s["outcomes"].count(o) for o in sorted(set(s["outcomes"]))}
         text = (f"{reason}; {s['forms_tested']} form(s) tested with {s['cases']} case(s); "

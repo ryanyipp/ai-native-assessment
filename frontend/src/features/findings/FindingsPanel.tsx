@@ -69,12 +69,19 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
 export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelect: (s: Selection) => void }) {
   const r = detail.run
   const failed = detail.actions.filter((a) => !a.ok).length
+  const stopped = r.status === 'failed' || r.status === 'partial' || r.status === 'interrupted'
   const hasVerifier = (detail.verifications ?? []).length > 0 || r.mode !== 'single_explorer'
   const order = ['confirmed', 'not_reproduced', 'inconclusive', 'unverified']
   const counts = order.map((s) => [s, detail.findings.filter((f) => f.kind !== 'persistence_check' && f.verification_status === s).length] as const)
     .filter(([, n]) => n > 0)
   return (
     <div className="space-y-4 px-4 py-4">
+      {stopped && (
+        <Callout tone={r.status === 'failed' ? 'red' : 'amber'} title={r.status === 'failed' ? 'Review stopped on an error' : 'Review did not finish'}>
+          <span className="[overflow-wrap:anywhere]">{r.stop_reason ?? 'No stop reason was recorded.'}</span>{' '}
+          <strong>{detail.findings.length === 0 ? 'Zero findings here does not mean the website passed.' : 'The findings below are incomplete.'}</strong>
+        </Callout>
+      )}
       {hasVerifier ? (
         <Callout title="How to read these results">
           The input tester reports suspicions; a separate verifier replays each one in fresh browser sessions with fresh test data, and code
@@ -96,7 +103,9 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
 
       {detail.findings.length === 0 ? (
         <EmptyState icon={<SearchCheck size={22} />} title="No observations reported">
-          {r.status === 'running' || r.status === 'queued'
+          {stopped
+            ? 'Nothing was reported before the review stopped. Later stages may not have run; see the stop reason above.'
+            : r.status === 'running' || r.status === 'queued'
             ? 'The explorer has not finished yet.'
             : hasVerifier
               ? 'No worker reported a candidate in this run. That is not proof the site meets every requirement; check the test cases in Activity.'
