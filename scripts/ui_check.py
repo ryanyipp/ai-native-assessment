@@ -121,10 +121,13 @@ async def main() -> None:
         # Launcher validation (client-side; nothing is submitted).
         await page.get_by_role("button", name="New run").first.click()
         dlg = page.get_by_role("complementary", name="New review run")  # persistent settings panel (was a dialog)
+        # An unapproved origin asks for approval in the launcher and cannot start (nothing is approved here).
         await dlg.get_by_label("Target website").fill("https://example.com/")
+        url_err = (await dlg.get_by_role("group", name="Approve target origin").is_visible()
+                   and await dlg.get_by_role("button", name="Start live run").is_disabled())
+        await dlg.get_by_label("Target website").fill("http://localhost:5174/")
         await dlg.get_by_label("Review goal").fill("abc")
         await dlg.get_by_role("button", name="Start live run").click()
-        url_err = await dlg.get_by_text("is not an allowed target").is_visible()
         goal_err = await dlg.get_by_text("at least 5 characters").is_visible()
         check("launcher shows URL and goal validation", url_err and goal_err)
         check("launcher shows model without secrets", await dlg.get_by_text("google/gemini-3-flash-preview").is_visible()

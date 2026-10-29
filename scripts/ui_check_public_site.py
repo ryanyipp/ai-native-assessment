@@ -142,7 +142,7 @@ async def run_checks(page, run_id):
           and r.get("scope_origins") == [ORIGIN] and r["provenance"]["synthetic_fixture"] is False)
     acts = sorted(d["actions"], key=lambda a: a["step"])
     types = [a["action"]["type"] for a in acts]
-    print("actions:", [(a["step"], a["label"], a["ok"], a.get("error")) for a in acts], flush=True)
+    print("actions:", [(a["step"], a["action"]["type"], a["target_description"], a["ok"], a.get("error")) for a in acts], flush=True)
     press_ok = [a for a in acts if a["action"]["type"] == "press" and a["ok"]]
     check_ok = [a for a in acts if a["action"]["type"] == "check" and a["ok"]]
     check("explorer added todos with Enter", len(press_ok) >= 2, f"{len(press_ok)} successful press actions")
@@ -183,7 +183,7 @@ async def main():
         if run_id:
             d = await run_checks(page, run_id)
             (OUT / "run-record.json").write_text(json.dumps({
-                "run": d["run"], "actions": [{k: a.get(k) for k in ("step", "label", "ok", "error", "url_after", "action")}
+                "run": d["run"], "actions": [{k: a.get(k) for k in ("step", "action", "target_description", "ok", "error", "url_after")}
                                              for a in sorted(d["actions"], key=lambda a: a["step"])],
                 "findings": d["findings"], "events": [e for e in d["events"] if e["type"] in
                                                       ("explorer_finished", "run_finished", "decision_rejected", "run_error")],
