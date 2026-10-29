@@ -1,16 +1,14 @@
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { AlertTriangle, CheckCircle2, CircleDashed, CircleSlash, Loader2, PauseCircle, XCircle } from 'lucide-react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { cx, provenanceOf, type Tone } from '../lib/ui-utils'
 import type { Run, RunStatus } from '../lib/types'
 
-export function cx(...parts: (string | false | null | undefined)[]) {
-  return parts.filter(Boolean).join(' ')
-}
 
 type Variant = 'primary' | 'secondary' | 'ghost'
 const variants: Record<Variant, string> = {
   primary: 'bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-300 disabled:text-slate-500',
-  secondary: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 disabled:text-slate-400',
+  secondary: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 disabled:text-slate-500',
   ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:text-slate-300',
 }
 
@@ -49,7 +47,6 @@ export function Tooltip({ content, children }: { content: ReactNode; children: R
   )
 }
 
-type Tone = 'neutral' | 'blue' | 'green' | 'amber' | 'red' | 'violet'
 const tones: Record<Tone, string> = {
   neutral: 'bg-slate-100 text-slate-700 ring-slate-200',
   blue: 'bg-accent-50 text-accent-700 ring-accent-100',
@@ -88,15 +85,6 @@ export function StatusBadge({ status, withTooltip = false }: { status: RunStatus
   return withTooltip ? <Tooltip content={m.help}><span tabIndex={0} className="inline-flex">{badge}</span></Tooltip> : badge
 }
 
-/** Live, playback and mocked are separate provenance flags; show the strongest caveat. */
-export function provenanceOf(run: Run): { label: string; tone: Tone; help: string } {
-  const p = run.provenance
-  if (p.mocked_model) return { label: 'Mocked model', tone: 'violet', help: 'A scripted stand-in replaced the model. Not a live run.' }
-  if (p.playback) return { label: 'Playback', tone: 'violet', help: 'Replayed from saved evidence. No fresh browser or model execution.' }
-  if (p.live) return { label: 'Live', tone: 'green', help: 'Real Chromium and real model calls were executed for this run.' }
-  return { label: 'Not live', tone: 'neutral', help: 'No live execution recorded.' }
-}
-
 export function ProvenanceBadge({ run }: { run: Run }) {
   const p = provenanceOf(run)
   return (
@@ -129,7 +117,7 @@ export function Field({ label, children, mono }: { label: string; children: Reac
 export function EmptyState({ icon, title, children, action }: { icon: ReactNode; title: string; children?: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-10 text-center">
-      <div className="text-slate-400">{icon}</div>
+      <div className="text-slate-500">{icon}</div>
       <p className="text-sm font-medium text-slate-800">{title}</p>
       {children && <div className="max-w-sm text-[13px] leading-relaxed text-slate-500">{children}</div>}
       {action}

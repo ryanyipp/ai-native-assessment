@@ -22,7 +22,7 @@ import '@xyflow/react/dist/style.css'
 import { Flag, Image as ImageIcon, MousePointerClick, Navigation, PencilLine, RotateCw } from 'lucide-react'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { Thumb } from '../../components/Screenshot'
-import { cx } from '../../components/ui'
+import { cx } from '../../lib/ui-utils'
 import type { RunDetail, ScreenState, Transition } from '../../lib/types'
 
 export type Selection = { kind: 'state'; id: string } | { kind: 'transition'; id: string } | null
@@ -41,8 +41,13 @@ type TransitionEdgeData = {
   onSelect: (id: string) => void
 }
 
-const actionIcon = (type: string) =>
-  ({ click: MousePointerClick, fill: PencilLine, reload: RotateCw, navigate: Navigation })[type] ?? MousePointerClick
+function ActionIcon({ type }: { type: string }) {
+  const props = { size: 11, 'aria-hidden': true, className: 'shrink-0 text-slate-500' } as const
+  if (type === 'fill') return <PencilLine {...props} />
+  if (type === 'reload') return <RotateCw {...props} />
+  if (type === 'navigate') return <Navigation {...props} />
+  return <MousePointerClick {...props} />
+}
 
 const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData>>) {
   const s = data.state
@@ -84,7 +89,6 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
   const { sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd } = props
   const d = data!
   const t = d.transition
-  const Icon = actionIcon(t.action.type)
   let path: string
   let lx: number
   let ly: number
@@ -122,21 +126,22 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
           type="button"
           onClick={() => d.onSelect(t.id)}
           aria-pressed={d.selected}
-          aria-label={`Transition step ${t.step}: ${t.label}${t.ok ? '' : ' (failed)'}`}
           title={t.label}
-          style={{ transform: `translate(-50%, -50%) translate(${lx}px, ${ly}px)`, pointerEvents: 'all', opacity: d.dimmed ? 0.5 : 1 }}
+          style={{ transform: `translate(-50%, -50%) translate(${lx}px, ${ly}px)`, pointerEvents: 'all', zIndex: d.selected ? 2 : 1 }}
           className={cx(
             'nodrag nopan absolute flex max-w-[190px] items-center gap-1.5 rounded-full border bg-white py-0.5 pl-0.5 pr-2 text-[11px] shadow-sm transition-[opacity,box-shadow]',
             t.ok ? 'border-slate-200 text-slate-700' : 'border-red-300 text-red-800',
+            d.dimmed && 'border-slate-100 text-slate-500 shadow-none',
             d.selected && 'border-accent-500 shadow-[0_0_0_3px_var(--color-accent-100)]',
           )}
         >
           <span className={cx('flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold',
             d.selected ? 'bg-accent-500 text-white' : t.ok ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-800')}>
-            {t.step}
+            <span className="sr-only">Transition step </span>{t.step}
           </span>
-          <Icon size={11} aria-hidden className="shrink-0 text-slate-400" />
+          <ActionIcon type={t.action.type} />
           <span className="truncate">{t.label.replace(/^(click|fill) /, '')}</span>
+          {!t.ok && <span className="sr-only"> (failed)</span>}
         </button>
       </EdgeLabelRenderer>
     </>
@@ -291,7 +296,6 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
           source: t.source_state_id,
           target: t.target_state_id,
           type: 'transition',
-          zIndex: selected ? 10 : 0,
           markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : '#94a3b8' },
           data: {
             transition: t,
@@ -351,7 +355,7 @@ function MapToolbar({ showThumbs, onToggleThumbs }: { showThumbs: boolean; onTog
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-white/95 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 shadow-sm backdrop-blur">
       <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-slate-400" aria-hidden />Action</span>
       <span className="flex items-center gap-1.5"><span className="h-px w-4 border-t border-dashed border-red-500" aria-hidden />Failed</span>
-      <span className="text-slate-500">Observed states only, not full coverage</span>
+      <span className="hidden text-slate-500 sm:inline">Observed states only, not full coverage</span>
       <button type="button" onClick={onToggleThumbs} aria-pressed={showThumbs}
         className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900">
         <ImageIcon size={12} aria-hidden />Thumbnails

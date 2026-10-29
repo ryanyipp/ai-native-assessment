@@ -3,7 +3,8 @@ import * as RTooltip from '@radix-ui/react-tooltip'
 import { ReactFlowProvider } from '@xyflow/react'
 import { Activity, ExternalLink, FileSearch, Info, Layers, Loader2, PanelLeft, Plus, RefreshCw, ScanSearch, Waypoints } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip, cx } from './components/ui'
+import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip } from './components/ui'
+import { cx } from './lib/ui-utils'
 import { EvidencePanel } from './features/evidence/EvidenceDrawer'
 import { FindingsPanel } from './features/findings/FindingsPanel'
 import { FlowMap, type Selection } from './features/flow-map/FlowMap'
@@ -169,14 +170,14 @@ export default function App() {
     <RTooltip.Provider>
       <div className="flex h-full flex-col">
         {/* Top bar */}
-        <div className="flex h-12 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3">
           <Button variant="ghost" size="sm" onClick={() => setRailOpen((o) => !o)} aria-label={railOpen ? 'Hide run history' : 'Show run history'} aria-expanded={railOpen} aria-controls="run-rail">
             <PanelLeft size={16} />
           </Button>
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-900 text-white"><Waypoints size={14} aria-hidden /></span>
             <span className="text-sm font-semibold tracking-tight">FlowLens</span>
-            <span className="hidden text-xs text-slate-400 sm:inline">AI website reviewer</span>
+            <span className="hidden text-xs text-slate-500 sm:inline">AI website reviewer</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
             {health ? (
@@ -194,7 +195,7 @@ export default function App() {
             )}
             <Button variant="primary" size="sm" onClick={() => setLauncherOpen(true)}><Plus size={14} aria-hidden />New run</Button>
           </div>
-        </div>
+        </header>
 
         <div className="relative flex min-h-0 flex-1">
           {/* Run history rail */}

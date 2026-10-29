@@ -1,7 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { KeyRound, Play, X } from 'lucide-react'
 import { useId, useState, type ReactNode } from 'react'
-import { Button, Callout, cx } from '../../components/ui'
+import { Button, Callout } from '../../components/ui'
+import { cx } from '../../lib/ui-utils'
 import { api } from '../../lib/api'
 import { fmtUsd } from '../../lib/format'
 import type { Health, Run } from '../../lib/types'
@@ -41,7 +42,7 @@ function FormField({ label, error, hint, children, id }: { label: string; error?
 
 const inputCls = (err?: string) =>
   cx(
-    'w-full rounded-md border bg-white px-2.5 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2',
+    'w-full rounded-md border bg-white px-2.5 py-1.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2',
     err ? 'border-red-400 focus:ring-red-200' : 'border-slate-300 focus:border-accent-500 focus:ring-accent-100',
   )
 

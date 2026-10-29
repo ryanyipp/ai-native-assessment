@@ -1,5 +1,6 @@
 import { Bot, CheckCircle2, Users, XCircle } from 'lucide-react'
-import { Badge, EmptyState, cx } from '../../components/ui'
+import { Badge, EmptyState } from '../../components/ui'
+import { cx } from '../../lib/ui-utils'
 import { fmtMs, fmtTime } from '../../lib/format'
 import { agentFor, modelCallFor, transitionForAction } from '../../lib/run-model'
 import type { RunDetail } from '../../lib/types'
@@ -41,10 +42,10 @@ export function RunActivity({ detail, selection, onSelect }: {
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="truncate text-[13px] font-medium text-slate-900">
-                      <span className="mr-1.5 font-mono text-[11px] text-slate-400">{a.step}</span>
+                      <span className="mr-1.5 font-mono text-[11px] text-slate-500"><span className="sr-only">Step </span>{a.step}</span>{' '}
                       {t?.label ?? (a.step === 0 ? 'Open start URL' : a.action.type)}
                     </span>
-                    <span className="shrink-0 font-mono text-[11px] text-slate-400">{fmtTime(a.started_at)}</span>
+                    <span className="shrink-0 font-mono text-[11px] text-slate-500">{fmtTime(a.started_at)}</span>
                   </span>
                   <span className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-slate-500">
                     <span>{agentFor(detail, a.id) ?? 'unknown agent'}</span>
@@ -66,7 +67,7 @@ export function RunActivity({ detail, selection, onSelect }: {
         <summary className="cursor-pointer font-medium text-slate-600 hover:text-slate-900">Raw event log ({detail.events.length})</summary>
         <ol className="mt-2 max-h-72 space-y-0.5 overflow-auto rounded-md bg-slate-50 p-2 font-mono text-[11px]">
           {detail.events.map((e) => (
-            <li key={e.seq} className="[overflow-wrap:anywhere]"><span className="text-slate-400">#{e.seq}</span> <span className="text-slate-600">{e.type}</span> {e.message}</li>
+            <li key={e.seq} className="[overflow-wrap:anywhere]"><span className="text-slate-500">#{e.seq}</span> <span className="text-slate-600">{e.type}</span> {e.message}</li>
           ))}
         </ol>
       </details>

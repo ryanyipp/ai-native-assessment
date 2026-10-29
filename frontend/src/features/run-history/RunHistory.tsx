@@ -1,5 +1,6 @@
 import { History } from 'lucide-react'
-import { EmptyState, StatusBadge, cx, provenanceOf } from '../../components/ui'
+import { EmptyState, StatusBadge } from '../../components/ui'
+import { cx, provenanceOf } from '../../lib/ui-utils'
 import { fmtDateTime, shortUrl } from '../../lib/format'
 import type { Run } from '../../lib/types'
 
@@ -35,7 +36,7 @@ export function RunHistory({ runs, activeId, onOpen, loading }: {
                   <StatusBadge status={r.status} />
                 </div>
                 <div className="mt-1 truncate text-xs text-slate-600" title={r.goal}>{r.goal}</div>
-                <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500">
+                <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-600">
                   <span>{fmtDateTime(r.created_at)}</span>
                   <span aria-hidden>·</span>
                   <span className={p.tone === 'violet' ? 'font-medium text-violet-700' : undefined}>{p.label}</span>

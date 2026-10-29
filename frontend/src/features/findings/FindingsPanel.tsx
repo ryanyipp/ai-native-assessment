@@ -19,7 +19,7 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
         <Badge>Explorer observation</Badge>
         <Badge>{f.reported_by}</Badge>
       </div>
-      <h3 className="text-sm font-semibold leading-snug">{f.description}</h3>
+      <h2 className="text-sm font-semibold leading-snug">{f.description}</h2>
       <dl className="divide-y divide-slate-100">
         <Field label="Expected">{f.expected}</Field>
         <Field label="Agent claim">{f.agent_claim ? claimText[f.agent_claim] : '—'}</Field>
@@ -85,7 +85,7 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
       )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <SectionTitle aside={<ClipboardCheck size={14} className="text-slate-400" />}>Recorded totals</SectionTitle>
+        <SectionTitle aside={<ClipboardCheck size={14} className="text-slate-500" />}>Recorded totals</SectionTitle>
         <dl className="divide-y divide-slate-100">
           <Field label="States">{detail.states.length} observed</Field>
           <Field label="Transitions">{detail.transitions.length} ({failed} failed actions)</Field>

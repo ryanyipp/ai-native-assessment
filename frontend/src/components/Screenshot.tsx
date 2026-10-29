@@ -2,11 +2,11 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ExternalLink, ImageOff, Maximize2, X } from 'lucide-react'
 import { useState } from 'react'
 import { artifactUrl } from '../lib/api'
-import { cx } from './ui'
+import { cx } from '../lib/ui-utils'
 
 export function MissingScreenshot({ className, reason = 'No screenshot recorded' }: { className?: string; reason?: string }) {
   return (
-    <div className={cx('flex flex-col items-center justify-center gap-1 bg-slate-100 text-slate-400', className)}>
+    <div className={cx('flex flex-col items-center justify-center gap-1 bg-slate-100 text-slate-500', className)}>
       <ImageOff size={18} aria-hidden />
       <span className="text-[11px]">{reason}</span>
     </div>

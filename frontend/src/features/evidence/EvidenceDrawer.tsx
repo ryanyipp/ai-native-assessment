@@ -1,7 +1,8 @@
 import { ArrowRight, ChevronLeft, ChevronRight, Cpu, ExternalLink, Globe, Image, MousePointerClick, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ScreenshotPreview } from '../../components/Screenshot'
-import { Badge, Button, Field, Kbd, SectionTitle, Tooltip, cx } from '../../components/ui'
+import { Badge, Button, Field, Kbd, SectionTitle, Tooltip } from '../../components/ui'
+import { cx } from '../../lib/ui-utils'
 import { artifactUrl } from '../../lib/api'
 import { fmtInt, fmtMs, fmtTime, fmtUsd } from '../../lib/format'
 import { agentFor, describeAction, evidenceFor, modelCallFor, reasoningFor, stateById } from '../../lib/run-model'
@@ -9,14 +10,14 @@ import type { BrowserAction, RunDetail, ScreenState, Transition } from '../../li
 import type { Selection } from '../flow-map/FlowMap'
 
 function ArtifactLink({ detail, id, label, icon }: { detail: RunDetail; id: string | null | undefined; label: string; icon: ReactNode }) {
-  if (!id) return <span className="text-slate-400">Not recorded</span>
+  if (!id) return <span className="text-slate-500">Not recorded</span>
   const ev = evidenceFor(detail, id)
   return (
     <a href={artifactUrl(id)} target="_blank" rel="noreferrer" data-artifact-id={id}
       className="group inline-flex max-w-full items-center gap-1.5 rounded text-accent-700 hover:underline">
       {icon}
       <span>{label}</span>
-      <span className="truncate font-mono text-[11px] text-slate-400 group-hover:text-slate-500">{id}</span>
+      <span className="truncate font-mono text-[11px] text-slate-500 group-hover:text-slate-500">{id}</span>
       {ev && <span className="sr-only">, sha256 {ev.sha256}</span>}
       <ExternalLink size={11} aria-hidden className="shrink-0" />
     </a>
@@ -43,7 +44,7 @@ function Json({ value }: { value: unknown }) {
 }
 
 function StateChip({ state, onSelect }: { state: ScreenState | undefined; onSelect: (s: Selection) => void }) {
-  if (!state) return <span className="text-slate-400">unknown</span>
+  if (!state) return <span className="text-slate-500">unknown</span>
   return (
     <button type="button" onClick={() => onSelect({ kind: 'state', id: state.id })}
       className="w-fit max-w-full truncate rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-left text-xs text-slate-800 hover:border-accent-500 hover:text-accent-700">
@@ -211,7 +212,7 @@ function StateEvidence({ detail, s, onSelect }: { detail: RunDetail; s: ScreenSt
         <ol className="space-y-1 text-[13px]">
           {s.setup_recipe.map((a, i) => (
             <li key={i} className="flex gap-2">
-              <span className="w-4 shrink-0 text-right font-mono text-[11px] text-slate-400">{i + 1}</span>
+              <span className="w-4 shrink-0 text-right font-mono text-[11px] text-slate-500">{i + 1}</span>
               <span className="min-w-0 font-mono text-xs [overflow-wrap:anywhere]">{recipeStep(a)}</span>
             </li>
           ))}
@@ -249,7 +250,7 @@ export function EvidencePanel({ detail, selection, onSelect, onStep }: {
             {t ? `Step ${t.step} of ${steps}` : `State · step ${s!.first_seen_step}`}
           </span>
           <Button variant="ghost" size="sm" onClick={() => onStep(1)} aria-label="Next step"><ChevronRight size={15} /></Button>
-          <span className="ml-1 hidden items-center gap-1 text-[11px] text-slate-400 xl:flex"><Kbd>←</Kbd><Kbd>→</Kbd> steps</span>
+          <span className="ml-1 hidden items-center gap-1 text-[11px] text-slate-500 xl:flex"><Kbd>←</Kbd><Kbd>→</Kbd> steps</span>
         </div>
         <Button variant="ghost" size="sm" onClick={() => onSelect(null)} aria-label="Close evidence"><X size={15} /></Button>
       </div>
