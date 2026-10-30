@@ -17,6 +17,30 @@ This is 72 scored live runs, 2 per model, mode and target. The sample is small, 
 
 **Total spend: US$0.59 of the US$2 ceiling**, including 2 smoke runs. OpenRouter's key usage rose by US$0.5870, which matches the recorded costs. No call lacked a reported cost, and every planned cell ran.
 
+## Addendum: Claude Haiku 5.5 (fixtures only)
+
+Haiku was added after the main batch, on the two local fixtures only, so its figures compare with the fixture rows below and not with the 12-run table above. The recommendation stays Gemini in `queue_review`.
+
+| Model | Mode | Known defects found | False confirmations | Goal met | Median run | Model latency p50 | US$ per run | Truncated replies |
+|---|---|---|---|---|---|---|---|---|
+| Gemini 3 Flash Preview | queue | 6/6 | 0 | 8/8 | 58 s | 2.2 s | 0.0295 | 6 |
+| Gemini 3 Flash Preview | single | 4/6 | 1 | 8/8 | 33 s | 2.1 s | 0.0093 | 2 |
+| **Haiku 5.5** | **queue** | **3/6** | **0** | **8/8** | **60 s** | **3.6 s** | **0.0053** | **1** |
+| **Haiku 5.5** | **single** | **3/6** | **0** | **8/8** | **40 s** | **2.6 s** | **0.0027** | **0** |
+| GPT-5 Nano | queue | 3/6 | 2 | 8/8 | 59 s | 2.7 s | 0.0035 | 2 |
+| GPT-5 Nano | single | 1/6 | 3 | 7/8 | 80 s | 3.7 s | 0.0030 | 1 |
+| DeepSeek V4 Flash | queue | 1/6 | 0 | 8/8 | 108 s | 7.3 s | 0.0053 | 54 |
+| DeepSeek V4 Flash | single | 0/6 | 0 | 8/8 | 75 s | 6.9 s | 0.0024 | 15 |
+
+- **Result:** Haiku had the cleanest output of the four: no unusable runs, 1 truncated reply and no false confirmations in 16 runs. All 8 corrected-build runs stayed clear.
+- **Detection:** it found D1 in all 4 Creator Studio broken runs, and DT2 in 2 of 4 Ticket Desk broken runs (rep 1 of each mode). It never found the cancelled-booking defect.
+- **Model settings:** ID `anthropic/claude-haiku-5.5`, US$0.10/0.50 per million tokens on the main providers. Same reasoning request as the other models. It has no temperature parameter, so temperature 0 was not applied. Prompts, assertions and limits were unchanged.
+- **Harness settings:** the run reservation was US$0.04, because US$0.17 would have allowed one run under the US$0.30 cap. It covers 100k input and 60k output tokens. All 16 runs were served by Claude Platform on AWS.
+- **Spend:** US$0.0670 of US$0.30, including 1 smoke run (`run_307817e31e18`). Key usage rose by US$0.0667.
+- **Limits:** 2 repetitions per cell. These runs followed the main batch and used a later commit, but the scenario was generated from the original and no prompt or assertion changed.
+
+Records: [`evaluation/results/model-comparison-haiku/`](../evaluation/results/model-comparison-haiku/) and [scenario_haiku.json](../evaluation/model-comparison/scenario_haiku.json).
+
 ## Method
 
 - **Models:** the current Gemini model plus two inexpensive alternatives. Prices and parameters were checked on OpenRouter's API on 2026-10-31 and are recorded in [scenario.json](../evaluation/model-comparison/scenario.json). Each run used one model for every role.
@@ -203,3 +227,24 @@ Medians across repetitions. Defects are found/known across runs; `n/a` means no 
 | DeepSeek | queue | the-internet | 2 | `run_3c5f2f67c320` | partial | yes | H1,H2 | – | n/a | unknown | 1 | 132 | 21 | 20486 | 11823 | 0.0050 | 7423/18448 | 2097/2961 | 8 | 8 |
 | GPT-5 Nano | queue | the-internet | 2 | `run_942e5c425edd` | partial | yes | H1,H2 | – | n/a | unknown | 1 | 103 | 21 | 20948 | 9553 | 0.0048 | 4899/6508 | 2146/3117 | 3 | 3 |
 | GPT-5 Nano | single | the-internet | 2 | `run_3a5db80d818c` | partial | no | H1,H2 | – | n/a | unknown | 1 | 106 | 14 | 21166 | 5102 | 0.0031 | 4246/6495 | 1835/2657 | 1 | 1 |
+
+### Haiku individual runs
+
+| Model | Mode | Target | Rep | Run | Status | Goal | Tested | Verified | Defects | False | Unfin. | s | Calls | In | Out | US$ | Model p50/p95 ms | Browser p50/p95 ms | Trunc. | Retries |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Haiku 5.5 | queue | creator-broken | 1 | `run_36a713835d66` | partial | yes | R3,R4,R5 | R5 | 1/1 | 0 | 3 | 75 | 24 | 32161 | 8345 | 0.0074 | 4198/7309 | 112/665 | 0 | 0 |
+| Haiku 5.5 | single | creator-broken | 1 | `run_520761cb0184` | completed | yes | R2,R3,R4,R5 | R5 | 1/1 | 0 | 0 | 48 | 9 | 15889 | 3107 | 0.0031 | 2728/5367 | 104/164 | 0 | 0 |
+| Haiku 5.5 | single | creator-corrected | 1 | `run_c23605d51a57` | completed | yes | R2,R3,R4,R5 | – | 0/0 | 0 | 0 | 42 | 9 | 14312 | 3048 | 0.0030 | 2586/4224 | 41/143 | 0 | 0 |
+| Haiku 5.5 | queue | creator-corrected | 1 | `run_f3bc0212f972` | partial | yes | R3,R4,R5 | – | 0/0 | 0 | 3 | 72 | 23 | 31085 | 8399 | 0.0073 | 4045/5149 | 122/1080 | 0 | 1 |
+| Haiku 5.5 | queue | ticket-broken | 1 | `run_57409b479aa2` | partial | yes | T2,T3,T5 | T2 | 1/2 | 0 | 1 | 54 | 18 | 22483 | 5695 | 0.0051 | 3523/4879 | 106/576 | 0 | 1 |
+| Haiku 5.5 | single | ticket-broken | 1 | `run_7bdf18a452de` | completed | yes | T2,T3,T4 | T2 | 1/2 | 0 | 0 | 38 | 8 | 13800 | 2670 | 0.0027 | 2638/3937 | 41/147 | 0 | 1 |
+| Haiku 5.5 | single | ticket-corrected | 1 | `run_64b885bfe644` | completed | yes | T2,T3,T4 | – | 0/0 | 0 | 0 | 31 | 7 | 11744 | 2462 | 0.0024 | 2614/4725 | 39/144 | 0 | 1 |
+| Haiku 5.5 | queue | ticket-corrected | 1 | `run_eb161404c9f3` | completed | yes | T2,T3 | – | 0/0 | 0 | 0 | 24 | 8 | 10390 | 2540 | 0.0023 | 3018/4943 | 110/215 | 0 | 0 |
+| Haiku 5.5 | single | creator-broken | 2 | `run_3696e1a7e2c3` | completed | yes | R3,R4,R5 | R5 | 1/1 | 0 | 0 | 49 | 10 | 16295 | 3704 | 0.0035 | 3007/4754 | 40/134 | 0 | 1 |
+| Haiku 5.5 | queue | creator-broken | 2 | `run_2e2413b2f04d` | partial | yes | R3,R4,R5 | R5 | 1/1 | 0 | 2 | 65 | 23 | 30516 | 8485 | 0.0073 | 3618/4887 | 110/575 | 0 | 0 |
+| Haiku 5.5 | queue | creator-corrected | 2 | `run_a6400f713c06` | partial | yes | R3,R4,R5 | – | 0/0 | 0 | 1 | 66 | 23 | 30396 | 8308 | 0.0072 | 3771/4530 | 109/611 | 0 | 0 |
+| Haiku 5.5 | single | creator-corrected | 2 | `run_95197f0db9f3` | completed | yes | R2,R3,R4,R5 | – | 0/0 | 0 | 0 | 42 | 9 | 15381 | 3190 | 0.0031 | 2623/5865 | 59/168 | 0 | 1 |
+| Haiku 5.5 | single | ticket-broken | 2 | `run_13d1f77808e7` | completed | yes | T2,T3,T4 | – | 0/2 | 0 | 0 | 28 | 6 | 9141 | 1609 | 0.0017 | 2729/5310 | 38/131 | 0 | 0 |
+| Haiku 5.5 | queue | ticket-broken | 2 | `run_8404dfb697b9` | completed | yes | T2,T3,T4 | – | 0/2 | 0 | 0 | 44 | 13 | 17198 | 4550 | 0.0040 | 3139/4741 | 107/484 | 1 | 1 |
+| Haiku 5.5 | queue | ticket-corrected | 2 | `run_1decb11fd77e` | completed | yes | T2,T3 | – | 0/0 | 0 | 0 | 21 | 8 | 9695 | 2134 | 0.0020 | 3025/4021 | 51/537 | 0 | 0 |
+| Haiku 5.5 | single | ticket-corrected | 2 | `run_cf2bf545f377` | completed | yes | T2,T3 | – | 0/0 | 0 | 0 | 27 | 6 | 9152 | 1563 | 0.0017 | 2384/4304 | 53/144 | 0 | 0 |

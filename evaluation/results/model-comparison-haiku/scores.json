@@ -1,0 +1,786 @@
+[
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_36a713835d66",
+  "wall_s": 75.1,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 3, 'skipped': 1, 'done': 14}; claimed by {'explorer-a': 6, 'explorer-b': 3, 'input-tester': 2, 'verifier': 5}; 6 test case(s), 5 candidate(s), verification {'confirmed': 1, 'inconclusive': 4}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Publish date one day before studio date is rejected {'Post title': 'Past boundary test', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 3,
+  "model_p50_ms": 4198,
+  "model_p95_ms": 7309,
+  "browser_p50_ms": 112,
+  "browser_p95_ms": 665,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 32161,
+  "out_tokens": 8345,
+  "cost": 0.007388600000000001,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_520761cb0184",
+  "wall_s": 47.5,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 3 candidate(s), verification: {'confirmed': 1, 'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past publish date rejected {'Post title': 'Past post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2728,
+  "model_p95_ms": 5367,
+  "browser_p50_ms": 104,
+  "browser_p95_ms": 164,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 15889,
+  "out_tokens": 3107,
+  "cost": 0.0031424,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_c23605d51a57",
+  "wall_s": 41.9,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2586,
+  "model_p95_ms": 4224,
+  "browser_p50_ms": 41,
+  "browser_p95_ms": 143,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 14312,
+  "out_tokens": 3048,
+  "cost": 0.0029552,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_f3bc0212f972",
+  "wall_s": 72.2,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 3, 'skipped': 1, 'done': 11}; claimed by {'explorer-a': 5, 'explorer-b': 4, 'input-tester': 2, 'verifier': 2}; 5 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 3,
+  "model_p50_ms": 4045,
+  "model_p95_ms": 5149,
+  "browser_p50_ms": 122,
+  "browser_p95_ms": 1080,
+  "calls": 23,
+  "failed_calls": 0,
+  "in_tokens": 31085,
+  "out_tokens": 8399,
+  "cost": 0.007308,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_57409b479aa2",
+  "wall_s": 54.5,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 2, 'done': 10}; claimed by {'explorer-a': 3, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 4 test case(s), 2 candidate(s), verification {'confirmed': 1, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T5"
+  ],
+  "reqs_verified": [
+   "T2"
+  ],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [
+   "DT2"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Tickets above maximum (7) {'Name': 'Ana Test', 'Email': 'ana@example.com', 'Tickets': '7'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 3523,
+  "model_p95_ms": 4879,
+  "browser_p50_ms": 106,
+  "browser_p95_ms": 576,
+  "calls": 18,
+  "failed_calls": 0,
+  "in_tokens": 22483,
+  "out_tokens": 5695,
+  "cost": 0.0050958,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_7bdf18a452de",
+  "wall_s": 37.8,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [
+   "T2"
+  ],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [
+   "DT2"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Tickets above maximum (7) {'Name': 'Test Visitor', 'Email': 'visitor@example.com', 'Tickets': '7'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2638,
+  "model_p95_ms": 3937,
+  "browser_p50_ms": 41,
+  "browser_p95_ms": 147,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 13800,
+  "out_tokens": 2670,
+  "cost": 0.002715,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_64b885bfe644",
+  "wall_s": 31.2,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2614,
+  "model_p95_ms": 4725,
+  "browser_p50_ms": 39,
+  "browser_p95_ms": 144,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 11744,
+  "out_tokens": 2462,
+  "cost": 0.0024054,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_eb161404c9f3",
+  "wall_s": 24.5,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 7}; claimed by {'explorer-a': 2, 'explorer-b': 1, 'input-tester': 1, 'verifier': 3}; 3 test case(s), 3 candidate(s), verification {'inconclusive': 3}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3018,
+  "model_p95_ms": 4943,
+  "browser_p50_ms": 110,
+  "browser_p95_ms": 215,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 10390,
+  "out_tokens": 2540,
+  "cost": 0.0023090000000000003,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_3696e1a7e2c3",
+  "wall_s": 48.6,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 3 candidate(s), verification: {'confirmed': 1, 'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date one day before studio date rejected {'Post title': 'Past boundary post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 3007,
+  "model_p95_ms": 4754,
+  "browser_p50_ms": 40,
+  "browser_p95_ms": 134,
+  "calls": 10,
+  "failed_calls": 0,
+  "in_tokens": 16295,
+  "out_tokens": 3704,
+  "cost": 0.0034815000000000002,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_2e2413b2f04d",
+  "wall_s": 64.9,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 2, 'skipped': 1, 'done': 15}; claimed by {'explorer-a': 5, 'explorer-b': 3, 'input-tester': 2, 'verifier': 5}; 6 test case(s), 5 candidate(s), verification {'confirmed': 1, 'inconclusive': 4}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Publish date one day before studio date {'Post title': 'Past boundary test', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 2,
+  "model_p50_ms": 3618,
+  "model_p95_ms": 4887,
+  "browser_p50_ms": 110,
+  "browser_p95_ms": 575,
+  "calls": 23,
+  "failed_calls": 0,
+  "in_tokens": 30516,
+  "out_tokens": 8485,
+  "cost": 0.0072940999999999995,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_a6400f713c06",
+  "wall_s": 66.3,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 1, 'done': 13}; claimed by {'explorer-a': 6, 'explorer-b': 5, 'input-tester': 2, 'verifier': 1}; 4 test case(s), 1 candidate(s), verification {'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 3771,
+  "model_p95_ms": 4530,
+  "browser_p50_ms": 109,
+  "browser_p95_ms": 611,
+  "calls": 23,
+  "failed_calls": 0,
+  "in_tokens": 30396,
+  "out_tokens": 8308,
+  "cost": 0.007193599999999998,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_95197f0db9f3",
+  "wall_s": 42.0,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 3 candidate(s), verification: {'inconclusive': 3}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2623,
+  "model_p95_ms": 5865,
+  "browser_p50_ms": 59,
+  "browser_p95_ms": 168,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 15381,
+  "out_tokens": 3190,
+  "cost": 0.0031330999999999998,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_13d1f77808e7",
+  "wall_s": 28.1,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2729,
+  "model_p95_ms": 5310,
+  "browser_p50_ms": 38,
+  "browser_p95_ms": 131,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 9141,
+  "out_tokens": 1609,
+  "cost": 0.0017186,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_8404dfb697b9",
+  "wall_s": 44.0,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 7}; claimed by {'explorer-a': 2, 'explorer-b': 3, 'input-tester': 1, 'verifier': 1}; 3 test case(s), 1 candidate(s), verification {'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3139,
+  "model_p95_ms": 4741,
+  "browser_p50_ms": 107,
+  "browser_p95_ms": 484,
+  "calls": 13,
+  "failed_calls": 0,
+  "in_tokens": 17198,
+  "out_tokens": 4550,
+  "cost": 0.0039948,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_1decb11fd77e",
+  "wall_s": 20.8,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 4}; claimed by {'explorer-a': 2, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3025,
+  "model_p95_ms": 4021,
+  "browser_p50_ms": 51,
+  "browser_p95_ms": 537,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 9695,
+  "out_tokens": 2134,
+  "cost": 0.0020365,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ },
+ {
+  "model": "anthropic/claude-haiku-5.5",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_cf2bf545f377",
+  "wall_s": 26.9,
+  "unusable": false,
+  "git": "069e9508bda3f2a47c5330251e54c40639c9ea69",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2384,
+  "model_p95_ms": 4304,
+  "browser_p50_ms": 53,
+  "browser_p95_ms": 144,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 9152,
+  "out_tokens": 1563,
+  "cost": 0.0016967000000000002,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "anthropic/claude-haiku-5.5"
+  ],
+  "providers": [
+   "Claude Platform on AWS"
+  ]
+ }
+]
