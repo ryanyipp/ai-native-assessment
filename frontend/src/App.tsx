@@ -29,6 +29,7 @@ function originOf(url: string) {
   try { return new URL(url).origin.toLowerCase() } catch { return null }
 }
 
+const DEMO_RUN = 'run_a572a9bf88c5'
 const STOPPED = new Set(['failed', 'partial', 'interrupted'])
 
 const MODE_LABEL: Record<string, string> = {
@@ -169,6 +170,8 @@ export default function App() {
   const [railOpen, setRailOpen] = useState(() => window.innerWidth >= 1600)
   const [showThumbs, setShowThumbs] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
+  const [demosMissing, setDemosMissing] = useState(false)
+  const demosRequested = useRef(new URLSearchParams(location.search).has('demos'))
   const inspectorRef = useRef<HTMLDivElement>(null)
   const splitRef = useRef<HTMLDivElement>(null)
   const sidebar = useSidebarWidth(splitRef)
@@ -201,6 +204,7 @@ export default function App() {
     load()
     const url = new URL(location.href)
     url.searchParams.set('run', runId)
+    url.searchParams.delete('demos')
     history.replaceState(null, '', url)
     return () => {
       cancelled = true
@@ -237,6 +241,18 @@ export default function App() {
     setRunId(id)
     if (window.innerWidth < 1280) setRailOpen(false)
   }, [])
+
+  // "Explore recorded demos" opens the confirmed-defect demo, or says how to load the bundle.
+  useEffect(() => {
+    if (!demosRequested.current || runsLoading) return
+    demosRequested.current = false
+    const demos = runs.filter((r) => r.imported_from)
+    const demo = demos.find((r) => r.id === DEMO_RUN) ?? demos[0]
+    if (demo) {
+      openRun(demo.id)
+      if (window.innerWidth >= 1280) setRailOpen(true)
+    } else setDemosMissing(true)
+  }, [runs, runsLoading, openRun])
 
   const select = useCallback((s: Selection) => {
     setSelection(s)
@@ -290,11 +306,11 @@ export default function App() {
           <Button variant="ghost" size="sm" onClick={() => setRailOpen((o) => !o)} aria-label={railOpen ? 'Hide run history' : 'Show run history'} aria-expanded={railOpen} aria-controls="run-rail">
             <PanelLeft size={16} />
           </Button>
-          <div className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-900 text-white"><Waypoints size={14} aria-hidden /></span>
             <span className="text-sm font-semibold tracking-tight">FlowLens</span>
             <span className="hidden text-xs text-slate-500 sm:inline">AI website reviewer</span>
-          </div>
+          </a>
           <div className="ml-auto flex items-center gap-3">
             {health ? (
               <Tooltip content={`Model calls are made only by the backend. Credit pool: ${fmtUsd(health.spent_reported_usd, 4)} spent of ${fmtUsd(health.budget_usd, 2)}.`}>
@@ -332,6 +348,9 @@ export default function App() {
           <main className="flex min-w-0 flex-1 flex-col">
             {healthError && !detail && (
               <div className="p-4"><Callout tone="red" title="Cannot reach the backend">{healthError} Start it with <code className="font-mono">uvicorn flowlens.main:app --port 8000</code> from <code className="font-mono">backend/</code>.</Callout></div>
+            )}
+            {demosMissing && !healthError && !runId && (
+              <div className="p-4 pb-0"><Callout tone="amber" title="No recorded demos are loaded">Load them with <code className="font-mono">python -m flowlens.demo load</code> from <code className="font-mono">backend/</code> (no API key needed), then refresh. Docker Compose loads them automatically.</Callout></div>
             )}
             {setupOpen || !runId ? (
               <div className="flex min-h-0 flex-1 max-lg:flex-col">

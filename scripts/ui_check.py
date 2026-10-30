@@ -184,7 +184,7 @@ async def main() -> None:
 
         # Backend down: simulated by failing every API request.
         await page.route("**/api/**", lambda r: r.abort())
-        await page.goto(f"{UI}/")
+        await page.goto(f"{UI}/workspace")
         await expect(page.get_by_role("status").filter(has_text="Backend unreachable")).to_be_visible()
         check("backend outage is shown", await page.get_by_text("Cannot reach the backend").is_visible())
         await page.screenshot(path=OUT / "after-backend-unreachable.png")

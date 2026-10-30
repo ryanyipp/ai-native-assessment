@@ -52,7 +52,7 @@ async def main():
         page = await (await browser.new_context(viewport={"width": 1440, "height": 900})).new_page()
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
-        await page.goto(UI + "/")
+        await page.goto(UI + "/workspace")
         panel = page.get_by_role("complementary", name="New review run")
         await expect(panel).to_be_visible(timeout=30000)
         check("launcher disables live runs without a key", await panel.get_by_role("button", name="Start live run").is_disabled()

@@ -118,7 +118,7 @@ cd backend; .\.venv\Scripts\python -m flowlens.demo load
 - **No API key and no model or website calls:** it copies records into the configured database and artifacts folder.
 - **Repeat-safe:** runs that already exist are skipped; `--replace` re-imports them.
 - **Labelled:** every loaded run is marked as imported. The run header shows **Recorded demo result**, Diagnostics and the report say where it came from, and nothing is re-run.
-- **Viewing them:** open a run from the run history and use Map, Browser, Evidence, Activity, Findings and **Report**. The map, screenshots and reports come from the saved records.
+- **Viewing them:** choose **Explore recorded demos** on the landing page (`/`), or open a run from the run history and use Map, Browser, Evidence, Activity, Findings and **Report**. The map, screenshots and reports come from the saved records.
 - **Making new runs:** that still needs the fixtures and an API key.
 
 Maintainers re-export with `python -m flowlens.demo export RUN_ID ... --note RUN_ID=TEXT`. It reads the current database and writes into `demo/`. Check the bundle for secrets before committing.

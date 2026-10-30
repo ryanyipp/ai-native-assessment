@@ -49,7 +49,7 @@ async def axe(page, label):
 async def launcher_checks(page):
     # Start from an unapproved state so the approval flow is exercised.
     httpx.delete(f"{API}/api/origins", params={"origin": ORIGIN}, timeout=10)
-    await page.goto(UI + "/")
+    await page.goto(UI + "/workspace")
     panel = page.get_by_role("complementary", name="New review run")
     url = panel.get_by_label("Target website")
     prev = page.get_by_role("region", name="Browser preview")

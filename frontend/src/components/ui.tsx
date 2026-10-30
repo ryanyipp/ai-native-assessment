@@ -1,31 +1,19 @@
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { AlertTriangle, CheckCircle2, CircleDashed, CircleSlash, Loader2, PauseCircle, XCircle } from 'lucide-react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { cx, provenanceOf, type Tone } from '../lib/ui-utils'
+import { buttonClass, cx, provenanceOf, type ButtonSize, type ButtonVariant, type Tone } from '../lib/ui-utils'
 import type { Run, RunStatus } from '../lib/types'
 
 
-type Variant = 'primary' | 'secondary' | 'ghost'
-const variants: Record<Variant, string> = {
-  primary: 'bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-300 disabled:text-slate-500',
-  secondary: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 disabled:text-slate-500',
-  ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:text-slate-300',
-}
-
 export function Button({ variant = 'secondary', size = 'md', className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: Variant
-  size?: 'sm' | 'md'
+  variant?: ButtonVariant
+  size?: ButtonSize
 }) {
   return (
     <button
       type="button"
       {...rest}
-      className={cx(
-        'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors disabled:cursor-not-allowed',
-        size === 'sm' ? 'h-7 px-2 text-xs' : 'h-9 px-3 text-sm',
-        variants[variant],
-        className,
-      )}
+      className={cx(buttonClass(variant, size), className)}
     />
   )
 }

@@ -22,7 +22,7 @@ def check(name, ok, detail=""):
 
 async def run(page, w, h):
     await page.set_viewport_size({"width": w, "height": h})
-    await page.goto(UI + "/")
+    await page.goto(UI + "/workspace")
     panel = page.get_by_role("complementary", name="New review run")
     await panel.wait_for()
     await panel.get_by_label("Shared queue: two explorers, tester, verifier").check()

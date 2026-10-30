@@ -20,7 +20,7 @@ cd frontend; npm ci; cd ..
 # then start the fixtures, backend and frontend as in docs/setup.md
 ```
 
-No API key is needed to inspect the recorded demo runs (labelled **Recorded demo result**). Live runs need `OPENROUTER_API_KEY` in `.env` (copy `.env.example`; never commit `.env`). Open http://localhost:5173, keep the default target `http://localhost:5174/` and goal, and click **Start live run**.
+No API key is needed to inspect the recorded demo runs (labelled **Recorded demo result**). Live runs need `OPENROUTER_API_KEY` in `.env` (copy `.env.example`; never commit `.env`). Open http://localhost:5173, choose **Start a review** (the workspace is at `/workspace`; old `/?run=ID` links redirect there), keep the default target `http://localhost:5174/` and goal, and click **Start live run**.
 
 ## Checks
 

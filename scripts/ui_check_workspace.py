@@ -45,7 +45,7 @@ async def axe(page: Page, label: str):
 
 
 async def setup_checks(page):
-    await page.goto(UI + "/")
+    await page.goto(UI + "/workspace")
     panel = page.get_by_role("complementary", name="New review run")
     await expect(panel).to_be_visible()
     check("pre-run: settings panel shows model and limits",
