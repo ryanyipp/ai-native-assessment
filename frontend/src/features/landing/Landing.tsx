@@ -1,5 +1,4 @@
-import { ArrowRight, ExternalLink, FileSearch, Film, History, Users, Waypoints } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { ArrowRight, ExternalLink, Film, History, Waypoints } from 'lucide-react'
 import { buttonClass } from '../../lib/ui-utils'
 
 const REPOSITORY_URL = 'https://github.com/ryanyipp/ai-native-assessment'
@@ -9,12 +8,6 @@ const REPOSITORY_URL = 'https://github.com/ryanyipp/ai-native-assessment'
  * and set src to '/flowlens-demo.mp4'. poster is optional. Controls are on and it never autoplays.
  */
 const DEMO_VIDEO = null as { src: string; poster?: string } | null
-
-const FEATURES: { icon: ReactNode; title: string; text: string }[] = [
-  { icon: <Waypoints size={18} aria-hidden />, title: 'Map user journeys', text: 'See the pages, states and transitions the agents actually observed.' },
-  { icon: <Users size={18} aria-hidden />, title: 'Test with cooperating agents', text: 'Explorers hand forms to a tester, and a verifier re-checks suspected issues.' },
-  { icon: <FileSearch size={18} aria-hidden />, title: 'Inspect evidence-backed findings', text: 'Open the screenshots, actions and outcomes behind each finding.' },
-]
 
 function DemoVideo() {
   if (DEMO_VIDEO) {
@@ -59,17 +52,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section aria-label="What FlowLens does" className="grid gap-4 md:grid-cols-3">
-          {FEATURES.map((f) => (
-            <article key={f.title} className="rounded-xl border border-slate-200 bg-white p-5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-700">{f.icon}</span>
-              <h2 className="mt-3 text-sm font-semibold text-slate-900">{f.title}</h2>
-              <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{f.text}</p>
-            </article>
-          ))}
-        </section>
-
-        <section aria-labelledby="demo-video-title" className="mx-auto max-w-3xl py-12">
+        <section aria-labelledby="demo-video-title" className="max-w-3xl pb-12">
           <h2 id="demo-video-title" className="mb-4 text-lg font-semibold tracking-tight text-slate-900">Demo video</h2>
           <DemoVideo />
         </section>
