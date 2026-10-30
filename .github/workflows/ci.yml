@@ -1,0 +1,48 @@
+# Offline checks: local fixtures and mocked models only. No secrets are configured or needed.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      # A dead local address and no key: a test that reached for a real model would fail, not spend.
+      OPENROUTER_API_KEY: ""
+      OPENROUTER_BASE_URL: http://127.0.0.1:9/api/v1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      # Chromium matching the locked Playwright version, with its system libraries.
+      - run: uv run --frozen python -m playwright install --with-deps chromium
+      - run: uv run --frozen pytest -q
+
+  frontend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

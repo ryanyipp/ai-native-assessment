@@ -132,6 +132,15 @@ cd frontend; npm run build; npm run lint
 
 `scripts/ui_check_*.py` are browser checks against saved runs, with the backend and frontend running. Only `ui_check_workspace.py --live` and `ui_check_public_site.py --live` start live runs.
 
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests, on Ubuntu with no secrets:
+
+- **Backend:** `uv sync --frozen`, Chromium for the locked Playwright version, then `pytest`. Browser tests drive the local fixture apps and agents use mocked model clients. The model URL points at a dead local port and the key is empty, so no paid call can succeed.
+- **Frontend:** `npm ci`, `npm run lint`, `npm run build`.
+
+CI does not cover live model runs, the evaluation batches, `scripts/ui_check_*.py`, Docker Compose or public websites. A green run means these automated checks passed, not that a live review works.
+
 ## Which setup paths have been tested
 
 See `docs/setup-verification.md`: native setup and Docker Compose, each from a clean clone on Windows 11.
