@@ -19,9 +19,10 @@ import {
   type NodeProps,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { Flag, Image as ImageIcon, MousePointerClick, Navigation, PencilLine, RotateCw } from 'lucide-react'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronsDownUp, ChevronsUpDown, Flag, Image as ImageIcon, Layers, MousePointerClick, Navigation, PencilLine, RotateCw } from 'lucide-react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Thumb } from '../../components/Screenshot'
+import { buildDecks, collapsedKeys, deckKey, type Deck } from '../../lib/decks'
 import { cx } from '../../lib/ui-utils'
 import type { RunDetail, ScreenState, Transition } from '../../lib/types'
 
@@ -29,8 +30,73 @@ export type Selection = { kind: 'state'; id: string } | { kind: 'transition'; id
 
 const NODE_W = 232
 const NODE_H = 188
+const DECK_PREFIX = 'deck:'
 
-type StateNodeData = { state: ScreenState; selected: boolean; dimmed: boolean; isStart: boolean; showThumb: boolean }
+type StateNodeData = {
+  state: ScreenState; selected: boolean; dimmed: boolean; isStart: boolean; showThumb: boolean
+  deck?: { size: number; onCollapse: () => void } // set on the first state of an expanded multi-state deck
+}
+type DeckNodeData = {
+  deck: Deck; selected: boolean; dimmed: boolean; isStart: boolean; showThumb: boolean; onExpand: () => void
+}
+
+const FINDING_TONE: Record<string, [string, string]> = {
+  confirmed: ['bg-red-100 text-red-800', 'confirmed'],
+  unverified: ['bg-amber-100 text-amber-900', 'unverified'],
+  inconclusive: ['bg-slate-200 text-slate-800', 'inconclusive'],
+  not_reproduced: ['bg-emerald-100 text-emerald-800', 'not reproduced'],
+}
+
+/** A collapsed deck: several observed states of one page or form, drawn as stacked cards. */
+const DeckNode = memo(function DeckNode({ data }: NodeProps<Node<DeckNodeData>>) {
+  const dk = data.deck
+  const rep = dk.states[0]
+  const findings = Object.entries(dk.findings).filter(([, n]) => n > 0)
+  return (
+    <div className={cx('relative transition-opacity duration-200', data.dimmed && 'opacity-70')} style={{ width: NODE_W }}>
+      {/* Stacked-card edges behind the top card. */}
+      <div aria-hidden className="absolute inset-0 translate-x-2 translate-y-2 rounded-xl border border-slate-200 bg-slate-50" />
+      <div aria-hidden className="absolute inset-0 translate-x-1 translate-y-1 rounded-xl border border-slate-200 bg-white" />
+      <div className={cx('relative overflow-hidden rounded-xl border bg-white shadow-sm',
+        data.selected ? 'border-accent-500 shadow-[0_0_0_3px_var(--color-accent-100)]' : 'border-slate-300 hover:shadow-md')}>
+        <Handle type="target" position={Position.Left} className="!h-2 !w-2 !border-0 !bg-slate-300" />
+        {data.showThumb && <Thumb id={rep.screenshot_artifact_id} alt="" className="h-[92px] w-full border-b border-slate-100" />}
+        <div className="space-y-1.5 px-3 py-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 text-[13px] font-semibold leading-tight text-slate-900">
+              <span className="block truncate" title={dk.heading}>{dk.heading}</span>
+              <span className="block truncate font-mono text-[10.5px] font-normal text-slate-500">{dk.route}</span>
+            </div>
+            {data.isStart && (
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                <Flag size={10} aria-hidden /> Start
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-1 text-[10.5px]">
+            <span className="inline-flex items-center gap-1 rounded bg-slate-900 px-1.5 py-0.5 font-medium text-white">
+              <Layers size={10} aria-hidden />{dk.states.length} observed states
+            </span>
+            {dk.testCases > 0 && <span className="rounded bg-amber-50 px-1.5 py-0.5 font-medium text-amber-900 ring-1 ring-inset ring-amber-200">
+              {dk.testCases} test{dk.testCases === 1 ? '' : 's'} recorded</span>}
+            {findings.map(([st, n]) => (
+              <span key={st} className={cx('rounded px-1.5 py-0.5 font-medium', FINDING_TONE[st]?.[0] ?? 'bg-slate-100')}>
+                {n} {FINDING_TONE[st]?.[1] ?? st}
+              </span>
+            ))}
+            {dk.active && <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">active</span>}
+          </div>
+          <button type="button" onClick={(e) => { e.stopPropagation(); data.onExpand() }} aria-expanded={false}
+            className="nodrag inline-flex items-center gap-1 rounded-md border border-slate-200 px-1.5 py-0.5 text-[11px] font-medium text-slate-700 hover:bg-slate-50">
+            <ChevronsUpDown size={12} aria-hidden />Expand {dk.states.length} states
+            {dk.innerMoves > 0 && <span className="font-normal text-slate-500">· {dk.innerMoves} moves inside</span>}
+          </button>
+        </div>
+        <Handle type="source" position={Position.Right} className="!h-2 !w-2 !border-0 !bg-slate-300" />
+      </div>
+    </div>
+  )
+})
 type TransitionEdgeData = {
   transition: Transition
   loopIndex: number
@@ -80,6 +146,12 @@ const StateNode = memo(function StateNode({ data }: NodeProps<Node<StateNodeData
             </span>
           )}
         </div>
+        {data.deck && (
+          <button type="button" onClick={(e) => { e.stopPropagation(); data.deck!.onCollapse() }} aria-expanded
+            className="nodrag inline-flex items-center gap-1 rounded-md border border-slate-200 px-1.5 py-0.5 text-[11px] font-medium text-slate-700 hover:bg-slate-50">
+            <ChevronsDownUp size={12} aria-hidden />Collapse {data.deck.size} states of this page
+          </button>
+        )}
         <div className="flex items-center justify-between gap-2 font-mono text-[10.5px] text-slate-500">
           <span className="truncate">{s.route}</span>
           <span className="shrink-0">step {s.first_seen_step}</span>
@@ -103,7 +175,7 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
   let path: string
   let lx: number
   let ly: number
-  if (t.source_state_id === t.target_state_id) {
+  if (props.source === props.target) {
     // Self-loop drawn over the top of the node; stacked if several.
     const lift = d.nodeH / 2 + 46 + d.loopIndex * 36
     const top = sourceY - lift
@@ -165,7 +237,7 @@ function TransitionEdge(props: EdgeProps<Edge<TransitionEdgeData>>) {
   )
 }
 
-const nodeTypes = { state: StateNode }
+const nodeTypes = { state: StateNode, deck: DeckNode }
 const edgeTypes = { transition: TransitionEdge }
 
 const COL_GAP = 170
@@ -180,14 +252,14 @@ const nodeHeight = (thumbs: boolean) => (thumbs ? NODE_H : 80)
  * is chosen to maximise the fit-to-view zoom for the measured panel size.
  * Self-loops are excluded from ranking and drawn over their node.
  */
-function layoutStates(detail: RunDetail, size: { w: number; h: number }, thumbs: boolean) {
+function layoutStates(ids: string[], links: { id: string; source: string; target: string }[], size: { w: number; h: number }, thumbs: boolean) {
   const nodeH = nodeHeight(thumbs)
   const g = new graphlib.Graph({ multigraph: true })
   g.setGraph({ rankdir: 'LR', ranksep: 100, nodesep: 70 })
   g.setDefaultEdgeLabel(() => ({}))
-  for (const s of detail.states) g.setNode(s.id, { width: NODE_W, height: nodeH })
-  for (const t of detail.transitions) {
-    if (t.source_state_id !== t.target_state_id) g.setEdge(t.source_state_id, t.target_state_id, { width: 150, height: 24 }, t.id)
+  for (const id of ids) g.setNode(id, { width: NODE_W, height: nodeH })
+  for (const t of links) {
+    if (t.source !== t.target) g.setEdge(t.source, t.target, { width: 150, height: 24 }, t.id)
   }
   layout(g)
 
@@ -267,7 +339,40 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
   compact?: boolean // docked mini map: no legend or toolbar
 }) {
   const [wrapRef, size] = useSize<HTMLDivElement>()
-  const { pos: positions, columns } = useMemo(() => layoutStates(detail, size, showThumbs), [detail, size, showThumbs])
+  // Card decks (visual grouping only). Manual expand/collapse choices win over the automatic
+  // default and are kept until the run changes.
+  const [manual, setManual] = useState(() => ({ run: detail.run.id, map: new Map<string, boolean>() }))
+  if (manual.run !== detail.run.id) setManual({ run: detail.run.id, map: new Map() })
+  const decks = useMemo(() => buildDecks(detail), [detail])
+  const collapsed = useMemo(() => collapsedKeys(decks, manual.map), [decks, manual])
+  const [regrouping, setRegrouping] = useState(false)
+  const regroupTimer = useRef<number | undefined>(undefined)
+  const setDeck = useCallback((keys: string[], expanded: boolean) => {
+    setManual((m) => {
+      const map = new Map(m.map)
+      for (const k of keys) map.set(k, expanded)
+      return { run: m.run, map }
+    })
+    setRegrouping(true)
+    window.clearTimeout(regroupTimer.current)
+    regroupTimer.current = window.setTimeout(() => setRegrouping(false), 400)
+  }, [])
+  const multiDecks = useMemo(() => [...decks.values()].filter((dk) => dk.states.length > 1).map((dk) => dk.key), [decks])
+  // Each state is drawn as itself or as its collapsed deck.
+  const visibleId = useCallback((stateId: string) => {
+    const s = detail.states.find((x) => x.id === stateId)
+    const k = s ? deckKey(s) : ''
+    return collapsed.has(k) ? DECK_PREFIX + k : stateId
+  }, [detail, collapsed])
+  const view = useMemo(() => {
+    const ids = [...new Set(detail.states.map((s) => visibleId(s.id)))]
+    // Moves between states inside one collapsed deck are counted on the deck instead of drawn.
+    const links = detail.transitions
+      .map((t) => ({ id: t.id, source: visibleId(t.source_state_id), target: visibleId(t.target_state_id), inner: t.source_state_id !== t.target_state_id }))
+      .filter((l) => !(l.inner && l.source === l.target && l.source.startsWith(DECK_PREFIX)))
+    return { ids, links }
+  }, [detail, visibleId])
+  const { pos: positions, columns } = useMemo(() => layoutStates(view.ids, view.links, size, showThumbs), [view, size, showThumbs])
   const startId = useMemo(() => [...detail.states].sort((a, b) => a.first_seen_step - b.first_seen_step)[0]?.id, [detail])
 
   // Records accepted after the map first rendered are marked new so they animate once.
@@ -302,8 +407,21 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
       }
     }
     const hasFocus = selection !== null
+    const focusVisible = new Set([...focusStates].map(visibleId))
+    const selectedVisible = selection?.kind === 'state' ? visibleId(selection.id) : null
 
-    const nodes: Node<StateNodeData>[] = detail.states.map((s) => ({
+    const deckNodes: Node<DeckNodeData>[] = [...collapsed].map((k) => {
+      const dk = decks.get(k)!
+      const id = DECK_PREFIX + k
+      return {
+        id, type: 'deck', position: positions.get(id) ?? { x: 0, y: 0 },
+        className: 'fl-deck-in',
+        ariaLabel: `Deck: ${dk.heading}, ${dk.states.length} observed states, route ${dk.route}. Activate to expand.`,
+        data: { deck: dk, selected: selectedVisible === id, dimmed: hasFocus && !focusVisible.has(id),
+          isStart: dk.states.some((s) => s.id === startId), showThumb: showThumbs, onExpand: () => setDeck([k], true) },
+      }
+    })
+    const stateNodes: Node<StateNodeData>[] = detail.states.filter((s) => !collapsed.has(deckKey(s))).map((s) => ({
       id: s.id,
       type: 'state',
       position: positions.get(s.id) ?? { x: 0, y: 0 },
@@ -315,23 +433,33 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         dimmed: hasFocus && !focusStates.has(s.id),
         isStart: s.id === startId,
         showThumb: showThumbs,
+        deck: (() => {
+          const dk = decks.get(deckKey(s))
+          return dk && dk.states.length > 1 && dk.states[0].id === s.id
+            ? { size: dk.states.length, onCollapse: () => setDeck([dk.key], false) } : undefined
+        })(),
       },
     }))
+    const nodes: Node[] = [...stateNodes, ...deckNodes]
+    const shown = new Set(view.links.map((l) => l.id))
     const loops = new Map<string, number>()
     const pairs = new Map<string, number>()
     const edges: Edge<TransitionEdgeData>[] = [...detail.transitions]
+      .filter((t) => shown.has(t.id))
       .sort((a, b) => a.step - b.step)
       .map((t) => {
-        const self = t.source_state_id === t.target_state_id
-        const key = self ? t.source_state_id : `${t.source_state_id}>${t.target_state_id}`
+        const source = visibleId(t.source_state_id)
+        const target = visibleId(t.target_state_id)
+        const self = source === target
+        const key = self ? source : `${source}>${target}`
         const bucket = self ? loops : pairs
         const index = bucket.get(key) ?? 0
         bucket.set(key, index + 1)
         const selected = selection?.kind === 'transition' && selection.id === t.id
         return {
           id: t.id,
-          source: t.source_state_id,
-          target: t.target_state_id,
+          source,
+          target,
           type: 'transition',
           className: fresh.has(t.id) ? 'fl-new-edge' : undefined,
           markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: !t.ok ? '#ef4444' : selected ? '#3b6ef5' : PHASE_STROKE[t.phase ?? ''] ?? '#94a3b8' },
@@ -347,16 +475,16 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         }
       })
     return { nodes, edges }
-  }, [detail, positions, selection, onSelect, startId, showThumbs, fresh])
+  }, [detail, positions, selection, onSelect, startId, showThumbs, fresh, collapsed, decks, visibleId, view, setDeck])
 
   return (
-    <div ref={wrapRef} className="h-full w-full">
+    <div ref={wrapRef} className={cx('h-full w-full', regrouping && 'fl-regroup')}>
     <ReactFlow
       nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
-      onNodeClick={(_, n) => onSelect({ kind: 'state', id: n.id })}
+      onNodeClick={(_, n) => (n.id.startsWith(DECK_PREFIX) ? setDeck([n.id.slice(DECK_PREFIX.length)], true) : onSelect({ kind: 'state', id: n.id }))}
       onEdgeClick={(_, e) => onSelect({ kind: 'transition', id: e.id })}
       onPaneClick={() => onSelect(null)}
       onMoveStart={(e) => { if (e) setFollow(false) }}
@@ -368,7 +496,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
       fitViewOptions={{ padding: 0.2 }}
       proOptions={{ hideAttribution: true }}
     >
-      {follow && <FitOnLayoutChange layoutKey={`${detail.run.id}:${detail.states.length}:${columns}:${showThumbs}:${size.w}x${size.h}`} />}
+      {follow && <FitOnLayoutChange layoutKey={`${detail.run.id}:${detail.states.length}:${columns}:${showThumbs}:${size.w}x${size.h}:${view.ids.length}`} />}
       <Background gap={20} size={1} color="var(--color-slate-200)" />
       <Controls showInteractive={false} position="bottom-left" className="!rounded-md !border !border-slate-200 !shadow-sm" fitViewOptions={{ padding: 0.2, duration: 250 }} />
       {detail.states.length >= 8 && <MiniMap
@@ -376,22 +504,27 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         pannable
         zoomable
         ariaLabel="Map overview"
-        nodeColor={(n) => ((n.data as StateNodeData).selected ? '#3b6ef5' : '#cbd5e1')}
+        nodeColor={(n) => ((n.data as StateNodeData).selected ? '#3b6ef5' : n.type === 'deck' ? '#64748b' : '#cbd5e1')}
         nodeBorderRadius={6}
         className="!rounded-md !border !border-slate-200 !shadow-sm"
         style={{ width: 160, height: 100 }}
       />}
       {!compact && <Panel position="top-left" className="!m-3">
         <MapToolbar showThumbs={showThumbs} onToggleThumbs={onToggleThumbs} follow={follow} onToggleFollow={() => setFollow((f) => !f)}
-          phases={new Set(detail.transitions.map((t) => t.phase ?? 'explore'))} />
+          phases={new Set(detail.transitions.map((t) => t.phase ?? 'explore'))}
+          decks={multiDecks.length > 0 ? {
+            total: multiDecks.length, collapsed: collapsed.size,
+            expandAll: () => setDeck(multiDecks, true), collapseAll: () => setDeck(multiDecks, false),
+          } : null} />
       </Panel>}
     </ReactFlow>
     </div>
   )
 }
 
-function MapToolbar({ showThumbs, onToggleThumbs, phases, follow, onToggleFollow }: {
+function MapToolbar({ showThumbs, onToggleThumbs, phases, follow, onToggleFollow, decks }: {
   showThumbs: boolean; onToggleThumbs: () => void; phases: Set<string>; follow: boolean; onToggleFollow: () => void
+  decks: { total: number; collapsed: number; expandAll: () => void; collapseAll: () => void } | null
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-white/95 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 shadow-sm backdrop-blur">
@@ -409,6 +542,19 @@ function MapToolbar({ showThumbs, onToggleThumbs, phases, follow, onToggleFollow
         className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900">
         Follow new pages
       </button>
+      {decks && (
+        <span className="inline-flex items-center gap-1" role="group" aria-label="Card decks">
+          <span className="text-slate-500" aria-live="polite">{decks.collapsed} of {decks.total} decks collapsed</span>
+          <button type="button" onClick={decks.expandAll} disabled={decks.collapsed === 0}
+            className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+            <ChevronsUpDown size={12} aria-hidden />Expand all
+          </button>
+          <button type="button" onClick={decks.collapseAll} disabled={decks.collapsed === decks.total}
+            className="inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 px-1.5 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+            <ChevronsDownUp size={12} aria-hidden />Collapse all
+          </button>
+        </span>
+      )}
     </div>
   )
 }

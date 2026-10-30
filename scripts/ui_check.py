@@ -6,13 +6,14 @@ Usage (repo root):
 """
 
 import asyncio
+import os
 import json
 import sys
 from pathlib import Path
 
 from playwright.async_api import Page, async_playwright, expect
 
-UI = "http://localhost:5173"
+UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 RUN = sys.argv[1] if len(sys.argv) > 1 else "run_e957eab8645e"
 OUT = Path(sys.argv[2] if len(sys.argv) > 2 else "docs/ui-iteration")
 AXE = Path(__file__).resolve().parents[1] / "frontend" / "node_modules" / "axe-core" / "axe.min.js"
@@ -32,6 +33,14 @@ async def axe(page: Page, label: str) -> None:
     check(f"axe {label}: no serious/critical violations", not serious, json.dumps(res))
 
 
+async def expand_all(page):
+    """Card decks collapse related states; per-state checks expand them first (display only)."""
+    b = page.get_by_role("button", name="Expand all")
+    if await b.count() and await b.is_enabled():
+        await b.click()
+        await page.wait_for_timeout(500)
+
+
 async def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
@@ -44,6 +53,7 @@ async def main() -> None:
         await page.goto(f"{UI}/?run={RUN}")
         await page.wait_for_selector(".react-flow__node")
         await page.wait_for_timeout(600)
+        await expand_all(page)
         check("map renders states", await page.locator(".react-flow__node").count() == 5)
         check("map renders transition labels", await page.get_by_role("button", name="Transition step").count() == 5)
         await axe(page, "workspace")
@@ -147,6 +157,7 @@ async def main() -> None:
         await page.reload()
         await page.wait_for_selector(".react-flow__node")
         await page.wait_for_timeout(500)
+        await expand_all(page)
         check("broken screenshots show placeholders", await page.get_by_text("Screenshot unavailable").count() >= 5)
         await page.screenshot(path=OUT / "after-missing-screenshots.png")
         await page.unroute("**/api/artifacts/*")

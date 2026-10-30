@@ -13,6 +13,8 @@ import { RunHistory } from './features/run-history/RunHistory'
 import { PagePreview, type PreviewState } from './features/browser-preview/PagePreview'
 import { WorkerPreview } from './features/browser-preview/WorkerPreview'
 import { AgentStrip } from './features/agents/AgentStrip'
+import { SidebarDivider } from './features/layout/SidebarDivider'
+import { useSidebarWidth } from './lib/sidebarWidth'
 import { RunLauncher } from './features/run-launcher/RunLauncher'
 import { api } from './lib/api'
 import { fmtInt, fmtUsd, shortUrl } from './lib/format'
@@ -134,6 +136,8 @@ export default function App() {
   const [showThumbs, setShowThumbs] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
   const inspectorRef = useRef<HTMLDivElement>(null)
+  const splitRef = useRef<HTMLDivElement>(null)
+  const sidebar = useSidebarWidth(splitRef)
 
   const refreshRuns = useCallback(() => {
     api.listRuns().then(setRuns).catch(() => undefined).finally(() => setRunsLoading(false))
@@ -324,7 +328,7 @@ export default function App() {
                     Updates paused: {detailError} <button type="button" className="ml-2 underline" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
                   </div>
                 )}
-                <div className="flex min-h-0 flex-1 max-lg:flex-col">
+                <div ref={splitRef} className="flex min-h-0 flex-1 max-lg:flex-col">
                   {/* The map stays the dominant view. */}
                   <section aria-label="Website flow map" data-testid="main-view" className="relative min-h-0 min-w-0 flex-1 bg-slate-50 max-lg:min-h-[60vh]">
                     {detail.states.length === 0 ? (
@@ -338,9 +342,11 @@ export default function App() {
                     )}
                   </section>
 
-                  {/* Inspector */}
+                  <SidebarDivider {...sidebar} />
+                  {/* Inspector: width set by the divider (saved), full width when stacked on narrow screens. */}
                   <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)} ref={inspectorRef}
-                    className="flex min-h-0 w-[400px] shrink-0 flex-col border-l border-slate-200 bg-white max-lg:w-full max-lg:border-l-0 max-lg:border-t xl:w-[440px]">
+                    style={{ '--sidebar-w': `${sidebar.width}px` } as React.CSSProperties}
+                    className="flex min-h-0 shrink-0 flex-col bg-white max-lg:w-full max-lg:border-t max-lg:border-slate-200 lg:w-(--sidebar-w)">
                     <Tabs.List aria-label="Run details" className="flex shrink-0 gap-4 overflow-x-auto border-b border-slate-200 px-4 max-xl:gap-3">
                       {tabTrigger('browser', 'Browser', <Monitor size={14} aria-hidden />)}
                       {tabTrigger('evidence', 'Evidence', <FileSearch size={14} aria-hidden />)}

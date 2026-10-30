@@ -6,6 +6,7 @@ Usage: backend\.venv\Scripts\python scripts\ui_check_report.py OUT_DIR
 """
 
 import asyncio
+import os
 import re
 import sys
 from pathlib import Path
@@ -13,7 +14,8 @@ from pathlib import Path
 import httpx
 from playwright.async_api import async_playwright, expect
 
-UI, API = "http://localhost:5173", "http://localhost:8000"
+UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
+API = os.environ.get("FLOWLENS_API", "http://localhost:8000")
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/report")
 RUNS = {  # saved runs covering each status and verification type
     "run_a572a9bf88c5": ("completed", "sequential review with an independently confirmed finding"),

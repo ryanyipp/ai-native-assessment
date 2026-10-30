@@ -50,7 +50,13 @@ body {
 .fl-agent-active { animation: fl-bob 1.6s ease-in-out infinite, fl-pulse 1.6s ease-out infinite; }
 .fl-agent-received { animation: fl-received 1.2s ease-out 2; }
 .fl-handoff-new { animation: fl-slide-in 600ms ease-out both; }
+/* Card decks: nodes glide to their new places only while a deck opens or closes (not while dragging). */
+@keyframes fl-deck-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.fl-regroup .react-flow__node { transition: transform 320ms ease-out; }
+.fl-regroup .fl-deck-in > div { animation: fl-deck-in 260ms ease-out both; }
 @media (prefers-reduced-motion: reduce) {
+  .fl-regroup .react-flow__node { transition: none !important; }
+  .fl-regroup .fl-deck-in > div { animation: none !important; }
   .fl-new-node > div, .fl-new-edge .react-flow__edge-path { animation: none !important; }
   .fl-agent-active, .fl-agent-received, .fl-handoff-new { animation: none !important; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

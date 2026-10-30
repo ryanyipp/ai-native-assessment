@@ -5,6 +5,7 @@ Usage (repo root): backend\.venv\Scripts\python scripts\ui_check_queue.py RUN_ID
 
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,7 @@ async def main():
         page = await (await b.new_context(viewport={"width": 1440, "height": 900})).new_page()
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
-        await page.goto(f"http://localhost:5173/?run={RUN}")
+        await page.goto(f"{os.environ.get('FLOWLENS_UI', 'http://localhost:5173')}/?run={RUN}")
         await page.wait_for_selector(".react-flow__node")
         await page.wait_for_timeout(700)
         await page.get_by_text("Diagnostics").click()

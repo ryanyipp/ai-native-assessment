@@ -6,13 +6,14 @@ Usage (repo root):
 """
 
 import asyncio
+import os
 import json
 import sys
 from pathlib import Path
 
 from playwright.async_api import Page, async_playwright, expect
 
-UI = "http://localhost:5173"
+UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 BROKEN, CORRECTED, RECHECK = sys.argv[1:4]
 OUT = Path(sys.argv[4] if len(sys.argv) > 4 else "docs/checkpoint-2")
 AXE = Path(__file__).resolve().parents[1] / "frontend" / "node_modules" / "axe-core" / "axe.min.js"
@@ -36,6 +37,14 @@ async def open_run(page: Page, run: str) -> None:
     await page.goto(f"{UI}/?run={run}")
     await page.wait_for_selector(".react-flow__node")
     await page.wait_for_timeout(700)
+
+
+async def expand_all(page):
+    """Card decks collapse related states; per-state checks expand them first (display only)."""
+    b = page.get_by_role("button", name="Expand all")
+    if await b.count() and await b.is_enabled():
+        await b.click()
+        await page.wait_for_timeout(500)
 
 
 async def main() -> None:
@@ -102,6 +111,7 @@ async def main() -> None:
 
         # State node seen by several workers keeps its sightings.
         await page.get_by_role("tab", name="Evidence").click()
+        await expand_all(page)
         node = page.locator(".react-flow__node").filter(has_text="Schedule a post").first
         await node.click()
         check("shared state lists every worker/context", await page.get_by_text("Observed by").is_visible())
