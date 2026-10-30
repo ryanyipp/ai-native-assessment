@@ -30,8 +30,9 @@ function DemoVideo() {
 
 export default function Landing() {
   return (
-    <div className="min-h-full bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="relative min-h-full overflow-hidden bg-slate-50">
+      <img src="/flow-background.svg" alt="" className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover opacity-20 lg:block" />
+      <header className="relative border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-12 max-w-5xl items-center gap-2 px-4 sm:px-6">
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-900 text-white"><Waypoints size={14} aria-hidden /></span>
           <span className="text-sm font-semibold tracking-tight">FlowLens</span>
@@ -39,7 +40,7 @@ export default function Landing() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 sm:px-6">
+      <main className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <section className="fl-enter max-w-3xl pb-12 pt-14 sm:pt-20">
           <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl">See how a website works—and what needs attention.</h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
@@ -58,7 +59,7 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white">
+      <footer className="relative border-t border-slate-200 bg-white">
         <p className="mx-auto max-w-5xl px-4 py-5 text-xs text-slate-600 sm:px-6">A bounded website review. Results cover observed journeys, not the entire website.</p>
       </footer>
     </div>

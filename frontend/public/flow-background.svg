@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#2f5fd0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+  <!-- Connectors -->
+  <path d="M1170 130H1230M1310 130H1380M1450 130H1500M1270 90V60M1130 90V50M1130 170V210M1270 170V230H1350M1400 230V275"/>
+  <path d="M1400 375V470H1280M1180 470H1100M1100 470V560H1190M1290 560H1370M1100 470H1000V600M1420 590V650M1420 720V800H1300M1200 800H1090M1000 680V800H1090"/>
+  <path d="M60 760H180M280 760H310M410 760H520M240 730V680M240 790V880H360M460 880H560M1500 170V320H1460M90 640H180"/>
+  <!-- Rectangles -->
+  
+  <rect x="1115" y="20" width="30" height="30"/><rect x="1110" y="210" width="40" height="40"/>
+  <rect x="1180" y="440" width="100" height="60" rx="6"/>
+  <rect x="1190" y="530" width="100" height="60" rx="6"/><rect x="1370" y="530" width="100" height="60" rx="6"/>
+  <rect x="1200" y="770" width="100" height="60" rx="6"/><rect x="180" y="730" width="100" height="60" rx="6"/>
+  <rect x="360" y="850" width="100" height="60" rx="6"/><rect x="520" y="735" width="50" height="50"/>
+  <rect x="1500" y="105" width="50" height="50"/><rect x="40" y="625" width="50" height="30"/>
+  <!-- Decisions -->
+  <path d="M1270 90L1310 130L1270 170L1230 130ZM1400 275L1450 325L1400 375L1350 325ZM1000 600L1040 640L1000 680L960 640ZM1420 650L1455 685L1420 720L1385 685ZM360 720L410 760L360 800L310 760ZM240 600L280 640L240 680L200 640Z"/>
+  <!-- Start and end points -->
+  <circle cx="1130" cy="130" r="40"/><circle cx="1270" cy="30" r="30"/><circle cx="1090" cy="800" r="32"/>
+  <circle cx="35" cy="760" r="25"/><circle cx="590" cy="880" r="30"/>
+</svg>
