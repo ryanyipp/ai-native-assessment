@@ -73,7 +73,9 @@ class RunLimits(BaseModel):
     max_tasks: int = Field(40, ge=1, le=300)
     task_max_attempts: int = Field(2, ge=1, le=5)
     task_lease_s: int = Field(300, ge=2, le=3600)  # renewed on every action; expired claims are revoked
-    planning_reasoning_tokens: int = Field(384, ge=0, le=4000)  # hidden-reasoning budget for tester/verifier
+    # Kept so older run records validate; no longer sent. The provider did not honour token budgets,
+    # so tester/verifier calls use effort "low" (see services/llm.reasoning_request).
+    planning_reasoning_tokens: int = Field(384, ge=0, le=4000)
 
 
 class FaultInjection(BaseModel):
@@ -264,6 +266,8 @@ class Observation(BaseModel):
 
 class ActionResult(BaseModel):
     id: str = Field(default_factory=lambda: new_id("act"))
+    error_detail: str | None = None  # full browser call log for failed actions (bounded; older runs: none)
+    recovery: str | None = None  # bounded recovery attempted by the engine, and whether it worked
     run_id: str
     step: int
     action: dict[str, Any]

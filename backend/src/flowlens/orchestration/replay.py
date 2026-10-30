@@ -33,6 +33,28 @@ class Reached:
     execution: Execution | None
 
 
+CONTROL_WAIT_TRIES = 3
+CONTROL_WAIT_MS = 500
+
+
+async def resolve_with_wait(eng: BrowserEngine, obs, control):
+    """Resolve a control, re-observing a few times if it is not there yet.
+
+    Some controls appear only after a request returns (an "Added!" dialog with "View Cart" after
+    add-to-cart; run_156b7b84dc3b). Bounded: at most CONTROL_WAIT_TRIES re-observations,
+    CONTROL_WAIT_MS apart. Several matches is ambiguity, not lateness, so it fails at once.
+    """
+    for attempt in range(CONTROL_WAIT_TRIES + 1):
+        try:
+            return resolve_control(obs, control)
+        except ControlResolutionError as e:
+            if "ambiguous" in str(e) or attempt == CONTROL_WAIT_TRIES:
+                raise ControlResolutionError(
+                    f"{e}" + (f" (after waiting {CONTROL_WAIT_TRIES * CONTROL_WAIT_MS} ms)" if attempt else "")) from e
+            await eng.page.wait_for_timeout(CONTROL_WAIT_MS)
+            obs = await eng.observe()
+
+
 async def execute_step(eng: BrowserEngine, origin: str, step: SemanticStep) -> tuple[dict, Execution]:
     """Raises ControlResolutionError if the control cannot be resolved uniquely."""
     if step.type == "navigate":
@@ -42,7 +64,7 @@ async def execute_step(eng: BrowserEngine, origin: str, step: SemanticStep) -> t
     else:
         assert step.control is not None
         obs = eng.last_observation or await eng.observe()
-        el = resolve_control(obs, step.control)
+        el = await resolve_with_wait(eng, obs, step.control)
         if step.type == "fill":
             action = FillAction(element_id=el.id, value=step.value or "")
         elif step.type == "press":

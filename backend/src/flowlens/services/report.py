@@ -104,9 +104,44 @@ def no_ids(t: str) -> str:
     return t
 
 
-def plain_stop(status: str, reason: str | None) -> str:
-    """Why a run stopped, in plain words (the raw reason is kept in Diagnostics)."""
+# Task notes recorded by the coordinator -> plain cause. First match wins.
+TASK_CAUSES = (
+    (("setupfailed", "could not reach", "reached a different state"),
+     "their starting page could not be recreated in a fresh browser (the page looked different on the next visit)"),
+    (("truncated at the output limit",), "the agent's replies were cut off before they finished"),
+    (("invalid repl", "invalid test plan", "invalid decision"), "the agent's replies were not valid"),
+    (("lease", "expired", "stalled"), "a worker stopped responding and its retries ran out"),
+    (("blocked:", "covers the element"), "something on the page covered the controls"),
+    (("timeout",), "the page did not respond in time"),
+)
+
+
+def task_cause(note: str | None) -> str:
+    t = (note or "").lower()
+    for keys, text in TASK_CAUSES:
+        if any(k in t for k in keys):
+            return text
+    return "it did not complete (details under Diagnostics)"
+
+
+def task_problems(tasks) -> list[tuple[str, str, str, int]]:
+    """(task type, status, plain cause, count) for failed and blocked tasks, largest first."""
+    c = Counter((t.type, t.status.value, task_cause(t.note)) for t in tasks if t.status.value in ("failed", "blocked"))
+    return sorted(((ty, st, cause, n) for (ty, st, cause), n in c.items()), key=lambda x: -x[3])
+
+
+def plain_stop(status: str, reason: str | None, tasks=()) -> str:
+    """Why a run stopped, in plain words (the raw reason is kept in Diagnostics).
+
+    A shared-queue run that "drained" its queue stopped because no work was left, so the real
+    cause is whatever made tasks fail or block (run_156b7b84dc3b), not a limit.
+    """
     t = (reason or "").lower()
+    problems = task_problems(tasks)
+    if "queue drained" in t and problems:
+        parts = [f"{n} {TASK_KIND.get(ty, ty)} {'failed' if st == 'failed' else 'were blocked'} because {cause}"
+                 for ty, st, cause, n in problems]
+        return "no work was left that could run: " + "; ".join(parts)
     if status == "failed":
         return "an internal error in FlowLens stopped it (details under Diagnostics)"
     if status == "interrupted":
@@ -266,6 +301,9 @@ class ReportBuilder:
             "cleared": [x for x in findings if x["verification"]["status"] == "not_reproduced"],
         }
         status_label, status_text = STATUS.get(r.status.value, (r.status.value, ""))
+        if r.status.value == "partial" and "queue drained" in (r.stop_reason or "") and task_problems(d.tasks):
+            status_text = ("The review stopped early because the work it needed could not run "
+                           "(see “What was not checked”), not because of a limit.")
         incomplete = r.status.value in ("partial", "failed", "interrupted", "running", "queued")
 
         # Requirements: what was exercised.
@@ -283,17 +321,26 @@ class ReportBuilder:
         untested = [f for f in d.forms if f.id not in tested_forms]
         gaps: list[str] = []
         if incomplete:
-            gaps.append(f"The review did not finish: {plain_stop(r.status.value, r.stop_reason)}. "
+            gaps.append(f"The review did not finish: {plain_stop(r.status.value, r.stop_reason, d.tasks)}. "
                         "Having no findings for an area does not mean that area works.")
         if r.mode == "single_explorer":
             gaps.append("No input testing or independent verification ran in this workflow; anything reported is an unverified observation.")
+        seen_forms = set()
         for f in untested:
             heading = f.headings[0] if f.headings else f.route
-            gaps.append(f"Form found but not tested: “{_clip(heading, 80)}” at {f.route}.")
+            if (heading, f.route) in seen_forms:
+                continue
+            seen_forms.add((heading, f.route))
+            n_same = sum(1 for g in untested if (g.headings[0] if g.headings else g.route) == heading and g.route == f.route)
+            gaps.append(f"Form found but not tested: “{_clip(heading, 80)}” at {f.route}"
+                        + (f" ({n_same} variants)." if n_same > 1 else "."))
         tc_failed = [tc for tc in d.test_cases if tc.status in ("setup_failed", "execution_failed")]
         if tc_failed:
             gaps.append(f"{len(tc_failed)} planned test case(s) could not be run (the starting page could not be recreated or the run failed).")
-        open_tasks = Counter((t.type, t.status.value) for t in d.tasks if t.status.value not in ("done",))
+        # Failed and blocked tasks are listed with their recorded cause; other open tasks by status.
+        for ty, st, cause, n in task_problems(d.tasks):
+            gaps.append(f"{n} {TASK_KIND.get(ty, ty)} {'failed' if st == 'failed' else 'blocked'}: {cause}.")
+        open_tasks = Counter((t.type, t.status.value) for t in d.tasks if t.status.value not in ("done", "failed", "blocked"))
         for (ty, st), n in sorted(open_tasks.items()):
             gaps.append(f"{n} {TASK_KIND.get(ty, ty)} {TASK_WHY.get(st, st)}.")
         not_checked = [q for q in reqs if q["coverage"] == "Not checked in this run"]

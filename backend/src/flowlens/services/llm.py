@@ -62,6 +62,22 @@ class LLMClient(Protocol):
                        reasoning_tokens: int | None = None) -> LLMResponse: ...
 
 
+def reasoning_request(reasoning_tokens: int | None) -> dict:
+    """Hidden-reasoning setting sent to the provider. Hidden reasoning shares the output cap.
+
+    None: effort "low" (the default for every call). 0: effort "minimal", used to retry a reply that
+    reasoning cut off. A positive number: an explicit token budget. Recorded calls showed that
+    google/gemini-3-flash-preview does not honour token budgets (run_156b7b84dc3b: 1342 and 2684
+    reasoning tokens against a 384 budget; 88 of 230 tester calls over 600), while effort "low"
+    stayed small (explore calls: median 0, 2 of 877 truncated).
+    """
+    if reasoning_tokens is None:
+        return {"effort": "low", "exclude": True}
+    if reasoning_tokens == 0:
+        return {"effort": "minimal", "exclude": True}
+    return {"max_tokens": reasoning_tokens, "exclude": True}
+
+
 class OpenRouterClient:
     is_mock = False
     supports_schema = False  # set from FLOWLENS_PROVIDER_JSON_SCHEMA; off by default (see __init__)
@@ -96,10 +112,7 @@ class OpenRouterClient:
             "response_format": ({"type": "json_schema",
                                  "json_schema": {"name": "reply", "strict": False, "schema": schema}}
                                 if schema is not None else {"type": "json_object"}),
-            # Keep hidden reasoning small so it cannot consume the output budget.
-            # A token budget bounds hidden reasoning more tightly than an effort level; it shares the output cap.
-            "reasoning": ({"max_tokens": reasoning_tokens, "exclude": True} if reasoning_tokens is not None
-                          else {"effort": "low", "exclude": True}),
+            "reasoning": reasoning_request(reasoning_tokens),
             "usage": {"include": True},
         }
         headers = {

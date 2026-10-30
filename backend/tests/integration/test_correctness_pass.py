@@ -144,16 +144,19 @@ class TruncatingClient:
     is_mock = True
     model = "truncating"
 
-    def __init__(self, good: str, truncate_times: int = 1):
-        self.good, self.left, self.seen = good, truncate_times, []
+    def __init__(self, good: str, truncate_times: int = 1, reasoning_share: float = 1.0):
+        self.good, self.left, self.seen, self.reasoning = good, truncate_times, [], []
+        self.share = reasoning_share  # fraction of the cut-off output that was hidden reasoning
 
     async def complete(self, messages, max_tokens, reasoning_tokens=None):
         self.seen.append(max_tokens)
+        self.reasoning.append(reasoning_tokens)
         if self.left > 0:
             self.left -= 1
             return LLMResponse(content='{"reasoning": "cut', model=self.model, provider="none", prompt_tokens=1,
                                completion_tokens=max_tokens, total_tokens=1 + max_tokens, reported_cost_usd=0.0,
-                               latency_ms=1, finish_reason="length", reasoning_tokens=max_tokens - 10)
+                               latency_ms=1, finish_reason="length",
+                               reasoning_tokens=int(max_tokens * self.share) - (10 if self.share == 1.0 else 0))
         return LLMResponse(content=self.good, model=self.model, provider="none", prompt_tokens=1, completion_tokens=5,
                            total_tokens=6, reported_cost_usd=0.0, latency_ms=1, finish_reason="stop")
 
@@ -166,7 +169,9 @@ async def test_truncated_reply_is_repaired_once_and_failures_are_kept(fixture_se
     qr.llm = TruncatingClient(good, truncate_times=1)
     plan, _ = await qr.model([{"role": "system", "content": "s"}, {"role": "user", "content": "u"}],
                              agent_id="input-tester", phase="input_test", task=task, parse=input_tester.parse_plan)
-    assert plan.cases == [] and qr.llm.seen == [1400, 2800]  # repair doubled the output cap
+    # Reasoning used the output budget: retry with minimal reasoning at the same cap (a bigger cap
+    # did not help in run_156b7b84dc3b).
+    assert plan.cases == [] and qr.llm.seen == [1400, 1400] and qr.llm.reasoning == [None, 0]
     ev = [e.type for e in store.detail(qr.run.id).events]
     assert "reply_truncated" in ev
     calls = store.list_for_run(ModelCall, qr.run.id)
@@ -177,6 +182,11 @@ async def test_truncated_reply_is_repaired_once_and_failures_are_kept(fixture_se
         await qr.model([{"role": "system", "content": "s"}, {"role": "user", "content": "u"}],
                        agent_id="input-tester", phase="input_test", task=task, parse=input_tester.parse_plan)
     assert len(store.list_for_run(ModelCall, qr.run.id)) == 4
+    # Visible text too long (little reasoning): the repair still doubles the output cap.
+    qr.llm = TruncatingClient(good, truncate_times=1, reasoning_share=0.1)
+    await qr.model([{"role": "system", "content": "s"}, {"role": "user", "content": "u"}],
+                   agent_id="input-tester", phase="input_test", task=task, parse=input_tester.parse_plan)
+    assert qr.llm.seen == [1400, 2800] and qr.llm.reasoning == [None, None]
 
 
 async def test_admitted_test_keeps_its_capacity_against_verification(fixture_server, tmp_path):

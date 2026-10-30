@@ -74,10 +74,13 @@ _INSPECT_JS = r"""
   const sel = 'a[href], button, input:not([type=hidden]), textarea, select, [role=button], [role=link], [contenteditable=true]';
   const forms = [...document.forms];
   const userInvalid = el => { try { return el.matches(':user-invalid'); } catch (e) { return false; } };
+  // Ad slots rotate between visits and are not part of the site under review.
+  const AD = 'ins.adsbygoogle, [id^="google_ads"], [id^="aswift"], [aria-label="Advertisement"], [data-ad-slot]';
+  const inAd = el => !!el.closest(AD);
   const out = [];
   for (const el of document.querySelectorAll(sel)) {
     if (out.length >= maxElements) break;
-    if (!visible(el)) continue;
+    if (!visible(el) || inAd(el)) continue;
     const id = 'e' + (out.length + 1);
     el.setAttribute('data-flowlens-id', id);
     const tag = el.tagName.toLowerCase();
@@ -109,9 +112,9 @@ _INSPECT_JS = r"""
   }
   const headings = [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(h => clean(h.innerText)).slice(0, 12);
   const status = [...document.querySelectorAll('[role=status],[role=alert],[aria-live]')]
-    .filter(visible).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
+    .filter(s => visible(s) && !inAd(s)).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
   const alerts = [...document.querySelectorAll('[role=alert]')]
-    .filter(visible).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
+    .filter(s => visible(s) && !inAd(s)).map(s => clean(s.innerText)).filter(Boolean).slice(0, 6);
   return { title: document.title, headings, elements: out, status, alerts, text: (document.body?.innerText || '').replace(/\s+/g, ' ').trim() };
 }
 """
@@ -119,6 +122,14 @@ _INSPECT_JS = r"""
 
 class ActionRejected(Exception):
     """The command failed validation before touching the browser."""
+
+
+class ActionBlocked(Exception):
+    """Another element covered the target, and the one bounded recovery did not clear it."""
+
+    def __init__(self, summary: str, detail: str, recovery: str):
+        super().__init__(summary)
+        self.summary, self.detail, self.recovery = summary, detail, recovery
 
 
 class ControlResolutionError(Exception):
@@ -164,6 +175,8 @@ class Execution:
     target_element: ObservedElement | None = None  # resolved element, from the pre-action observation
     # Page-coordinate bounds of the target element just before the action (for click highlights).
     target_box: dict | None = None
+    error_detail: str | None = None  # full Playwright call log for browser errors (bounded)
+    recovery: str | None = None  # bounded recovery that was attempted, and its result
 
 
 def normalise_route(url: str) -> str:
@@ -213,6 +226,41 @@ def page_structure(obs: Observation) -> tuple[str, str]:
             hashlib.sha256(layout.encode()).hexdigest()[:16])
 
 
+# Third-party ad networks. Their full-page interstitials ("#google_vignette") covered controls and
+# timed out clicks, and their rotating content changed state fingerprints between visits
+# (run_156b7b84dc3b). Requests to them are refused; the site's own requests are unaffected.
+AD_HOST_SUFFIXES = (
+    "googlesyndication.com", "doubleclick.net", "googleadservices.com", "adservice.google.com",
+    "googletagservices.com", "fundingchoicesmessages.google.com", "pagead2.googlesyndication.com",
+    "amazon-adsystem.com", "adnxs.com", "taboola.com", "outbrain.com", "criteo.com", "criteo.net",
+)
+
+
+def is_ad_host(url: str) -> bool:
+    host = (urlsplit(url).hostname or "").lower()
+    return any(host == s or host.endswith("." + s) for s in AD_HOST_SUFFIXES)
+
+
+INTERCEPT_RX = re.compile(r"- (<[^\n]{0,4000}?>)(?: from (<[^\n]{0,600}?>))?(?: subtree)? intercepts pointer events")
+
+
+def interceptor_of(message: str) -> str | None:
+    """Short description of the element Playwright reports as covering the target, if any."""
+    m = INTERCEPT_RX.search(message)
+    if not m:
+        return None
+
+    def short(tag: str | None) -> str:
+        if not tag:
+            return ""
+        name = re.match(r"<(\w+)", tag)
+        attrs = [f'{k}="{v[:40]}"' for k, v in re.findall(r'\b(id|class|title|aria-label)="([^"]*)"', tag)]
+        return f"<{name.group(1) if name else '?'} {' '.join(attrs)}>".replace(" >", ">")
+
+    inner, outer = short(m.group(1)), short(m.group(2))
+    return f"{inner} inside {outer}" if outer else inner
+
+
 def origin_of(url: str) -> str:
     s = urlsplit(url)
     return f"{s.scheme}://{s.netloc}".lower()
@@ -235,6 +283,7 @@ class BrowserEngine:
         self.last_observation: Observation | None = None
         # Main-frame navigations (including each redirect hop) that left the allowed origins.
         self._escapes: list[str] = []
+        self.blocked_ad_requests = 0
 
     def in_scope(self, url: str) -> bool:
         return origin_of(url) in self.allowed_origins
@@ -255,6 +304,9 @@ class BrowserEngine:
         req = route.request
         if self._main_navigation(req) and req.url.startswith("http") and not self.in_scope(req.url):
             self._escapes.append(req.url)
+            await route.abort("blockedbyclient")
+        elif is_ad_host(req.url) and not self.in_scope(req.url):
+            self.blocked_ad_requests += 1
             await route.abort("blockedbyclient")
         else:
             await route.fallback()
@@ -357,6 +409,8 @@ class BrowserEngine:
         target_el = None
         target_box = None
         error = None
+        error_detail = None
+        recovery = None
         self._escapes.clear()
         try:
             if isinstance(action, InspectAction):
@@ -390,9 +444,9 @@ class BrowserEngine:
                     # A click, not set_checked: many apps re-render the row on change, so Playwright's
                     # post-click check of the same element fails. The next observation shows the result.
                     if el.checked != action.checked:
-                        await loc.click()
+                        recovery = await self._pointer(loc, lambda **kw: loc.click(**kw))
                 elif isinstance(action, PressAction):
-                    await loc.press(action.key)
+                    recovery = await self._pointer(loc, lambda **kw: loc.press(action.key, **kw))
                     try:
                         await page.wait_for_load_state("load", timeout=NAV_TIMEOUT_MS)
                     except PlaywrightError:
@@ -400,7 +454,7 @@ class BrowserEngine:
                 else:
                     if el.href and not el.href.startswith("#"):
                         self.check_origin(urljoin(url_before, el.href))
-                    await loc.click()
+                    recovery = await self._pointer(loc, lambda **kw: loc.click(**kw))
                     try:
                         await page.wait_for_load_state("load", timeout=NAV_TIMEOUT_MS)
                     except PlaywrightError:
@@ -409,8 +463,11 @@ class BrowserEngine:
                 raise ActionRejected(f"unsupported action {type(action).__name__}")
         except ActionRejected as e:
             error = f"rejected: {e}"
+        except ActionBlocked as e:
+            error, error_detail, recovery = f"blocked: {e.summary}", e.detail[:4000], e.recovery
         except PlaywrightError as e:
             error = f"browser error: {str(e).splitlines()[0][:300]}"
+            error_detail = str(e)[:4000]
         if isinstance(action, (ClickAction, PressAction, CheckAction)) and error is None:
             await self._settle()
         # Guard against any navigation or redirect that left the approved scope. Nothing from an
@@ -441,7 +498,35 @@ class BrowserEngine:
             screenshot_png=png,
             target_element=target_el,
             target_box=target_box,
+            error_detail=error_detail,
+            recovery=recovery,
         )
+
+    RECOVERY_TIMEOUT_MS = 2000
+
+    async def _pointer(self, loc, act) -> str | None:
+        """Run a pointer/keyboard action; if another element covers the target, recover once.
+
+        The recovery is bounded: press Escape (closes most overlays and dialogs), let the page
+        settle, and retry once with a short timeout. It never forces the click through the cover.
+        Returns a note when a recovery ran; raises ActionBlocked if the cover stays.
+        """
+        try:
+            await act()
+            return None
+        except PlaywrightError as e:
+            cover = interceptor_of(str(e))
+            if cover is None:
+                raise
+            first = str(e)
+        await self.page.keyboard.press("Escape")
+        await self._settle()
+        try:
+            await act(timeout=self.RECOVERY_TIMEOUT_MS)
+            return f"{cover} covered the element; pressed Escape and the retry succeeded"
+        except PlaywrightError as e2:
+            note = f"{cover} covered the element; pressed Escape and retried once ({self.RECOVERY_TIMEOUT_MS} ms): still covered"
+            raise ActionBlocked(f"{cover} covers the element", first + "\n--- retry after Escape ---\n" + str(e2), note) from e2
 
     async def _settle(self) -> None:
         """Let single-page apps finish re-rendering (hashchange, state updates) before observing."""

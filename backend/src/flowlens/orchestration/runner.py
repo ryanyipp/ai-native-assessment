@@ -49,7 +49,7 @@ from flowlens.models.contracts import (
 )
 from flowlens.services.evidence import EvidenceStore
 from flowlens.verification import persistence
-from flowlens.services.llm import BudgetExceeded, LLMClient, check_budget
+from flowlens.services.llm import BudgetExceeded, LLMClient, check_budget, reasoning_request
 from flowlens.storage.db import Store
 
 MAX_CONSECUTIVE_INVALID = 3
@@ -83,10 +83,15 @@ def _state_summary(obs) -> str:
     return f"{head}{extra}{form}"
 
 
+AD_FRAGMENTS = {"google_vignette"}
+
+
 def relative_path(url: str) -> str:
     s = urlsplit(url)
-    # The fragment is kept: single-page apps route on it (e.g. a "#/active" filter).
-    return (s.path or "/") + (f"?{s.query}" if s.query else "") + (f"#{s.fragment}" if s.fragment else "")
+    # The fragment is kept: single-page apps route on it (e.g. a "#/active" filter). An ad network's
+    # interstitial marker ("#google_vignette") is not part of the site and is dropped.
+    frag = "" if s.fragment in AD_FRAGMENTS else s.fragment
+    return (s.path or "/") + (f"?{s.query}" if s.query else "") + (f"#{frag}" if frag else "")
 
 
 def semantic_step(action: dict[str, Any], ex: Execution) -> SemanticStep | None:
@@ -206,7 +211,8 @@ class ExplorerRun:
         obs_art = self.ev.save_json("observation", f"{step:03d}", ex.observation.model_dump())
         result = ActionResult(
             run_id=self.run.id, step=step, action=action, target_description=ex.target_description,
-            ok=ex.ok, error=ex.error, url_before=ex.url_before, url_after=ex.url_after,
+            ok=ex.ok, error=ex.error, error_detail=ex.error_detail, recovery=ex.recovery,
+            url_before=ex.url_before, url_after=ex.url_after,
             started_at=ex.started_at, duration_ms=ex.duration_ms,
             screenshot_artifact_id=shot.id, observation_artifact_id=obs_art.id,
             agent_id=agent_id, phase=phase, context_id=context_id, task_id=task.id,
@@ -399,7 +405,7 @@ class ExplorerRun:
             "agent_id": agent_id, "messages": messages, "response": resp.content if resp else None,
             "usage": resp.raw.get("usage") if resp else None, "error": call.error,
             "finish_reason": call.finish_reason, "max_tokens": max_tokens or lim.max_output_tokens,
-            "reasoning_tokens_budget": reasoning_tokens,
+            "reasoning_request": reasoning_request(reasoning_tokens),
         })
         call.artifact_id = art.id
         self.store.put(call)

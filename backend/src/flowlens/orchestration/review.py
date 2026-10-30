@@ -90,6 +90,11 @@ class _Attempt:
         return st
 
 
+def reasoning_starved(mc) -> bool:
+    """A truncated reply whose output budget went mostly to hidden reasoning."""
+    return bool(mc and mc.completion_tokens and (mc.reasoning_tokens or 0) >= 0.75 * mc.completion_tokens)
+
+
 class ReviewRun(ExplorerRun):
     tester_id = input_tester.AGENT_ID
     verifier_id = verifier.AGENT_ID
@@ -164,11 +169,13 @@ class ReviewRun(ExplorerRun):
         """
         lim = self.run.limits
         note_msgs, max_tokens = messages, lim.max_output_tokens_planning
+        # Effort "low" first (token budgets were not honoured by the provider; see llm.reasoning_request).
+        reasoning: int | None = None
         last_err = None
         for attempt in range(2):
             content, mc_id = await self.call_model(
                 note_msgs, agent_id=agent_id, phase=phase, task=task, reserve=reserve, max_tokens=max_tokens,
-                reasoning_tokens=lim.planning_reasoning_tokens, schema=schema,
+                reasoning_tokens=reasoning, schema=schema,
                 hold_key=task.id if task.id in self.holds else None)
             try:
                 return parse(content), mc_id
@@ -180,7 +187,13 @@ class ReviewRun(ExplorerRun):
                            f"{agent_id} reply {'cut off at the output limit' if truncated else 'rejected'}: {e}",
                            agent_id=agent_id, task=task, model_call_id=mc_id, attempt=attempt + 1,
                            reasoning_tokens=mc.reasoning_tokens if mc else None)
-                if truncated:
+                if truncated and reasoning_starved(mc):
+                    # Hidden reasoning used the output budget: a bigger cap was shown not to help
+                    # (run_156b7b84dc3b), so retry once with minimal reasoning and the same cap.
+                    reasoning = 0
+                    fix = ("your previous reply was cut off before it finished. Reply at once with compact "
+                           "single-line JSON, fewer cases and shorter text.")
+                elif truncated:
                     max_tokens = min(max_tokens * 2, 4000)
                     fix = ("your previous reply was cut off at the output limit. Reply with compact single-line "
                            "JSON, fewer cases and shorter text.")
