@@ -49,6 +49,12 @@ Across all recorded runs:
 - **Token budget** (tester calls): 88 of 230 used over 600 reasoning tokens, and 22 were truncated.
 - **`effort: "low"`** (explorer calls): median 0 reasoning tokens, and 2 of 877 truncated.
 
+## Injected fault: not a cause
+
+The run was labelled with an injected fault: explorer-a stalls for 75 s after its first explore claim. The lease was 300 s, so it never expired. No lease, fencing or recovery events were recorded, and explorer-a resumed and continued. None of the failed or blocked tasks relate to it.
+
+This also means the fault exercised nothing in this run. To test recovery, the stall must exceed the lease: the launcher's 75 s stall is meant for its 60 s test lease.
+
 ## 4. Report explanation
 
 For partial runs, the report said "stopped at a time, step or budget limit". That was wrong here: the queue drained because its tasks failed or were blocked.
