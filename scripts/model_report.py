@@ -6,6 +6,7 @@ Usage: backend\.venv\Scripts\python scripts\model_report.py BATCH
 from __future__ import annotations
 
 import json
+import os
 import re
 import statistics
 import sys
@@ -20,8 +21,9 @@ from eval_report_v2 import defect_hit  # noqa: E402
 from flowlens.config import get_settings  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
 
-SC = json.loads((ROOT / "evaluation" / "model-comparison" / "scenario.json").read_text("utf-8"))
-SHORT = {"google/gemini-3-flash-preview": "Gemini", "deepseek/deepseek-v4-flash": "DeepSeek", "openai/gpt-5-nano": "GPT-5 Nano"}
+SC = json.loads((ROOT / "evaluation" / "model-comparison" / os.environ.get("BENCHMARK_SCENARIO", "scenario.json")).read_text("utf-8"))
+SHORT = {"google/gemini-3-flash-preview": "Gemini", "deepseek/deepseek-v4-flash": "DeepSeek", "openai/gpt-5-nano": "GPT-5 Nano",
+         "anthropic/claude-haiku-5.5": "Haiku 5.5"}
 MODE = {"single_agent": "single", "queue_review": "queue"}
 
 

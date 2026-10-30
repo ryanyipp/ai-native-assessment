@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import subprocess
 import sys
@@ -36,7 +37,7 @@ from flowlens.services.llm import OpenRouterClient  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
 
 require_live()
-SCENARIO_PATH = ROOT / "evaluation" / "model-comparison" / "scenario.json"
+SCENARIO_PATH = ROOT / "evaluation" / "model-comparison" / os.environ.get("BENCHMARK_SCENARIO", "scenario.json")
 SC = json.loads(SCENARIO_PATH.read_text("utf-8"))
 
 
@@ -137,7 +138,7 @@ async def main(batch: str, stage: str) -> int:
     log = out / f"{stage}.jsonl"
     done = [json.loads(x) for x in log.read_text("utf-8").splitlines()] if log.exists() else []
     if stage == "smoke":
-        cells = [(m, "creator-broken", "queue_review", "smoke") for m in SC["models"][1:]]
+        cells = [(m, "creator-broken", "queue_review", "smoke") for m in SC.get("smoke_models", SC["models"][1:])]
         limits = SC["smoke_limits"]
     else:
         if git("status", "--porcelain", "--", "backend/src", "scripts/model_benchmark.py", "evaluation/model-comparison"):

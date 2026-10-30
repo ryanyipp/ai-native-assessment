@@ -1,0 +1,90 @@
+{
+  "note": "Generated from scenario.json: goals, requirements, limits, smoke limits and the unusable rule are unchanged. Fixtures only.",
+  "models": [
+    "anthropic/claude-haiku-5.5"
+  ],
+  "model_notes": "Checked 2026-10-31 on OpenRouter: US$0.10/0.50 per M in/out on the main providers (some regional routes 0.11/0.55). Accepts reasoning and response_format; no temperature parameter, so temperature 0 is not applied. Same reasoning request as the other models (effort low, minimal on repair). Provider routing is left to OpenRouter.",
+  "modes": [
+    "single_agent",
+    "queue_review"
+  ],
+  "repetitions": 2,
+  "ceiling_usd": 0.3,
+  "run_reservation_usd": 0.04,
+  "ledger_tolerance_usd": 0.02,
+  "unusable_rule": "A run is unusable if it has a harness error, no successful model call, or at least half its calls failed or were rejected. Two consecutive unusable runs stop that model; its remaining cells are reported as not run.",
+  "limits": {
+    "max_model_calls": 30,
+    "max_cost_usd": 0.15,
+    "max_steps": 12,
+    "explore_steps_per_task": 3,
+    "max_depth": 2,
+    "reserved_testing_calls": 6,
+    "reserved_verification_calls": 5,
+    "max_duration_s": 900,
+    "task_lease_s": 45
+  },
+  "smoke_limits": {
+    "max_model_calls": 12,
+    "max_cost_usd": 0.03,
+    "max_steps": 6,
+    "explore_steps_per_task": 2,
+    "max_depth": 1,
+    "reserved_testing_calls": 3,
+    "reserved_verification_calls": 2,
+    "max_duration_s": 240,
+    "task_lease_s": 45
+  },
+  "targets": {
+    "creator-broken": {
+      "url": "http://localhost:5174/",
+      "profile": "fixture",
+      "build": "broken",
+      "key": "evaluation/creator-studio/answer_key_v2.json",
+      "goal": "Explore the creator dashboard and open each form a creator can use, without submitting them. Finish when you have seen them.",
+      "requirements_file": "fixtures/creator-studio/requirements.md",
+      "goal_urls": [
+        "/drafts/new",
+        "/schedule/new"
+      ]
+    },
+    "creator-corrected": {
+      "url": "http://localhost:5175/",
+      "profile": "fixture",
+      "build": "corrected",
+      "key": "evaluation/creator-studio/answer_key_v2.json",
+      "goal": "Explore the creator dashboard and open each form a creator can use, without submitting them. Finish when you have seen them.",
+      "requirements_file": "fixtures/creator-studio/requirements.md",
+      "goal_urls": [
+        "/drafts/new",
+        "/schedule/new"
+      ]
+    },
+    "ticket-broken": {
+      "url": "http://localhost:5176/",
+      "profile": "fixture",
+      "build": "broken",
+      "key": "evaluation/ticket-desk/answer_key.json",
+      "goal": "Explore this website and open each form a visitor can use, without submitting them. Finish when you have seen them.",
+      "requirements_file": "fixtures/ticket-desk/requirements.md",
+      "goal_urls": [
+        "/events/[^/]+/book"
+      ]
+    },
+    "ticket-corrected": {
+      "url": "http://localhost:5177/",
+      "profile": "fixture",
+      "build": "corrected",
+      "key": "evaluation/ticket-desk/answer_key.json",
+      "goal": "Explore this website and open each form a visitor can use, without submitting them. Finish when you have seen them.",
+      "requirements_file": "fixtures/ticket-desk/requirements.md",
+      "goal_urls": [
+        "/events/[^/]+/book"
+      ]
+    }
+  },
+  "smoke_models": [
+    "anthropic/claude-haiku-5.5"
+  ],
+  "reservation_note": "100k input and 60k output tokens at Haiku prices, above the fixture maxima of the main batch (23,571 and 15,562). The per-run limit stays US$0.15."
+}
