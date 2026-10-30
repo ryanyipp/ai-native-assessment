@@ -176,12 +176,32 @@ export default function App() {
   const splitRef = useRef<HTMLDivElement>(null)
   const sidebar = useSidebarWidth(splitRef)
 
+  const openRun = useCallback((id: string) => {
+    setSetupOpen(false)
+    setSelection(null)
+    setDetail((d) => (d?.run.id === id ? d : null))
+    setDetailError(null)
+    setRunId(id)
+    if (window.innerWidth < 1280) setRailOpen(false)
+  }, [])
+
   const refreshRuns = useCallback(() => {
-    api.listRuns().then(setRuns).catch(() => undefined).finally(() => setRunsLoading(false))
+    api.listRuns().then((list) => {
+      setRuns(list)
+      if (!demosRequested.current) return
+      // "Explore recorded demos" opens the confirmed-defect demo, or says how to load the bundle.
+      demosRequested.current = false
+      const demos = list.filter((r) => r.imported_from)
+      const demo = demos.find((r) => r.id === DEMO_RUN) ?? demos[0]
+      if (demo) {
+        openRun(demo.id)
+        if (window.innerWidth >= 1280) setRailOpen(true)
+      } else setDemosMissing(true)
+    }).catch(() => undefined).finally(() => setRunsLoading(false))
     api.health()
       .then((h) => { setHealth(h); setHealthError(null) })
       .catch((e: Error) => { setHealth(null); setHealthError(e.message) })
-  }, [])
+  }, [openRun])
   useEffect(refreshRuns, [refreshRuns])
 
   // Load the selected run; poll only while it is active.
@@ -232,27 +252,6 @@ export default function App() {
       return { kind: 'idle', cleared: was }
     })
   }, [])
-
-  const openRun = useCallback((id: string) => {
-    setSetupOpen(false)
-    setSelection(null)
-    setDetail((d) => (d?.run.id === id ? d : null))
-    setDetailError(null)
-    setRunId(id)
-    if (window.innerWidth < 1280) setRailOpen(false)
-  }, [])
-
-  // "Explore recorded demos" opens the confirmed-defect demo, or says how to load the bundle.
-  useEffect(() => {
-    if (!demosRequested.current || runsLoading) return
-    demosRequested.current = false
-    const demos = runs.filter((r) => r.imported_from)
-    const demo = demos.find((r) => r.id === DEMO_RUN) ?? demos[0]
-    if (demo) {
-      openRun(demo.id)
-      if (window.innerWidth >= 1280) setRailOpen(true)
-    } else setDemosMissing(true)
-  }, [runs, runsLoading, openRun])
 
   const select = useCallback((s: Selection) => {
     setSelection(s)

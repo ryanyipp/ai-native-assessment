@@ -69,7 +69,7 @@ export default function Landing() {
           ))}
         </section>
 
-        <section aria-labelledby="demo-video-title" className="py-12">
+        <section aria-labelledby="demo-video-title" className="mx-auto max-w-3xl py-12">
           <h2 id="demo-video-title" className="mb-4 text-lg font-semibold tracking-tight text-slate-900">Demo video</h2>
           <DemoVideo />
         </section>

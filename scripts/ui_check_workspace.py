@@ -48,6 +48,8 @@ async def setup_checks(page):
     await page.goto(UI + "/workspace")
     panel = page.get_by_role("complementary", name="New review run")
     await expect(panel).to_be_visible()
+    # The workspace loads after the page's load event, so wait for /api/health to fill the launcher.
+    await expect(panel.get_by_text("google/gemini-3-flash-preview")).to_be_visible()
     check("pre-run: settings panel shows model and limits",
           await panel.get_by_text("google/gemini-3-flash-preview").is_visible() and await panel.get_by_text("Budget and limits").is_visible())
     prev = page.get_by_role("region", name="Browser preview")

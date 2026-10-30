@@ -55,6 +55,8 @@ async def main():
         await page.goto(UI + "/workspace")
         panel = page.get_by_role("complementary", name="New review run")
         await expect(panel).to_be_visible(timeout=30000)
+        # The workspace loads after the page's load event, so wait for /api/health to fill the launcher.
+        await expect(panel.get_by_text("Live runs unavailable")).to_be_visible(timeout=30000)
         check("launcher disables live runs without a key", await panel.get_by_role("button", name="Start live run").is_disabled()
               and await panel.get_by_text("Live runs unavailable").is_visible())
         await page.goto(UI + "/?run=run_a572a9bf88c5")
