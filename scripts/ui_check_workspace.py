@@ -205,8 +205,11 @@ async def run_checks(page, browser, run_id, errors):
     await page.route(f"**/api/runs/{run_id}", serve)
     await page.goto(UI + f"/?run={run_id}")
     await page.wait_for_selector(".react-flow__node")
+    # The active count moved from the strip into Diagnostics (merged run toolbar).
+    await page.get_by_text("Diagnostics").click()
     check("fixture: two workers shown active at once", await strip.locator(".fl-agent-active").count() == 2
-          and await strip.get_by_text("2 active now").is_visible())
+          and await page.get_by_text("2 workers working on a claimed task").is_visible())
+    await page.get_by_text("Diagnostics").click()
     await expect(strip.locator(".fl-handoff-new")).to_have_count(1, timeout=8000)
     check("fixture: a new handoff event animates once and marks the receiver",
           await strip.get_by_role("button", name="Input tester").locator(".fl-agent-received").count() == 1)

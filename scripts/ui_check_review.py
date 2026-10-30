@@ -60,7 +60,7 @@ async def main() -> None:
         await open_run(page, BROKEN)
         header = page.locator("header").first
         await page.get_by_text("Diagnostics").click()  # metadata moved into the Diagnostics dropdown
-        check("header names the workflow", await page.get_by_text("Explorer → tester → verifier").first.is_visible())
+        check("header names the workflow", await page.locator("text=Explorer → tester → verifier >> visible=true").count() >= 1)
         check("header shows evaluation build label", await page.get_by_text("build: creator-studio:broken").is_visible())
         await page.get_by_text("Diagnostics").click()
         check("map legend distinguishes test and verification", await page.get_by_text("Input test", exact=True).is_visible()

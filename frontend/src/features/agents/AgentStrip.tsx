@@ -20,10 +20,11 @@ function lastHandoffSeq(d: RunDetail) {
  * events: several workers can be active at once. A handoff animates only when a new
  * handoff_created event arrives; there is no invented progress.
  */
-export function AgentStrip({ detail, selected, onSelect }: {
+export function AgentStrip({ detail, selected, onSelect, inline = false }: {
   detail: RunDetail
   selected: string | null
   onSelect: (worker: string) => void
+  inline?: boolean // inside the run toolbar: no own row, no active count (it is in Diagnostics)
 }) {
   // Handoffs already present when the strip first renders (old runs) do not animate.
   const [seen, setSeen] = useState(() => ({ run: detail.run.id, seq: lastHandoffSeq(detail), fresh: null as RunEvent | null, detail }))
@@ -39,8 +40,9 @@ export function AgentStrip({ detail, selected, onSelect }: {
   const working = statuses.filter((s) => s.st.state === 'working').length
   const running = ['queued', 'running'].includes(detail.run.status)
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-200 bg-white px-4 py-2" aria-label="Agents">
-      <ul className="flex flex-wrap items-center gap-1.5" role="list">
+    <div className={inline ? 'flex min-w-0 items-center gap-x-3' : 'flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-200 bg-white px-4 py-2'}
+      aria-label="Agents" role="group">
+      <ul className={cx('flex items-center gap-1', inline ? 'shrink-0' : 'flex-wrap gap-1.5')} role="list">
         {statuses.map(({ w, st, acted }) => {
           const Icon = ICON[w] ?? Bot
           const active = st.state === 'working'
@@ -69,8 +71,8 @@ export function AgentStrip({ detail, selected, onSelect }: {
           )
         })}
       </ul>
-      <div className="flex min-w-0 flex-1 items-center gap-3 text-[11px] text-slate-600">
-        {running && <span className="shrink-0 tabular-nums">{working} active now</span>}
+      <div className={cx('flex min-w-0 flex-1 items-center gap-3 text-[11px] text-slate-600', inline && 'max-2xl:hidden')}>
+        {running && !inline && <span className="shrink-0 tabular-nums">{working} active now</span>}
         {latest && (
           <span key={seen.fresh?.seq ?? 'static'} className={cx('inline-flex min-w-0 items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5',
             seen.fresh?.seq === latest.seq && 'fl-handoff-new')} aria-live="polite">

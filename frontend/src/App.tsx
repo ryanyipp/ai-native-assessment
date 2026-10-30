@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as RTooltip from '@radix-ui/react-tooltip'
 import { ReactFlowProvider } from '@xyflow/react'
-import { Activity, ChevronDown, Download, ExternalLink, FileText, FileSearch, Info, Layers, Loader2, Monitor, PanelLeft, Plus, RefreshCw, Settings2, Waypoints } from 'lucide-react'
+import { Activity, ChevronDown, ClipboardList, Download, ExternalLink, FileText, FileSearch, Info, Layers, Loader2, Monitor, PanelLeft, Plus, RefreshCw, Settings2, Waypoints } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Button, Callout, EmptyState, ProvenanceBadge, StatusBadge, Tooltip } from './components/ui'
 import { cx } from './lib/ui-utils'
@@ -17,7 +17,8 @@ import { SidebarDivider } from './features/layout/SidebarDivider'
 import { useSidebarWidth } from './lib/sidebarWidth'
 import { RunLauncher } from './features/run-launcher/RunLauncher'
 import { api } from './lib/api'
-import { fmtInt, fmtUsd, shortUrl } from './lib/format'
+import { fmtInt, fmtUsd } from './lib/format'
+import { agentsOf, workerStatus } from './lib/workers'
 import { transitionsByStep } from './lib/run-model'
 import type { Health, Run, RunDetail } from './lib/types'
 
@@ -36,25 +37,53 @@ const MODE_LABEL: Record<string, string> = {
 }
 
 /** Compact run header: goal, target, status. Technical metadata and cost live in Diagnostics; failures stay visible. */
-function RunHeader({ detail }: { detail: RunDetail }) {
+/**
+ * One compact run toolbar: Review dropdown (goal, target, workflow), status and labels, the agent
+ * widgets inline, then report and diagnostics controls. The stop reason of a stopped run stays
+ * visible on its own line. Below lg the agents move to their own scrollable line, labels intact.
+ */
+function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactNode }) {
   const r = detail.run
   const active = ACTIVE.has(r.status)
+  const working = agentsOf(detail).filter((w) => workerStatus(detail, w).state === 'working').length
   return (
-    <header className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-slate-200 bg-white px-4 py-2">
-      <h1 className="min-w-0 max-w-[min(56rem,100%)] truncate text-[14px] font-semibold text-slate-900" title={r.goal}>{r.goal}</h1>
-      <a href={r.target_url} target="_blank" rel="noreferrer" title={r.target_url}
-        className="inline-flex min-w-0 items-center gap-1 font-mono text-xs text-slate-600 hover:text-accent-700">
-        <span className="truncate">{shortUrl(r.target_url)}</span><ExternalLink size={11} aria-hidden className="shrink-0" />
-      </a>
+    <header className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-slate-200 bg-white px-4 py-1.5" data-testid="run-toolbar">
+      <h1 className="sr-only">{r.goal}</h1>
+      <details className="group relative shrink-0" data-testid="review-menu">
+        <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+          <ClipboardList size={13} aria-hidden />Review<ChevronDown size={12} aria-hidden className="transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="absolute left-0 top-full z-30 mt-1 w-[min(34rem,calc(100vw-2rem))] space-y-2.5 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700 shadow-lg">
+          <div>
+            <p className="font-medium text-slate-500">Goal</p>
+            <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-snug text-slate-900">{r.goal}</p>
+          </div>
+          <div>
+            <p className="font-medium text-slate-500">Target</p>
+            <a href={r.target_url} target="_blank" rel="noreferrer" className="mt-0.5 inline-flex items-center gap-1 font-mono text-slate-800 [overflow-wrap:anywhere] hover:text-accent-700">
+              {r.target_url}<ExternalLink size={11} aria-hidden className="shrink-0" />
+            </a>
+            {r.target_profile === 'website' && (
+              <p className="mt-1 text-slate-600"><Badge tone="blue">Public website</Badge> Approved in the launcher; allowed origin {(r.scope_origins ?? []).join(', ')}.
+                Each worker used a fresh browser context; the site's server data is not isolated.</p>
+            )}
+          </div>
+          <div>
+            <p className="font-medium text-slate-500">Workflow</p>
+            <p className="mt-0.5 text-slate-900">{MODE_LABEL[r.mode] ?? r.mode}</p>
+          </div>
+          {r.requirements.length > 0 && (
+            <div>
+              <p className="font-medium text-slate-500">Requirements ({r.requirements.length})</p>
+              <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-slate-800">{r.requirements.map((q) => <li key={q}>{q}</li>)}</ul>
+            </div>
+          )}
+        </div>
+      </details>
       <StatusBadge status={r.status} withTooltip />
       {r.imported_from && (
         <Tooltip content={`Recorded result loaded from ${r.imported_from}. It was not run by this installation; nothing is re-run.`}>
           <span tabIndex={0} className="inline-flex"><Badge tone="amber">Recorded demo result</Badge></span>
-        </Tooltip>
-      )}
-      {r.target_profile === 'website' && (
-        <Tooltip content={`Public website approved in the launcher. Allowed origin: ${(r.scope_origins ?? []).join(', ')}. Each worker used a fresh browser context; the site's server data is not isolated.`}>
-          <span tabIndex={0} className="inline-flex"><Badge tone="blue">Public website</Badge></span>
         </Tooltip>
       )}
       {r.fault_injection && (
@@ -62,9 +91,11 @@ function RunHeader({ detail }: { detail: RunDetail }) {
           <span tabIndex={0} className="inline-flex"><Badge tone="amber">Injected fault</Badge></span>
         </Tooltip>
       )}
-      {active && <span className="inline-flex items-center gap-1 text-xs text-accent-700"><Loader2 size={12} className="motion-safe:animate-spin" aria-hidden />Updating every 1.5 s</span>}
+      {active && <Loader2 size={13} className="shrink-0 text-accent-700 motion-safe:animate-spin" aria-label="Updating" />}
+      {/* Agents inline; on narrow screens they take their own line and scroll rather than squeeze. */}
+      <div className="order-last flex w-full min-w-0 overflow-x-auto lg:order-none lg:w-auto lg:flex-1" data-testid="toolbar-agents">{agents}</div>
       {/* Report built by the backend from this run's saved records only. */}
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex shrink-0 items-center gap-1.5">
         <a href={`/api/runs/${r.id}/report`} target="_blank" rel="noreferrer"
           className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50">
           <FileText size={13} aria-hidden />Report
@@ -74,13 +105,16 @@ function RunHeader({ detail }: { detail: RunDetail }) {
           <Download size={13} aria-hidden />Markdown
         </a>
       </div>
-      <details className="group relative">
+      <details className="group relative shrink-0">
         <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
           <Settings2 size={13} aria-hidden />Diagnostics<ChevronDown size={12} aria-hidden className="transition-transform group-open:rotate-180" />
         </summary>
         <div className="absolute right-0 top-full z-30 mt-1 w-[min(30rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700 shadow-lg">
           <dl className="grid grid-cols-[7rem_minmax(0,1fr)] gap-x-3 gap-y-1.5">
             <dt className="text-slate-500">Run</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.id}</dd>
+            <dt className="text-slate-500">Updates</dt>
+            <dd>{active ? 'Refreshing every 1.5 s while the run is active' : 'Not refreshing (the run is not active)'}</dd>
+            {active && (<><dt className="text-slate-500">Active now</dt><dd className="tabular-nums">{working} worker{working === 1 ? '' : 's'} working on a claimed task</dd></>)}
             <dt className="text-slate-500">Workflow</dt><dd>{MODE_LABEL[r.mode] ?? r.mode}</dd>
             {r.imported_from && (<><dt className="text-slate-500">Imported from</dt><dd>{r.imported_from} (recorded result; not run here)</dd></>)}
             <dt className="text-slate-500">Sessions</dt>
@@ -320,9 +354,9 @@ export default function App() {
               <MapSkeleton />
             ) : (
               <>
-                <RunHeader detail={detail} />
-                <AgentStrip detail={detail} selected={tab === 'browser' ? worker : null}
-                  onSelect={(w) => { setWorker(w); setTab('browser') }} />
+                <RunHeader detail={detail} agents={
+                  <AgentStrip inline detail={detail} selected={tab === 'browser' ? worker : null}
+                    onSelect={(w) => { setWorker(w); setTab('browser') }} />} />
                 {detailError && (
                   <div className="border-b border-red-200 bg-red-50 px-5 py-1.5 text-xs text-red-800" role="alert">
                     Updates paused: {detailError} <button type="button" className="ml-2 underline" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
