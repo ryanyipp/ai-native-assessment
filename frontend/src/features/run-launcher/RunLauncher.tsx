@@ -1,5 +1,5 @@
 import { Camera, Globe, KeyRound, Play, ShieldCheck, X } from 'lucide-react'
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useLayoutEffect, useRef, useState, type ReactNode, type TextareaHTMLAttributes } from 'react'
 import { Button, Callout } from '../../components/ui'
 import { cx } from '../../lib/ui-utils'
 import { api } from '../../lib/api'
@@ -37,6 +37,32 @@ function FormField({ label, error, hint, children, id }: { label: string; error?
       ) : null}
     </div>
   )
+}
+
+/**
+ * Textarea that grows with its text up to maxRem, and can also be resized vertically by hand
+ * (same cap). Once the user resizes it by hand, that height is kept: auto-grow stops for it.
+ */
+function AutoTextarea({ maxRem, className, value, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { maxRem: number; value: string }) {
+  const ref = useRef<HTMLTextAreaElement>(null)
+  const lastAuto = useRef<number | null>(null) // height this component last set
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    // A height different from the one we set means the user resized it: leave it alone.
+    if (lastAuto.current !== null && Math.abs(el.offsetHeight - lastAuto.current) > 1) return
+    const max = maxRem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    const needed = el.scrollHeight + (el.offsetHeight - el.clientHeight)
+    if (needed > el.offsetHeight) {
+      const h = Math.min(needed, max)
+      el.style.height = `${h}px`
+      lastAuto.current = h
+    } else if (lastAuto.current === null) {
+      lastAuto.current = el.offsetHeight
+    }
+  }, [value, maxRem])
+  return <textarea ref={ref} value={value} {...rest} style={{ maxHeight: `${maxRem}rem` }}
+    className={cx(className, 'resize-y overflow-y-auto')} />
 }
 
 const inputCls = (err?: string) =>
@@ -192,9 +218,14 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               </p>
             )}
             <FormField id={`${uid}-goal`} label="Review goal" error={show('goal')}>
-              <textarea id={`${uid}-goal`} className={inputCls(show('goal'))} rows={3} value={goal}
+              <AutoTextarea id={`${uid}-goal`} className={inputCls(show('goal'))} rows={3} value={goal} maxRem={16}
                 aria-invalid={!!show('goal')} aria-describedby={show('goal') ? `${uid}-goal-err` : undefined}
                 onChange={(e) => setGoal(e.target.value)} />
+            </FormField>
+            <FormField id={`${uid}-req`} label="Requirements (optional)" hint="One per line, optionally prefixed with an id such as R5. The tester and verifier only treat these as explicit expectations.">
+              <AutoTextarea id={`${uid}-req`} className={inputCls()} rows={3} value={requirements} maxRem={20} aria-describedby={`${uid}-req-hint`}
+                placeholder="Saved drafts keep their title and caption after reload."
+                onChange={(e) => setRequirements(e.target.value)} />
             </FormField>
             <fieldset className="space-y-1.5">
               <legend className="text-[13px] font-medium text-slate-800">Workflow</legend>
@@ -209,19 +240,14 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
                   <span><span className="font-medium text-slate-900">{label}</span><span className="block text-xs text-slate-600">{hint}</span></span>
                 </label>
               ))}
-              {mode === 'queue_review' && (
-                <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-2.5 py-2 text-[13px]">
-                  <input type="checkbox" checked={injectStall} onChange={(e) => setInjectStall(e.target.checked)} className="mt-0.5" />
-                  <span><span className="font-medium text-slate-900">Inject a stall (labelled fault)</span>
-                    <span className="block text-xs text-slate-600">explorer-a stops for 75 s after its first claim. The run is labelled as containing an injected failure.</span></span>
-                </label>
-              )}
             </fieldset>
-            <FormField id={`${uid}-req`} label="Requirements (optional)" hint="One per line, optionally prefixed with an id such as R5. The tester and verifier only treat these as explicit expectations.">
-              <textarea id={`${uid}-req`} className={inputCls()} rows={2} value={requirements} aria-describedby={`${uid}-req-hint`}
-                placeholder="Saved drafts keep their title and caption after reload."
-                onChange={(e) => setRequirements(e.target.value)} />
-            </FormField>
+            {mode === 'queue_review' && (
+              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-2.5 py-2 text-[13px]">
+                <input type="checkbox" checked={injectStall} onChange={(e) => setInjectStall(e.target.checked)} className="mt-0.5" />
+                <span><span className="font-medium text-slate-900">Inject a stall (labelled fault)</span>
+                  <span className="block text-xs text-slate-600">explorer-a stops for 75 s after its first claim. The run is labelled as containing an injected failure.</span></span>
+              </label>
+            )}
 
             <details className="rounded-lg border border-slate-200" open={touched && LIMIT_KEYS.some((k) => errors[k])}>
               <summary className="cursor-pointer select-none px-3 py-2 text-[13px] font-medium text-slate-700">
@@ -264,7 +290,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             )}
             {apiError && <Callout tone="red" title="The server rejected the run">{apiError}</Callout>}
           </form>
-          <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-5 py-3">
+          <div className="sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-3" data-testid="launcher-actions">
             <Button type="button" disabled={previewBusy || !!errors.url} onClick={() => { setTouched(true); if (!errors.url) onPreview(targetUrl.trim()) }}
               title={needsApproval ? 'Approve the origin first' : undefined}>
               <Camera size={14} aria-hidden /> {previewBusy ? 'Capturing…' : 'Preview page'}
