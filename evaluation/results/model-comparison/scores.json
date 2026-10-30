@@ -1,0 +1,3480 @@
+[
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_66e7d1b88ede",
+  "wall_s": 57.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 2, 'skipped': 1, 'done': 10}; claimed by {'explorer-a': 5, 'explorer-b': 4, 'input-tester': 2, 'verifier': 1}; 5 test case(s), 1 candidate(s), verification {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date rejection {'Post title': 'Old Post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 2,
+  "model_p50_ms": 2226,
+  "model_p95_ms": 7257,
+  "browser_p50_ms": 121,
+  "browser_p95_ms": 687,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 21350,
+  "out_tokens": 6266,
+  "cost": 0.029473,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_0b249c8f7291",
+  "wall_s": 44.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 4 candidate(s), verification: {'confirmed': 1, 'inconclusive': 3}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Invalid Past Date {'Post title': 'Past Post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2083,
+  "model_p95_ms": 7518,
+  "browser_p50_ms": 42,
+  "browser_p95_ms": 146,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 10726,
+  "out_tokens": 2446,
+  "cost": 0.012700999999999999,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_39a560dd89cd",
+  "wall_s": 133.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 8531,
+  "model_p95_ms": 37747,
+  "browser_p50_ms": 39,
+  "browser_p95_ms": 145,
+  "calls": 10,
+  "failed_calls": 0,
+  "in_tokens": 11429,
+  "out_tokens": 7317,
+  "cost": 0.0032200429999999997,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "DeepInfra",
+   "GMICloud",
+   "Relace",
+   "SiliconFlow"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_2fcd160295d3",
+  "wall_s": 68.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'done': 4, 'blocked': 2}; claimed by {'explorer-a': 3, 'explorer-b': 1, 'input-tester': 2, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 0,
+  "defects_found": [],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 5424,
+  "model_p95_ms": 13731,
+  "browser_p50_ms": 153,
+  "browser_p95_ms": 528,
+  "calls": 16,
+  "failed_calls": 0,
+  "in_tokens": 13264,
+  "out_tokens": 10315,
+  "cost": 0.0051046526,
+  "truncated": 5,
+  "retries": 5,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "SiliconFlow"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_c218fae89578",
+  "wall_s": 76.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 2, 'skipped': 2, 'done': 10}; claimed by {'explorer-a': 3, 'explorer-b': 4, 'input-tester': 2, 'verifier': 2}; 6 test case(s), 2 candidate(s), verification {'confirmed': 1, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date rejection {'Post title': 'Old Post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 2,
+  "model_p50_ms": 2694,
+  "model_p95_ms": 14101,
+  "browser_p50_ms": 104,
+  "browser_p95_ms": 481,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 19613,
+  "out_tokens": 6701,
+  "cost": 0.00366105,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_16ace0619e76",
+  "wall_s": 97.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 2 form(s) tested with 6 case(s); 2 candidate(s), verification: {'confirmed': 1, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2"
+  ],
+  "reqs_verified": [
+   "R2"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [],
+  "defects_known": 1,
+  "false_confirmations": [
+   "R2 {'Title': 'Draft 2', 'Caption': ''}"
+  ],
+  "confirmed": [
+   "R2: New draft: empty_caption {'Title': 'Draft 2', 'Caption': ''}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 3628,
+  "model_p95_ms": 7983,
+  "browser_p50_ms": 47,
+  "browser_p95_ms": 151,
+  "calls": 18,
+  "failed_calls": 0,
+  "in_tokens": 22544,
+  "out_tokens": 7539,
+  "cost": 0.0041428,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_46eda7d5b57b",
+  "wall_s": 46.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R3"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [
+   "R3 {'Title': 'My Draft', 'Caption': 'Draft content'}"
+  ],
+  "confirmed": [
+   "R3: New draft: Valid draft {'Title': 'My Draft', 'Caption': 'Draft content'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2106,
+  "model_p95_ms": 8535,
+  "browser_p50_ms": 46,
+  "browser_p95_ms": 160,
+  "calls": 10,
+  "failed_calls": 0,
+  "in_tokens": 11505,
+  "out_tokens": 2459,
+  "cost": 0.0131295,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_e876403810ba",
+  "wall_s": 57.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 4, 'skipped': 1, 'done': 10}; claimed by {'explorer-a': 4, 'explorer-b': 4, 'input-tester': 2, 'verifier': 2}; 5 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 4,
+  "model_p50_ms": 2242,
+  "model_p95_ms": 7055,
+  "browser_p50_ms": 122,
+  "browser_p95_ms": 650,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 21427,
+  "out_tokens": 7008,
+  "cost": 0.0317375,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_2939d367c5c4",
+  "wall_s": 78.4,
+  "unusable": true,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'done': 4, 'blocked': 2}; claimed by {'explorer-a': 3, 'explorer-b': 1, 'input-tester': 2, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 0,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 8015,
+  "model_p95_ms": 20286,
+  "browser_p50_ms": 98,
+  "browser_p95_ms": 449,
+  "calls": 16,
+  "failed_calls": 0,
+  "in_tokens": 13531,
+  "out_tokens": 10948,
+  "cost": 0.0037109334,
+  "truncated": 7,
+  "retries": 8,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "DeepInfra",
+   "GMICloud",
+   "Parasail",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_fd6bc12516b4",
+  "wall_s": 131.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 3 case(s); 0 candidate(s); stopped early: single-agent task blocked: single-agent produced invalid replies: truncated at the output limit; invalid test plan: Invalid JSON: EOF while parsing a value at line 1 column 0 at ()",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 7307,
+  "model_p95_ms": 55408,
+  "browser_p50_ms": 102,
+  "browser_p95_ms": 150,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 10066,
+  "out_tokens": 6041,
+  "cost": 0.0022258614,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "SiliconFlow"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_80cf22c27984",
+  "wall_s": 83.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 1 form(s) tested with 3 case(s); 2 candidate(s), verification: {'confirmed': 1, 'not_reproduced': 1}",
+  "goal_met": false,
+  "goal_missing": [
+   "/schedule/new"
+  ],
+  "reqs_tested": [
+   "R2"
+  ],
+  "reqs_verified": [
+   "R2"
+  ],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [
+   "R2 {'Title': '', 'Caption': 'Caption'}"
+  ],
+  "confirmed": [
+   "R2: New draft: empty-title {'Title': '', 'Caption': 'Caption'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 3207,
+  "model_p95_ms": 9074,
+  "browser_p50_ms": 46,
+  "browser_p95_ms": 125,
+  "calls": 16,
+  "failed_calls": 0,
+  "in_tokens": 19205,
+  "out_tokens": 5027,
+  "cost": 0.00297105,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_26cb5031e8c7",
+  "wall_s": 61.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 4, 'skipped': 1, 'done': 10}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 3}; 6 test case(s), 3 candidate(s), verification {'inconclusive': 3}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 4,
+  "model_p50_ms": 2645,
+  "model_p95_ms": 7977,
+  "browser_p50_ms": 105,
+  "browser_p95_ms": 487,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 19601,
+  "out_tokens": 7259,
+  "cost": 0.0038836499999999998,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_b136420c0fdf",
+  "wall_s": 62.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 1, 'done': 11}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 4 test case(s), 2 candidate(s), verification {'confirmed': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [
+   "T2",
+   "T5"
+  ],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [
+   "DT2",
+   "DT5"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Too many tickets {'Name': 'Bob', 'Email': 'bob@example.com', 'Tickets': '7'}",
+   "T5: Cancel this booking?: Confirm cancellation {}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 2232,
+  "model_p95_ms": 5313,
+  "browser_p50_ms": 122,
+  "browser_p95_ms": 625,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 21603,
+  "out_tokens": 7273,
+  "cost": 0.03262050000000001,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_6e1d56ed792e",
+  "wall_s": 30.4,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [
+   "T2"
+  ],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [
+   "DT2"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Invalid tickets {'Name': 'Bob', 'Email': 'bob@example.com', 'Tickets': '7'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 1983,
+  "model_p95_ms": 2652,
+  "browser_p50_ms": 38,
+  "browser_p95_ms": 122,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 9081,
+  "out_tokens": 899,
+  "cost": 0.0072375,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_a2c56ac3891c",
+  "wall_s": 73.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 4893,
+  "model_p95_ms": 41668,
+  "browser_p50_ms": 38,
+  "browser_p95_ms": 129,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 6503,
+  "out_tokens": 3062,
+  "cost": 0.0011473072,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_8017f3ef313a",
+  "wall_s": 117.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 1, 'skipped': 2, 'done': 9}; claimed by {'explorer-a': 5, 'explorer-b': 2, 'input-tester': 2, 'verifier': 1}; 4 test case(s), 1 candidate(s), verification {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [
+   "T5"
+  ],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [
+   "DT5"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T5: Cancel this booking?: Cancel booking {}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 7440,
+  "model_p95_ms": 12918,
+  "browser_p50_ms": 91,
+  "browser_p95_ms": 452,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 23571,
+  "out_tokens": 15562,
+  "cost": 0.005914017599999998,
+  "truncated": 8,
+  "retries": 8,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_051affcc2b49",
+  "wall_s": 58.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 6}; claimed by {'explorer-a': 4, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2931,
+  "model_p95_ms": 12983,
+  "browser_p50_ms": 98,
+  "browser_p95_ms": 281,
+  "calls": 17,
+  "failed_calls": 0,
+  "in_tokens": 14474,
+  "out_tokens": 5340,
+  "cost": 0.0028596999999999997,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_827cbfface99",
+  "wall_s": 26.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 4969,
+  "model_p95_ms": 5694,
+  "browser_p50_ms": 37,
+  "browser_p95_ms": 146,
+  "calls": 4,
+  "failed_calls": 0,
+  "in_tokens": 3683,
+  "out_tokens": 1946,
+  "cost": 0.00096255,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_3679b7e1d5e2",
+  "wall_s": 27.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2381,
+  "model_p95_ms": 3941,
+  "browser_p50_ms": 41,
+  "browser_p95_ms": 137,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 7584,
+  "out_tokens": 723,
+  "cost": 0.005961,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_28092cf77999",
+  "wall_s": 46.6,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 2, 'done': 7}; claimed by {'explorer-a': 2, 'explorer-b': 3, 'input-tester': 2, 'verifier': 0}; 4 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 2604,
+  "model_p95_ms": 10462,
+  "browser_p50_ms": 50,
+  "browser_p95_ms": 358,
+  "calls": 17,
+  "failed_calls": 0,
+  "in_tokens": 14419,
+  "out_tokens": 4930,
+  "cost": 0.021999499999999998,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_7d1cf49d1a19",
+  "wall_s": 116.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 1, 'skipped': 2, 'done': 8}; claimed by {'explorer-a': 5, 'explorer-b': 2, 'input-tester': 2, 'verifier': 0}; 4 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 7259,
+  "model_p95_ms": 13478,
+  "browser_p50_ms": 101,
+  "browser_p95_ms": 433,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 22722,
+  "out_tokens": 14293,
+  "cost": 0.005558130000000001,
+  "truncated": 7,
+  "retries": 7,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "DeepInfra",
+   "GMICloud",
+   "Parasail",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_566f70f67d22",
+  "wall_s": 59.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 6444,
+  "model_p95_ms": 10082,
+  "browser_p50_ms": 41,
+  "browser_p95_ms": 135,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 8999,
+  "out_tokens": 4536,
+  "cost": 0.0024734329999999997,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_bc70c5397d1c",
+  "wall_s": 63.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 4625,
+  "model_p95_ms": 6186,
+  "browser_p50_ms": 37,
+  "browser_p95_ms": 131,
+  "calls": 12,
+  "failed_calls": 0,
+  "in_tokens": 14492,
+  "out_tokens": 4796,
+  "cost": 0.0026430000000000004,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_3894c4267d00",
+  "wall_s": 49.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 6}; claimed by {'explorer-a': 4, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2619,
+  "model_p95_ms": 6737,
+  "browser_p50_ms": 101,
+  "browser_p95_ms": 498,
+  "calls": 17,
+  "failed_calls": 0,
+  "in_tokens": 14424,
+  "out_tokens": 4493,
+  "cost": 0.0025184,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_e4e3c45f8740",
+  "wall_s": 43.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 2, 'skipped': 4, 'done': 6, 'failed': 1}; claimed by {'explorer-a': 5, 'explorer-b': 3, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 3,
+  "model_p50_ms": 2097,
+  "model_p95_ms": 2656,
+  "browser_p50_ms": 92,
+  "browser_p95_ms": 307,
+  "calls": 19,
+  "failed_calls": 0,
+  "in_tokens": 19201,
+  "out_tokens": 1179,
+  "cost": 0.013137500000000002,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_cee1f15891de",
+  "wall_s": 14.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 0 form(s) tested with 0 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 1744,
+  "model_p95_ms": 2295,
+  "browser_p50_ms": 84,
+  "browser_p95_ms": 182,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 6814,
+  "out_tokens": 458,
+  "cost": 0.0047810000000000005,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_573cd5ecf9e6",
+  "wall_s": 24.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 0 form(s) tested with 0 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3452,
+  "model_p95_ms": 4872,
+  "browser_p50_ms": 94,
+  "browser_p95_ms": 201,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 7064,
+  "out_tokens": 1350,
+  "cost": 0.0005326714000000001,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_21877d425884",
+  "wall_s": 125.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 2, 'done': 5}; claimed by {'explorer-a': 3, 'explorer-b': 2, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 5599,
+  "model_p95_ms": 40973,
+  "browser_p50_ms": 100,
+  "browser_p95_ms": 226,
+  "calls": 15,
+  "failed_calls": 0,
+  "in_tokens": 15017,
+  "out_tokens": 8132,
+  "cost": 0.0028644016,
+  "truncated": 7,
+  "retries": 7,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "DeepInfra",
+   "GMICloud",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_b0d39ad6ff91",
+  "wall_s": 52.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 2, 'skipped': 2, 'done': 4}; claimed by {'explorer-a': 2, 'explorer-b': 2, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 5179,
+  "model_p95_ms": 6231,
+  "browser_p50_ms": 92,
+  "browser_p95_ms": 292,
+  "calls": 12,
+  "failed_calls": 0,
+  "in_tokens": 10607,
+  "out_tokens": 7481,
+  "cost": 0.00352275,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_8e0431c0f388",
+  "wall_s": 53.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 0 form(s) tested with 0 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 4020,
+  "model_p95_ms": 5747,
+  "browser_p50_ms": 86,
+  "browser_p95_ms": 184,
+  "calls": 12,
+  "failed_calls": 0,
+  "in_tokens": 15169,
+  "out_tokens": 4848,
+  "cost": 0.00269765,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_ae152319c98d",
+  "wall_s": 42.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 2 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2004,
+  "model_p95_ms": 2886,
+  "browser_p50_ms": 1713,
+  "browser_p95_ms": 2809,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 10775,
+  "out_tokens": 582,
+  "cost": 0.0071335,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_6ad9ad5fd3b7",
+  "wall_s": 81.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 1, 'done': 8}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 1, 'verifier': 1}; 3 test case(s), 1 candidate(s), verification {'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 2462,
+  "model_p95_ms": 7735,
+  "browser_p50_ms": 2017,
+  "browser_p95_ms": 2952,
+  "calls": 22,
+  "failed_calls": 0,
+  "in_tokens": 25386,
+  "out_tokens": 6862,
+  "cost": 0.033278999999999996,
+  "truncated": 4,
+  "retries": 4,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_8e813b86dee9",
+  "wall_s": 138.6,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'done': 8}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 1, 'verifier': 0}; 2 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 8481,
+  "model_p95_ms": 14020,
+  "browser_p50_ms": 2088,
+  "browser_p95_ms": 2993,
+  "calls": 21,
+  "failed_calls": 0,
+  "in_tokens": 21312,
+  "out_tokens": 13074,
+  "cost": 0.0051519973999999994,
+  "truncated": 10,
+  "retries": 10,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "SiliconFlow",
+   "Venice"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_88382bd67007",
+  "wall_s": 87.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 2 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 5156,
+  "model_p95_ms": 15488,
+  "browser_p50_ms": 2039,
+  "browser_p95_ms": 2560,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 12313,
+  "out_tokens": 4963,
+  "cost": 0.0022902312,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Relace"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 1,
+  "run_id": "run_de932c562c5e",
+  "wall_s": 61.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 4428,
+  "model_p95_ms": 5904,
+  "browser_p50_ms": 2012,
+  "browser_p95_ms": 2659,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 7517,
+  "out_tokens": 3237,
+  "cost": 0.00167065,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 1,
+  "run_id": "run_95e85c9b9605",
+  "wall_s": 91.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'done': 7}; claimed by {'explorer-a': 4, 'explorer-b': 2, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "/dropdown"
+  ],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3625,
+  "model_p95_ms": 5701,
+  "browser_p50_ms": 2013,
+  "browser_p95_ms": 2908,
+  "calls": 20,
+  "failed_calls": 0,
+  "in_tokens": 22151,
+  "out_tokens": 8051,
+  "cost": 0.00420123,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_260b64b1cfeb",
+  "wall_s": 46.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 3 candidate(s), verification: {'confirmed': 1, 'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past Date Rejection {'Post title': 'Past Post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2568,
+  "model_p95_ms": 7417,
+  "browser_p50_ms": 42,
+  "browser_p95_ms": 144,
+  "calls": 10,
+  "failed_calls": 0,
+  "in_tokens": 11453,
+  "out_tokens": 2611,
+  "cost": 0.013559500000000004,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_94026034ff96",
+  "wall_s": 57.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 4, 'skipped': 1, 'done': 9}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 5 test case(s), 2 candidate(s), verification {'confirmed': 1, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date {'Post title': 'Past Post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 4,
+  "model_p50_ms": 2253,
+  "model_p95_ms": 7305,
+  "browser_p50_ms": 127,
+  "browser_p95_ms": 605,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 21362,
+  "out_tokens": 6828,
+  "cost": 0.031165,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_cd378809a843",
+  "wall_s": 63.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'done': 4, 'blocked': 2}; claimed by {'explorer-a': 3, 'explorer-b': 1, 'input-tester': 2, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 0,
+  "defects_found": [],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 7112,
+  "model_p95_ms": 15027,
+  "browser_p50_ms": 111,
+  "browser_p95_ms": 456,
+  "calls": 14,
+  "failed_calls": 0,
+  "in_tokens": 11549,
+  "out_tokens": 9765,
+  "cost": 0.0047480355,
+  "truncated": 5,
+  "retries": 5,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_d5f38a06e40c",
+  "wall_s": 96.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 4 case(s); 2 candidate(s), verification: {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 10311,
+  "model_p95_ms": 16557,
+  "browser_p50_ms": 43,
+  "browser_p95_ms": 174,
+  "calls": 10,
+  "failed_calls": 0,
+  "in_tokens": 11992,
+  "out_tokens": 7179,
+  "cost": 0.0026912565,
+  "truncated": 2,
+  "retries": 2,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_d615568ddb58",
+  "wall_s": 80.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'confirmed': 1, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date rejection {'Post title': 'Old post', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 3023,
+  "model_p95_ms": 7648,
+  "browser_p50_ms": 50,
+  "browser_p95_ms": 143,
+  "calls": 17,
+  "failed_calls": 0,
+  "in_tokens": 21253,
+  "out_tokens": 5973,
+  "cost": 0.00345185,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_d10edfe47b74",
+  "wall_s": 62.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 3, 'skipped': 1, 'done': 10}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 3}; 6 test case(s), 3 candidate(s), verification {'confirmed': 1, 'inconclusive': 1, 'not_reproduced': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R2",
+   "R5"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [
+   "D1"
+  ],
+  "defects_known": 1,
+  "false_confirmations": [],
+  "confirmed": [
+   "R5: Schedule a post: Past date rejection {'Post title': 'Past test', 'Publish date': '2026-06-14'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 3,
+  "model_p50_ms": 3222,
+  "model_p95_ms": 6030,
+  "browser_p50_ms": 98,
+  "browser_p95_ms": 517,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 20544,
+  "out_tokens": 9059,
+  "cost": 0.0046508,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_dcb7f0d9c900",
+  "wall_s": 52.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 5, 'skipped': 1, 'done': 9}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 5 test case(s), 2 candidate(s), verification {'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 5,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 5,
+  "model_p50_ms": 2670,
+  "model_p95_ms": 8088,
+  "browser_p50_ms": 110,
+  "browser_p95_ms": 698,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 21954,
+  "out_tokens": 7385,
+  "cost": 0.033131999999999995,
+  "truncated": 2,
+  "retries": 3,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_c88af76765d5",
+  "wall_s": 35.4,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 6 case(s); 1 candidate(s), verification: {'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R3",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2002,
+  "model_p95_ms": 3056,
+  "browser_p50_ms": 51,
+  "browser_p95_ms": 150,
+  "calls": 9,
+  "failed_calls": 0,
+  "in_tokens": 10482,
+  "out_tokens": 1097,
+  "cost": 0.008532,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_bf863960654b",
+  "wall_s": 77.4,
+  "unusable": true,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer finished the goal; 2 form(s) tested with 0 case(s); 0 candidate(s); stopped early: single-agent task blocked: single-agent produced invalid replies: truncated at the output limit; invalid test plan: Invalid JSON: EOF while parsing a value at line 1 column 0 at ()",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 0,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 12425,
+  "model_p95_ms": 17933,
+  "browser_p50_ms": 106,
+  "browser_p95_ms": 110,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 7947,
+  "out_tokens": 6426,
+  "cost": 0.0027982578000000004,
+  "truncated": 4,
+  "retries": 4,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Crusoe",
+   "GMICloud",
+   "Parasail",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_080bcf544f63",
+  "wall_s": 114.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 1, 'done': 7, 'blocked': 1}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 6732,
+  "model_p95_ms": 15588,
+  "browser_p50_ms": 112,
+  "browser_p95_ms": 478,
+  "calls": 24,
+  "failed_calls": 0,
+  "in_tokens": 21134,
+  "out_tokens": 14086,
+  "cost": 0.005849050200000001,
+  "truncated": 9,
+  "retries": 9,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Crusoe",
+   "DeepInfra",
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Wafer"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_97e001b7d063",
+  "wall_s": 59.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (model-call limit reached (25/25)); tasks {'unfinished': 4, 'skipped': 2, 'done': 10}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 2, 'verifier': 3}; 6 test case(s), 3 candidate(s), verification {'confirmed': 2, 'inconclusive': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R2"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [
+   "R2 {'Title': '', 'Caption': 'Caption text'}",
+   "R2 {'Title': 'Draft without caption', 'Caption': ''}"
+  ],
+  "confirmed": [
+   "R2: New draft: Empty Title should fail {'Title': '', 'Caption': 'Caption text'}",
+   "R2: New draft: Empty Caption should fail {'Title': 'Draft without caption', 'Caption': ''}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 4,
+  "model_p50_ms": 3205,
+  "model_p95_ms": 6706,
+  "browser_p50_ms": 58,
+  "browser_p95_ms": 600,
+  "calls": 25,
+  "failed_calls": 0,
+  "in_tokens": 20413,
+  "out_tokens": 9008,
+  "cost": 0.00462385,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "creator-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_f658c0adbdb9",
+  "wall_s": 80.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 2 form(s) tested with 6 case(s); 3 candidate(s), verification: {'confirmed': 1, 'inconclusive': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "R2",
+   "R4",
+   "R5"
+  ],
+  "reqs_verified": [
+   "R2"
+  ],
+  "forms": 2,
+  "cases": 6,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [
+   "R2 {'Title': '', 'Caption': 'Caption text'}"
+  ],
+  "confirmed": [
+   "R2: New draft: Empty title {'Title': '', 'Caption': 'Caption text'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 1,
+  "model_p50_ms": 2796,
+  "model_p95_ms": 5155,
+  "browser_p50_ms": 47,
+  "browser_p95_ms": 147,
+  "calls": 18,
+  "failed_calls": 0,
+  "in_tokens": 22927,
+  "out_tokens": 6234,
+  "cost": 0.00363995,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_6cd826575b63",
+  "wall_s": 30.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 1 candidate(s), verification: {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [
+   "T2"
+  ],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [
+   "DT2"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Invalid tickets {'Name': 'John Doe', 'Email': 'john@example.com', 'Tickets': '7'}"
+  ],
+  "independence": [
+   "self"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2012,
+  "model_p95_ms": 2710,
+  "browser_p50_ms": 40,
+  "browser_p95_ms": 124,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 8937,
+  "out_tokens": 907,
+  "cost": 0.007189499999999999,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_619c5b2bc20c",
+  "wall_s": 62.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 2, 'skipped': 1, 'done': 10}; claimed by {'explorer-a': 3, 'explorer-b': 3, 'input-tester': 2, 'verifier': 2}; 4 test case(s), 2 candidate(s), verification {'confirmed': 2}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [
+   "T2",
+   "T5"
+  ],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [
+   "DT2",
+   "DT5"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Too many tickets {'Name': 'John Doe', 'Email': 'john@example.com', 'Tickets': '7'}",
+   "T5: Cancel this booking?: Cancel booking {}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 2,
+  "model_p50_ms": 2383,
+  "model_p95_ms": 7194,
+  "browser_p50_ms": 109,
+  "browser_p95_ms": 480,
+  "calls": 22,
+  "failed_calls": 0,
+  "in_tokens": 18944,
+  "out_tokens": 7094,
+  "cost": 0.030754,
+  "truncated": 2,
+  "retries": 2,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_61c7f16a2120",
+  "wall_s": 102.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 6, 'blocked': 1}; claimed by {'explorer-a': 4, 'explorer-b': 1, 'input-tester': 2, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 7398,
+  "model_p95_ms": 21136,
+  "browser_p50_ms": 43,
+  "browser_p95_ms": 498,
+  "calls": 18,
+  "failed_calls": 0,
+  "in_tokens": 15903,
+  "out_tokens": 12386,
+  "cost": 0.0061049046,
+  "truncated": 6,
+  "retries": 7,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Azure",
+   "GMICloud",
+   "Parasail",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_f35475146474",
+  "wall_s": 47.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 0 case(s); 0 candidate(s); stopped early: single-agent task blocked: single-agent produced invalid replies: truncated at the output limit; invalid test plan: Invalid JSON: EOF while parsing a string at line 1 column 522 at ()",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 0,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 5817,
+  "model_p95_ms": 12329,
+  "browser_p50_ms": 121,
+  "browser_p95_ms": 145,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 7342,
+  "out_tokens": 4357,
+  "cost": 0.002504161,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Azure",
+   "GMICloud",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-broken",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_5094637bd59f",
+  "wall_s": 69.7,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 3677,
+  "model_p95_ms": 10063,
+  "browser_p50_ms": 40,
+  "browser_p95_ms": 108,
+  "calls": 14,
+  "failed_calls": 0,
+  "in_tokens": 16598,
+  "out_tokens": 5954,
+  "cost": 0.0032115,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-broken",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_f4b43cd0fc74",
+  "wall_s": 47.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'done': 7}; claimed by {'explorer-a': 4, 'explorer-b': 1, 'input-tester': 1, 'verifier': 1}; 3 test case(s), 1 candidate(s), verification {'confirmed': 1}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2"
+  ],
+  "reqs_verified": [
+   "T2"
+  ],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [
+   "DT2"
+  ],
+  "defects_known": 2,
+  "false_confirmations": [],
+  "confirmed": [
+   "T2: Book tickets: Invalid tickets out of range {'Name': 'Test User', 'Email': 'test@example.com', 'Tickets': '7'}"
+  ],
+  "independence": [
+   "independent"
+  ],
+  "unfinished": 0,
+  "model_p50_ms": 2745,
+  "model_p95_ms": 9536,
+  "browser_p50_ms": 96,
+  "browser_p95_ms": 382,
+  "calls": 19,
+  "failed_calls": 0,
+  "in_tokens": 15629,
+  "out_tokens": 5087,
+  "cost": 0.0028162499999999997,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_3ef22a8f2809",
+  "wall_s": 46.1,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 2, 'done': 8}; claimed by {'explorer-a': 3, 'explorer-b': 3, 'input-tester': 2, 'verifier': 0}; 4 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 2159,
+  "model_p95_ms": 8104,
+  "browser_p50_ms": 64,
+  "browser_p95_ms": 300,
+  "calls": 19,
+  "failed_calls": 0,
+  "in_tokens": 16610,
+  "out_tokens": 5657,
+  "cost": 0.025276,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_31e6c04c4d52",
+  "wall_s": 24.9,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2317,
+  "model_p95_ms": 2807,
+  "browser_p50_ms": 39,
+  "browser_p95_ms": 126,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 7658,
+  "out_tokens": 775,
+  "cost": 0.006154,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_95ba80519682",
+  "wall_s": 50.6,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 4721,
+  "model_p95_ms": 12739,
+  "browser_p50_ms": 35,
+  "browser_p95_ms": 127,
+  "calls": 7,
+  "failed_calls": 0,
+  "in_tokens": 7566,
+  "out_tokens": 4252,
+  "cost": 0.0019078005999999998,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_558acfaadbd8",
+  "wall_s": 131.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 8}; claimed by {'explorer-a': 4, 'explorer-b': 2, 'input-tester': 2, 'verifier': 0}; 4 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4",
+   "T5"
+  ],
+  "reqs_verified": [],
+  "forms": 2,
+  "cases": 4,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 10014,
+  "model_p95_ms": 14794,
+  "browser_p50_ms": 88,
+  "browser_p95_ms": 453,
+  "calls": 23,
+  "failed_calls": 0,
+  "in_tokens": 20417,
+  "out_tokens": 12554,
+  "cost": 0.0053356599,
+  "truncated": 7,
+  "retries": 7,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Azure",
+   "DeepInfra",
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-corrected",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_31012bae8720",
+  "wall_s": 49.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "queue drained; tasks {'skipped': 2, 'done': 6}; claimed by {'explorer-a': 4, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T2",
+   "T3",
+   "T4"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 2584,
+  "model_p95_ms": 15348,
+  "browser_p50_ms": 103,
+  "browser_p95_ms": 490,
+  "calls": 17,
+  "failed_calls": 0,
+  "in_tokens": 14163,
+  "out_tokens": 4788,
+  "cost": 0.0026233500000000004,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "ticket-corrected",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_190201bc0f9c",
+  "wall_s": 80.3,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "T3"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": [],
+  "defects_known": 0,
+  "false_confirmations": [],
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 3873,
+  "model_p95_ms": 14190,
+  "browser_p50_ms": 34,
+  "browser_p95_ms": 129,
+  "calls": 14,
+  "failed_calls": 0,
+  "in_tokens": 17804,
+  "out_tokens": 5551,
+  "cost": 0.0031106,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_8d6f91092bb9",
+  "wall_s": 17.4,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 0 form(s) tested with 0 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 1844,
+  "model_p95_ms": 2504,
+  "browser_p50_ms": 91,
+  "browser_p95_ms": 3328,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 6758,
+  "out_tokens": 352,
+  "cost": 0.004435,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_dd1137649359",
+  "wall_s": 27.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 2, 'skipped': 2, 'done': 4, 'failed': 1}; claimed by {'explorer-a': 3, 'explorer-b': 2, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/active",
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 3,
+  "model_p50_ms": 1996,
+  "model_p95_ms": 3251,
+  "browser_p50_ms": 94,
+  "browser_p95_ms": 219,
+  "calls": 12,
+  "failed_calls": 0,
+  "in_tokens": 11179,
+  "out_tokens": 1350,
+  "cost": 0.0096395,
+  "truncated": 0,
+  "retries": 1,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_e553d9090b96",
+  "wall_s": 108.8,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 1, 'skipped': 1, 'done': 4}; claimed by {'explorer-a': 3, 'explorer-b': 1, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 9519,
+  "model_p95_ms": 41995,
+  "browser_p50_ms": 98,
+  "browser_p95_ms": 571,
+  "calls": 12,
+  "failed_calls": 0,
+  "in_tokens": 11293,
+  "out_tokens": 6678,
+  "cost": 0.0030104428,
+  "truncated": 4,
+  "retries": 5,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "Azure",
+   "DigitalOcean",
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_c293eac43077",
+  "wall_s": 29.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 0 form(s) tested with 0 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 3869,
+  "model_p95_ms": 6534,
+  "browser_p50_ms": 95,
+  "browser_p95_ms": 162,
+  "calls": 6,
+  "failed_calls": 0,
+  "in_tokens": 7071,
+  "out_tokens": 1688,
+  "cost": 0.0008183495,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "todomvc",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_58497e376755",
+  "wall_s": 21.3,
+  "unusable": true,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "failed",
+  "stop_reason": "model produced repeated invalid decisions",
+  "goal_met": false,
+  "goal_missing": [
+   "#/active",
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 6746,
+  "model_p95_ms": 6977,
+  "browser_p50_ms": 193,
+  "browser_p95_ms": 193,
+  "calls": 3,
+  "failed_calls": 0,
+  "in_tokens": 2531,
+  "out_tokens": 2301,
+  "cost": 0.00104695,
+  "truncated": 2,
+  "retries": 3,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "todomvc",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_7abe4b186020",
+  "wall_s": 76.6,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "queue drained; tasks {'unfinished': 2, 'skipped': 5, 'done': 6, 'failed': 1}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 0, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "goal_met": false,
+  "goal_missing": [
+   "#/active",
+   "#/completed"
+  ],
+  "reqs_tested": [],
+  "reqs_verified": [],
+  "forms": 0,
+  "cases": 0,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 3,
+  "model_p50_ms": 5131,
+  "model_p95_ms": 6974,
+  "browser_p50_ms": 87,
+  "browser_p95_ms": 301,
+  "calls": 18,
+  "failed_calls": 0,
+  "in_tokens": 17139,
+  "out_tokens": 9983,
+  "cost": 0.004850150000000001,
+  "truncated": 2,
+  "retries": 3,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_f332f0ad24c7",
+  "wall_s": 75.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 2, 'done': 6}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 1, 'verifier': 0}; 2 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 2,
+  "model_p50_ms": 2145,
+  "model_p95_ms": 5477,
+  "browser_p50_ms": 2071,
+  "browser_p95_ms": 2891,
+  "calls": 22,
+  "failed_calls": 0,
+  "in_tokens": 26004,
+  "out_tokens": 5620,
+  "cost": 0.029861999999999996,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "google/gemini-3-flash-preview",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_74ca34cb2cf9",
+  "wall_s": 39.2,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 2 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 1619,
+  "model_p95_ms": 2263,
+  "browser_p50_ms": 1710,
+  "browser_p95_ms": 2553,
+  "calls": 8,
+  "failed_calls": 0,
+  "in_tokens": 10689,
+  "out_tokens": 575,
+  "cost": 0.0070695,
+  "truncated": 0,
+  "retries": 0,
+  "actual_models": [
+   "google/gemini-3-flash-preview"
+  ],
+  "providers": [
+   "Google"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_2b6355c66723",
+  "wall_s": 116.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "completed",
+  "stop_reason": "explorer finished the goal; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 0,
+  "model_p50_ms": 6764,
+  "model_p95_ms": 12913,
+  "browser_p50_ms": 1839,
+  "browser_p95_ms": 2905,
+  "calls": 11,
+  "failed_calls": 0,
+  "in_tokens": 14851,
+  "out_tokens": 6494,
+  "cost": 0.0035690261,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "deepseek/deepseek-v4-flash",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_3c5f2f67c320",
+  "wall_s": 132.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 1, 'done': 7}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 1, 'verifier': 0}; 3 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 7423,
+  "model_p95_ms": 18448,
+  "browser_p50_ms": 2097,
+  "browser_p95_ms": 2961,
+  "calls": 21,
+  "failed_calls": 0,
+  "in_tokens": 20486,
+  "out_tokens": 11823,
+  "cost": 0.005002901099999999,
+  "truncated": 8,
+  "retries": 8,
+  "actual_models": [
+   "deepseek/deepseek-v4-flash"
+  ],
+  "providers": [
+   "GMICloud",
+   "Parasail",
+   "Relace",
+   "Venice"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "the-internet",
+  "mode": "queue_review",
+  "rep": 2,
+  "run_id": "run_942e5c425edd",
+  "wall_s": 103.0,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "explorer share of the budget used (explore call share used (19/19)); tasks {'unfinished': 1, 'done': 7}; claimed by {'explorer-a': 4, 'explorer-b': 3, 'input-tester': 1, 'verifier': 0}; 2 test case(s), 0 candidate(s), verification {}",
+  "goal_met": true,
+  "goal_missing": [],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 2,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 4899,
+  "model_p95_ms": 6508,
+  "browser_p50_ms": 2146,
+  "browser_p95_ms": 3117,
+  "calls": 21,
+  "failed_calls": 0,
+  "in_tokens": 20948,
+  "out_tokens": 9553,
+  "cost": 0.0048052400000000006,
+  "truncated": 3,
+  "retries": 3,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ },
+ {
+  "model": "openai/gpt-5-nano",
+  "target": "the-internet",
+  "mode": "single_agent",
+  "rep": 2,
+  "run_id": "run_3a5db80d818c",
+  "wall_s": 106.5,
+  "unusable": false,
+  "git": "a4bf97d9002e36f350947aefeaaf7bd94d0ba590",
+  "code_fingerprint": "be82ddc467e44df6",
+  "status": "partial",
+  "stop_reason": "step limit reached before the explorer finished; 1 form(s) tested with 3 case(s); 0 candidate(s)",
+  "goal_met": false,
+  "goal_missing": [
+   "/checkboxes",
+   "/dropdown"
+  ],
+  "reqs_tested": [
+   "H1",
+   "H2"
+  ],
+  "reqs_verified": [],
+  "forms": 1,
+  "cases": 3,
+  "defects_found": null,
+  "defects_known": null,
+  "false_confirmations": null,
+  "confirmed": [],
+  "independence": [],
+  "unfinished": 1,
+  "model_p50_ms": 4246,
+  "model_p95_ms": 6495,
+  "browser_p50_ms": 1835,
+  "browser_p95_ms": 2657,
+  "calls": 14,
+  "failed_calls": 0,
+  "in_tokens": 21166,
+  "out_tokens": 5102,
+  "cost": 0.0030991000000000005,
+  "truncated": 1,
+  "retries": 1,
+  "actual_models": [
+   "openai/gpt-5-nano"
+  ],
+  "providers": [
+   "OpenAI"
+  ]
+ }
+]
