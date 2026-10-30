@@ -28,6 +28,7 @@ from flowlens.models.contracts import Provenance, Run, RunLimits, VerificationAt
 from flowlens.orchestration.review import ReverifyRun, ReviewRun  # noqa: E402
 from flowlens.services.llm import OpenRouterClient  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
+from check_prereq import require_live
 
 BUILDS = {"broken": "http://localhost:5174/", "corrected": "http://localhost:5175/"}
 GOAL = ("Explore the creator dashboard and open each form a creator can use, without submitting them. "
@@ -125,4 +126,5 @@ async def main(which: str) -> None:
 
 
 if __name__ == "__main__":
+    require_live()
     asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "all"))

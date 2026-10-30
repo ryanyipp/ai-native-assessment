@@ -20,6 +20,8 @@ from pathlib import Path
 import httpx
 from playwright.async_api import Page, async_playwright, expect
 
+from check_prereq import require_runs
+
 UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 API = os.environ.get("FLOWLENS_API", "http://localhost:8000")
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/ui-iteration-2")
@@ -29,6 +31,7 @@ AXE = ROOT / "frontend" / "node_modules" / "axe-core" / "axe.min.js"
 REQS = "\n".join(" ".join(i.strip()[2:].split()) for i in re.split(r"\n(?=- R\d)", (ROOT / "fixtures" / "creator-studio" /
                  "requirements.md").read_text("utf-8")) if i.strip().startswith("- R"))
 GOAL = "Explore the creator dashboard and open each form a creator can use, without submitting them. Finish when you have seen them."
+WORKERS = {"explorer-a": "Explorer A", "explorer-b": "Explorer B", "input-tester": "Input tester", "verifier": "Verifier"}
 results: list[tuple[str, bool, str]] = []
 
 
@@ -129,16 +132,26 @@ async def run_checks(page, browser, run_id, errors):
     await expect(page.get_by_role("tab", name="Browser")).to_have_attribute("aria-selected", "true")
     check("clicking a worker opens its browser view", await side.get_by_role("radio", name=re.compile("explorer-b")).get_attribute("aria-checked") == "true"
           and await strip.get_by_role("button", name="Explorer B").get_attribute("aria-pressed") == "true")
+    # Only workers with recorded actions have one to show; the others must not borrow a colleague's.
+    acted_ids = {a["agent_id"] for a in detail["actions"]}
+    acted = [label for wid, label in WORKERS.items() if wid in acted_ids]
     captions = set()
-    for name in ("Explorer A", "Explorer B", "Input tester", "Verifier"):
+    for name in acted:
         await strip.get_by_role("button", name=name).click()
         captions.add(await side.get_by_text(re.compile("Last recorded action: step")).inner_text())
-    check("each worker shows its own recorded action", len(captions) == 4, f"{len(captions)} distinct")
+    check("each worker shows its own recorded action", len(captions) == len(acted), f"{len(captions)} distinct of {len(acted)}")
+    idle = [label for wid, label in WORKERS.items() if wid not in acted_ids]
+    for name in idle:
+        await strip.get_by_role("button", name=name).click()
+        check(f"{name} recorded nothing and shows no other worker's action",
+              await side.get_by_text("This worker has not recorded a browser action.").is_visible()
+              and await side.get_by_text(re.compile("Last recorded action: step")).count() == 0)
+    await strip.get_by_role("button", name=acted[0]).click()
     check("worker screenshot labelled as recorded, not live", await side.get_by_text(re.compile("not live video")).first.is_visible())
     await page.screenshot(path=OUT / "after-browser-tab.png")
 
     hl = None
-    for name in ("Explorer A", "Explorer B", "Input tester", "Verifier"):
+    for name in acted:
         await strip.get_by_role("button", name=name).click()
         btn = side.get_by_role("button", name=re.compile("Show where step"))
         if await btn.count():
@@ -153,12 +166,12 @@ async def run_checks(page, browser, run_id, errors):
             break
     check("highlight drawn only from recorded bounds" if hl is not None else "no last action supports a highlight (none drawn)", hl is not False)
     opened = 0
-    for name in ("Explorer A", "Explorer B", "Input tester", "Verifier"):
+    for name in acted:
         await strip.get_by_role("button", name=name).click()
         await side.get_by_role("button", name=re.compile("Open evidence for step")).click()
         await expect(page.get_by_role("tab", name="Evidence")).to_have_attribute("aria-selected", "true")
         opened += await side.get_by_text(re.compile(r"step \d+", re.I)).first.is_visible()
-    check("every worker's screenshot opens its evidence", opened == 4, f"{opened}/4")
+    check("every worker's screenshot opens its evidence", opened == len(acted), f"{opened}/{len(acted)}")
 
     # Map selection opens evidence in the same sidebar.
     await page.get_by_role("tab", name="Findings").click()
@@ -256,6 +269,7 @@ async def run_checks(page, browser, run_id, errors):
 async def main():
     if not TARGET:
         sys.exit("give a saved RUN_ID, or --live to start one bounded live run")
+    require_runs("run_e957eab8645e", "run_db4f36872772", "run_9191ff906668", "run_53d7009ff711")
     OUT.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
         b = await p.chromium.launch()

@@ -1,0 +1,53 @@
+{
+  "id": "ho_cc2ef747456b",
+  "run_id": "run_9191ff906668",
+  "kind": "candidate_to_verifier",
+  "from_agent": "single-agent",
+  "to_agent": "single-agent",
+  "task_id": "task_beb6ee8a40cb",
+  "source_state_id": "state_7db9d557c99c",
+  "form_id": "form_8e4d9d8f6dc5",
+  "finding_id": "fnd_3ea6f98d24dd",
+  "setup": {
+    "target_state_id": "state_7db9d557c99c",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [],
+  "expected_behaviour": [
+    {
+      "text": "The system should either save the draft with an empty title or provide a validation message.",
+      "source": "none supplied"
+    }
+  ],
+  "evidence_refs": [
+    "art_44b7467a0a83",
+    "art_7aae56542cc4",
+    "art_9124394ecc92",
+    "art_c33ef5af5d79",
+    "art_c3b0e8c4fc16",
+    "art_7aa0f3ec7914",
+    "art_d66c75724f65",
+    "art_bc9c1fa311d3"
+  ],
+  "created_at": "2026-10-29T10:31:11.789042Z"
+}

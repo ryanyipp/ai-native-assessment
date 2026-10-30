@@ -32,7 +32,7 @@ backend\.venv\Scripts\python scripts\ui_check.py run_e957eab8645e docs\ui-iterat
 backend\.venv\Scripts\python scripts\ui_check_review.py run_db4f36872772 run_44704dfc5083 run_40e786578fef docs\checkpoint-2
 backend\.venv\Scripts\python scripts\ui_check_queue.py run_72e3868cc54e docs\checkpoint-3
 # Checkpoint 2 live evaluation (spends credit; both fixture builds must be running):
-backend\.venv\Scripts\python scripts\checkpoint2_eval.py all
+backend\.venv\Scripts\python scripts\checkpoint2_eval.py all --live
 ```
 
 ## Budget

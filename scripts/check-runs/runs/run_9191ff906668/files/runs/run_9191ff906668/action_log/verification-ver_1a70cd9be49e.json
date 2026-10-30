@@ -1,0 +1,70 @@
+{
+  "id": "ver_1a70cd9be49e",
+  "run_id": "run_9191ff906668",
+  "finding_id": "fnd_d0a4798593de",
+  "handoff_id": "ho_1f783b239ea2",
+  "verifier_id": "single-agent",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "text_contains": null,
+      "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+    "chosen_by": "single-agent"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "text_contains": null,
+        "field": "Publish date"
+      },
+      "requirement_ref": "R5",
+      "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+      "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5174/scheduled/118f915e?scheduled=1",
+      "route": "/scheduled/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Post scheduled."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+  "action_result_ids": [
+    "act_1dfbdb40fcda",
+    "act_e25fefc561d8",
+    "act_c5231a37b97b",
+    "act_a5f4249a851d"
+  ],
+  "evidence_refs": [
+    "art_ce416b555e58",
+    "art_4e0abb91c256",
+    "art_494357310dd3",
+    "art_ca091b90592a",
+    "art_da9bbdc3ebf8",
+    "art_ad2ba50a48f9",
+    "art_22ba5f1d6ab0",
+    "art_0445f4617e91"
+  ],
+  "model_call_id": "mc_f81dc72482b3",
+  "started_at": "2026-10-29T10:31:12.015253Z",
+  "finished_at": "2026-10-29T10:31:18.129394Z"
+}

@@ -1,0 +1,5703 @@
+{
+ "runs": [
+  {
+   "id": "run_9191ff906668",
+   "target_url": "http://localhost:5174/",
+   "goal": "Explore the creator dashboard and open each form a creator can use, without submitting them. Finish when you have seen them.",
+   "requirements": [
+    "R1. A creator can start a new draft from the dashboard.",
+    "R2. A draft has a title and a caption.",
+    "R3. Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+    "R4. A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+    "R5. A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+   ],
+   "model": "google/gemini-3-flash-preview",
+   "mode": "single_agent",
+   "limits": {
+    "max_steps": 12,
+    "max_model_calls": 30,
+    "max_cost_usd": 0.15,
+    "max_output_tokens": 800,
+    "max_output_tokens_planning": 1400,
+    "max_duration_s": 900,
+    "max_states": 30,
+    "reserved_verification_calls": 5,
+    "max_forms_tested": 3,
+    "max_cases_per_form": 3,
+    "verification_replays": 2,
+    "reserved_testing_calls": 6,
+    "explore_steps_per_task": 3,
+    "max_depth": 2,
+    "max_tasks": 40,
+    "task_max_attempts": 2,
+    "task_lease_s": 45,
+    "planning_reasoning_tokens": 384
+   },
+   "target_build": "creator-studio:broken",
+   "fault_injection": null,
+   "status": "completed",
+   "stop_reason": "explorer finished the goal; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'confirmed': 1, 'inconclusive': 1}",
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "usage": {
+    "model_calls": 9,
+    "prompt_tokens": 9363,
+    "completion_tokens": 1389,
+    "total_tokens": 10752,
+    "reported_cost_usd": 0.0088485,
+    "calls_without_cost": 0,
+    "exploration_calls": 4,
+    "testing_calls": 4,
+    "verification_calls": 1,
+    "truncated_calls": 0
+   },
+   "created_at": "2026-10-29T10:30:25.714657Z",
+   "finished_at": "2026-10-29T10:31:22.084655Z"
+  }
+ ],
+ "states": [
+  {
+   "id": "state_904d33615818",
+   "run_id": "run_9191ff906668",
+   "signature": "88218e31c26ae2b2",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/",
+   "url": "http://localhost:5174/",
+   "title": "Dashboard · Creator Studio",
+   "summary": "Dashboard",
+   "screenshot_artifact_id": "art_2e86317e8a7b",
+   "first_seen_step": 0,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "http://localhost:5174/"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "explore",
+     "context_id": "single-agent:explore:ws_33ee1f4750",
+     "action_result_id": "act_6ef40b4c59e0"
+    }
+   ]
+  },
+  {
+   "id": "state_7db9d557c99c",
+   "run_id": "run_9191ff906668",
+   "signature": "0e2b19e7e8058ea8",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/drafts/new",
+   "url": "http://localhost:5174/drafts/new",
+   "title": "New draft · Creator Studio",
+   "summary": "New draft (0/2 fields filled)",
+   "screenshot_artifact_id": "art_5c8f2631550f",
+   "first_seen_step": 1,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "http://localhost:5174/"
+    },
+    {
+     "type": "click",
+     "element_id": "e2"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "New draft",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "explore",
+     "context_id": "single-agent:explore:ws_33ee1f4750",
+     "action_result_id": "act_d3c664de9ff9"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+     "action_result_id": "act_5e70f1a3fd73"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+     "action_result_id": "act_2660e63e2cb8"
+    }
+   ]
+  },
+  {
+   "id": "state_9f455486894d",
+   "run_id": "run_9191ff906668",
+   "signature": "d88f89ed7886b427",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/schedule/new",
+   "url": "http://localhost:5174/schedule/new",
+   "title": "Schedule a post · Creator Studio",
+   "summary": "Schedule a post (0/2 fields filled)",
+   "screenshot_artifact_id": "art_a19c6fd44b59",
+   "first_seen_step": 3,
+   "setup_recipe": [
+    {
+     "type": "navigate",
+     "url": "http://localhost:5174/"
+    },
+    {
+     "type": "click",
+     "element_id": "e2"
+    },
+    {
+     "type": "click",
+     "element_id": "e1"
+    },
+    {
+     "type": "click",
+     "element_id": "e3"
+    }
+   ],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "New draft",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Schedule a post",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "explore",
+     "context_id": "single-agent:explore:ws_33ee1f4750",
+     "action_result_id": "act_21be1aae047f"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+     "action_result_id": "act_4126a05391e9"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+     "action_result_id": "act_a0ddf47662f1"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+     "action_result_id": "act_ab290f8e4cab"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+     "action_result_id": "act_1dfbdb40fcda"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+     "action_result_id": "act_a2ac58d8b114"
+    }
+   ]
+  },
+  {
+   "id": "state_a9043722341c",
+   "run_id": "run_9191ff906668",
+   "signature": "3a63862784474f4e",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/drafts/:id",
+   "url": "http://localhost:5174/drafts/ee39442b?saved=1",
+   "title": "Edit draft · Creator Studio",
+   "summary": "Edit draft — Draft saved. (2/2 fields filled)",
+   "screenshot_artifact_id": "art_1e8b3b1603ea",
+   "first_seen_step": 7,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "New draft",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text"
+     },
+     "value": "My First Post"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null
+     },
+     "value": "This is a test caption."
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Save draft",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+     "action_result_id": "act_3ee3928f72d2"
+    }
+   ]
+  },
+  {
+   "id": "state_2fcedbaa6d65",
+   "run_id": "run_9191ff906668",
+   "signature": "40018cbee542aa7a",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/drafts/:id",
+   "url": "http://localhost:5174/drafts/a6bca99a?saved=1",
+   "title": "Edit draft · Creator Studio",
+   "summary": "Edit draft — Draft saved. (1/2 fields filled)",
+   "screenshot_artifact_id": "art_d66c75724f65",
+   "first_seen_step": 11,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "New draft",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text"
+     },
+     "value": ""
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null
+     },
+     "value": "Caption only"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Save draft",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+     "action_result_id": "act_1f14efada8ab"
+    }
+   ]
+  },
+  {
+   "id": "state_6e8b0d2d1bda",
+   "run_id": "run_9191ff906668",
+   "signature": "ec74b49ccfe0be8e",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/scheduled/:id",
+   "url": "http://localhost:5174/scheduled/625b9ebe?scheduled=1",
+   "title": "Scheduled post · Creator Studio",
+   "summary": "Scheduled post — Post scheduled.",
+   "screenshot_artifact_id": "art_70324b5e7b14",
+   "first_seen_step": 15,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "New draft",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Schedule a post",
+      "input_type": null
+     },
+     "value": null
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text"
+     },
+     "value": "Future Post"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date"
+     },
+     "value": "2026-06-16"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Schedule post",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "discovered_by": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "sightings": [
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+     "action_result_id": "act_0fc254ce662c"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+     "action_result_id": "act_6dd1295f4d15"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "input_test",
+     "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+     "action_result_id": "act_feae0d378e1f"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+     "action_result_id": "act_a5f4249a851d"
+    },
+    {
+     "agent_id": "single-agent",
+     "phase": "verify",
+     "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+     "action_result_id": "act_d45aeef1a789"
+    }
+   ]
+  }
+ ],
+ "transitions": [
+  {
+   "id": "tr_3dc7a394f1ce",
+   "run_id": "run_9191ff906668",
+   "step": 1,
+   "source_state_id": "state_904d33615818",
+   "target_state_id": "state_7db9d557c99c",
+   "action": {
+    "type": "click",
+    "element_id": "e2"
+   },
+   "label": "click link 'New draft'",
+   "action_result_id": "act_d3c664de9ff9",
+   "ok": true,
+   "duration_ms": 47,
+   "screenshot_artifact_id": "art_5c8f2631550f",
+   "model_call_id": "mc_0f12d34232b1",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_e929cfbd58bc",
+   "run_id": "run_9191ff906668",
+   "step": 2,
+   "source_state_id": "state_7db9d557c99c",
+   "target_state_id": "state_904d33615818",
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "label": "click link 'Dashboard'",
+   "action_result_id": "act_eaf896c1e9d0",
+   "ok": true,
+   "duration_ms": 35,
+   "screenshot_artifact_id": "art_46607eacf68e",
+   "model_call_id": "mc_224ecc2faa01",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_dff0debf5a81",
+   "run_id": "run_9191ff906668",
+   "step": 3,
+   "source_state_id": "state_904d33615818",
+   "target_state_id": "state_9f455486894d",
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "label": "click link 'Schedule a post'",
+   "action_result_id": "act_21be1aae047f",
+   "ok": true,
+   "duration_ms": 31,
+   "screenshot_artifact_id": "art_a19c6fd44b59",
+   "model_call_id": "mc_6098a0557f30",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:default",
+   "test_case_id": null,
+   "verification_id": null
+  },
+  {
+   "id": "tr_b8b25d9ad9a2",
+   "run_id": "run_9191ff906668",
+   "step": 7,
+   "source_state_id": "state_7db9d557c99c",
+   "target_state_id": "state_a9043722341c",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_022f8bed167a",
+    "inputs": {
+     "Title": "My First Post",
+     "Caption": "This is a test caption."
+    },
+    "submit": "Save draft"
+   },
+   "label": "test: Title='My First Post', Caption='This is a test caption.'",
+   "action_result_id": "act_3ee3928f72d2",
+   "ok": true,
+   "duration_ms": 103,
+   "screenshot_artifact_id": "art_1e8b3b1603ea",
+   "model_call_id": "mc_d5fe5d392249",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "test_case_id": "tc_022f8bed167a",
+   "verification_id": null
+  },
+  {
+   "id": "tr_92aed92e997a",
+   "run_id": "run_9191ff906668",
+   "step": 11,
+   "source_state_id": "state_7db9d557c99c",
+   "target_state_id": "state_2fcedbaa6d65",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_f6d9b1d171a2",
+    "inputs": {
+     "Title": "",
+     "Caption": "Caption only"
+    },
+    "submit": "Save draft"
+   },
+   "label": "test: Title='', Caption='Caption only'",
+   "action_result_id": "act_1f14efada8ab",
+   "ok": true,
+   "duration_ms": 121,
+   "screenshot_artifact_id": "art_d66c75724f65",
+   "model_call_id": "mc_d5fe5d392249",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "test_case_id": "tc_f6d9b1d171a2",
+   "verification_id": null
+  },
+  {
+   "id": "tr_44f1191eb66b",
+   "run_id": "run_9191ff906668",
+   "step": 15,
+   "source_state_id": "state_9f455486894d",
+   "target_state_id": "state_6e8b0d2d1bda",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_5a54bb8a40e8",
+    "inputs": {
+     "Post title": "Future Post",
+     "Publish date": "2026-06-16"
+    },
+    "submit": "Schedule post"
+   },
+   "label": "test: Post title='Future Post', Publish date='2026-06-16'",
+   "action_result_id": "act_0fc254ce662c",
+   "ok": true,
+   "duration_ms": 102,
+   "screenshot_artifact_id": "art_70324b5e7b14",
+   "model_call_id": "mc_857aafe7b2fe",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "test_case_id": "tc_5a54bb8a40e8",
+   "verification_id": null
+  },
+  {
+   "id": "tr_f085492ff60c",
+   "run_id": "run_9191ff906668",
+   "step": 19,
+   "source_state_id": "state_9f455486894d",
+   "target_state_id": "state_6e8b0d2d1bda",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_02f13433253b",
+    "inputs": {
+     "Post title": "Past Post",
+     "Publish date": "2026-06-14"
+    },
+    "submit": "Schedule post"
+   },
+   "label": "test: Post title='Past Post', Publish date='2026-06-14'",
+   "action_result_id": "act_6dd1295f4d15",
+   "ok": true,
+   "duration_ms": 139,
+   "screenshot_artifact_id": "art_957780f2c328",
+   "model_call_id": "mc_857aafe7b2fe",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "test_case_id": "tc_02f13433253b",
+   "verification_id": null
+  },
+  {
+   "id": "tr_bc366e9e843c",
+   "run_id": "run_9191ff906668",
+   "step": 23,
+   "source_state_id": "state_9f455486894d",
+   "target_state_id": "state_6e8b0d2d1bda",
+   "action": {
+    "type": "test_case",
+    "test_case_id": "tc_b1eb19959608",
+    "inputs": {
+     "Post title": "Today Post",
+     "Publish date": "2026-06-15"
+    },
+    "submit": "Schedule post"
+   },
+   "label": "test: Post title='Today Post', Publish date='2026-06-15'",
+   "action_result_id": "act_feae0d378e1f",
+   "ok": true,
+   "duration_ms": 127,
+   "screenshot_artifact_id": "art_6652a55c01a7",
+   "model_call_id": "mc_857aafe7b2fe",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "test_case_id": "tc_b1eb19959608",
+   "verification_id": null
+  },
+  {
+   "id": "tr_96ba646bc70d",
+   "run_id": "run_9191ff906668",
+   "step": 27,
+   "source_state_id": "state_9f455486894d",
+   "target_state_id": "state_6e8b0d2d1bda",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_d0a4798593de",
+    "inputs": {
+     "Post title": "Past Post",
+     "Publish date": "2026-06-14"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Post title='Past Post', Publish date='2026-06-14'",
+   "action_result_id": "act_a5f4249a851d",
+   "ok": true,
+   "duration_ms": 124,
+   "screenshot_artifact_id": "art_22ba5f1d6ab0",
+   "model_call_id": "mc_f81dc72482b3",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "test_case_id": null,
+   "verification_id": "ver_1a70cd9be49e"
+  },
+  {
+   "id": "tr_852545730969",
+   "run_id": "run_9191ff906668",
+   "step": 31,
+   "source_state_id": "state_9f455486894d",
+   "target_state_id": "state_6e8b0d2d1bda",
+   "action": {
+    "type": "verify_case",
+    "finding_id": "fnd_d0a4798593de",
+    "inputs": {
+     "Post title": "Past Post",
+     "Publish date": "2026-06-14"
+    },
+    "assertion": "validation_message_present"
+   },
+   "label": "verify: Post title='Past Post', Publish date='2026-06-14'",
+   "action_result_id": "act_d45aeef1a789",
+   "ok": true,
+   "duration_ms": 109,
+   "screenshot_artifact_id": "art_f6417c3b3b0f",
+   "model_call_id": null,
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "test_case_id": null,
+   "verification_id": "ver_87e9dbc4f97c"
+  }
+ ],
+ "actions": [
+  {
+   "id": "act_6ef40b4c59e0",
+   "run_id": "run_9191ff906668",
+   "step": 0,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/"
+   },
+   "target_description": "http://localhost:5174/",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/",
+   "started_at": "2026-10-29T10:30:28.847805Z",
+   "duration_ms": 25,
+   "screenshot_artifact_id": "art_2e86317e8a7b",
+   "observation_artifact_id": "art_87aa938369b9",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "task_id": "task_729210ea60f6"
+  },
+  {
+   "id": "act_d3c664de9ff9",
+   "run_id": "run_9191ff906668",
+   "step": 1,
+   "action": {
+    "type": "click",
+    "element_id": "e2"
+   },
+   "target_description": "link 'New draft'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:31.284820Z",
+   "duration_ms": 47,
+   "screenshot_artifact_id": "art_5c8f2631550f",
+   "observation_artifact_id": "art_6afef8452eff",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "task_id": "task_729210ea60f6"
+  },
+  {
+   "id": "act_eaf896c1e9d0",
+   "run_id": "run_9191ff906668",
+   "step": 2,
+   "action": {
+    "type": "click",
+    "element_id": "e1"
+   },
+   "target_description": "link 'Dashboard'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/",
+   "started_at": "2026-10-29T10:30:33.210594Z",
+   "duration_ms": 35,
+   "screenshot_artifact_id": "art_46607eacf68e",
+   "observation_artifact_id": "art_7c7cd59fd9ce",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "task_id": "task_729210ea60f6"
+  },
+  {
+   "id": "act_21be1aae047f",
+   "run_id": "run_9191ff906668",
+   "step": 3,
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "target_description": "link 'Schedule a post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:30:34.975323Z",
+   "duration_ms": 31,
+   "screenshot_artifact_id": "art_a19c6fd44b59",
+   "observation_artifact_id": "art_062876596e54",
+   "agent_id": "single-agent",
+   "phase": "explore",
+   "context_id": "single-agent:explore:ws_33ee1f4750",
+   "task_id": "task_729210ea60f6"
+  },
+  {
+   "id": "act_5e70f1a3fd73",
+   "run_id": "run_9191ff906668",
+   "step": 4,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/drafts/new"
+   },
+   "target_description": "http://localhost:5174/drafts/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:47.656805Z",
+   "duration_ms": 29,
+   "screenshot_artifact_id": "art_5ea15ebef71f",
+   "observation_artifact_id": "art_47b7e25edcd8",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_ba21f623574d",
+   "run_id": "run_9191ff906668",
+   "step": 5,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "My First Post"
+   },
+   "target_description": "textbox 'Title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:47.854022Z",
+   "duration_ms": 15,
+   "screenshot_artifact_id": "art_061fda794c91",
+   "observation_artifact_id": "art_d74b98daa3f7",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_41f97c191140",
+   "run_id": "run_9191ff906668",
+   "step": 6,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "This is a test caption."
+   },
+   "target_description": "textbox 'Caption'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:47.997219Z",
+   "duration_ms": 8,
+   "screenshot_artifact_id": "art_ec1b474b211a",
+   "observation_artifact_id": "art_4fad4b334f24",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_3ee3928f72d2",
+   "run_id": "run_9191ff906668",
+   "step": 7,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Save draft'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/ee39442b?saved=1",
+   "started_at": "2026-10-29T10:30:48.105944Z",
+   "duration_ms": 51,
+   "screenshot_artifact_id": "art_1e8b3b1603ea",
+   "observation_artifact_id": "art_278bbf7e1891",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_2660e63e2cb8",
+   "run_id": "run_9191ff906668",
+   "step": 8,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/drafts/new"
+   },
+   "target_description": "http://localhost:5174/drafts/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:51.564983Z",
+   "duration_ms": 37,
+   "screenshot_artifact_id": "art_44b7467a0a83",
+   "observation_artifact_id": "art_7aae56542cc4",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_1651606e61f7",
+   "run_id": "run_9191ff906668",
+   "step": 9,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": ""
+   },
+   "target_description": "textbox 'Title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:51.761723Z",
+   "duration_ms": 16,
+   "screenshot_artifact_id": "art_9124394ecc92",
+   "observation_artifact_id": "art_c33ef5af5d79",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_d706672919dd",
+   "run_id": "run_9191ff906668",
+   "step": 10,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "Caption only"
+   },
+   "target_description": "textbox 'Caption'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/new",
+   "started_at": "2026-10-29T10:30:51.897868Z",
+   "duration_ms": 10,
+   "screenshot_artifact_id": "art_c3b0e8c4fc16",
+   "observation_artifact_id": "art_7aa0f3ec7914",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_1f14efada8ab",
+   "run_id": "run_9191ff906668",
+   "step": 11,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Save draft'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/drafts/new",
+   "url_after": "http://localhost:5174/drafts/a6bca99a?saved=1",
+   "started_at": "2026-10-29T10:30:52.019656Z",
+   "duration_ms": 58,
+   "screenshot_artifact_id": "art_d66c75724f65",
+   "observation_artifact_id": "art_bc9c1fa311d3",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "task_id": "task_c10ffab8cb21"
+  },
+  {
+   "id": "act_4126a05391e9",
+   "run_id": "run_9191ff906668",
+   "step": 12,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:00.290679Z",
+   "duration_ms": 33,
+   "screenshot_artifact_id": "art_d898808090b2",
+   "observation_artifact_id": "art_3d8acef48177",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_63ae98c46e8c",
+   "run_id": "run_9191ff906668",
+   "step": 13,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Future Post"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:00.472857Z",
+   "duration_ms": 15,
+   "screenshot_artifact_id": "art_0d020e200c38",
+   "observation_artifact_id": "art_f20a856b355c",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_de1ff6321f79",
+   "run_id": "run_9191ff906668",
+   "step": 14,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-16"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:00.589127Z",
+   "duration_ms": 5,
+   "screenshot_artifact_id": "art_57e2acf9fa72",
+   "observation_artifact_id": "art_6be4af87ff79",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_0fc254ce662c",
+   "run_id": "run_9191ff906668",
+   "step": 15,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/scheduled/625b9ebe?scheduled=1",
+   "started_at": "2026-10-29T10:31:00.705928Z",
+   "duration_ms": 49,
+   "screenshot_artifact_id": "art_70324b5e7b14",
+   "observation_artifact_id": "art_966d982396bf",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_a0ddf47662f1",
+   "run_id": "run_9191ff906668",
+   "step": 16,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:04.341337Z",
+   "duration_ms": 54,
+   "screenshot_artifact_id": "art_05e67d278991",
+   "observation_artifact_id": "art_9bce07c4258a",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_ada6c7500c4c",
+   "run_id": "run_9191ff906668",
+   "step": 17,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Past Post"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:04.613960Z",
+   "duration_ms": 18,
+   "screenshot_artifact_id": "art_16dfa61d9ba1",
+   "observation_artifact_id": "art_7417649d6c7b",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_0a62a7315cf8",
+   "run_id": "run_9191ff906668",
+   "step": 18,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-14"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:04.763719Z",
+   "duration_ms": 11,
+   "screenshot_artifact_id": "art_ec2060e9bfcf",
+   "observation_artifact_id": "art_ecdaa8aebec6",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_6dd1295f4d15",
+   "run_id": "run_9191ff906668",
+   "step": 19,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/scheduled/3ed03846?scheduled=1",
+   "started_at": "2026-10-29T10:31:04.888574Z",
+   "duration_ms": 56,
+   "screenshot_artifact_id": "art_957780f2c328",
+   "observation_artifact_id": "art_ef05b7f65815",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_ab290f8e4cab",
+   "run_id": "run_9191ff906668",
+   "step": 20,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:08.364734Z",
+   "duration_ms": 44,
+   "screenshot_artifact_id": "art_7b1472f87c81",
+   "observation_artifact_id": "art_65fadb7919a4",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_1320055b752e",
+   "run_id": "run_9191ff906668",
+   "step": 21,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Today Post"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:08.582988Z",
+   "duration_ms": 17,
+   "screenshot_artifact_id": "art_eae92390f531",
+   "observation_artifact_id": "art_d2d79ff1a6a0",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_7f1db46dd411",
+   "run_id": "run_9191ff906668",
+   "step": 22,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-15"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:08.710658Z",
+   "duration_ms": 7,
+   "screenshot_artifact_id": "art_7253c52313e9",
+   "observation_artifact_id": "art_59ee24c13acb",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_feae0d378e1f",
+   "run_id": "run_9191ff906668",
+   "step": 23,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/scheduled/f08d3069?scheduled=1",
+   "started_at": "2026-10-29T10:31:08.832877Z",
+   "duration_ms": 59,
+   "screenshot_artifact_id": "art_6652a55c01a7",
+   "observation_artifact_id": "art_69ddf35d5f5e",
+   "agent_id": "single-agent",
+   "phase": "input_test",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "task_id": "task_70e865945246"
+  },
+  {
+   "id": "act_1dfbdb40fcda",
+   "run_id": "run_9191ff906668",
+   "step": 24,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:15.097391Z",
+   "duration_ms": 50,
+   "screenshot_artifact_id": "art_ce416b555e58",
+   "observation_artifact_id": "art_4e0abb91c256",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_e25fefc561d8",
+   "run_id": "run_9191ff906668",
+   "step": 25,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Past Post"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:17.648203Z",
+   "duration_ms": 20,
+   "screenshot_artifact_id": "art_494357310dd3",
+   "observation_artifact_id": "art_ca091b90592a",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_c5231a37b97b",
+   "run_id": "run_9191ff906668",
+   "step": 26,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-14"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:17.798045Z",
+   "duration_ms": 9,
+   "screenshot_artifact_id": "art_da9bbdc3ebf8",
+   "observation_artifact_id": "art_ad2ba50a48f9",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_a5f4249a851d",
+   "run_id": "run_9191ff906668",
+   "step": 27,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/scheduled/118f915e?scheduled=1",
+   "started_at": "2026-10-29T10:31:17.928286Z",
+   "duration_ms": 45,
+   "screenshot_artifact_id": "art_22ba5f1d6ab0",
+   "observation_artifact_id": "art_0445f4617e91",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_a2ac58d8b114",
+   "run_id": "run_9191ff906668",
+   "step": 28,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:21.277837Z",
+   "duration_ms": 37,
+   "screenshot_artifact_id": "art_9acc2fcdf914",
+   "observation_artifact_id": "art_6dc058f9eaf3",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_59786a495aad",
+   "run_id": "run_9191ff906668",
+   "step": 29,
+   "action": {
+    "type": "fill",
+    "element_id": "e2",
+    "value": "Past Post"
+   },
+   "target_description": "textbox 'Post title'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:21.479167Z",
+   "duration_ms": 14,
+   "screenshot_artifact_id": "art_6a4e7e4d2e0c",
+   "observation_artifact_id": "art_1664f9df0425",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_ca4be61e6bc4",
+   "run_id": "run_9191ff906668",
+   "step": 30,
+   "action": {
+    "type": "fill",
+    "element_id": "e3",
+    "value": "2026-06-14"
+   },
+   "target_description": "textbox 'Publish date'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-29T10:31:21.604465Z",
+   "duration_ms": 6,
+   "screenshot_artifact_id": "art_3cb49c1ad6ef",
+   "observation_artifact_id": "art_fed9dc67e67b",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "task_id": "task_0fcc41fc2192"
+  },
+  {
+   "id": "act_d45aeef1a789",
+   "run_id": "run_9191ff906668",
+   "step": 31,
+   "action": {
+    "type": "click",
+    "element_id": "e4"
+   },
+   "target_description": "button 'Schedule post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/schedule/new",
+   "url_after": "http://localhost:5174/scheduled/09d49293?scheduled=1",
+   "started_at": "2026-10-29T10:31:21.705672Z",
+   "duration_ms": 52,
+   "screenshot_artifact_id": "art_f6417c3b3b0f",
+   "observation_artifact_id": "art_fdabf00f8d0a",
+   "agent_id": "single-agent",
+   "phase": "verify",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "task_id": "task_0fcc41fc2192"
+  }
+ ],
+ "findings": [
+  {
+   "id": "fnd_3ea6f98d24dd",
+   "run_id": "run_9191ff906668",
+   "kind": "review_observation",
+   "reported_by": "single-agent",
+   "description": "New draft: Empty title",
+   "expected": "The system should either save the draft with an empty title or provide a validation message.",
+   "observed": "The system saved the draft with an empty title, but since there is no requirement specifying whether titles are mandatory or optional, the outcome is neither a success nor a failure.",
+   "agent_claim": null,
+   "same_context_check": null,
+   "evidence_refs": [
+    "art_44b7467a0a83",
+    "art_7aae56542cc4",
+    "art_9124394ecc92",
+    "art_c33ef5af5d79",
+    "art_c3b0e8c4fc16",
+    "art_7aa0f3ec7914",
+    "art_d66c75724f65",
+    "art_bc9c1fa311d3"
+   ],
+   "verification_status": "inconclusive",
+   "replay_recipe": [],
+   "requirement_ref": null,
+   "requirement_text": null,
+   "inputs": {
+    "Title": "",
+    "Caption": "Caption only"
+   },
+   "reproduction": {
+    "target_state_id": "state_7db9d557c99c",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "reproduction_steps": [
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text"
+     },
+     "value": ""
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null
+     },
+     "value": "Caption only"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Save draft",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "form_id": "form_8e4d9d8f6dc5",
+   "test_case_id": "tc_f6d9b1d171a2",
+   "handoff_ids": [
+    "ho_8b2fe75e8021",
+    "ho_cc2ef747456b"
+   ],
+   "verification_ids": [
+    "ver_29f2a8219114"
+   ],
+   "verified_by": "single-agent",
+   "verification_reason": "No supplied requirement states the expected behaviour, so there is no explicit assertion to evaluate. Kept as a review observation.",
+   "source_finding_id": null,
+   "verification_independence": "self"
+  },
+  {
+   "id": "fnd_d0a4798593de",
+   "run_id": "run_9191ff906668",
+   "kind": "defect_candidate",
+   "reported_by": "single-agent",
+   "description": "Schedule a post: Invalid past date",
+   "expected": "The form shows a validation message and rejects the past date.",
+   "observed": "The post with a past date (2026-06-14) was accepted and scheduled instead of being rejected with a validation message.",
+   "agent_claim": null,
+   "same_context_check": null,
+   "evidence_refs": [
+    "art_05e67d278991",
+    "art_9bce07c4258a",
+    "art_16dfa61d9ba1",
+    "art_7417649d6c7b",
+    "art_ec2060e9bfcf",
+    "art_ecdaa8aebec6",
+    "art_957780f2c328",
+    "art_ef05b7f65815"
+   ],
+   "verification_status": "confirmed",
+   "replay_recipe": [],
+   "requirement_ref": "R5",
+   "requirement_text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+   "inputs": {
+    "Post title": "Past Post",
+    "Publish date": "2026-06-14"
+   },
+   "reproduction": {
+    "target_state_id": "state_9f455486894d",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Dashboard",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "reproduction_steps": [
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text"
+     },
+     "value": "Past Post"
+    },
+    {
+     "type": "fill",
+     "path": null,
+     "control": {
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date"
+     },
+     "value": "2026-06-14"
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "button",
+      "name": "Schedule post",
+      "input_type": null
+     },
+     "value": null
+    }
+   ],
+   "form_id": "form_25e784e085be",
+   "test_case_id": "tc_02f13433253b",
+   "handoff_ids": [
+    "ho_fb7b0816626c",
+    "ho_1f783b239ea2"
+   ],
+   "verification_ids": [
+    "ver_1a70cd9be49e",
+    "ver_87e9dbc4f97c"
+   ],
+   "verified_by": "single-agent",
+   "verification_reason": "All 2 fresh replays violated R5.",
+   "source_finding_id": null,
+   "verification_independence": "self"
+  }
+ ],
+ "evidence": [
+  {
+   "id": "art_2e86317e8a7b",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/000-navigate.png",
+   "sha256": "87acad57d0fd974c0befdba37fceb9aabc12f1213295a7bec466f1a50acee3e2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:28.965040Z"
+  },
+  {
+   "id": "art_87aa938369b9",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/000.json",
+   "sha256": "fe533c8f5fc8250b73656bc888b079acf97c18b7473bc172bb13c35c5311bd4f",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:28.982103Z"
+  },
+  {
+   "id": "art_08fb12f7deb3",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/001-single-agent-mc_0f12d34232b1.json",
+   "sha256": "32add455c101db6ca7992795dc289b15e782afe20f38435317461f7e3b810350",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:31.193053Z"
+  },
+  {
+   "id": "art_5c8f2631550f",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/001-click.png",
+   "sha256": "aff7010bf5cb9932b4a19e9a4ea62e9219b88e1d13aba15b44a5a104a8691a5a",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:31.396477Z"
+  },
+  {
+   "id": "art_6afef8452eff",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/001.json",
+   "sha256": "a6189e2818062692e30202f0836c8174460cabfdbd6fa6531ca1cdbb310e7ba9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:31.418307Z"
+  },
+  {
+   "id": "art_9487b2c22b75",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/002-single-agent-mc_224ecc2faa01.json",
+   "sha256": "88b4be6bf85f3555298c706b6124c7bc8bd69403e8711770df9cf02b94a7adae",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:33.130211Z"
+  },
+  {
+   "id": "art_46607eacf68e",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/002-click.png",
+   "sha256": "87acad57d0fd974c0befdba37fceb9aabc12f1213295a7bec466f1a50acee3e2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:33.316789Z"
+  },
+  {
+   "id": "art_7c7cd59fd9ce",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/002.json",
+   "sha256": "fe533c8f5fc8250b73656bc888b079acf97c18b7473bc172bb13c35c5311bd4f",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:33.333078Z"
+  },
+  {
+   "id": "art_cf717fb5e657",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/003-single-agent-mc_6098a0557f30.json",
+   "sha256": "800dab9a87667ce7ac97e46db1fb073dcf12610ae22074a13fb63e85b2136207",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:34.882945Z"
+  },
+  {
+   "id": "art_a19c6fd44b59",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/003-click.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:35.062946Z"
+  },
+  {
+   "id": "art_062876596e54",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/003.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:35.080056Z"
+  },
+  {
+   "id": "art_7f5f52b5d5e1",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/004-single-agent-mc_b912b88cfe86.json",
+   "sha256": "0a785a5adc16efe613022b462df5063f95826eb8928619d193e8cbe6b2c78c22",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:41.977526Z"
+  },
+  {
+   "id": "art_e5423b0a9dda",
+   "run_id": "run_9191ff906668",
+   "kind": "handoff",
+   "path": "runs/run_9191ff906668/handoff/ho_8b2fe75e8021.json",
+   "sha256": "45ae86816a27940b7625c8b785f90d16937983d5ec7392a16d36bc0e7df61c5d",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:42.179627Z"
+  },
+  {
+   "id": "art_b24370121232",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/005-single-agent-mc_d5fe5d392249.json",
+   "sha256": "a4e34bcabc1626600a947717701092911355d6376721f3a808d95618730d93be",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:44.603252Z"
+  },
+  {
+   "id": "art_5ea15ebef71f",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/004-navigate.png",
+   "sha256": "aff7010bf5cb9932b4a19e9a4ea62e9219b88e1d13aba15b44a5a104a8691a5a",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:47.779646Z"
+  },
+  {
+   "id": "art_47b7e25edcd8",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/004.json",
+   "sha256": "a6189e2818062692e30202f0836c8174460cabfdbd6fa6531ca1cdbb310e7ba9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:47.795446Z"
+  },
+  {
+   "id": "art_061fda794c91",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/005-fill.png",
+   "sha256": "f8d81cfca0f37868d1ec7fe5f3265f953e11160503ef3c7e5a2647716187b281",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:47.931602Z"
+  },
+  {
+   "id": "art_d74b98daa3f7",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/005.json",
+   "sha256": "0a66e1da5e8f8343f1ed946c966a4bd9177a57ec0ff87e09c9b4ef1c7fed520f",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:47.949053Z"
+  },
+  {
+   "id": "art_ec1b474b211a",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/006-fill.png",
+   "sha256": "dacb7a48d49c653593740944fb5d4ae31efdd581fdbd609c56c377bf84c5b2de",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:48.045146Z"
+  },
+  {
+   "id": "art_4fad4b334f24",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/006.json",
+   "sha256": "9392bd5f02e68a707523953d490cd1b22f8d097d9f08ea633ac0902922f74f81",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:48.062036Z"
+  },
+  {
+   "id": "art_1e8b3b1603ea",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/007-click.png",
+   "sha256": "5c91b47d52335f9d8b9d229c06a14e5b3f16664d2aeccb7cba46e804999ea96b",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:48.212626Z"
+  },
+  {
+   "id": "art_278bbf7e1891",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/007.json",
+   "sha256": "184d81ed031b1246aa14aee7580244b7eda21cc25908c8b1953108062e62d22c",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:48.229077Z"
+  },
+  {
+   "id": "art_44b7467a0a83",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/008-navigate.png",
+   "sha256": "aff7010bf5cb9932b4a19e9a4ea62e9219b88e1d13aba15b44a5a104a8691a5a",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:51.684074Z"
+  },
+  {
+   "id": "art_7aae56542cc4",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/008.json",
+   "sha256": "a6189e2818062692e30202f0836c8174460cabfdbd6fa6531ca1cdbb310e7ba9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:51.699590Z"
+  },
+  {
+   "id": "art_9124394ecc92",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/009-fill.png",
+   "sha256": "4bf56f3bedb668a97569a1a90019c0f1394a62a2b3df9903c4b1248ac6f35171",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:51.833676Z"
+  },
+  {
+   "id": "art_c33ef5af5d79",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/009.json",
+   "sha256": "a6189e2818062692e30202f0836c8174460cabfdbd6fa6531ca1cdbb310e7ba9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:51.851678Z"
+  },
+  {
+   "id": "art_c3b0e8c4fc16",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/010-fill.png",
+   "sha256": "d40aef6615aa6542e82f1750b25938a5b6b4a0f3557df14e14d7a8f222bfa689",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:51.949808Z"
+  },
+  {
+   "id": "art_7aa0f3ec7914",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/010.json",
+   "sha256": "10b6799f7d0cf88b73f9acd9c70ff73ee959b68d8352399f8a408664e9afe7e6",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:51.966813Z"
+  },
+  {
+   "id": "art_d66c75724f65",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/011-click.png",
+   "sha256": "2721d7da1b93896cdaac4748722437153410d41727d92b0b27b99c509fe2eb6f",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:30:52.152998Z"
+  },
+  {
+   "id": "art_bc9c1fa311d3",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/011.json",
+   "sha256": "b93f9a8db52bcdfcb4d4ef541d46b5ab68a8f63886dd6eafb133fd2c835b64b0",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:52.169521Z"
+  },
+  {
+   "id": "art_cb502968e124",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/006-single-agent-mc_23abd7cbefe9.json",
+   "sha256": "806d3f91dd8a29f427a8e3e900acc2e7e1aa804a54f51e0dbd17f02294fa2963",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:54.493749Z"
+  },
+  {
+   "id": "art_c276935aef19",
+   "run_id": "run_9191ff906668",
+   "kind": "handoff",
+   "path": "runs/run_9191ff906668/handoff/ho_fb7b0816626c.json",
+   "sha256": "203b7b7f52d82cad04ea17a56eba1e6f4c95346ef41d8e01f2df9eefd50c9257",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:54.676858Z"
+  },
+  {
+   "id": "art_37690f7154f2",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/007-single-agent-mc_857aafe7b2fe.json",
+   "sha256": "6babd4733bd3f83e47ff3614ea033a3239ac558adf026494615750a7d26400a1",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:30:57.201647Z"
+  },
+  {
+   "id": "art_d898808090b2",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/012-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:00.398406Z"
+  },
+  {
+   "id": "art_3d8acef48177",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/012.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:00.415636Z"
+  },
+  {
+   "id": "art_0d020e200c38",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/013-fill.png",
+   "sha256": "26c39fe0f43b64e1756e18d6b7f68cb68731ddb6d7d5436c5fd37b98ed6083df",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:00.530897Z"
+  },
+  {
+   "id": "art_f20a856b355c",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/013.json",
+   "sha256": "b00f06c946dc1a93a0bb3db0d0a97497ed7a63635482bab96a8fdaa56c82daed",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:00.545599Z"
+  },
+  {
+   "id": "art_57e2acf9fa72",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/014-fill.png",
+   "sha256": "c2bf6d15601e41a6553db039b7ef5a6c2527759ebb68c2055c4548d1115ae414",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:00.628051Z"
+  },
+  {
+   "id": "art_6be4af87ff79",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/014.json",
+   "sha256": "67b49fc69e9d9d6a226eec0fb25166367a4fca92fd05af1a55d4015feffd07b9",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:00.647899Z"
+  },
+  {
+   "id": "art_70324b5e7b14",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/015-click.png",
+   "sha256": "16bd3ea2740f49429fc92e853aae7b7428f52276204a138391cbfe490aa7c62a",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:00.824911Z"
+  },
+  {
+   "id": "art_966d982396bf",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/015.json",
+   "sha256": "9a8297a4f819ccd985e6086a35db0cac68f62f6387351687faaad7db6815c4ce",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:00.841680Z"
+  },
+  {
+   "id": "art_05e67d278991",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/016-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:04.531480Z"
+  },
+  {
+   "id": "art_9bce07c4258a",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/016.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:04.550591Z"
+  },
+  {
+   "id": "art_16dfa61d9ba1",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/017-fill.png",
+   "sha256": "4b533fa9bbabdf524a3fc8e8e24a7d9dbb175690c54e7c5c70d1e875625bfde2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:04.691021Z"
+  },
+  {
+   "id": "art_7417649d6c7b",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/017.json",
+   "sha256": "7ba66b1dddb58db689fe3d1497349783934a5f751cb1d2988ff0c3f85c4c49bf",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:04.711107Z"
+  },
+  {
+   "id": "art_ec2060e9bfcf",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/018-fill.png",
+   "sha256": "773a8e5425c545bd682ed7b5586663cbc79c4534bc043598176b1f26c0aa63ab",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:04.821393Z"
+  },
+  {
+   "id": "art_ecdaa8aebec6",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/018.json",
+   "sha256": "7abbb2cde75a1831fe094af50353689d8ca62abd983134e091f8064647f246f0",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:04.837838Z"
+  },
+  {
+   "id": "art_957780f2c328",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/019-click.png",
+   "sha256": "af45d9228a5503700c98f5b467bee329e4d9c574b2fda1ded16b19b3d27d3210",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:05.023619Z"
+  },
+  {
+   "id": "art_ef05b7f65815",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/019.json",
+   "sha256": "d38bcf2fd8a7e7c937fd6345b3cb6c0b0957e74ed40b40f15e40c773e04a73ba",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:05.042364Z"
+  },
+  {
+   "id": "art_7b1472f87c81",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/020-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:08.501498Z"
+  },
+  {
+   "id": "art_65fadb7919a4",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/020.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:08.525337Z"
+  },
+  {
+   "id": "art_eae92390f531",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/021-fill.png",
+   "sha256": "c41564cb6c94ef4bbbfaf5636fa9b0041c222da820b2a9d757a8e11a784513d8",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:08.651148Z"
+  },
+  {
+   "id": "art_d2d79ff1a6a0",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/021.json",
+   "sha256": "4d419afd7ec0378b01b6b295a782e245afdb129d90ed39d7e8c39e1de157647a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:08.667258Z"
+  },
+  {
+   "id": "art_7253c52313e9",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/022-fill.png",
+   "sha256": "8f30c460a203545d8d02a1a6c7cb84dedb8fdfd243c6dc2ab612803067ca5acc",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:08.766500Z"
+  },
+  {
+   "id": "art_59ee24c13acb",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/022.json",
+   "sha256": "3c09c2278b5bd2f0bb7f2ea6c2882e25305dcafba59deba9cce30499ddb8cdf8",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:08.784830Z"
+  },
+  {
+   "id": "art_6652a55c01a7",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/023-click.png",
+   "sha256": "f930622c2b714330897c7a8c3fe0063d153a3f415b8efa80ec2e86b9ff36957a",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:08.969110Z"
+  },
+  {
+   "id": "art_69ddf35d5f5e",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/023.json",
+   "sha256": "716acd114a2bc10f588b9b5148a7e028c92c7a474c6a28d83a97b44a400475fc",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:08.984530Z"
+  },
+  {
+   "id": "art_f9571942409a",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/008-single-agent-mc_ea2f15c2acdd.json",
+   "sha256": "4e4831a52338456cd643e316ac254ff461d26810928a1847625008792906f527",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:11.611170Z"
+  },
+  {
+   "id": "art_bf2724d064b7",
+   "run_id": "run_9191ff906668",
+   "kind": "handoff",
+   "path": "runs/run_9191ff906668/handoff/ho_cc2ef747456b.json",
+   "sha256": "92bc60bab312c05be7a23311ebe5982f512330157e0d19d1a93badb1f997d63d",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:11.790077Z"
+  },
+  {
+   "id": "art_9f13a0f653e0",
+   "run_id": "run_9191ff906668",
+   "kind": "action_log",
+   "path": "runs/run_9191ff906668/action_log/verification-ver_29f2a8219114.json",
+   "sha256": "c32ac144e31935d990bd9bd0765378d2860376c230df504bbbddd01e7727dd55",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:11.836776Z"
+  },
+  {
+   "id": "art_8daccd6e7175",
+   "run_id": "run_9191ff906668",
+   "kind": "handoff",
+   "path": "runs/run_9191ff906668/handoff/ho_1f783b239ea2.json",
+   "sha256": "8272df5b6f11ce2eaed29fdad9409d5788a727337ae4513a0953bb1adf57546f",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:11.963692Z"
+  },
+  {
+   "id": "art_ce416b555e58",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/024-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:15.251480Z"
+  },
+  {
+   "id": "art_4e0abb91c256",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/024.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:15.272345Z"
+  },
+  {
+   "id": "art_1503b3a03594",
+   "run_id": "run_9191ff906668",
+   "kind": "model_call",
+   "path": "runs/run_9191ff906668/model_call/009-single-agent-mc_f81dc72482b3.json",
+   "sha256": "9b43ede57f59a874c7093320c3fe1a6d43379aa4992e4995f8e3a782f7db4b3a",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:17.566098Z"
+  },
+  {
+   "id": "art_494357310dd3",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/025-fill.png",
+   "sha256": "4b533fa9bbabdf524a3fc8e8e24a7d9dbb175690c54e7c5c70d1e875625bfde2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:17.720372Z"
+  },
+  {
+   "id": "art_ca091b90592a",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/025.json",
+   "sha256": "7ba66b1dddb58db689fe3d1497349783934a5f751cb1d2988ff0c3f85c4c49bf",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:17.737833Z"
+  },
+  {
+   "id": "art_da9bbdc3ebf8",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/026-fill.png",
+   "sha256": "773a8e5425c545bd682ed7b5586663cbc79c4534bc043598176b1f26c0aa63ab",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:17.857554Z"
+  },
+  {
+   "id": "art_ad2ba50a48f9",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/026.json",
+   "sha256": "7abbb2cde75a1831fe094af50353689d8ca62abd983134e091f8064647f246f0",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:17.876293Z"
+  },
+  {
+   "id": "art_22ba5f1d6ab0",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/027-click.png",
+   "sha256": "af45d9228a5503700c98f5b467bee329e4d9c574b2fda1ded16b19b3d27d3210",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:18.027298Z"
+  },
+  {
+   "id": "art_0445f4617e91",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/027.json",
+   "sha256": "e5fe52c64cb44e71da656d56bd139f9961f1305c5c31d2e7a4ad3cce1f583b6c",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:18.043117Z"
+  },
+  {
+   "id": "art_b2724e1bb1a2",
+   "run_id": "run_9191ff906668",
+   "kind": "action_log",
+   "path": "runs/run_9191ff906668/action_log/verification-ver_1a70cd9be49e.json",
+   "sha256": "c1d61904467b800b5fc4a4784a550cd12898c1995b11322688b8a9e1def8b60c",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:18.130388Z"
+  },
+  {
+   "id": "art_9acc2fcdf914",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/028-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:21.398379Z"
+  },
+  {
+   "id": "art_6dc058f9eaf3",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/028.json",
+   "sha256": "14a75b502c533f18ace2a191e1f6dff78abdc9c9df7dd04fa5e9a8574fab41e3",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:21.413899Z"
+  },
+  {
+   "id": "art_6a4e7e4d2e0c",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/029-fill.png",
+   "sha256": "4b533fa9bbabdf524a3fc8e8e24a7d9dbb175690c54e7c5c70d1e875625bfde2",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:21.530284Z"
+  },
+  {
+   "id": "art_1664f9df0425",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/029.json",
+   "sha256": "7ba66b1dddb58db689fe3d1497349783934a5f751cb1d2988ff0c3f85c4c49bf",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:21.554605Z"
+  },
+  {
+   "id": "art_3cb49c1ad6ef",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/030-fill.png",
+   "sha256": "773a8e5425c545bd682ed7b5586663cbc79c4534bc043598176b1f26c0aa63ab",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:21.645517Z"
+  },
+  {
+   "id": "art_fed9dc67e67b",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/030.json",
+   "sha256": "7abbb2cde75a1831fe094af50353689d8ca62abd983134e091f8064647f246f0",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:21.659673Z"
+  },
+  {
+   "id": "art_f6417c3b3b0f",
+   "run_id": "run_9191ff906668",
+   "kind": "screenshot",
+   "path": "runs/run_9191ff906668/screenshots/031-click.png",
+   "sha256": "af45d9228a5503700c98f5b467bee329e4d9c574b2fda1ded16b19b3d27d3210",
+   "media_type": "image/png",
+   "created_at": "2026-10-29T10:31:21.811662Z"
+  },
+  {
+   "id": "art_fdabf00f8d0a",
+   "run_id": "run_9191ff906668",
+   "kind": "observation",
+   "path": "runs/run_9191ff906668/observation/031.json",
+   "sha256": "a195368106fb47556498e92b1993e6c9ae69464b884e81b8286ac7c348f8af27",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:21.826661Z"
+  },
+  {
+   "id": "art_b26cab14fabe",
+   "run_id": "run_9191ff906668",
+   "kind": "action_log",
+   "path": "runs/run_9191ff906668/action_log/verification-ver_87e9dbc4f97c.json",
+   "sha256": "8bf2c9bad835861bcdff9d6a6739636530d5b22b157b4301ac4a799c77e6a864",
+   "media_type": "application/json",
+   "created_at": "2026-10-29T10:31:21.919840Z"
+  }
+ ],
+ "model_calls": [
+  {
+   "id": "mc_0f12d34232b1",
+   "run_id": "run_9191ff906668",
+   "step": 0,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 784,
+   "completion_tokens": 58,
+   "total_tokens": 842,
+   "reported_cost_usd": 0.000566,
+   "latency_ms": 2121,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_08fb12f7deb3",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_224ecc2faa01",
+   "run_id": "run_9191ff906668",
+   "step": 1,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 844,
+   "completion_tokens": 71,
+   "total_tokens": 915,
+   "reported_cost_usd": 0.000635,
+   "latency_ms": 1568,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_9487b2c22b75",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_6098a0557f30",
+   "run_id": "run_9191ff906668",
+   "step": 2,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 943,
+   "completion_tokens": 51,
+   "total_tokens": 994,
+   "reported_cost_usd": 0.0006245,
+   "latency_ms": 1490,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_cf717fb5e657",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_b912b88cfe86",
+   "run_id": "run_9191ff906668",
+   "step": 3,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1037,
+   "completion_tokens": 108,
+   "total_tokens": 1145,
+   "reported_cost_usd": 0.0008425,
+   "latency_ms": 6758,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_7f5f52b5d5e1",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_d5fe5d392249",
+   "run_id": "run_9191ff906668",
+   "step": 3,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 824,
+   "completion_tokens": 207,
+   "total_tokens": 1031,
+   "reported_cost_usd": 0.001033,
+   "latency_ms": 2304,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_b24370121232",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_23abd7cbefe9",
+   "run_id": "run_9191ff906668",
+   "step": 11,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1083,
+   "completion_tokens": 145,
+   "total_tokens": 1228,
+   "reported_cost_usd": 0.0009765,
+   "latency_ms": 2097,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_cb502968e124",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_857aafe7b2fe",
+   "run_id": "run_9191ff906668",
+   "step": 11,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 987,
+   "completion_tokens": 322,
+   "total_tokens": 1309,
+   "reported_cost_usd": 0.0014595,
+   "latency_ms": 2455,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_37690f7154f2",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_ea2f15c2acdd",
+   "run_id": "run_9191ff906668",
+   "step": 23,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1471,
+   "completion_tokens": 229,
+   "total_tokens": 1700,
+   "reported_cost_usd": 0.0014225,
+   "latency_ms": 2446,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_f9571942409a",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "input_test"
+  },
+  {
+   "id": "mc_f81dc72482b3",
+   "run_id": "run_9191ff906668",
+   "step": 24,
+   "model": "google/gemini-3-flash-preview",
+   "provider": "Google",
+   "prompt_tokens": 1390,
+   "completion_tokens": 198,
+   "total_tokens": 1588,
+   "reported_cost_usd": 0.001289,
+   "latency_ms": 2221,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_1503b3a03594",
+   "finish_reason": "stop",
+   "reasoning_tokens": 0,
+   "agent_id": "single-agent",
+   "phase": "verify"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "task_729210ea60f6",
+   "run_id": "run_9191ff906668",
+   "type": "explore",
+   "key": "run_9191ff906668:explore:start",
+   "depends_on": [],
+   "input_refs": [],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:30:25.737841Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_c10ffab8cb21",
+   "run_id": "run_9191ff906668",
+   "type": "input_test",
+   "key": "run_9191ff906668:input_test:cc472cb2f5142026",
+   "depends_on": [],
+   "input_refs": [
+    "form_8e4d9d8f6dc5",
+    "ho_8b2fe75e8021"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "tc_022f8bed167a",
+    "tc_f6d9b1d171a2",
+    "fnd_3ea6f98d24dd"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:30:42.164622Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_e482cf65b8d0",
+   "run_id": "run_9191ff906668",
+   "type": "explore",
+   "key": "run_9191ff906668:explore:3a63862784474f4e",
+   "depends_on": [],
+   "input_refs": [
+    "state_a9043722341c"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3.",
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:30:48.422628Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_fdb9c4306efb",
+   "run_id": "run_9191ff906668",
+   "type": "explore",
+   "key": "run_9191ff906668:explore:40018cbee542aa7a",
+   "depends_on": [],
+   "input_refs": [
+    "state_2fcedbaa6d65"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3.",
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:30:52.358040Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_70e865945246",
+   "run_id": "run_9191ff906668",
+   "type": "input_test",
+   "key": "run_9191ff906668:input_test:8a8bf412b0cd0dd3",
+   "depends_on": [],
+   "input_refs": [
+    "form_25e784e085be",
+    "ho_fb7b0816626c"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "tc_5a54bb8a40e8",
+    "tc_02f13433253b",
+    "tc_b1eb19959608",
+    "fnd_d0a4798593de"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:30:54.658098Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_3c2d8d2ec925",
+   "run_id": "run_9191ff906668",
+   "type": "explore",
+   "key": "run_9191ff906668:explore:ec74b49ccfe0be8e",
+   "depends_on": [],
+   "input_refs": [
+    "state_6e8b0d2d1bda"
+   ],
+   "owner": null,
+   "attempt_id": null,
+   "lease_expires_at": null,
+   "status": "deferred",
+   "result_refs": [],
+   "note": "New state found by testing; the shared exploration queue arrives in checkpoint 3.",
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:31:01.036785Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_beb6ee8a40cb",
+   "run_id": "run_9191ff906668",
+   "type": "verify",
+   "key": "run_9191ff906668:verify:fnd_3ea6f98d24dd",
+   "depends_on": [],
+   "input_refs": [
+    "fnd_3ea6f98d24dd"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "ver_29f2a8219114"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:31:11.773884Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_0fcc41fc2192",
+   "run_id": "run_9191ff906668",
+   "type": "verify",
+   "key": "run_9191ff906668:verify:fnd_d0a4798593de",
+   "depends_on": [],
+   "input_refs": [
+    "fnd_d0a4798593de"
+   ],
+   "owner": "single-agent",
+   "attempt_id": "att_1",
+   "lease_expires_at": null,
+   "status": "done",
+   "result_refs": [
+    "ver_1a70cd9be49e",
+    "ver_87e9dbc4f97c"
+   ],
+   "note": null,
+   "priority": 0,
+   "depth": 0,
+   "attempts": 0,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": null,
+   "created_at": "2026-10-29T10:31:11.940989Z",
+   "claimed_at": null,
+   "finished_at": null,
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  }
+ ],
+ "forms": [
+  {
+   "id": "form_8e4d9d8f6dc5",
+   "run_id": "run_9191ff906668",
+   "key": "cc472cb2f5142026",
+   "state_id": "state_7db9d557c99c",
+   "url": "http://localhost:5174/drafts/new",
+   "route": "/drafts/new",
+   "headings": [
+    "New draft"
+   ],
+   "fields": [
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text"
+     },
+     "required": false,
+     "observed_value": ""
+    },
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null
+     },
+     "required": false,
+     "observed_value": ""
+    }
+   ],
+   "submit_controls": [
+    {
+     "role": "button",
+     "name": "Save draft",
+     "input_type": null
+    }
+   ],
+   "page_text": "Creator Studio Dashboard New draft Title Caption Save draft",
+   "discovered_by": "single-agent",
+   "action_result_id": "act_d3c664de9ff9",
+   "evidence_refs": [
+    "art_5c8f2631550f",
+    "art_6afef8452eff"
+   ]
+  },
+  {
+   "id": "form_25e784e085be",
+   "run_id": "run_9191ff906668",
+   "key": "8a8bf412b0cd0dd3",
+   "state_id": "state_9f455486894d",
+   "url": "http://localhost:5174/schedule/new",
+   "route": "/schedule/new",
+   "headings": [
+    "Schedule a post"
+   ],
+   "fields": [
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text"
+     },
+     "required": true,
+     "observed_value": ""
+    },
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date"
+     },
+     "required": true,
+     "observed_value": ""
+    }
+   ],
+   "submit_controls": [
+    {
+     "role": "button",
+     "name": "Schedule post",
+     "input_type": null
+    }
+   ],
+   "page_text": "Creator Studio Dashboard Schedule a post Studio date: 2026-06-15 Post title Publish date Schedule post",
+   "discovered_by": "single-agent",
+   "action_result_id": "act_21be1aae047f",
+   "evidence_refs": [
+    "art_a19c6fd44b59",
+    "art_062876596e54"
+   ]
+  }
+ ],
+ "handoffs": [
+  {
+   "id": "ho_8b2fe75e8021",
+   "run_id": "run_9191ff906668",
+   "kind": "form_to_tester",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_c10ffab8cb21",
+   "source_state_id": "state_7db9d557c99c",
+   "form_id": "form_8e4d9d8f6dc5",
+   "finding_id": null,
+   "setup": {
+    "target_state_id": "state_7db9d557c99c",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "A creator can start a new draft from the dashboard."
+    },
+    {
+     "id": "R2",
+     "text": "A draft has a title and a caption."
+    },
+    {
+     "id": "R3",
+     "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown."
+    },
+    {
+     "id": "R4",
+     "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date."
+    },
+    {
+     "id": "R5",
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A creator can start a new draft from the dashboard.",
+     "source": "R1"
+    },
+    {
+     "text": "A draft has a title and a caption.",
+     "source": "R2"
+    },
+    {
+     "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+     "source": "R3"
+    },
+    {
+     "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+     "source": "R4"
+    },
+    {
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+     "source": "R5"
+    }
+   ],
+   "evidence_refs": [
+    "art_5c8f2631550f",
+    "art_6afef8452eff",
+    "art_e5423b0a9dda"
+   ],
+   "created_at": "2026-10-29T10:30:42.179627Z"
+  },
+  {
+   "id": "ho_fb7b0816626c",
+   "run_id": "run_9191ff906668",
+   "kind": "form_to_tester",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_70e865945246",
+   "source_state_id": "state_9f455486894d",
+   "form_id": "form_25e784e085be",
+   "finding_id": null,
+   "setup": {
+    "target_state_id": "state_9f455486894d",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Dashboard",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "A creator can start a new draft from the dashboard."
+    },
+    {
+     "id": "R2",
+     "text": "A draft has a title and a caption."
+    },
+    {
+     "id": "R3",
+     "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown."
+    },
+    {
+     "id": "R4",
+     "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date."
+    },
+    {
+     "id": "R5",
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A creator can start a new draft from the dashboard.",
+     "source": "R1"
+    },
+    {
+     "text": "A draft has a title and a caption.",
+     "source": "R2"
+    },
+    {
+     "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+     "source": "R3"
+    },
+    {
+     "text": "A creator can schedule a post from the dashboard by giving a post title and a publish date.",
+     "source": "R4"
+    },
+    {
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+     "source": "R5"
+    }
+   ],
+   "evidence_refs": [
+    "art_a19c6fd44b59",
+    "art_062876596e54",
+    "art_c276935aef19"
+   ],
+   "created_at": "2026-10-29T10:30:54.675862Z"
+  },
+  {
+   "id": "ho_cc2ef747456b",
+   "run_id": "run_9191ff906668",
+   "kind": "candidate_to_verifier",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_beb6ee8a40cb",
+   "source_state_id": "state_7db9d557c99c",
+   "form_id": "form_8e4d9d8f6dc5",
+   "finding_id": "fnd_3ea6f98d24dd",
+   "setup": {
+    "target_state_id": "state_7db9d557c99c",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [],
+   "expected_behaviour": [
+    {
+     "text": "The system should either save the draft with an empty title or provide a validation message.",
+     "source": "none supplied"
+    }
+   ],
+   "evidence_refs": [
+    "art_44b7467a0a83",
+    "art_7aae56542cc4",
+    "art_9124394ecc92",
+    "art_c33ef5af5d79",
+    "art_c3b0e8c4fc16",
+    "art_7aa0f3ec7914",
+    "art_d66c75724f65",
+    "art_bc9c1fa311d3",
+    "art_bf2724d064b7"
+   ],
+   "created_at": "2026-10-29T10:31:11.789042Z"
+  },
+  {
+   "id": "ho_1f783b239ea2",
+   "run_id": "run_9191ff906668",
+   "kind": "candidate_to_verifier",
+   "from_agent": "single-agent",
+   "to_agent": "single-agent",
+   "task_id": "task_0fcc41fc2192",
+   "source_state_id": "state_9f455486894d",
+   "form_id": "form_25e784e085be",
+   "finding_id": "fnd_d0a4798593de",
+   "setup": {
+    "target_state_id": "state_9f455486894d",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "New draft",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Dashboard",
+       "input_type": null
+      },
+      "value": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null
+      },
+      "value": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [
+    {
+     "id": "R5",
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+   ],
+   "expected_behaviour": [
+    {
+     "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+     "source": "R5"
+    }
+   ],
+   "evidence_refs": [
+    "art_05e67d278991",
+    "art_9bce07c4258a",
+    "art_16dfa61d9ba1",
+    "art_7417649d6c7b",
+    "art_ec2060e9bfcf",
+    "art_ecdaa8aebec6",
+    "art_957780f2c328",
+    "art_ef05b7f65815",
+    "art_8daccd6e7175"
+   ],
+   "created_at": "2026-10-29T10:31:11.962694Z"
+  }
+ ],
+ "test_cases": [
+  {
+   "id": "tc_022f8bed167a",
+   "run_id": "run_9191ff906668",
+   "form_id": "form_8e4d9d8f6dc5",
+   "handoff_id": "ho_8b2fe75e8021",
+   "designed_by": "single-agent",
+   "label": "Valid draft",
+   "inputs": {
+    "Title": "My First Post",
+    "Caption": "This is a test caption."
+   },
+   "submit": {
+    "role": "button",
+    "name": "Save draft",
+    "input_type": null
+   },
+   "requirement_ref": "R3",
+   "expected": "The draft is saved and values persist.",
+   "expectation_source": "R3",
+   "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_5e70f1a3fd73",
+    "act_ba21f623574d",
+    "act_41f97c191140",
+    "act_3ee3928f72d2"
+   ],
+   "evidence_refs": [
+    "art_5ea15ebef71f",
+    "art_47b7e25edcd8",
+    "art_061fda794c91",
+    "art_d74b98daa3f7",
+    "art_ec1b474b211a",
+    "art_4fad4b334f24",
+    "art_1e8b3b1603ea",
+    "art_278bbf7e1891"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5174/drafts/new",
+    "url_after": "http://localhost:5174/drafts/ee39442b?saved=1",
+    "title": "Edit draft · Creator Studio",
+    "headings": [
+     "Edit draft"
+    ],
+    "status_messages": [
+     "Draft saved."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes"
+   },
+   "resulting_state_id": "state_a9043722341c",
+   "tester_verdict": "as_expected",
+   "tester_note": "The draft was successfully saved with a status message and redirected to an edit page, matching the expectation for valid inputs.",
+   "model_call_ids": [
+    "mc_d5fe5d392249",
+    "mc_23abd7cbefe9"
+   ]
+  },
+  {
+   "id": "tc_f6d9b1d171a2",
+   "run_id": "run_9191ff906668",
+   "form_id": "form_8e4d9d8f6dc5",
+   "handoff_id": "ho_8b2fe75e8021",
+   "designed_by": "single-agent",
+   "label": "Empty title",
+   "inputs": {
+    "Title": "",
+    "Caption": "Caption only"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Save draft",
+    "input_type": null
+   },
+   "requirement_ref": null,
+   "expected": "The system should either save the draft with an empty title or provide a validation message.",
+   "expectation_source": "unspecified",
+   "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_2660e63e2cb8",
+    "act_1651606e61f7",
+    "act_d706672919dd",
+    "act_1f14efada8ab"
+   ],
+   "evidence_refs": [
+    "art_44b7467a0a83",
+    "art_7aae56542cc4",
+    "art_9124394ecc92",
+    "art_c33ef5af5d79",
+    "art_c3b0e8c4fc16",
+    "art_7aa0f3ec7914",
+    "art_d66c75724f65",
+    "art_bc9c1fa311d3"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5174/drafts/new",
+    "url_after": "http://localhost:5174/drafts/a6bca99a?saved=1",
+    "title": "Edit draft · Creator Studio",
+    "headings": [
+     "Edit draft"
+    ],
+    "status_messages": [
+     "Draft saved."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes"
+   },
+   "resulting_state_id": "state_2fcedbaa6d65",
+   "tester_verdict": "unclear",
+   "tester_note": "The system saved the draft with an empty title, but since there is no requirement specifying whether titles are mandatory or optional, the outcome is neither a success nor a failure.",
+   "model_call_ids": [
+    "mc_d5fe5d392249",
+    "mc_23abd7cbefe9"
+   ]
+  },
+  {
+   "id": "tc_5a54bb8a40e8",
+   "run_id": "run_9191ff906668",
+   "form_id": "form_25e784e085be",
+   "handoff_id": "ho_fb7b0816626c",
+   "designed_by": "single-agent",
+   "label": "Valid future date",
+   "inputs": {
+    "Post title": "Future Post",
+    "Publish date": "2026-06-16"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Schedule post",
+    "input_type": null
+   },
+   "requirement_ref": "R4",
+   "expected": "The post is successfully scheduled for a future date.",
+   "expectation_source": "R4",
+   "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_4126a05391e9",
+    "act_63ae98c46e8c",
+    "act_de1ff6321f79",
+    "act_0fc254ce662c"
+   ],
+   "evidence_refs": [
+    "art_d898808090b2",
+    "art_3d8acef48177",
+    "art_0d020e200c38",
+    "art_f20a856b355c",
+    "art_57e2acf9fa72",
+    "art_6be4af87ff79",
+    "art_70324b5e7b14",
+    "art_966d982396bf"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5174/schedule/new",
+    "url_after": "http://localhost:5174/scheduled/625b9ebe?scheduled=1",
+    "title": "Scheduled post · Creator Studio",
+    "headings": [
+     "Scheduled post"
+    ],
+    "status_messages": [
+     "Post scheduled."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Future Post Publish date 2026-06-16 Back to dashboard"
+   },
+   "resulting_state_id": "state_6e8b0d2d1bda",
+   "tester_verdict": "as_expected",
+   "tester_note": "The post with a future date was successfully scheduled and redirected to a confirmation page.",
+   "model_call_ids": [
+    "mc_857aafe7b2fe",
+    "mc_ea2f15c2acdd"
+   ]
+  },
+  {
+   "id": "tc_02f13433253b",
+   "run_id": "run_9191ff906668",
+   "form_id": "form_25e784e085be",
+   "handoff_id": "ho_fb7b0816626c",
+   "designed_by": "single-agent",
+   "label": "Invalid past date",
+   "inputs": {
+    "Post title": "Past Post",
+    "Publish date": "2026-06-14"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Schedule post",
+    "input_type": null
+   },
+   "requirement_ref": "R5",
+   "expected": "The form shows a validation message and rejects the past date.",
+   "expectation_source": "R5",
+   "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_a0ddf47662f1",
+    "act_ada6c7500c4c",
+    "act_0a62a7315cf8",
+    "act_6dd1295f4d15"
+   ],
+   "evidence_refs": [
+    "art_05e67d278991",
+    "art_9bce07c4258a",
+    "art_16dfa61d9ba1",
+    "art_7417649d6c7b",
+    "art_ec2060e9bfcf",
+    "art_ecdaa8aebec6",
+    "art_957780f2c328",
+    "art_ef05b7f65815"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5174/schedule/new",
+    "url_after": "http://localhost:5174/scheduled/3ed03846?scheduled=1",
+    "title": "Scheduled post · Creator Studio",
+    "headings": [
+     "Scheduled post"
+    ],
+    "status_messages": [
+     "Post scheduled."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Past Post Publish date 2026-06-14 Back to dashboard"
+   },
+   "resulting_state_id": "state_6e8b0d2d1bda",
+   "tester_verdict": "unexpected",
+   "tester_note": "The post with a past date (2026-06-14) was accepted and scheduled instead of being rejected with a validation message.",
+   "model_call_ids": [
+    "mc_857aafe7b2fe",
+    "mc_ea2f15c2acdd"
+   ]
+  },
+  {
+   "id": "tc_b1eb19959608",
+   "run_id": "run_9191ff906668",
+   "form_id": "form_25e784e085be",
+   "handoff_id": "ho_fb7b0816626c",
+   "designed_by": "single-agent",
+   "label": "Current date",
+   "inputs": {
+    "Post title": "Today Post",
+    "Publish date": "2026-06-15"
+   },
+   "submit": {
+    "role": "button",
+    "name": "Schedule post",
+    "input_type": null
+   },
+   "requirement_ref": null,
+   "expected": "The post is accepted as the date is not in the past.",
+   "expectation_source": "unspecified",
+   "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+   "status": "executed",
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "action_result_ids": [
+    "act_ab290f8e4cab",
+    "act_1320055b752e",
+    "act_7f1db46dd411",
+    "act_feae0d378e1f"
+   ],
+   "evidence_refs": [
+    "art_7b1472f87c81",
+    "art_65fadb7919a4",
+    "art_eae92390f531",
+    "art_d2d79ff1a6a0",
+    "art_7253c52313e9",
+    "art_59ee24c13acb",
+    "art_6652a55c01a7",
+    "art_69ddf35d5f5e"
+   ],
+   "observed": {
+    "url_before": "http://localhost:5174/schedule/new",
+    "url_after": "http://localhost:5174/scheduled/f08d3069?scheduled=1",
+    "title": "Scheduled post · Creator Studio",
+    "headings": [
+     "Scheduled post"
+    ],
+    "status_messages": [
+     "Post scheduled."
+    ],
+    "alert_messages": [],
+    "invalid_fields": [],
+    "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Today Post Publish date 2026-06-15 Back to dashboard"
+   },
+   "resulting_state_id": "state_6e8b0d2d1bda",
+   "tester_verdict": "as_expected",
+   "tester_note": "The post with the current studio date was successfully scheduled.",
+   "model_call_ids": [
+    "mc_857aafe7b2fe",
+    "mc_ea2f15c2acdd"
+   ]
+  }
+ ],
+ "verifications": [
+  {
+   "id": "ver_29f2a8219114",
+   "run_id": "run_9191ff906668",
+   "finding_id": "fnd_3ea6f98d24dd",
+   "handoff_id": "ho_cc2ef747456b",
+   "verifier_id": "single-agent",
+   "replay_index": 0,
+   "target_origin": "http://localhost:5174",
+   "context_id": null,
+   "fresh_context": true,
+   "setup_ok": false,
+   "setup_strategy": null,
+   "setup_error": null,
+   "failure_class": "expectation",
+   "assertion": null,
+   "result": null,
+   "outcome": "inconclusive",
+   "reason": "No supplied requirement states the expected behaviour, so there is no explicit assertion to evaluate. Kept as a review observation.",
+   "action_result_ids": [],
+   "evidence_refs": [
+    "art_bf2724d064b7",
+    "art_9f13a0f653e0"
+   ],
+   "model_call_id": null,
+   "started_at": "2026-10-29T10:31:11.835767Z",
+   "finished_at": "2026-10-29T10:31:11.835767Z"
+  },
+  {
+   "id": "ver_1a70cd9be49e",
+   "run_id": "run_9191ff906668",
+   "finding_id": "fnd_d0a4798593de",
+   "handoff_id": "ho_1f783b239ea2",
+   "verifier_id": "single-agent",
+   "replay_index": 0,
+   "target_origin": "http://localhost:5174",
+   "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "text_contains": null,
+     "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+    "chosen_by": "single-agent"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "text_contains": null,
+      "field": "Publish date"
+     },
+     "requirement_ref": "R5",
+     "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+     "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+     "url": "http://localhost:5174/scheduled/118f915e?scheduled=1",
+     "route": "/scheduled/:id",
+     "alert_messages": [],
+     "field_validation": {},
+     "status_messages": [
+      "Post scheduled."
+     ],
+     "matching_messages": []
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "confirmed",
+   "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+   "action_result_ids": [
+    "act_1dfbdb40fcda",
+    "act_e25fefc561d8",
+    "act_c5231a37b97b",
+    "act_a5f4249a851d"
+   ],
+   "evidence_refs": [
+    "art_ce416b555e58",
+    "art_4e0abb91c256",
+    "art_494357310dd3",
+    "art_ca091b90592a",
+    "art_da9bbdc3ebf8",
+    "art_ad2ba50a48f9",
+    "art_22ba5f1d6ab0",
+    "art_0445f4617e91",
+    "art_b2724e1bb1a2"
+   ],
+   "model_call_id": "mc_f81dc72482b3",
+   "started_at": "2026-10-29T10:31:12.015253Z",
+   "finished_at": "2026-10-29T10:31:18.129394Z"
+  },
+  {
+   "id": "ver_87e9dbc4f97c",
+   "run_id": "run_9191ff906668",
+   "finding_id": "fnd_d0a4798593de",
+   "handoff_id": "ho_1f783b239ea2",
+   "verifier_id": "single-agent",
+   "replay_index": 1,
+   "target_origin": "http://localhost:5174",
+   "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+   "fresh_context": true,
+   "setup_ok": true,
+   "setup_strategy": "direct",
+   "setup_error": null,
+   "failure_class": null,
+   "assertion": {
+    "type": "validation_message_present",
+    "params": {
+     "text_contains": null,
+     "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+    "chosen_by": "single-agent"
+   },
+   "result": {
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "text_contains": null,
+      "field": "Publish date"
+     },
+     "requirement_ref": "R5",
+     "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+     "chosen_by": "single-agent"
+    },
+    "passed": false,
+    "observed": {
+     "url": "http://localhost:5174/scheduled/09d49293?scheduled=1",
+     "route": "/scheduled/:id",
+     "alert_messages": [],
+     "field_validation": {},
+     "status_messages": [
+      "Post scheduled."
+     ],
+     "matching_messages": []
+    },
+    "evaluated_by": "engine"
+   },
+   "outcome": "confirmed",
+   "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+   "action_result_ids": [
+    "act_a2ac58d8b114",
+    "act_59786a495aad",
+    "act_ca4be61e6bc4",
+    "act_d45aeef1a789"
+   ],
+   "evidence_refs": [
+    "art_9acc2fcdf914",
+    "art_6dc058f9eaf3",
+    "art_6a4e7e4d2e0c",
+    "art_1664f9df0425",
+    "art_3cb49c1ad6ef",
+    "art_fed9dc67e67b",
+    "art_f6417c3b3b0f",
+    "art_fdabf00f8d0a",
+    "art_b26cab14fabe"
+   ],
+   "model_call_id": null,
+   "started_at": "2026-10-29T10:31:18.244051Z",
+   "finished_at": "2026-10-29T10:31:21.918840Z"
+  }
+ ],
+ "events": [
+  {
+   "seq": 1168,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "run_started",
+   "message": "Run started with model google/gemini-3-flash-preview (single_agent)",
+   "data": {
+    "mocked_model": false
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:25.775177Z"
+  },
+  {
+   "seq": 1169,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Dashboard",
+   "data": {
+    "state_id": "state_904d33615818",
+    "route": "/",
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:29.023966Z"
+  },
+  {
+   "seq": 1170,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 0: navigate http://localhost:5174/",
+   "data": {
+    "action_result_id": "act_6ef40b4c59e0",
+    "ok": true,
+    "duration_ms": 25,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:29.040180Z"
+  },
+  {
+   "seq": 1171,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 1 (single-agent): 842 tokens, US$0.00057",
+   "data": {
+    "model_call_id": "mc_0f12d34232b1",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:31.241544Z"
+  },
+  {
+   "seq": 1172,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I will start by exploring the 'New draft' form as per requirement R1 and R2.",
+   "data": {
+    "step": 1,
+    "action": {
+     "type": "click",
+     "element_id": "e2"
+    },
+    "model_call_id": "mc_0f12d34232b1"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:31.267138Z"
+  },
+  {
+   "seq": 1173,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: New draft (0/2 fields filled)",
+   "data": {
+    "state_id": "state_7db9d557c99c",
+    "route": "/drafts/new",
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:31.474290Z"
+  },
+  {
+   "seq": 1174,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 1: click link 'New draft'",
+   "data": {
+    "action_result_id": "act_d3c664de9ff9",
+    "ok": true,
+    "duration_ms": 47,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:31.490348Z"
+  },
+  {
+   "seq": 1175,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "form_discovered",
+   "message": "Form on /drafts/new: Title, Caption",
+   "data": {
+    "form_id": "form_8e4d9d8f6dc5",
+    "state_id": "state_7db9d557c99c",
+    "action_result_id": "act_d3c664de9ff9",
+    "evidence_refs": [
+     "art_5c8f2631550f",
+     "art_6afef8452eff"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:31.542543Z"
+  },
+  {
+   "seq": 1176,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 2 (single-agent): 915 tokens, US$0.00064",
+   "data": {
+    "model_call_id": "mc_224ecc2faa01",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:33.178893Z"
+  },
+  {
+   "seq": 1177,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have seen the 'New draft' form (R1, R2). Now I will return to the dashboard to find the scheduling form (R4).",
+   "data": {
+    "step": 2,
+    "action": {
+     "type": "click",
+     "element_id": "e1"
+    },
+    "model_call_id": "mc_224ecc2faa01"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:33.194604Z"
+  },
+  {
+   "seq": 1178,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 2: click link 'Dashboard'",
+   "data": {
+    "action_result_id": "act_eaf896c1e9d0",
+    "ok": true,
+    "duration_ms": 35,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:33.357265Z"
+  },
+  {
+   "seq": 1179,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 3 (single-agent): 994 tokens, US$0.00062",
+   "data": {
+    "model_call_id": "mc_6098a0557f30",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:34.926922Z"
+  },
+  {
+   "seq": 1180,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have already explored the 'New draft' form. Now I will explore the 'Schedule a post' form to satisfy requirement R4.",
+   "data": {
+    "step": 3,
+    "action": {
+     "type": "click",
+     "element_id": "e3"
+    },
+    "model_call_id": "mc_6098a0557f30"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:34.959518Z"
+  },
+  {
+   "seq": 1181,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Schedule a post (0/2 fields filled)",
+   "data": {
+    "state_id": "state_9f455486894d",
+    "route": "/schedule/new",
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:35.129714Z"
+  },
+  {
+   "seq": 1182,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 3: click link 'Schedule a post'",
+   "data": {
+    "action_result_id": "act_21be1aae047f",
+    "ok": true,
+    "duration_ms": 31,
+    "phase": "explore",
+    "context_id": "single-agent:explore:ws_33ee1f4750"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:35.136046Z"
+  },
+  {
+   "seq": 1183,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "form_discovered",
+   "message": "Form on /schedule/new: Post title, Publish date",
+   "data": {
+    "form_id": "form_25e784e085be",
+    "state_id": "state_9f455486894d",
+    "action_result_id": "act_21be1aae047f",
+    "evidence_refs": [
+     "art_a19c6fd44b59",
+     "art_062876596e54"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:35.194295Z"
+  },
+  {
+   "seq": 1184,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 4 (single-agent): 1145 tokens, US$0.00084",
+   "data": {
+    "model_call_id": "mc_b912b88cfe86",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:42.028082Z"
+  },
+  {
+   "seq": 1185,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "decision",
+   "message": "I have now explored both the 'New draft' form (R1, R2) and the 'Schedule a post' form (R4). I have seen all the forms mentioned in the requirements.",
+   "data": {
+    "step": 4,
+    "action": {
+     "type": "finish",
+     "persistence": "unknown",
+     "checked_values": [],
+     "summary": "I explored the dashboard and opened the 'New draft' form (containing title and caption fields) and the 'Schedule a post' form (containing post title and publish date fields)."
+    },
+    "model_call_id": "mc_b912b88cfe86"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:42.045414Z"
+  },
+  {
+   "seq": 1186,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "explorer_finished",
+   "message": "Explorer finished: I explored the dashboard and opened the 'New draft' form (containing title and caption fields) and the 'Schedule a post' form (containing post title and publish date fields).",
+   "data": {
+    "model_call_id": "mc_b912b88cfe86"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:42.063293Z"
+  },
+  {
+   "seq": 1187,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_8b2fe75e8021: form form_8e4d9d8f6dc5 from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_8b2fe75e8021",
+    "kind": "form_to_tester",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_8e4d9d8f6dc5",
+    "finding_id": null,
+    "task_id": "task_c10ffab8cb21",
+    "artifact_id": "art_e5423b0a9dda"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:42.262745Z"
+  },
+  {
+   "seq": 1188,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 5 (single-agent): 1031 tokens, US$0.00103",
+   "data": {
+    "model_call_id": "mc_d5fe5d392249",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:44.656731Z"
+  },
+  {
+   "seq": 1189,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_plan",
+   "message": "Input tester planned 2 case(s): I will test the draft creation form with valid inputs to verify that titles and captions are correctly handled according to requirements R2 and R3.",
+   "data": {
+    "model_call_id": "mc_d5fe5d392249",
+    "cases": [
+     {
+      "label": "Valid draft",
+      "inputs": {
+       "Title": "My First Post",
+       "Caption": "This is a test caption."
+      },
+      "submit": "Save draft",
+      "requirement_ref": "R3",
+      "expected": "The draft is saved and values persist."
+     },
+     {
+      "label": "Empty title",
+      "inputs": {
+       "Title": "",
+       "Caption": "Caption only"
+      },
+      "submit": "Save draft",
+      "requirement_ref": null,
+      "expected": "The system should either save the draft with an empty title or provide a validation message."
+     }
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:44.670784Z"
+  },
+  {
+   "seq": 1190,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 4: setup: open /drafts/new",
+   "data": {
+    "action_result_id": "act_5e70f1a3fd73",
+    "ok": true,
+    "duration_ms": 29,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:47.821774Z"
+  },
+  {
+   "seq": 1191,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 5: fill textbox 'Title' = 'My First Post'",
+   "data": {
+    "action_result_id": "act_ba21f623574d",
+    "ok": true,
+    "duration_ms": 15,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:47.980740Z"
+  },
+  {
+   "seq": 1192,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 6: fill textbox 'Caption' = 'This is a test caption.'",
+   "data": {
+    "action_result_id": "act_41f97c191140",
+    "ok": true,
+    "duration_ms": 8,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:48.091913Z"
+  },
+  {
+   "seq": 1193,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 7: click button 'Save draft'",
+   "data": {
+    "action_result_id": "act_3ee3928f72d2",
+    "ok": true,
+    "duration_ms": 51,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:48.259245Z"
+  },
+  {
+   "seq": 1194,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Edit draft — Draft saved. (2/2 fields filled)",
+   "data": {
+    "state_id": "state_a9043722341c",
+    "route": "/drafts/:id",
+    "phase": "input_test",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:48.277124Z"
+  },
+  {
+   "seq": 1195,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Valid draft' (Title='My First Post', Caption='This is a test caption.'): executed",
+   "data": {
+    "test_case_id": "tc_022f8bed167a",
+    "status": "executed",
+    "context_id": "single-agent:tc_022f8bed167a:ws_0c5f818050",
+    "resulting_state_id": "state_a9043722341c",
+    "evidence_refs": [
+     "art_1e8b3b1603ea",
+     "art_278bbf7e1891"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:48.403037Z"
+  },
+  {
+   "seq": 1196,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from single-agent queued for exploration (deferred): Edit draft — Draft saved. (2/2 fields filled)",
+   "data": {
+    "state_id": "state_a9043722341c",
+    "deferred_task_id": "task_e482cf65b8d0"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:48.439768Z"
+  },
+  {
+   "seq": 1197,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 8: setup: open /drafts/new",
+   "data": {
+    "action_result_id": "act_2660e63e2cb8",
+    "ok": true,
+    "duration_ms": 37,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:51.732545Z"
+  },
+  {
+   "seq": 1198,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 9: fill textbox 'Title' = ''",
+   "data": {
+    "action_result_id": "act_1651606e61f7",
+    "ok": true,
+    "duration_ms": 16,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:51.883775Z"
+  },
+  {
+   "seq": 1199,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 10: fill textbox 'Caption' = 'Caption only'",
+   "data": {
+    "action_result_id": "act_d706672919dd",
+    "ok": true,
+    "duration_ms": 10,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:52.001457Z"
+  },
+  {
+   "seq": 1200,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 11: click button 'Save draft'",
+   "data": {
+    "action_result_id": "act_1f14efada8ab",
+    "ok": true,
+    "duration_ms": 58,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:52.201409Z"
+  },
+  {
+   "seq": 1201,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Edit draft — Draft saved. (1/2 fields filled)",
+   "data": {
+    "state_id": "state_2fcedbaa6d65",
+    "route": "/drafts/:id",
+    "phase": "input_test",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:52.230604Z"
+  },
+  {
+   "seq": 1202,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Empty title' (Title='', Caption='Caption only'): executed",
+   "data": {
+    "test_case_id": "tc_f6d9b1d171a2",
+    "status": "executed",
+    "context_id": "single-agent:tc_f6d9b1d171a2:ws_0a253ea95b",
+    "resulting_state_id": "state_2fcedbaa6d65",
+    "evidence_refs": [
+     "art_d66c75724f65",
+     "art_bc9c1fa311d3"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:52.340292Z"
+  },
+  {
+   "seq": 1203,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from single-agent queued for exploration (deferred): Edit draft — Draft saved. (1/2 fields filled)",
+   "data": {
+    "state_id": "state_2fcedbaa6d65",
+    "deferred_task_id": "task_fdb9c4306efb"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:52.377109Z"
+  },
+  {
+   "seq": 1204,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 6 (single-agent): 1228 tokens, US$0.00098",
+   "data": {
+    "model_call_id": "mc_23abd7cbefe9",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:54.556423Z"
+  },
+  {
+   "seq": 1205,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_c10ffab8cb21",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "candidate_reported",
+   "message": "Input tester reports review observation (expectation not backed by a requirement): New draft: Empty title",
+   "data": {
+    "finding_id": "fnd_3ea6f98d24dd",
+    "test_case_id": "tc_f6d9b1d171a2",
+    "kind": "review_observation",
+    "verdict": "unclear",
+    "requirement_ref": null,
+    "model_call_id": "mc_23abd7cbefe9"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:54.615142Z"
+  },
+  {
+   "seq": 1206,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_fb7b0816626c: form form_25e784e085be from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_fb7b0816626c",
+    "kind": "form_to_tester",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_25e784e085be",
+    "finding_id": null,
+    "task_id": "task_70e865945246",
+    "artifact_id": "art_c276935aef19"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:54.710040Z"
+  },
+  {
+   "seq": 1207,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 7 (single-agent): 1309 tokens, US$0.00146",
+   "data": {
+    "model_call_id": "mc_857aafe7b2fe",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:57.257701Z"
+  },
+  {
+   "seq": 1208,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_plan",
+   "message": "Input tester planned 3 case(s): I will test the scheduling form with valid and invalid dates relative to the studio date of 2026-06-15 to verify requirement R5.",
+   "data": {
+    "model_call_id": "mc_857aafe7b2fe",
+    "cases": [
+     {
+      "label": "Valid future date",
+      "inputs": {
+       "Post title": "Future Post",
+       "Publish date": "2026-06-16"
+      },
+      "submit": "Schedule post",
+      "requirement_ref": "R4",
+      "expected": "The post is successfully scheduled for a future date."
+     },
+     {
+      "label": "Invalid past date",
+      "inputs": {
+       "Post title": "Past Post",
+       "Publish date": "2026-06-14"
+      },
+      "submit": "Schedule post",
+      "requirement_ref": "R5",
+      "expected": "The form shows a validation message and rejects the past date."
+     },
+     {
+      "label": "Current date",
+      "inputs": {
+       "Post title": "Today Post",
+       "Publish date": "2026-06-15"
+      },
+      "submit": "Schedule post",
+      "requirement_ref": null,
+      "expected": "The post is accepted as the date is not in the past."
+     }
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:30:57.275055Z"
+  },
+  {
+   "seq": 1209,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 12: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_4126a05391e9",
+    "ok": true,
+    "duration_ms": 33,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:00.444414Z"
+  },
+  {
+   "seq": 1210,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 13: fill textbox 'Post title' = 'Future Post'",
+   "data": {
+    "action_result_id": "act_63ae98c46e8c",
+    "ok": true,
+    "duration_ms": 15,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:00.576171Z"
+  },
+  {
+   "seq": 1211,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 14: fill textbox 'Publish date' = '2026-06-16'",
+   "data": {
+    "action_result_id": "act_de1ff6321f79",
+    "ok": true,
+    "duration_ms": 5,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:00.689899Z"
+  },
+  {
+   "seq": 1212,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 15: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_0fc254ce662c",
+    "ok": true,
+    "duration_ms": 49,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:00.872741Z"
+  },
+  {
+   "seq": 1213,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "state_discovered",
+   "message": "New state: Scheduled post — Post scheduled.",
+   "data": {
+    "state_id": "state_6e8b0d2d1bda",
+    "route": "/scheduled/:id",
+    "phase": "input_test",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:00.904585Z"
+  },
+  {
+   "seq": 1214,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Valid future date' (Post title='Future Post', Publish date='2026-06-16'): executed",
+   "data": {
+    "test_case_id": "tc_5a54bb8a40e8",
+    "status": "executed",
+    "context_id": "single-agent:tc_5a54bb8a40e8:ws_4064ad7e1d",
+    "resulting_state_id": "state_6e8b0d2d1bda",
+    "evidence_refs": [
+     "art_70324b5e7b14",
+     "art_966d982396bf"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:01.020568Z"
+  },
+  {
+   "seq": 1215,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "frontier_deferred",
+   "message": "New state from single-agent queued for exploration (deferred): Scheduled post — Post scheduled.",
+   "data": {
+    "state_id": "state_6e8b0d2d1bda",
+    "deferred_task_id": "task_3c2d8d2ec925"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:01.045582Z"
+  },
+  {
+   "seq": 1216,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 16: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_a0ddf47662f1",
+    "ok": true,
+    "duration_ms": 54,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:04.584024Z"
+  },
+  {
+   "seq": 1217,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 17: fill textbox 'Post title' = 'Past Post'",
+   "data": {
+    "action_result_id": "act_ada6c7500c4c",
+    "ok": true,
+    "duration_ms": 18,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:04.744770Z"
+  },
+  {
+   "seq": 1218,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 18: fill textbox 'Publish date' = '2026-06-14'",
+   "data": {
+    "action_result_id": "act_0a62a7315cf8",
+    "ok": true,
+    "duration_ms": 11,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:04.872799Z"
+  },
+  {
+   "seq": 1219,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 19: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_6dd1295f4d15",
+    "ok": true,
+    "duration_ms": 56,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:05.072898Z"
+  },
+  {
+   "seq": 1220,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Invalid past date' (Post title='Past Post', Publish date='2026-06-14'): executed",
+   "data": {
+    "test_case_id": "tc_02f13433253b",
+    "status": "executed",
+    "context_id": "single-agent:tc_02f13433253b:ws_800c0cbb07",
+    "resulting_state_id": "state_6e8b0d2d1bda",
+    "evidence_refs": [
+     "art_957780f2c328",
+     "art_ef05b7f65815"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:05.225007Z"
+  },
+  {
+   "seq": 1221,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 20: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_ab290f8e4cab",
+    "ok": true,
+    "duration_ms": 44,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:08.554067Z"
+  },
+  {
+   "seq": 1222,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 21: fill textbox 'Post title' = 'Today Post'",
+   "data": {
+    "action_result_id": "act_1320055b752e",
+    "ok": true,
+    "duration_ms": 17,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:08.695545Z"
+  },
+  {
+   "seq": 1223,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 22: fill textbox 'Publish date' = '2026-06-15'",
+   "data": {
+    "action_result_id": "act_7f1db46dd411",
+    "ok": true,
+    "duration_ms": 7,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:08.815505Z"
+  },
+  {
+   "seq": 1224,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 23: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_feae0d378e1f",
+    "ok": true,
+    "duration_ms": 59,
+    "phase": "input_test",
+    "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:09.014607Z"
+  },
+  {
+   "seq": 1225,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "test_executed",
+   "message": "Test case 'Current date' (Post title='Today Post', Publish date='2026-06-15'): executed",
+   "data": {
+    "test_case_id": "tc_b1eb19959608",
+    "status": "executed",
+    "context_id": "single-agent:tc_b1eb19959608:ws_f83fcd7b16",
+    "resulting_state_id": "state_6e8b0d2d1bda",
+    "evidence_refs": [
+     "art_6652a55c01a7",
+     "art_69ddf35d5f5e"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:09.146325Z"
+  },
+  {
+   "seq": 1226,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 8 (single-agent): 1700 tokens, US$0.00142",
+   "data": {
+    "model_call_id": "mc_ea2f15c2acdd",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.658765Z"
+  },
+  {
+   "seq": 1227,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_70e865945246",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "candidate_reported",
+   "message": "Input tester reports candidate defect: Schedule a post: Invalid past date",
+   "data": {
+    "finding_id": "fnd_d0a4798593de",
+    "test_case_id": "tc_02f13433253b",
+    "kind": "defect_candidate",
+    "verdict": "unexpected",
+    "requirement_ref": "R5",
+    "model_call_id": "mc_ea2f15c2acdd"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.726789Z"
+  },
+  {
+   "seq": 1228,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_cc2ef747456b: candidate fnd_3ea6f98d24dd from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_cc2ef747456b",
+    "kind": "candidate_to_verifier",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_8e4d9d8f6dc5",
+    "finding_id": "fnd_3ea6f98d24dd",
+    "task_id": "task_beb6ee8a40cb",
+    "artifact_id": "art_bf2724d064b7"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.819728Z"
+  },
+  {
+   "seq": 1229,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_beb6ee8a40cb",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "verification_executed",
+   "message": "Verification replay 1 of fnd_3ea6f98d24dd: inconclusive (expectation)",
+   "data": {
+    "verification_id": "ver_29f2a8219114",
+    "finding_id": "fnd_3ea6f98d24dd",
+    "outcome": "inconclusive",
+    "failure_class": "expectation",
+    "context_id": null,
+    "evidence_refs": [
+     "art_bf2724d064b7",
+     "art_9f13a0f653e0"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.867310Z"
+  },
+  {
+   "seq": 1230,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_beb6ee8a40cb",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "result_accepted",
+   "message": "Accepted inconclusive for fnd_3ea6f98d24dd: No supplied requirement states the expected behaviour, so there is no explicit assertion to evaluate. Kept as a review observation.",
+   "data": {
+    "finding_id": "fnd_3ea6f98d24dd",
+    "outcome": "inconclusive",
+    "verification_ids": [
+     "ver_29f2a8219114"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.922431Z"
+  },
+  {
+   "seq": 1231,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_1f783b239ea2: candidate fnd_d0a4798593de from single-agent to single-agent",
+   "data": {
+    "handoff_id": "ho_1f783b239ea2",
+    "kind": "candidate_to_verifier",
+    "from_agent": "single-agent",
+    "to_agent": "single-agent",
+    "form_id": "form_25e784e085be",
+    "finding_id": "fnd_d0a4798593de",
+    "task_id": "task_0fcc41fc2192",
+    "artifact_id": "art_8daccd6e7175"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:11.999339Z"
+  },
+  {
+   "seq": 1232,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 24: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_1dfbdb40fcda",
+    "ok": true,
+    "duration_ms": 50,
+    "phase": "verify",
+    "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:15.304425Z"
+  },
+  {
+   "seq": 1233,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "model_call",
+   "message": "Model call 9 (single-agent): 1588 tokens, US$0.00129",
+   "data": {
+    "model_call_id": "mc_f81dc72482b3",
+    "ok": true,
+    "phase": "verify",
+    "finish_reason": "stop"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:17.613099Z"
+  },
+  {
+   "seq": 1234,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "assertion_selected",
+   "message": "Verifier selected validation_message_present for R5: The requirement R5 explicitly states that a publish date in the past must be rejected with a validation message. The input '2026-06-14' is before the studio date of '2026-06-15', so a validation message is expected.",
+   "data": {
+    "finding_id": "fnd_d0a4798593de",
+    "model_call_id": "mc_f81dc72482b3",
+    "assertion": {
+     "type": "validation_message_present",
+     "params": {
+      "text_contains": null,
+      "field": "Publish date"
+     },
+     "requirement_ref": "R5",
+     "expected": "A validation message should be displayed for the 'Publish date' field because the date is in the past relative to the studio date.",
+     "chosen_by": "single-agent"
+    }
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:17.632641Z"
+  },
+  {
+   "seq": 1235,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 25: fill textbox 'Post title' = 'Past Post'",
+   "data": {
+    "action_result_id": "act_e25fefc561d8",
+    "ok": true,
+    "duration_ms": 20,
+    "phase": "verify",
+    "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:17.783045Z"
+  },
+  {
+   "seq": 1236,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 26: fill textbox 'Publish date' = '2026-06-14'",
+   "data": {
+    "action_result_id": "act_c5231a37b97b",
+    "ok": true,
+    "duration_ms": 9,
+    "phase": "verify",
+    "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:17.910723Z"
+  },
+  {
+   "seq": 1237,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 27: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_a5f4249a851d",
+    "ok": true,
+    "duration_ms": 45,
+    "phase": "verify",
+    "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:18.079267Z"
+  },
+  {
+   "seq": 1238,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "verification_executed",
+   "message": "Verification replay 1 of fnd_d0a4798593de: confirmed (assertion validation_message_present failed)",
+   "data": {
+    "verification_id": "ver_1a70cd9be49e",
+    "finding_id": "fnd_d0a4798593de",
+    "outcome": "confirmed",
+    "failure_class": null,
+    "context_id": "single-agent:ver_1a70cd9be49e:ws_7387a62cda",
+    "evidence_refs": [
+     "art_0445f4617e91",
+     "art_b2724e1bb1a2"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:18.162759Z"
+  },
+  {
+   "seq": 1239,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 28: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_a2ac58d8b114",
+    "ok": true,
+    "duration_ms": 37,
+    "phase": "verify",
+    "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:21.443212Z"
+  },
+  {
+   "seq": 1240,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 29: fill textbox 'Post title' = 'Past Post'",
+   "data": {
+    "action_result_id": "act_59786a495aad",
+    "ok": true,
+    "duration_ms": 14,
+    "phase": "verify",
+    "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:21.589297Z"
+  },
+  {
+   "seq": 1241,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 30: fill textbox 'Publish date' = '2026-06-14'",
+   "data": {
+    "action_result_id": "act_ca4be61e6bc4",
+    "ok": true,
+    "duration_ms": 6,
+    "phase": "verify",
+    "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:21.690672Z"
+  },
+  {
+   "seq": 1242,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "action_executed",
+   "message": "Step 31: click button 'Schedule post'",
+   "data": {
+    "action_result_id": "act_d45aeef1a789",
+    "ok": true,
+    "duration_ms": 52,
+    "phase": "verify",
+    "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:21.858993Z"
+  },
+  {
+   "seq": 1243,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "single-agent",
+   "type": "verification_executed",
+   "message": "Verification replay 2 of fnd_d0a4798593de: confirmed (assertion validation_message_present failed)",
+   "data": {
+    "verification_id": "ver_87e9dbc4f97c",
+    "finding_id": "fnd_d0a4798593de",
+    "outcome": "confirmed",
+    "failure_class": null,
+    "context_id": "single-agent:ver_87e9dbc4f97c:ws_5b4549703e",
+    "evidence_refs": [
+     "art_fdabf00f8d0a",
+     "art_b26cab14fabe"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:21.954660Z"
+  },
+  {
+   "seq": 1244,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_0fcc41fc2192",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "result_accepted",
+   "message": "Accepted confirmed for fnd_d0a4798593de: All 2 fresh replays violated R5.",
+   "data": {
+    "finding_id": "fnd_d0a4798593de",
+    "outcome": "confirmed",
+    "verification_ids": [
+     "ver_1a70cd9be49e",
+     "ver_87e9dbc4f97c"
+    ]
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:22.070389Z"
+  },
+  {
+   "seq": 1245,
+   "run_id": "run_9191ff906668",
+   "task_id": "task_729210ea60f6",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_finished",
+   "message": "Run completed: explorer finished the goal; 2 form(s) tested with 5 case(s); 2 candidate(s), verification: {'confirmed': 1, 'inconclusive': 1}",
+   "data": {
+    "status": "completed"
+   },
+   "provenance": {
+    "live": true,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": false
+   },
+   "created_at": "2026-10-29T10:31:22.103655Z"
+  }
+ ]
+}

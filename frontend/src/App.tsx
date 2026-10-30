@@ -41,7 +41,7 @@ const MODE_LABEL: Record<string, string> = {
 /**
  * One compact run toolbar: Review dropdown (goal, target, workflow), status and labels, the agent
  * widgets inline, then report and diagnostics controls. The stop reason of a stopped run stays
- * visible on its own line. Below lg the agents move to their own scrollable line, labels intact.
+ * visible on its own line. Below xl the agents move to their own scrollable line, labels intact.
  */
 function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactNode }) {
   const r = detail.run
@@ -94,7 +94,7 @@ function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactN
       )}
       {active && <Loader2 size={13} className="shrink-0 text-accent-700 motion-safe:animate-spin" aria-label="Updating" />}
       {/* Agents inline; on narrow screens they take their own line and scroll rather than squeeze. */}
-      <div className="order-last flex w-full min-w-0 overflow-x-auto lg:order-none lg:w-auto lg:flex-1" data-testid="toolbar-agents">{agents}</div>
+      <div className="order-last flex w-full min-w-0 overflow-x-auto xl:order-none xl:w-auto xl:flex-1" data-testid="toolbar-agents">{agents}</div>
       {/* Report built by the backend from this run's saved records only. */}
       <div className="ml-auto flex shrink-0 items-center gap-1.5">
         <a href={`/api/runs/${r.id}/report`} target="_blank" rel="noreferrer"
@@ -179,6 +179,7 @@ export default function App() {
   const openRun = useCallback((id: string) => {
     setSetupOpen(false)
     setSelection(null)
+    setWorker(null)
     setDetail((d) => (d?.run.id === id ? d : null))
     setDetailError(null)
     setRunId(id)

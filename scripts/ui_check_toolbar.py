@@ -11,6 +11,7 @@ from pathlib import Path
 
 import httpx
 from playwright.async_api import async_playwright, expect
+from check_prereq import require_runs
 
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/run-toolbar")
 UI = sys.argv[2] if len(sys.argv) > 2 else "http://localhost:5173"
@@ -136,4 +137,5 @@ async def main():
     sys.exit(1 if fails else 0)
 
 
+require_runs("run_a54099283d9d", "run_a4f1034bfe0f", "run_53d7009ff711")
 asyncio.run(main())

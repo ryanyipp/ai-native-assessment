@@ -1,0 +1,41 @@
+{
+  "url": "http://localhost:5174/scheduled/781d8c29?scheduled=1",
+  "title": "Scheduled post \u00b7 Creator Studio",
+  "headings": [
+    "Scheduled post"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "Back to dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Scheduled post Post scheduled. Post title Future Post Publish date 2026-06-16 Back to dashboard",
+  "status_messages": [
+    "Post scheduled."
+  ],
+  "alert_messages": [],
+  "invalid_fields": []
+}

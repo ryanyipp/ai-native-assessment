@@ -13,6 +13,8 @@ from pathlib import Path
 
 from playwright.async_api import Page, async_playwright, expect
 
+from check_prereq import require_runs
+
 UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 RUN = sys.argv[1] if len(sys.argv) > 1 else "run_e957eab8645e"
 OUT = Path(sys.argv[2] if len(sys.argv) > 2 else "docs/ui-iteration")
@@ -42,6 +44,7 @@ async def expand_all(page):
 
 
 async def main() -> None:
+    require_runs(RUN)
     OUT.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
         b = await p.chromium.launch()
@@ -128,7 +131,20 @@ async def main() -> None:
         await page.screenshot(path=OUT / "after-1440x900-findings.png")
         await axe(page, "findings tab")
 
-        # Launcher validation (client-side; nothing is submitted).
+        # Launcher validation (client-side). Health is stubbed so it runs without a key, and run
+        # creation is blocked so a validation bug can never start a paid run.
+        async def with_key(route):
+            resp = await route.fetch()
+            await route.fulfill(response=resp, json={**await resp.json(), "api_key_configured": True})
+        submitted: list[str] = []
+        async def block_create(route):
+            if route.request.method == "POST":
+                submitted.append(route.request.url)
+                await route.abort()
+            else:
+                await route.continue_()
+        await page.route("**/api/health", with_key)
+        await page.route("**/api/runs", block_create)
         await page.get_by_role("button", name="New run").first.click()
         dlg = page.get_by_role("complementary", name="New review run")  # persistent settings panel (was a dialog)
         # An unapproved origin asks for approval in the launcher and cannot start (nothing is approved here).
@@ -136,6 +152,7 @@ async def main() -> None:
         url_err = (await dlg.get_by_role("group", name="Approve target origin").is_visible()
                    and await dlg.get_by_role("button", name="Start live run").is_disabled())
         await dlg.get_by_label("Target website").fill("http://localhost:5174/")
+        await expect(dlg.get_by_role("button", name="Start live run")).to_be_enabled()
         await dlg.get_by_label("Review goal").fill("abc")
         await dlg.get_by_role("button", name="Start live run").click()
         goal_err = await dlg.get_by_text("at least 5 characters").is_visible()
@@ -151,6 +168,9 @@ async def main() -> None:
         await page.screenshot(path=OUT / "after-launcher-validation.png")
         await axe(page, "run settings panel")
         await dlg.get_by_role("button", name="Close run settings").click()
+        await page.unroute("**/api/health")
+        await page.unroute("**/api/runs")
+        check("launcher validation submitted nothing", not submitted, str(submitted))
 
         # Missing screenshots degrade to placeholders.
         await page.route("**/api/artifacts/*", lambda r: r.fulfill(status=404, body="{}"))

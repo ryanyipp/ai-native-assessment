@@ -1,0 +1,29 @@
+{
+  "id": "ver_36d90b09a365",
+  "run_id": "run_db4f36872772",
+  "finding_id": "fnd_b7f69d37b78f",
+  "handoff_id": "ho_05a864e37d93",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_36d90b09a365:ws_507c84ddee",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": "expectation",
+  "assertion": null,
+  "result": null,
+  "outcome": "inconclusive",
+  "reason": "Verifier judged that R2 does not explicitly state this behaviour: The requirement describes the components of a draft but does not explicitly state that these fields are mandatory or define the behavior when one is missing. According to the instructions, a requirement describing what something 'has' or 'c",
+  "action_result_ids": [
+    "act_8533b6ae9fca"
+  ],
+  "evidence_refs": [
+    "art_283ea9b82438",
+    "art_2e429e1c99a5"
+  ],
+  "model_call_id": "mc_f0adff54f4e9",
+  "started_at": "2026-10-29T07:27:18.541775Z",
+  "finished_at": "2026-10-29T07:27:30.371980Z"
+}

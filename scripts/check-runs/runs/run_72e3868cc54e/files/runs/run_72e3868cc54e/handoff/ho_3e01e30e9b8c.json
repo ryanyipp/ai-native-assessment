@@ -1,0 +1,73 @@
+{
+  "id": "ho_3e01e30e9b8c",
+  "run_id": "run_72e3868cc54e",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_e4428db77a6d",
+  "source_state_id": "state_09dec2947c2d",
+  "form_id": "form_ad6e63044069",
+  "finding_id": "fnd_6d163ccfb367",
+  "setup": {
+    "target_state_id": "state_09dec2947c2d",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Dashboard",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Schedule a post",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [],
+  "expected_behaviour": [
+    {
+      "text": "The form should prevent submission due to the required 'Post title' field being empty.",
+      "source": "none supplied"
+    }
+  ],
+  "evidence_refs": [
+    "art_fea977f77bcd",
+    "art_5f3e991435a0",
+    "art_03046a22672d",
+    "art_ca076efded64",
+    "art_a09b354f10e8",
+    "art_dd263d87ad34",
+    "art_f5b5327c3630",
+    "art_bb8aead7f57c"
+  ],
+  "created_at": "2026-10-29T08:50:29.693174Z"
+}

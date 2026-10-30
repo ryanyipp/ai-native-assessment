@@ -1,0 +1,62 @@
+{
+  "id": "ho_18e23f33ea30",
+  "run_id": "run_a4f1034bfe0f",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_af11578c55c5",
+  "source_state_id": "state_aca369d8bbf9",
+  "form_id": "form_521a64fb50d0",
+  "finding_id": "fnd_ac1b5a94d810",
+  "setup": {
+    "target_state_id": "state_aca369d8bbf9",
+    "expected_signature": "0e2b19e7e8058ea8",
+    "direct_path": "/drafts/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "R3",
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.",
+      "source": "R3"
+    }
+  ],
+  "evidence_refs": [
+    "art_f43fcba388ed",
+    "art_570664a7d4d9",
+    "art_53ffb81bbd58",
+    "art_60ff17f3f01b",
+    "art_c696b5f8b413",
+    "art_6215a913b3e4",
+    "art_b42e65c7a2a7",
+    "art_3fb668504204",
+    "art_adaa4f6c2ac5",
+    "art_e95ea3083604",
+    "art_5a0fbad761aa",
+    "art_3e8d4898834c"
+  ],
+  "created_at": "2026-10-29T13:39:40.058864Z"
+}

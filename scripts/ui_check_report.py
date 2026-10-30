@@ -13,6 +13,7 @@ from pathlib import Path
 
 import httpx
 from playwright.async_api import async_playwright, expect
+from check_prereq import require_runs
 
 UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 API = os.environ.get("FLOWLENS_API", "http://localhost:8000")
@@ -120,4 +121,5 @@ async def main():
     sys.exit(1 if fails else 0)
 
 
+require_runs(*RUNS)
 asyncio.run(main())

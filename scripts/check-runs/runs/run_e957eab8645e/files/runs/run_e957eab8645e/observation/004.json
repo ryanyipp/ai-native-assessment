@@ -1,0 +1,53 @@
+{
+  "url": "http://localhost:5174/drafts/7ceb16cd?saved=1",
+  "title": "Edit draft \u00b7 Creator Studio",
+  "headings": [
+    "Edit draft"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false
+    },
+    {
+      "id": "e2",
+      "tag": "input",
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text",
+      "value": "Test Draft Title",
+      "href": null,
+      "disabled": false
+    },
+    {
+      "id": "e3",
+      "tag": "textarea",
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null,
+      "value": "Test Draft Caption Content",
+      "href": null,
+      "disabled": false
+    },
+    {
+      "id": "e4",
+      "tag": "button",
+      "role": "button",
+      "name": "Save changes",
+      "input_type": null,
+      "value": null,
+      "href": null,
+      "disabled": false
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes",
+  "status_messages": [
+    "Draft saved."
+  ]
+}

@@ -15,6 +15,7 @@ from pathlib import Path
 
 import httpx
 from playwright.async_api import async_playwright, expect
+from check_prereq import MISSING_PREREQUISITE, api_key_configured, require_runs
 
 args = [a for a in sys.argv[1:] if not a.startswith("--out")]
 OUT = Path(next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--out=")), "setup-check"))
@@ -56,6 +57,9 @@ async def main():
         panel = page.get_by_role("complementary", name="New review run")
         await expect(panel).to_be_visible(timeout=30000)
         # The workspace loads after the page's load event, so wait for /api/health to fill the launcher.
+        if api_key_configured():
+            print("MISSING PREREQUISITE: this check needs a backend with no API key", file=sys.stderr)
+            sys.exit(MISSING_PREREQUISITE)
         await expect(panel.get_by_text("Live runs unavailable")).to_be_visible(timeout=30000)
         check("launcher disables live runs without a key", await panel.get_by_role("button", name="Start live run").is_disabled()
               and await panel.get_by_text("Live runs unavailable").is_visible())
@@ -83,4 +87,5 @@ async def main():
     sys.exit(1 if fails else 0)
 
 
+require_runs("run_a572a9bf88c5", "run_a54099283d9d", "run_53d7009ff711", load=False)
 asyncio.run(main())

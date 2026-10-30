@@ -1,0 +1,32 @@
+{
+  "url": "http://localhost:5174/",
+  "title": "Dashboard \u00b7 Creator Studio",
+  "headings": [
+    "Dashboard",
+    "Your drafts"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "New draft",
+      "input_type": null,
+      "value": null,
+      "href": "/drafts/new",
+      "disabled": false
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Dashboard New draft Your drafts No drafts yet.",
+  "status_messages": []
+}

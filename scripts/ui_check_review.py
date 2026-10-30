@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from playwright.async_api import Page, async_playwright, expect
+from check_prereq import require_runs
 
 UI = os.environ.get("FLOWLENS_UI", "http://localhost:5173")
 BROKEN, CORRECTED, RECHECK = sys.argv[1:4]
@@ -154,4 +155,5 @@ async def main() -> None:
     sys.exit(0 if n == len(results) else 1)
 
 
+require_runs()
 asyncio.run(main())

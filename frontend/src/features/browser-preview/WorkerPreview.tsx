@@ -38,8 +38,10 @@ export function WorkerPreview({ detail, worker, onWorker, onSelect, compact = fa
   onSelect: (s: Selection) => void
   compact?: boolean
 }) {
-  const workers = workersOf(detail)
-  const current = worker && workers.includes(worker) ? worker : workers[0] ?? null
+  const recorded = workersOf(detail)
+  // A worker on the roster may have recorded nothing: show that, never another worker's evidence.
+  const workers = worker && !recorded.includes(worker) ? [...recorded, worker] : recorded
+  const current = worker ?? workers[0] ?? null
   const [showWhere, setShowWhere] = useState(false)
   if (!current) {
     return <p className="p-4 text-sm text-slate-600">No worker has recorded a browser action yet.</p>
@@ -105,7 +107,7 @@ export function WorkerPreview({ detail, worker, onWorker, onSelect, compact = fa
             ) : null}
           </>
         ) : (
-          <p className="text-sm text-slate-600">This worker has not recorded a screenshot yet.</p>
+          <p className="text-sm text-slate-600">{a ? 'This worker has not recorded a screenshot yet.' : 'This worker has not recorded a browser action.'}</p>
         )}
       </div>
     </section>

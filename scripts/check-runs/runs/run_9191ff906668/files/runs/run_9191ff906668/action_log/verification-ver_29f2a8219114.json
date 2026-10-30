@@ -1,0 +1,26 @@
+{
+  "id": "ver_29f2a8219114",
+  "run_id": "run_9191ff906668",
+  "finding_id": "fnd_3ea6f98d24dd",
+  "handoff_id": "ho_cc2ef747456b",
+  "verifier_id": "single-agent",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": null,
+  "fresh_context": true,
+  "setup_ok": false,
+  "setup_strategy": null,
+  "setup_error": null,
+  "failure_class": "expectation",
+  "assertion": null,
+  "result": null,
+  "outcome": "inconclusive",
+  "reason": "No supplied requirement states the expected behaviour, so there is no explicit assertion to evaluate. Kept as a review observation.",
+  "action_result_ids": [],
+  "evidence_refs": [
+    "art_bf2724d064b7"
+  ],
+  "model_call_id": null,
+  "started_at": "2026-10-29T10:31:11.835767Z",
+  "finished_at": "2026-10-29T10:31:11.835767Z"
+}

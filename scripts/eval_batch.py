@@ -27,7 +27,9 @@ from flowlens.models.contracts import Provenance, Run, RunLimits  # noqa: E402
 from flowlens.orchestration.launch import run_class  # noqa: E402
 from flowlens.services.llm import OpenRouterClient  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
+from check_prereq import require_live
 
+require_live()
 SCENARIO_PATH = (ROOT / sys.argv[2]) if len(sys.argv) > 2 else ROOT / "evaluation" / "creator-studio" / "scenario.json"
 SCENARIO = json.loads(SCENARIO_PATH.read_text("utf-8"))
 CONDITIONS = sys.argv[3].split(",") if len(sys.argv) > 3 and sys.argv[3] != "all" else list(SCENARIO["conditions"])

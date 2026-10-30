@@ -1,0 +1,41 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens. You designed input cases for a form; code executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts the browser recorded afterwards (URLs, headings, status and alert messages, invalid fields, visible text).\n\nJudge each case only from those recorded facts:\n- \"as_expected\": the facts match the expectation.\n- \"unexpected\": the facts contradict the expectation.\n- \"unclear\": the facts are insufficient, or the expectation itself is not stated by a requirement.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<one sentence>\", \"assessments\": [\n  {\"case\": <case number>, \"verdict\": \"as_expected\" | \"unexpected\" | \"unclear\",\n   \"observed_summary\": \"<what the facts show>\", \"requirement_ref\": \"<id or null>\"}]}\n\nIf a case has a check page, its facts include that page before and after the action; compare them.\nYour verdicts are unverified candidates. A separate verifier checks them independently.\nReply with compact JSON on a single line (no indentation)."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- R1: A creator can start a new draft from the dashboard.\n- R2: A draft has a title and a caption.\n- R3: Saving a draft keeps its title and caption. After a page reload, the saved values are still shown.\n- R4: A creator can schedule a post from the dashboard by giving a post title and a publish date.\n- R5: A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.\n\nForm: http://localhost:5174/drafts/new (New draft)\n\nCase 1: Valid draft\n  inputs: {\"Title\": \"My Draft\", \"Caption\": \"My Caption\"}\n  requirement: R3\n  expected: Draft saved and values persist after reload\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/3383833c?saved=1\", \"title\": \"Edit draft \u00b7 Creator Studio\", \"headings\": [\"Edit draft\"], \"status_messages\": [\"Draft saved.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes\", \"check_page\": {\"path\": \"/drafts/new\", \"before\": {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/new\", \"title\": \"New draft \u00b7 Creator Studio\", \"headings\": [\"New draft\"], \"status_messages\": [], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard New draft Title Caption Save draft\"}, \"after\": {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/new\", \"title\": \"New draft \u00b7 Creator Studio\", \"headings\": [\"New draft\"], \"status_messages\": [], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard New draft Title Caption Save draft\"}}}\n\nCase 2: Empty fields\n  inputs: {\"Title\": \"\", \"Caption\": \"\"}\n  requirement: none\n  expected: System behavior for empty draft creation\n  execution: executed\n  recorded facts: {\"url_before\": \"http://localhost:5174/drafts/new\", \"url_after\": \"http://localhost:5174/drafts/54de478d?saved=1\", \"title\": \"Edit draft \u00b7 Creator Studio\", \"headings\": [\"Edit draft\"], \"status_messages\": [\"Draft saved.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Creator Studio Dashboard Edit draft Draft saved. Title Caption Save changes\"}"
+    }
+  ],
+  "response": "{\"reasoning\": \"The first case fails to demonstrate persistence after reload as the check page shows a fresh form, while the second case lacks a specific requirement to judge against.\", \"assessments\": [{\"case\": 1, \"verdict\": \"unexpected\", \"observed_summary\": \"The draft was saved, but the check_page 'after' state shows a fresh 'New draft' form instead of the saved values.\", \"requirement_ref\": \"R3\"}, {\"case\": 2, \"verdict\": \"unclear\", \"observed_summary\": \"The system allowed saving a draft with empty fields, but no requirement defines the expected behavior for empty inputs.\", \"requirement_ref\": null}]}",
+  "usage": {
+    "prompt_tokens": 900,
+    "completion_tokens": 143,
+    "total_tokens": 1043,
+    "cost": 0.000879,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.000879,
+      "upstream_inference_prompt_cost": 0.00045,
+      "upstream_inference_completions_cost": 0.000429
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null,
+  "finish_reason": "stop",
+  "max_tokens": 1400,
+  "reasoning_tokens_budget": 384
+}

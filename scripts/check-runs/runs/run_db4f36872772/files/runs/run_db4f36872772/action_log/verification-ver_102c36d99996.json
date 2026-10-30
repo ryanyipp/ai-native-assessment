@@ -1,0 +1,29 @@
+{
+  "id": "ver_102c36d99996",
+  "run_id": "run_db4f36872772",
+  "finding_id": "fnd_eb7ffa461d83",
+  "handoff_id": "ho_14abf56dd900",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_102c36d99996:ws_903b661a11",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": "expectation",
+  "assertion": null,
+  "result": null,
+  "outcome": "inconclusive",
+  "reason": "Verifier judged that R2 does not explicitly state this behaviour: The requirement describes the components of a draft but does not explicitly state that these fields are mandatory or define the system's behavior when they are empty during the save process.",
+  "action_result_ids": [
+    "act_e535279d3303"
+  ],
+  "evidence_refs": [
+    "art_af2d18fd5b42",
+    "art_1e0cdb8504cf"
+  ],
+  "model_call_id": "mc_981ef4765251",
+  "started_at": "2026-10-29T07:27:06.512195Z",
+  "finished_at": "2026-10-29T07:27:18.307160Z"
+}

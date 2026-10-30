@@ -1,0 +1,68 @@
+{
+  "id": "ver_0497065f75c3",
+  "run_id": "run_a4f1034bfe0f",
+  "finding_id": "fnd_918d4348046d",
+  "handoff_id": "ho_0ebbb019c0b7",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_0497065f75c3:ws_9e5e17c583",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "text_contains": null
+    },
+    "requirement_ref": "R5",
+    "expected": "a validation message is displayed",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "text_contains": null
+      },
+      "requirement_ref": "R5",
+      "expected": "a validation message is displayed",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5174/scheduled/2bb625e6?scheduled=1",
+      "route": "/scheduled/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Post scheduled."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+  "action_result_ids": [
+    "act_b3e40e5495cc",
+    "act_c21e96e904c8",
+    "act_77d7401edcbf",
+    "act_b666f22b755a"
+  ],
+  "evidence_refs": [
+    "art_a9c061decede",
+    "art_066c0683692e",
+    "art_801855afbd83",
+    "art_6e76a15ba213",
+    "art_9f67930ceb8e",
+    "art_b3d41eefeef3",
+    "art_1f82ec8c4ae4",
+    "art_2ba38bed3e80"
+  ],
+  "model_call_id": "mc_bf12253c6306",
+  "started_at": "2026-10-29T13:40:11.761687Z",
+  "finished_at": "2026-10-29T13:40:20.944651Z"
+}

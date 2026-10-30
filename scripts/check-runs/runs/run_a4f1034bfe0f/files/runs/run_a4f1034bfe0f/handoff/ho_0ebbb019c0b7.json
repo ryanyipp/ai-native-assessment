@@ -1,0 +1,78 @@
+{
+  "id": "ho_0ebbb019c0b7",
+  "run_id": "run_a4f1034bfe0f",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_6ee2d66de8d8",
+  "source_state_id": "state_7ff94e05819b",
+  "form_id": "form_f6290fcfeeb0",
+  "finding_id": "fnd_918d4348046d",
+  "setup": {
+    "target_state_id": "state_7ff94e05819b",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Dashboard",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Schedule a post",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "R5",
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A publish date in the past must be rejected: the form shows a validation message and no post is scheduled. \"Past\" means before the studio date shown on the scheduling form.",
+      "source": "R5"
+    }
+  ],
+  "evidence_refs": [
+    "art_850e2aa70292",
+    "art_7031030ce0c6",
+    "art_cf6a1b7577a0",
+    "art_2bbeef6a70f0",
+    "art_e3889e871a37",
+    "art_cb2489930fd4",
+    "art_dc7314965206",
+    "art_29c8258f4f2d"
+  ],
+  "created_at": "2026-10-29T13:40:11.569749Z"
+}

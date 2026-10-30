@@ -1,0 +1,65 @@
+{
+  "url": "http://localhost:5174/schedule/new",
+  "title": "Schedule a post \u00b7 Creator Studio",
+  "headings": [
+    "Schedule a post"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "input",
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text",
+      "value": "Today Post",
+      "href": null,
+      "disabled": false,
+      "required": true,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "input",
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date",
+      "value": "",
+      "href": null,
+      "disabled": false,
+      "required": true,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "button",
+      "role": "button",
+      "name": "Schedule post",
+      "input_type": null,
+      "value": null,
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Schedule a post Studio date: 2026-06-15 Post title Publish date Schedule post",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

@@ -1,0 +1,68 @@
+{
+  "id": "ver_c03120a611de",
+  "run_id": "run_72e3868cc54e",
+  "finding_id": "fnd_f7edcdc78584",
+  "handoff_id": "ho_c0728ef87b06",
+  "verifier_id": "verifier",
+  "replay_index": 1,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_c03120a611de:ws_2927040b60",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "field": "Publish date"
+    },
+    "requirement_ref": "R5",
+    "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "field": "Publish date"
+      },
+      "requirement_ref": "R5",
+      "expected": "A validation message should be displayed because the publish date (2026-06-14) is before the studio date (2026-06-15).",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5174/scheduled/1a6899f3?scheduled=1",
+      "route": "/scheduled/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Post scheduled."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated R5 in this fresh replay.",
+  "action_result_ids": [
+    "act_4424f7d2f48a",
+    "act_c306de9766ef",
+    "act_1ccb96bd9d62",
+    "act_030db3fc433b"
+  ],
+  "evidence_refs": [
+    "art_3f0b803dc1f9",
+    "art_40f2413c302b",
+    "art_8e3305982782",
+    "art_9af01814ec27",
+    "art_3b4225c1e082",
+    "art_43899fefd97d",
+    "art_eaa72f7373e5",
+    "art_7703ab5f0c8d"
+  ],
+  "model_call_id": null,
+  "started_at": "2026-10-29T08:50:41.984479Z",
+  "finished_at": "2026-10-29T08:50:45.782944Z"
+}

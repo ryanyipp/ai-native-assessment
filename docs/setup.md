@@ -130,7 +130,9 @@ cd backend; .\.venv\Scripts\python -m pytest -q     # starts its own fixture ser
 cd frontend; npm run build; npm run lint
 ```
 
-`scripts/ui_check_*.py` are browser checks against saved runs, with the backend and frontend running. Only `ui_check_workspace.py --live` and `ui_check_public_site.py --live` start live runs.
+`scripts/ui_check_*.py` and `check_setup.py` are browser checks against saved runs, with the backend and frontend running. They make no model calls and work without an API key. Runs they need are loaded automatically from `demo/` or `scripts/check-runs/` (saved runs used only by these checks); existing runs are skipped. If a prerequisite is still missing, a script prints `MISSING PREREQUISITE` and exits with code 3. `check_setup.py` needs a backend with no API key.
+
+Paid model runs need an explicit `--live`: `ui_check_workspace.py`, `ui_check_public_site.py`, `checkpoint2_eval.py` and `eval_batch.py`. Without it, the last two start nothing and exit with code 2.
 
 ### Continuous integration
 

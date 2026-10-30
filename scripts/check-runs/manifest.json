@@ -1,0 +1,64 @@
+{
+  "runs": [
+    {
+      "run_id": "run_e957eab8645e",
+      "status": "completed",
+      "mode": "single_explorer",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-28T18:27:59.296917Z",
+      "reported_cost_usd": 0.004238,
+      "note": "",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_db4f36872772",
+      "status": "completed",
+      "mode": "explore_test_verify",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T07:25:56.106684Z",
+      "reported_cost_usd": 0.029275500000000006,
+      "note": "",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_9191ff906668",
+      "status": "completed",
+      "mode": "single_agent",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T10:30:25.714657Z",
+      "reported_cost_usd": 0.0088485,
+      "note": "",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_a4f1034bfe0f",
+      "status": "partial",
+      "mode": "queue_review",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T13:38:57.156336Z",
+      "reported_cost_usd": 0.027982500000000007,
+      "note": "",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_44704dfc5083",
+      "status": "partial",
+      "mode": "explore_test_verify",
+      "target_url": "http://localhost:5175/",
+      "recorded_at": "2026-10-29T07:14:44.549745Z",
+      "reported_cost_usd": 0.025726500000000003,
+      "note": "",
+      "missing_files": 0
+    },
+    {
+      "run_id": "run_72e3868cc54e",
+      "status": "partial",
+      "mode": "queue_review",
+      "target_url": "http://localhost:5174/",
+      "recorded_at": "2026-10-29T08:49:28.471257Z",
+      "reported_cost_usd": 0.0361155,
+      "note": "",
+      "missing_files": 0
+    }
+  ]
+}

@@ -14,6 +14,7 @@ from pathlib import Path
 
 import httpx
 from playwright.async_api import async_playwright, expect
+from check_prereq import require_runs
 
 UI = sys.argv[2] if len(sys.argv) > 2 else "http://localhost:5173"
 API = sys.argv[3] if len(sys.argv) > 3 else "http://localhost:8000"
@@ -177,4 +178,5 @@ async def main():
     sys.exit(1 if fails else 0)
 
 
+require_runs("run_d50048493cc5")
 asyncio.run(main())

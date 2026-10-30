@@ -1,0 +1,73 @@
+{
+  "id": "ho_72a5a2eede4a",
+  "run_id": "run_44704dfc5083",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_190816e2e404",
+  "source_state_id": "state_c7ec6cc7c987",
+  "form_id": "form_127e7dde3dca",
+  "finding_id": "fnd_873df2312e68",
+  "setup": {
+    "target_state_id": "state_c7ec6cc7c987",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "New draft",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Dashboard",
+          "input_type": null
+        },
+        "value": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Schedule a post",
+          "input_type": null
+        },
+        "value": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [],
+  "expected_behaviour": [
+    {
+      "text": "The form should prevent submission or show a validation error for the required title field.",
+      "source": "none supplied"
+    }
+  ],
+  "evidence_refs": [
+    "art_028cd74fcbdf",
+    "art_149f8518e05f",
+    "art_6582e395b9a1",
+    "art_aee55a640a5d",
+    "art_2b1b62937811",
+    "art_9e81024e67be",
+    "art_109c0825a0e1",
+    "art_7c8ff65c24bf"
+  ],
+  "created_at": "2026-10-29T07:15:51.175527Z"
+}

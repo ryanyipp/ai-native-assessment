@@ -1,0 +1,67 @@
+{
+  "url": "http://localhost:5174/",
+  "title": "Dashboard \u00b7 Creator Studio",
+  "headings": [
+    "Dashboard",
+    "Your drafts",
+    "Scheduled posts"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "New draft",
+      "input_type": null,
+      "value": null,
+      "href": "/drafts/new",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Schedule a post",
+      "input_type": null,
+      "value": null,
+      "href": "/schedule/new",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "a",
+      "role": "link",
+      "name": "My Future Post",
+      "input_type": null,
+      "value": null,
+      "href": "/scheduled/8e79fd4c",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Dashboard New draft Schedule a post Your drafts No drafts yet. Scheduled posts My Future Post \u00b7 2026-06-20",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

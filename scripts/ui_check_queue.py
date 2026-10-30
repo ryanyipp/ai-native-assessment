@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 from playwright.async_api import async_playwright
+from check_prereq import require_runs
 
 RUN, OUT = sys.argv[1], Path(sys.argv[2])
 AXE = Path(__file__).resolve().parents[1] / "frontend" / "node_modules" / "axe-core" / "axe.min.js"
@@ -54,4 +55,5 @@ async def main():
     sys.exit(0 if all(p for _, p in ok) else 1)
 
 
+require_runs()
 asyncio.run(main())

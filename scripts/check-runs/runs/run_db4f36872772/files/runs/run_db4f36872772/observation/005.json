@@ -1,0 +1,65 @@
+{
+  "url": "http://localhost:5174/drafts/cb7f04ce",
+  "title": "Edit draft \u00b7 Creator Studio",
+  "headings": [
+    "Edit draft"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Dashboard",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null
+    },
+    {
+      "id": "e2",
+      "tag": "input",
+      "role": "textbox",
+      "name": "Title",
+      "input_type": "text",
+      "value": "Test Draft Title 123",
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e3",
+      "tag": "textarea",
+      "role": "textbox",
+      "name": "Caption",
+      "input_type": null,
+      "value": "This is a test caption for persistence check.",
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    },
+    {
+      "id": "e4",
+      "tag": "button",
+      "role": "button",
+      "name": "Save changes",
+      "input_type": null,
+      "value": null,
+      "href": null,
+      "disabled": false,
+      "required": false,
+      "form_index": 0,
+      "validation_message": null
+    }
+  ],
+  "text_excerpt": "Creator Studio Dashboard Edit draft Title Caption Save changes",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}

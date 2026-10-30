@@ -1,0 +1,72 @@
+{
+  "id": "ver_f31165a0a3ae",
+  "run_id": "run_a4f1034bfe0f",
+  "finding_id": "fnd_ac1b5a94d810",
+  "handoff_id": "ho_18e23f33ea30",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://localhost:5174",
+  "context_id": "verifier:ver_f31165a0a3ae:ws_1a132dedb5",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "assertion": {
+    "type": "text_or_value_retained",
+    "params": {
+      "expected": "My Draft",
+      "field": "Title",
+      "expect_present": true
+    },
+    "requirement_ref": "R3",
+    "expected": "The 'Title' field should contain 'My Draft' after saving.",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "text_or_value_retained",
+      "params": {
+        "expected": "My Draft",
+        "field": "Title",
+        "expect_present": true
+      },
+      "requirement_ref": "R3",
+      "expected": "The 'Title' field should contain 'My Draft' after saving.",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://localhost:5174/drafts/new",
+      "route": "/drafts/new",
+      "field_value": ""
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion text_or_value_retained failed: the page violated R3 in this fresh replay.",
+  "action_result_ids": [
+    "act_77b80f88a6a1",
+    "act_421ae47f853e",
+    "act_c8f6093d9940",
+    "act_6f315a977c54",
+    "act_0065659edc9f"
+  ],
+  "evidence_refs": [
+    "art_6964aad06636",
+    "art_5cce9cf3f727",
+    "art_ba1dadb2bd44",
+    "art_3e101ba36ec3",
+    "art_f8cfe869ff2e",
+    "art_d9cc121bf1b6",
+    "art_f308d9a25fb7",
+    "art_da883ea6648b",
+    "art_c50e6552974e",
+    "art_aa31d037095a",
+    "art_cbd92caa86e3",
+    "art_a90eac9ba70a"
+  ],
+  "model_call_id": "mc_38659b6d63d2",
+  "started_at": "2026-10-29T13:39:40.390319Z",
+  "finished_at": "2026-10-29T13:39:54.367138Z"
+}
