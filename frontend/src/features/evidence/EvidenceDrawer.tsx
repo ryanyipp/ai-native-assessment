@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronLeft, ChevronRight, Cpu, ExternalLink, Globe, Image, MousePointerClick, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ScreenshotPreview } from '../../components/Screenshot'
-import { Badge, Button, Field, Kbd, SectionTitle, Tooltip } from '../../components/ui'
+import { Badge, Button, Field, SectionTitle, Tooltip } from '../../components/ui'
 import { cx } from '../../lib/ui-utils'
 import { artifactUrl } from '../../lib/api'
 import { fmtInt, fmtMs, fmtTime, fmtUsd } from '../../lib/format'
@@ -317,18 +317,15 @@ export function EvidencePanel({ detail, selection, onSelect, onStep }: {
   const t = selection?.kind === 'transition' ? detail.transitions.find((x) => x.id === selection.id) : undefined
   const s = selection?.kind === 'state' ? stateById(detail, selection.id) : undefined
   if (!t && !s) return null
-  const steps = detail.transitions.length
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-2">
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" onClick={() => onStep(-1)} aria-label="Previous step"><ChevronLeft size={15} /></Button>
           <span className="min-w-[5.5rem] text-center text-xs tabular-nums text-slate-600">
-            {t ? `Step ${t.step} of ${steps}` : `State · step ${s!.first_seen_step}`}
+            {t ? `Step ${t.step}` : `State · step ${s!.first_seen_step}`}
           </span>
-          <Button variant="ghost" size="sm" onClick={() => onStep(1)} aria-label="Next step"><ChevronRight size={15} /></Button>
-          <span className="ml-1 hidden items-center gap-1 text-[11px] text-slate-500 xl:flex"><Kbd>←</Kbd><Kbd>→</Kbd> steps</span>
-        </div>
+          <Button variant="ghost" size="sm" onClick={() => onStep(1)} aria-label="Next step"><ChevronRight size={15} /></Button>        </div>
         <Button variant="ghost" size="sm" onClick={() => onSelect(null)} aria-label="Close evidence"><X size={15} /></Button>
       </div>
       <div key={selection!.id} className="fl-enter min-h-0 flex-1 overflow-y-auto px-4 py-4">
