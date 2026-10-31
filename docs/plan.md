@@ -4,6 +4,8 @@ Working specification • Version 1 • 29 October 2026
 
 > Converted from `FlowLens_Product_and_Development_Plan.docx`. This is the agreed build plan. It describes proposed features, performance, costs and results. It does not claim any of them are implemented. Update this file when implementation evidence changes a decision.
 
+> **Status at submission:** this is the original plan, kept as written. Some planned items were not built, including SSE (polling every 1.5 s instead), review chat, and a reporter model (reports come from saved records). See "Implementation status" in `AGENTS.md`.
+
 FlowLens is an AI website reviewer for team leads, product managers, and QA reviewers. It explores an authorised staging website, builds a map of observed user journeys, tests interactions, and presents findings with reproducible evidence. A small review assistant answers questions from the saved run.
 
 This document consolidates the agreed product, multi-agent workflow, implementation boundaries, evaluation approach, and development checkpoints.

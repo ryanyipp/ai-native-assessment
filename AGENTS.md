@@ -6,13 +6,29 @@
 
 FlowLens is an AI website reviewer. It explores an authorised staging site and builds an interactive map of observed states and transitions. It tests inputs, independently verifies candidate defects, and presents evidence-linked findings, an agent timeline and a Markdown report. A grounded review chat comes last.
 
+## Implementation status (submission)
+
+The rest of this file and `docs/plan.md` describe the agreed plan. This table says what exists.
+
+| Capability | Status |
+|---|---|
+| Explorer, input tester, verifier, shared queue, leases, recovery | Implemented |
+| Reports | Implemented, built from saved records with no reporter model |
+| Live updates | Implemented as polling every 1.5 s; SSE is not implemented |
+| Cancel a run (API and UI) | Implemented |
+| Re-check of a finding (`reverify`) | Script only (`scripts/checkpoint2_eval.py`); not in the API or UI |
+| Queue explorer finish notes | Shown as unverified explorer observations; they are not findings |
+| Review chat, goal auditor | Not implemented; out of submission scope |
+
+A completed run finished its work; it does not mean the website passed. Fresh browser contexts do not isolate a public website's server data.
+
 ## Stack (initial choices)
 
 - **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Flow (custom state nodes, labelled transition edges)
 - **Backend:** Python 3.12, FastAPI, Pydantic contracts, custom asyncio coordinator in one process
 - **Browser:** Playwright Python + Chromium, executing validated structured commands
 - **Persistence:** SQLite as the source of truth, with evidence stored as local files under `artifacts/` (ignored by Git)
-- **Live updates:** SSE with ordered event IDs that clients can reconnect from
+- **Live updates:** planned as SSE; implemented as polling every 1.5 s
 - **Model:** one server-side OpenRouter adapter. The model ID comes from `OPENROUTER_MODEL`. Never call the model from the frontend.
 - **Verification and packaging:** pytest, browser integration tests, lockfiles (`uv.lock`, `package-lock.json`), Docker Compose
 
@@ -27,10 +43,10 @@ Out of scope: exhaustive coverage, automatic code repair, load testing, real Tik
 | Role | Does | Must not |
 |---|---|---|
 | Coordinator (code, not an LLM) | Queue, atomic claims with attempt ID and lease, budgets, accepts validated results | Accept a result from a non-current attempt |
-| Explorer A / B | Explore a claimed frontier state; emit states, transitions, forms, candidate issues | Confirm its own defects |
+| Explorer A / B | Explore a claimed frontier state; emit states, transitions, forms, unverified notes | Confirm its own defects |
 | Input tester | Generate input cases for a discovered form; emit outcomes and candidate findings | Skip returning new states to exploration |
 | Verifier | Replay from a fresh context; evaluate an executable assertion | Produce a verdict from LLM prose alone |
-| Reporter / chat | Summarise and answer using cited record and artifact IDs | Invent observations or launch tests (v1) |
+| Report (code, not an LLM) | Summarise saved records. Chat is out of submission scope | Invent observations or launch tests |
 
 - LLMs propose actions, inputs and assertions, constrained by a bounded schema. Code executes, records, evaluates and stores.
 - Each worker gets its own browser context. Operations on shared server data are serialised or namespaced.
@@ -61,7 +77,7 @@ See the minimum fields in `docs/plan.md` § Contracts. The lead session owns sch
 2. **Verification:** an input test finds one known defect, independent replay confirms it, and the corrected build passes.
 3. **Collaboration:** two explorers plus specialist workers hand off real work, and ownership prevents duplicate acceptance.
 4. **Recovery:** a labelled stall expires and the task is reassigned. The late result is rejected, and every event is recorded.
-5. **Review product:** findings, timeline, evidence, cited chat and Markdown export.
+5. **Review product:** findings, timeline, evidence and Markdown export. Cited chat was planned and is out of submission scope.
 6. **Evaluation:** single-agent baseline (about 3 runs per condition), fixed-build runs, clean setup, attribution.
 
 Stop at the end of each checkpoint for review. Add the second explorer only after ownership and replay have tests.

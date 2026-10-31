@@ -7,6 +7,8 @@ There are two ways to run FlowLens with its three fixture apps:
 
 Both can show the **recorded demo runs** without an API key.
 
+The UI refreshes active runs by polling every 1.5 s. Public website targets get fresh browser contexts, but their server data is not isolated.
+
 ## What runs where
 
 | Service | Port | What it is |
@@ -30,7 +32,7 @@ All settings are optional, and empty values fall back to the defaults in `backen
 |---|---|---|
 | `OPENROUTER_API_KEY` | Live runs only | Without it the UI works, saved and demo runs can be inspected and previews work, but **Start live run** is disabled. Server-side only; never sent to the browser. |
 | `OPENROUTER_MODEL` | | Default `google/gemini-3-flash-preview`. |
-| `FLOWLENS_BUDGET_USD`, `FLOWLENS_RUN_BUDGET_USD` | | The overall credit pool (10) and the per-run cap (0.50). |
+| `FLOWLENS_BUDGET_USD`, `FLOWLENS_RUN_BUDGET_USD` | | The overall credit pool (10) and the per-run cap (0.50). The pool counts runs made by this installation, not imported demos. |
 | `FLOWLENS_ALLOWED_ORIGINS` | | Fixture origins that get test-data workspaces. The default covers ports 5174–5179 on `localhost` and `127.0.0.1`. Change it only if you move the fixtures. Other websites are approved in the launcher. |
 | `DATABASE_URL`, `ARTIFACTS_DIR` | | Default `artifacts/flowlens.db` and `artifacts/`, both git-ignored. |
 | `FRONTEND_PORT` | | The frontend port and the CORS origin (5173). |

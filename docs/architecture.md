@@ -1,6 +1,6 @@
 # Architecture notes (checkpoint 2)
 
-These notes describe what is implemented. `docs/plan.md` remains the agreed plan.
+These notes follow the build by checkpoint, so later sections replace earlier ones where they differ. See "Current behaviour" at the end. `docs/plan.md` remains the agreed plan.
 
 ## Workers and boundaries
 
@@ -84,7 +84,7 @@ A fresh browser does not isolate server records. `services/test_data.py` calls t
 All workers call the model through `ExplorerRun.call_model`, which is checked against **one** run budget (calls, run cost and the overall pool) and recorded with `agent_id` and `phase`.
 
 - **Reserved calls:** the explorer leaves `reserved_verification_calls` plus 2 tester calls unused; the tester leaves the verification reserve.
-- **Output caps:** tester and verifier calls use `max_output_tokens_planning` (default 2000), because hidden reasoning shares the output cap.
+- **Output caps:** tester and verifier calls use `max_output_tokens_planning` (default 1400), because hidden reasoning shares the output cap.
 - **Exhausted budget:** if verification runs out of budget, the result is inconclusive and the run is `partial`.
 
 ## Ready for later checkpoints
@@ -106,7 +106,7 @@ Tasks live in the SQLite `tasks` table. Every operation runs in one `BEGIN IMMED
 | `complete` / `fail` | Accepted only if owner and attempt are still current (`StaleAttempt` otherwise). `fail` puts the task back to `ready` until `max_attempts` claims are used, then marks it `failed`. |
 | `mark_unfinished` | At the end of a run, every task that never ran becomes `unfinished`, with the reason. |
 
-Leases are recorded but not yet enforced. Expiry, reassignment and stale-result rejection under an injected stall are checkpoint 4.
+Lease enforcement is described under checkpoint 4.
 
 ## Workers (`orchestration/queue_review.py`)
 
@@ -124,7 +124,7 @@ Four coroutines share one event loop: `explorer-a`, `explorer-b` (type `explore`
 - **Budget:**
   - One run budget is shared by every worker.
   - Explorers stop when total calls reach `max_model_calls − reserved_testing_calls − reserved_verification_calls`; the tester leaves the verification reserve.
-  - The check happens before each call, so concurrent workers can overshoot by one call (seen live: 20/19).
+  - Capacity is reserved in one synchronous step (see Budget reservation), which replaced an earlier check that could overshoot by one call.
 - **Termination:** a worker exits when no task it can claim is ready, no task is in progress, and nothing in progress could produce more. It also exits when the time limit is hit or the explorer budget share is used. The run is `partial` if anything is unfinished, blocked or failed, or if a budget limit was hit.
 
 # Checkpoint 4: leases, fencing and recovery
@@ -151,4 +151,40 @@ Cost is still checked before each call from provider-reported totals; one call's
 
 ## Planning outputs
 
-Tester and verifier calls send `reasoning: {max_tokens: planning_reasoning_tokens (384), exclude: true}` with `max_output_tokens_planning` 1400. Plans have at most 3 cases and shorter fields. The provider's `finish_reason` and reasoning-token count are stored per call, and `Usage.truncated_calls` counts cut-off replies.
+Tester and verifier calls send `reasoning: {effort: low, exclude: true}`, or `minimal` on a starved retry, with `max_output_tokens_planning` 1400. `planning_reasoning_tokens` is kept only so old records validate. Plans have at most 3 cases and shorter fields. The provider's `finish_reason` and reasoning-token count are stored per call, and `Usage.truncated_calls` counts cut-off replies.
+
+# Current behaviour
+
+## Live updates and reports
+
+The frontend polls `GET /api/runs/{id}` every 1.5 s while a run is active. There is no SSE route. Reports are built from saved records with no model call.
+
+## Limits by mode
+
+| Limit | Explorer only, sequential, single-agent | Shared queue |
+|---|---|---|
+| `max_model_calls`, `max_cost_usd`, overall pool | Enforced before each call | Enforced before each call |
+| `max_steps` | Enforced | **Not used**; hidden in the launcher |
+| `max_states` | Enforced | **Not used** |
+| `max_forms_tested` | Sequential and single-agent | **Not used**; `max_tasks` and call capacity bound testing |
+| `explore_steps_per_task`, `max_depth`, `max_tasks`, `task_max_attempts`, `task_lease_s` | Not used | Enforced |
+| `max_cases_per_form`, `verification_replays` | Sequential and single-agent | Enforced |
+| `max_duration_s` | Soft, during exploration only | Soft |
+
+The time limit never interrupts running work. In queue mode it is checked before a claim and between explorer steps, so a test or verification in progress finishes first. Cost limits can overshoot by the calls already in flight.
+
+## Stale attempts
+
+Tester and verifier task saves go through `TaskQueue.update`, which refuses an attempt that is no longer current. `guard_publish` checks the attempt immediately before findings or an accepted verification are written. No `await` falls between that check and the writes, so the watchdog cannot expire the attempt in between. Evidence the attempt recorded before it expired stays, labelled with its task and context.
+
+## Cancellation
+
+`POST /api/runs/{id}/cancel` and **Cancel run** set a flag that blocks new claims, model calls and browser actions. An in-flight or slot-waiting call is abandoned within about 0.25 s, browser contexts close through the normal exit, leftover tasks become `unfinished`, and the run ends `cancelled` with its evidence kept. A request the provider already received may still be charged; that call is counted under `calls_without_cost`. Cancellation works only for a run executing in the current backend process.
+
+## Explorer observations
+
+When a queue explorer finishes, its summary is stored as an `explorer_observation` event linked to its task and state. The Findings tab and report show these as unverified explorer observations. They create no finding, are not sent to the verifier, and are not read by the evaluation scorers. Runs made before this change have only the shortened note on the task, so they show none.
+
+## Credit pool and attribution
+
+The overall pool counts only runs made by this installation; imported demo runs keep their recorded cost on the run. Single-agent explore transitions now name the single agent. Older records are unchanged, so explore transitions in earlier single-agent runs still read `explorer-a` / `explorer-a:default`.

@@ -4,12 +4,14 @@ An AI website reviewer. It explores an authorised staging site and builds an evi
 
 Status: **Checkpoint 4** (shared task queue with enforced leases, fencing and stalled-worker recovery; labelled fault injection; the sequential checkpoint 2 workflow remains selectable). See `docs/architecture.md`.
 
+What exists and what was only planned is listed under "Implementation status" in `AGENTS.md`. In short: the UI refreshes by polling every 1.5 s, reports are built from saved records with no model, re-checks are script-only, and review chat is out of scope. A completed run finished its work; it does not mean the website passed.
+
 ## Setup
 
 Full instructions, configuration and the recorded demo runs are in **[docs/setup.md](docs/setup.md)**. In short:
 
 ```sh
-docker compose up --build          # FlowLens + both fixture apps; open http://localhost:5173
+docker compose up --build          # FlowLens + the three fixture apps; open http://localhost:5173
 ```
 
 or natively (Python 3.12 + uv, Node 22+):
