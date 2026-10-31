@@ -191,6 +191,16 @@ class QueueReviewRun(ReviewRun):
             raise AttemptRevoked(str(e)) from e
         self.last_seen[task.attempt_id or ""] = time.monotonic()
 
+    def guard_publish(self, task: Task) -> None:
+        self.check_attempt(task, "result")
+
+    def save_task(self, task: Task) -> None:
+        try:
+            self.queue.update(task)
+        except StaleAttempt as e:
+            self.revoked.add(task.attempt_id or "")
+            raise AttemptRevoked(str(e)) from e
+
     def start_heartbeat(self, task: Task):
         """Renew the lease while a model call is in flight.
 

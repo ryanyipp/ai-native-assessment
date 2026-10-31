@@ -132,6 +132,13 @@ class ReviewRun(ExplorerRun):
                            direct_path=relative_path(state.url), steps=list(state.semantic_recipe),
                            data_isolation=self.provider.isolation)
 
+    def save_task(self, task: Task) -> None:
+        """Hook: queue mode saves through the queue, which refuses an attempt that is no longer current."""
+        self.store.put(task)
+
+    def guard_publish(self, task: Task) -> None:
+        """Hook: queue mode refuses to publish results from a revoked attempt."""
+
     def new_task(self, type_: str, key: str, owner: str, input_refs: list[str]) -> Task:
         t = Task(run_id=self.run.id, type=type_, key=key, owner=owner, attempt_id="att_1", status="claimed",
                  input_refs=input_refs)
@@ -283,7 +290,7 @@ class ReviewRun(ExplorerRun):
         self.summary["cases"] += len(cases)
         if not cases:
             task.status = "done"
-            self.store.put(task)
+            self.save_task(task)
             return []
         executed = [{"label": c.label, "inputs": c.inputs, "requirement_ref": c.requirement_ref,
                      "expected": c.expected, "status": c.status, "error": c.setup_error, "facts": c.observed}
@@ -297,6 +304,8 @@ class ReviewRun(ExplorerRun):
             return self._block(task, f"tester could not assess outcomes: {e}")
         except ValueError as e:
             return self._block(task, str(e), budget=False)
+        # No await from here to the task save, so an expiry cannot land between the check and the writes.
+        self.guard_publish(task)
         findings = []
         for a in assessment.assessments:
             if not 1 <= a.case <= len(cases):
@@ -310,13 +319,13 @@ class ReviewRun(ExplorerRun):
             findings.append(self._candidate(tc, form, handoff, state, a.verdict, a.observed_summary, assess_mc, task))
         task.status = "done"
         task.result_refs = [c.id for c in cases] + [f.id for f in findings]
-        self.store.put(task)
+        self.save_task(task)
         return findings
 
     def _block(self, task: Task, why: str, budget: bool = True) -> list[Finding]:
         task.status = "blocked"
         task.note = why
-        self.store.put(task)
+        self.save_task(task)
         self.budget_note = why if budget else (self.budget_note or f"{task.owner} task blocked: {why}")
         self.event("task_blocked", why, agent_id=task.owner, task=task)
         return []
@@ -615,6 +624,7 @@ class ReviewRun(ExplorerRun):
 
     def accept(self, f: Finding, attempts: list[VerificationAttempt], task: Task) -> None:
         """Coordinator acceptance: provenance and evidence checks before the finding changes."""
+        self.guard_publish(task)  # no await from here on, so an expiry cannot land before the writes finish
         problems = []
         for a in attempts:
             if self.independent_verification and (not a.verifier_id.startswith("verifier")
@@ -628,7 +638,7 @@ class ReviewRun(ExplorerRun):
             self.event("result_rejected", "Verification result rejected: " + "; ".join(problems or ["no attempts"]),
                        agent_id=COORDINATOR, task=task, finding_id=f.id)
             task.status = "failed"
-            self.store.put(task)
+            self.save_task(task)
             return
         outcomes = {a.outcome for a in attempts}
         if outcomes == {"confirmed"}:
@@ -650,7 +660,7 @@ class ReviewRun(ExplorerRun):
         self.store.put(f)
         task.status = "done"
         task.result_refs = f.verification_ids
-        self.store.put(task)
+        self.save_task(task)
         self.summary["outcomes"].append(status.value)
         self.event("result_accepted", f"Accepted {status.value} for {f.id}: {reason}", agent_id=COORDINATOR,
                    task=task, finding_id=f.id, outcome=status.value, verification_ids=f.verification_ids)

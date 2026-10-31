@@ -7,13 +7,13 @@ enqueue or a completion is atomic even across threads or processes:
 - claim: picks the highest-priority ready task of the requested types whose
   dependencies are all done, and assigns owner, a new attempt id and a lease.
   Ready tasks whose dependency ended badly become `blocked`.
-- complete / fail: accepted only from the current owner and attempt. A failure
+- complete / fail / update: accepted only from the current owner and attempt. A failure
   is retried (back to ready) until `max_attempts` claims have been used.
 
 - renew: the current attempt extends its lease (called on every action).
 - expire_overdue: claimed tasks past their lease lose their attempt. The task
-  goes back to ready (the expired owner may not reclaim it) or, with no attempts
-  left, to failed. Any later renew/complete/fail by that attempt is stale.
+  goes back to ready (the expired owner may reclaim it only if no other worker
+  can take that type) or, with no attempts left, to failed. Any later renew/complete/fail by that attempt is stale.
 """
 
 from __future__ import annotations
@@ -106,9 +106,9 @@ class TaskQueue:
     def _current(self, c: sqlite3.Connection, task: Task) -> Task:
         row = c.execute("SELECT data FROM tasks WHERE id=?", (task.id,)).fetchone()
         cur = Task.model_validate_json(row[0])
-        # Workers may already have set done/blocked on their own task object; the attempt must still be current.
+        # Workers may already have saved done/blocked/failed through `update`; the attempt must still be current.
         if cur.owner != task.owner or cur.attempt_id != task.attempt_id or cur.status not in (
-                TaskStatus.claimed, TaskStatus.done, TaskStatus.blocked):
+                TaskStatus.claimed, TaskStatus.done, TaskStatus.blocked, TaskStatus.failed):
             raise StaleAttempt(f"{task.id}: attempt {task.attempt_id} by {task.owner} is not current "
                                f"(current {cur.attempt_id} by {cur.owner}, {cur.status.value})")
         return cur
@@ -118,9 +118,17 @@ class TaskQueue:
         """Default status: done, unless the worker already marked its task blocked."""
         with self._tx() as c:
             cur = self._current(c, task)
-            final = status or (TaskStatus.blocked if cur.status == TaskStatus.blocked else TaskStatus.done)
+            final = status or (cur.status if cur.status in (TaskStatus.blocked, TaskStatus.failed) else TaskStatus.done)
             cur.status, cur.result_refs, cur.finished_at = final, result_refs, utcnow()
             cur.note = note or cur.note
+            self._save(c, cur)
+            return cur
+
+    def update(self, task: Task) -> Task:
+        """Save a worker's status, note and results, only while its attempt is current."""
+        with self._tx() as c:
+            cur = self._current(c, task)
+            cur.status, cur.note, cur.result_refs = task.status, task.note, task.result_refs
             self._save(c, cur)
             return cur
 

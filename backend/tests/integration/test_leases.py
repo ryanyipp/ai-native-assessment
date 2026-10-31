@@ -6,11 +6,13 @@ Chromium with a scripted model (mocked_model) and a labelled injected fault.
 
 import asyncio
 import threading
+from datetime import timedelta
 
 import pytest
 
-from flowlens.models.contracts import FaultInjection, ModelCall, Task, TaskStatus
-from flowlens.services.llm import BudgetExceeded, LLMResponse
+from flowlens.config import Settings
+from flowlens.models.contracts import FaultInjection, ModelCall, Task, TaskStatus, utcnow
+from flowlens.services.llm import BudgetExceeded, LLMResponse, OpenRouterClient
 from flowlens.storage.queue import StaleAttempt
 from test_queue import _q, _t, make_queue_run, queue_script
 
@@ -162,3 +164,62 @@ def test_sole_worker_retries_instead_of_stranding(tmp_path):
     assert v2.id == v1.id and v2.attempt_id != v1.attempt_id
     with pytest.raises(StaleAttempt):
         q.complete(v1, ["late"])
+
+
+def _expire_claims(qr):
+    """What the watchdog does, at an exact point in a worker's path. Returns the expired attempts."""
+    gone = []
+    for t, _, attempt, _ in qr.queue.expire_overdue(now=utcnow() + timedelta(days=1), can_exclude=qr.other_worker_can_take):
+        qr.revoked.add(attempt)
+        gone.append(attempt)
+        if t.status == TaskStatus.ready:
+            qr.queue.release(t.id)
+    return gone
+
+
+async def test_attempt_expired_during_assessment_publishes_nothing(fixture_server, tmp_path):
+    base, _ = queue_script()
+    expired = []
+
+    def script(messages):
+        if "You designed input cases" in messages[0]["content"] and not expired:
+            expired.extend(_expire_claims(qr))
+        return base(messages)
+
+    qr, store = make_queue_run(fixture_server, tmp_path, script)
+    await qr.execute()
+    d = store.detail(qr.run.id)
+    assert expired
+    assert not [e for e in d.events if e.type == "candidate_reported" and e.attempt_id in expired]
+    assert [e for e in d.events if e.type == "result_rejected" and e.attempt_id in expired]
+    tasks = [t for t in d.tasks if t.type == "input_test"]
+    assert all(t.attempt_id not in expired for t in tasks)  # the stale copy did not overwrite ownership
+
+
+async def test_attempt_expired_before_acceptance_changes_no_finding(fixture_server, tmp_path):
+    script, _ = queue_script()
+    qr, store = make_queue_run(fixture_server, tmp_path, script)
+    expired, replay = [], qr.replay
+
+    async def replay_then_expire(f, handoff, task, idx, assertion):
+        att = await replay(f, handoff, task, idx, assertion)
+        if idx == qr.run.limits.verification_replays - 1 and not expired:
+            expired.extend(_expire_claims(qr))
+        return att
+
+    qr.replay = replay_then_expire
+    await qr.execute()
+    d = store.detail(qr.run.id)
+    assert expired
+    assert not [e for e in d.events if e.type == "result_accepted" and e.attempt_id in expired]
+    assert [e for e in d.events if e.type == "result_rejected" and e.attempt_id in expired]
+    assert [e for e in d.events if e.type == "action_executed" and e.attempt_id in expired]  # earlier evidence stays
+
+
+def test_failed_status_saved_by_a_current_attempt_stays_failed(tmp_path):
+    _, q = _q(tmp_path)
+    q.enqueue(_t("a"))
+    t, _ = q.claim("w", {"explore"}, 60)
+    t.status = TaskStatus.failed
+    q.update(t)
+    assert q.complete(t, []).status == TaskStatus.failed  # a rejected result is not reported as a late one
