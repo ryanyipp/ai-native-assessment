@@ -87,6 +87,7 @@ async def main():
                 break
             await asyncio.sleep(0.25)
         print("stopped after", round(time.time() - t0, 1), "s", flush=True)
+        await asyncio.sleep(1)  # the blocking calls above hold back Playwright's response events
         check("UI click returned 202", 202 in replies, str(replies))
         check("terminal status cancelled", d["run"]["status"] == "cancelled", d["run"]["stop_reason"][:90])
         await page.get_by_text("Stopped early").wait_for(timeout=6000)

@@ -202,6 +202,7 @@ class QueueReviewRun(ReviewRun):
             self.revoked.add(task.attempt_id or "")
             raise AttemptRevoked(str(e)) from e
         self.last_seen[task.attempt_id or ""] = time.monotonic()
+        self.raise_if_cancelled()  # the renewal takes time; a request may have landed during it
 
     def guard_publish(self, task: Task) -> None:
         self.check_attempt(task, "result")
