@@ -255,11 +255,11 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               <summary className="cursor-pointer select-none px-3 py-2 text-[13px] font-medium text-slate-700">
                 Budget and limits
                 <span className="ml-2 font-normal text-slate-500">
-                  {fmtUsd(limits.max_cost_usd, 2)} · {limits.max_steps} steps · {limits.max_model_calls} calls
+                  {fmtUsd(limits.max_cost_usd, 2)}{mode === 'queue_review' ? '' : ` · ${limits.max_steps} steps`} · {limits.max_model_calls} calls
                 </span>
               </summary>
               <div className="grid grid-cols-2 gap-3 border-t border-slate-200 px-3 py-3">
-                {LIMIT_KEYS.map((k) => (
+                {LIMIT_KEYS.filter((k) => !(mode === 'queue_review' && k === 'max_steps')).map((k) => (
                   <FormField key={k} id={`${uid}-${k}`} label={LIMITS[k].label} error={show(k)}>
                     <input id={`${uid}-${k}`} type="number" className={cx(inputCls(show(k)), 'tabular-nums')}
                       min={LIMITS[k].min} max={LIMITS[k].max} step={LIMITS[k].step} value={Number.isNaN(limits[k]) ? '' : limits[k]}
@@ -269,7 +269,8 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
                 ))}
                 <p className="col-span-2 text-xs leading-relaxed text-slate-500">
                   Limits are checked before each model call, so a run can finish slightly over its cost limit (in-flight overshoot). Reaching a
-                  limit marks the run partial, never passing.
+                  limit marks the run partial, never passing. The time limit is soft: it is checked between steps and tasks and does not interrupt work already running.
+                  {mode === 'queue_review' && ' Shared queue runs use fixed exploration limits (4 actions per task, depth 2, 40 tasks) instead of a browser step limit.'}
                 </p>
               </div>
             </details>
