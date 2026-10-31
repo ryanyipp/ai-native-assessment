@@ -259,6 +259,8 @@ async def test_cancel_stops_active_workers_and_keeps_evidence(fixture_server, tm
     assert d.actions and not [t for t in d.tasks if t.status in (TaskStatus.ready, TaskStatus.claimed)]
     assert qr.in_flight == 0 and d.run.usage.calls_without_cost >= 1
     assert d.events[-1].type == "run_finished"
+    asked = next(e for e in d.events if e.type == "cancel_requested")
+    assert not [a for a in d.actions if a.started_at > asked.created_at]
     stopped = next(e.seq for e in d.events if e.type == "task_cancelled")
     assert not [e for e in d.events if e.type == "task_claimed" and e.seq > stopped]
 

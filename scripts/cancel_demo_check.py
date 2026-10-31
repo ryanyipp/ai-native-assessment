@@ -69,6 +69,11 @@ async def main():
             await asyncio.sleep(0.5)
         check("scripted label", d["run"]["provenance"]["mocked_model"] and not d["run"]["provenance"]["live"])
         during = browsers_under(SERVER)
+        for _ in range(40):  # a single sample can fall between two browser launches
+            if during is None or during > 0:
+                break
+            await asyncio.sleep(0.25)
+            during = browsers_under(SERVER)
         check("browsers open while active", during is None or during > 0, str(during))
         await page.get_by_role("button", name="Cancel run").click()
         t0 = time.time()
@@ -87,15 +92,20 @@ async def main():
         await page.get_by_text("Stopped early").wait_for(timeout=6000)
         toolbar = page.locator('[data-testid="run-toolbar"]')
         check("UI shows Cancelled", await toolbar.get_by_text("Cancelled", exact=True).count() > 0)
-        check("Cancel button gone", await page.get_by_role("button", name=re.compile("Cancel")).count() == 0)
+        check("Cancel button gone", await page.get_by_role("button", name=re.compile(r"^(Cancel run|Cancelling)")).count() == 0)
         await page.screenshot(path=OUT / "cancelled-run.png")
         check("partial evidence remains", d["actions"] and d["evidence"], f'{len(d["actions"])} actions')
         check("no ready or claimed tasks", not [t for t in d["tasks"] if t["status"] in ("ready", "claimed")])
-        cut = next((e["seq"] for e in d["events"] if e["type"] == "task_cancelled"), None)
-        check("a worker stopped its task", cut is not None)
-        after = {e["type"] for e in d["events"] if cut and e["seq"] > cut}
-        check("no work accepted after the stop",
-              not {"task_claimed", "result_accepted", "candidate_reported", "action_executed"} & after, str(sorted(after)))
+        asked = next(e for e in d["events"] if e["type"] == "cancel_requested")
+        after = [e for e in d["events"] if e["seq"] > asked["seq"]]
+        check("workers stopped their tasks", any(e["type"] == "task_cancelled" for e in after))
+        check("no claims or accepted results after the request",
+              not {"task_claimed", "result_accepted", "candidate_reported"} & {e["type"] for e in after})
+        check("no browser action started after the request",
+              not [a for a in d["actions"] if a["started_at"] > asked["created_at"]],
+              f'{sum(e["type"] == "action_executed" for e in after)} in-progress action(s) finished and were recorded')
+        check("no successful model call after the request", not [
+            e for e in after if e["type"] == "model_call" and e["data"].get("ok")])
         print("calls_without_cost", d["run"]["usage"]["calls_without_cost"], flush=True)
         await asyncio.sleep(3)
         left = browsers_under(SERVER)

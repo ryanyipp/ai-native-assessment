@@ -179,7 +179,7 @@ Tester and verifier task saves go through `TaskQueue.update`, which refuses an a
 
 ## Cancellation
 
-`POST /api/runs/{id}/cancel` and **Cancel run** set a flag that blocks new claims, model calls and browser actions. An in-flight or slot-waiting call is abandoned within about 0.25 s, browser contexts close through the normal exit, leftover tasks become `unfinished`, and the run ends `cancelled` with its evidence kept. A request the provider already received may still be charged; that call is counted under `calls_without_cost`. Cancellation works only for a run executing in the current backend process.
+`POST /api/runs/{id}/cancel` and **Cancel run** set a flag that blocks new claims, model calls and browser actions. An in-flight or slot-waiting call is abandoned within about 0.25 s, a browser action already running finishes and is recorded, browser contexts close through the normal exit, leftover tasks become `unfinished`, and the run ends `cancelled` with its evidence kept. A request the provider already received may still be charged; that call is counted under `calls_without_cost`. Cancellation works only for a run executing in the current backend process.
 
 ## Explorer observations
 

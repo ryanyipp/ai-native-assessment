@@ -168,7 +168,10 @@ class ExplorerRun:
         self.cancel_requested = threading.Event()  # set from the API thread
 
     def cancel(self) -> None:
-        self.cancel_requested.set()
+        if not self.cancel_requested.is_set():
+            self.cancel_requested.set()
+            self.event("cancel_requested", "Cancellation requested: no new tasks, model calls or browser actions. "
+                       "An action already running finishes and is recorded.", agent_id="coordinator")
 
     def raise_if_cancelled(self) -> None:
         if self.cancel_requested.is_set():
