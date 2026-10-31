@@ -87,6 +87,8 @@ backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studi
 $env:CREATOR_STUDIO_MODE='corrected'; $env:CREATOR_STUDIO_DATA='fixtures\creator-studio\data\corrected.json'; backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\creator-studio --host 127.0.0.1 --port 5175
 backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\ticket-desk --host 127.0.0.1 --port 5176
 $env:TICKET_DESK_MODE='corrected'; $env:TICKET_DESK_DATA='fixtures\ticket-desk\data\corrected.json'; backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\ticket-desk --host 127.0.0.1 --port 5177
+backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\leave-desk --host 127.0.0.1 --port 5178
+$env:LEAVE_DESK_MODE='corrected'; $env:LEAVE_DESK_DATA='fixtures\leave-desk\data\corrected.json'; backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\leave-desk --host 127.0.0.1 --port 5179
 
 # Backend API
 cd backend; .\.venv\Scripts\python -m uvicorn flowlens.main:app --host 127.0.0.1 --port 8000
