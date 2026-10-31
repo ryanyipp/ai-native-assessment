@@ -47,6 +47,7 @@ class RunStatus(StrEnum):
     partial = "partial"  # stopped on a budget limit: not a pass
     failed = "failed"
     interrupted = "interrupted"
+    cancelled = "cancelled"  # stopped by a person; results are incomplete
 
 
 RunMode = Literal["single_explorer", "explore_test_verify", "queue_review", "single_agent", "reverify"]

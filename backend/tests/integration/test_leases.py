@@ -11,7 +11,7 @@ from datetime import timedelta
 import pytest
 
 from flowlens.config import Settings
-from flowlens.models.contracts import FaultInjection, ModelCall, Task, TaskStatus, utcnow
+from flowlens.models.contracts import FaultInjection, ModelCall, RunStatus, Task, TaskStatus, utcnow
 from flowlens.services.llm import BudgetExceeded, LLMResponse, OpenRouterClient
 from flowlens.storage.queue import StaleAttempt
 from test_queue import _q, _t, make_queue_run, queue_script
@@ -234,3 +234,41 @@ def test_failed_status_saved_by_a_current_attempt_stays_failed(tmp_path):
     t.status = TaskStatus.failed
     q.update(t)
     assert q.complete(t, []).status == TaskStatus.failed  # a rejected result is not reported as a late one
+
+
+class HangingClient(SlowClient):
+    async def complete(self, messages, max_tokens, reasoning_tokens=None):
+        await asyncio.sleep(30)
+
+
+async def _cancel_once_calling(qr):
+    running = asyncio.create_task(qr.execute())
+    while qr.in_flight == 0:
+        await asyncio.sleep(0.05)
+    await asyncio.sleep(0.5)
+    qr.cancel()
+    await asyncio.wait_for(running, timeout=15)
+
+
+async def test_cancel_stops_active_workers_and_keeps_evidence(fixture_server, tmp_path):
+    qr, store = make_queue_run(fixture_server, tmp_path, lambda m: "{}")
+    qr.llm = HangingClient()
+    await _cancel_once_calling(qr)
+    d = store.detail(qr.run.id)
+    assert d.run.status == RunStatus.cancelled and "cancelled by user" in d.run.stop_reason
+    assert d.actions and not [t for t in d.tasks if t.status in (TaskStatus.ready, TaskStatus.claimed)]
+    assert qr.in_flight == 0 and d.run.usage.calls_without_cost >= 1
+    assert d.events[-1].type == "run_finished"
+    stopped = next(e.seq for e in d.events if e.type == "task_cancelled")
+    assert not [e for e in d.events if e.type == "task_claimed" and e.seq > stopped]
+
+
+async def test_cancel_releases_calls_waiting_for_capacity(fixture_server, tmp_path):
+    qr, store = make_queue_run(fixture_server, tmp_path, lambda m: "{}")
+    qr.llm = OpenRouterClient(Settings(_env_file=None, openrouter_api_key="test", openrouter_base_url="http://127.0.0.1:9/v1"))
+    qr.llm._slots = slots = threading.BoundedSemaphore(1)
+    slots.acquire()
+    await _cancel_once_calling(qr)
+    slots.release()
+    assert store.detail(qr.run.id).run.status == RunStatus.cancelled
+    assert slots.acquire(blocking=False)

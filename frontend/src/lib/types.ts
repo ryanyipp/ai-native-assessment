@@ -1,6 +1,6 @@
 // Mirrors backend/src/flowlens/models/contracts.py. The backend owns the schema.
 
-export type RunStatus = 'queued' | 'running' | 'completed' | 'partial' | 'failed' | 'interrupted'
+export type RunStatus = 'queued' | 'running' | 'completed' | 'partial' | 'failed' | 'interrupted' | 'cancelled'
 export type Phase = 'explore' | 'input_test' | 'verify'
 export type VerificationStatus = 'unverified' | 'confirmed' | 'not_reproduced' | 'inconclusive'
 

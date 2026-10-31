@@ -51,16 +51,32 @@ def check_code_current() -> None:
         )
 
 
+ACTIVE_RUNS: dict[str, ExplorerRun] = {}  # runs executing in this process
+
+
+def request_cancel(run_id: str) -> bool:
+    """Ask a run in this process to stop. False if it is not executing here."""
+    active = ACTIVE_RUNS.get(run_id)
+    if active is None:
+        return False
+    active.cancel()
+    return True
+
+
 def run_class(run: Run) -> type[ExplorerRun]:
     return {"explore_test_verify": ReviewRun, "queue_review": QueueReviewRun, "single_agent": SingleAgentRun}.get(run.mode, ExplorerRun)
 
 
 def start_run_thread(run: Run, store: Store, settings: Settings, llm: LLMClient) -> threading.Thread:
     """Each run gets its own thread and event loop (Playwright needs a subprocess-capable loop on Windows)."""
-    cls = run_class(run)
+    active = run_class(run)(run, store, settings, llm)
+    ACTIVE_RUNS[run.id] = active
 
     def target():
-        asyncio.run(cls(run, store, settings, llm).execute())
+        try:
+            asyncio.run(active.execute())
+        finally:
+            ACTIVE_RUNS.pop(run.id, None)
 
     t = threading.Thread(target=target, name=f"run-{run.id}", daemon=True)
     t.start()

@@ -29,9 +29,12 @@ WORKFLOW = {
 }
 STATUS = {
     "completed": ("Finished", "The review ran to its end. Finished does not mean the website passed."),
-    "partial": ("Incomplete", "The review stopped at a time, step or budget limit before everything was checked."),
+    "partial": ("Incomplete", "The review stopped before everything was checked: a limit was reached, or some work "
+                              "could not run."),
     "failed": ("Stopped by an error", "The review stopped because of an error, so later checks did not run."),
     "interrupted": ("Interrupted", "The review was interrupted (for example, the server restarted) before it finished."),
+    "cancelled": ("Cancelled", "A person stopped this review before it finished. A model request already sent when it "
+                               "stopped may still have been charged."),
     "running": ("Still running", "This report is a snapshot of a review that has not finished."),
     "queued": ("Not started", "The review has not started yet."),
 }
@@ -144,6 +147,8 @@ def plain_stop(status: str, reason: str | None, tasks=()) -> str:
         return "no work was left that could run: " + "; ".join(parts)
     if status == "failed":
         return "an internal error in FlowLens stopped it (details under Diagnostics)"
+    if status == "cancelled":
+        return "a person cancelled it"
     if status == "interrupted":
         return "it was interrupted, for example by a server restart"
     for key, text in (("share", "the part of the budget set aside for exploring was used up"),
@@ -153,6 +158,17 @@ def plain_stop(status: str, reason: str | None, tasks=()) -> str:
         if key in t:
             return text
     return "it stopped before finishing (details under Diagnostics)"
+
+
+def limits_text(r) -> str:
+    """Only the limits this workflow enforces. The time limit never interrupts work already running."""
+    lim = r.limits
+    calls = f"{lim.max_model_calls} calls, {lim.max_output_tokens} output tokens per call"
+    soft = f"{lim.max_duration_s} s time limit (soft: checked between steps and tasks; running work is not interrupted)"
+    if r.mode == "queue_review":
+        return (f"{calls}, {lim.explore_steps_per_task} actions per explore task, depth {lim.max_depth}, "
+                f"{lim.max_tasks} tasks, {lim.max_cases_per_form} cases per form, {soft}")
+    return f"{lim.max_steps} steps, {calls}, {lim.max_states} states, {soft}"
 
 
 class ReportBuilder:
@@ -235,7 +251,7 @@ class ReportBuilder:
             return {"status": st, "label": "Inconclusive", "tone": "slate", "independence": "independent" if indep else "self",
                     "text": f"Re-checked by {who}, but no verdict was possible" + (f": {why}." if why else ".")
                             + (" A person should decide whether this matters." if (why or "").startswith("no supplied") else "")}
-        stopped = self.d.run.status in ("partial", "failed", "interrupted")
+        stopped = self.d.run.status in ("partial", "failed", "interrupted", "cancelled")
         return {"status": "unverified", "label": "Unverified", "tone": "amber", "independence": "none",
                 "text": "Only the agent that reported it has seen this; it was not re-checked"
                         + (" because the review stopped first." if stopped else ".")}
@@ -304,7 +320,7 @@ class ReportBuilder:
         if r.status.value == "partial" and "queue drained" in (r.stop_reason or "") and task_problems(d.tasks):
             status_text = ("The review stopped early because the work it needed could not run "
                            "(see “What was not checked”), not because of a limit.")
-        incomplete = r.status.value in ("partial", "failed", "interrupted", "running", "queued")
+        incomplete = r.status.value in ("partial", "failed", "interrupted", "cancelled", "running", "queued")
 
         # Requirements: what was exercised.
         tc_by_req = Counter(tc.expectation_source for tc in d.test_cases if tc.status == "executed")
@@ -380,6 +396,8 @@ class ReportBuilder:
             "cost": f"US${u.reported_cost_usd:.4f} for this run"
                     + (f" ({u.calls_without_cost} call(s) reported no cost, so the true cost may be higher)" if u.calls_without_cost else ""),
             "status_label": status_label, "status_text": status_text, "incomplete": incomplete,
+            "observations": [{"by": e.agent_id, "text": e.message, "route": e.data.get("route"), "task": e.task_id}
+                             for e in d.events if e.type == "explorer_observation"],
             "summary": lines, "groups": groups, "requirements": reqs, "gaps": gaps,
             "evidence_note": (
                 "Evidence links open screenshots saved by FlowLens. They work while the FlowLens server that ran this "
@@ -397,7 +415,7 @@ class ReportBuilder:
                 "Reported cost": f"US${u.reported_cost_usd:.4f} of a US${r.limits.max_cost_usd:.2f} limit"
                                  + (f"; {u.calls_without_cost} call(s) reported no cost" if u.calls_without_cost else ""),
                 "Truncated replies": str(u.truncated_calls),
-                "Limits": f"{r.limits.max_steps} steps, {r.limits.max_model_calls} calls, {r.limits.max_output_tokens} output tokens per call",
+                "Limits": limits_text(r),
                 "Target profile": "Approved public website" if r.target_profile == "website" else "Configured fixture with test workspaces",
                 "Allowed origins": ", ".join(r.scope_origins) or "configured origins (recorded before per-run scope existed)",
                 "Build label (evaluation only)": r.target_build or "—",
@@ -470,6 +488,10 @@ def to_markdown(rep: dict) -> str:
         for x in items:
             n += 1
             out += finding(x, n)
+    if rep["observations"]:
+        out += ["## Unverified explorer observations", "",
+                "Notes from explorers. Nothing checked these, and they are not findings.", ""]
+        out += [f"- **{_md(o['by'])}** at {_md(o['route'])}: {_md(o['text'])}" for o in rep["observations"]] + [""]
     out += ["## What was not checked", ""]
     out += [f"- {_md(g)}" for g in rep["gaps"]] or ["- Nothing recorded as unchecked."]
     out += [""]
@@ -582,6 +604,10 @@ def to_html(rep: dict, md_href: str) -> str:
         for x in items:
             n += 1
             body.append(finding(x, n))
+    if rep["observations"]:
+        body.append('<h2>Unverified explorer observations</h2><p class="note">Notes from explorers. Nothing checked these, '
+                    'and they are not findings.</p><ul>' + "".join(
+                        f'<li><b>{_e(o["by"])}</b> at {_e(o["route"])}: {_e(o["text"])}</li>' for o in rep["observations"]) + "</ul>")
     body.append("<h2>What was not checked</h2><ul>" + ("".join(f"<li>{_e(g)}</li>" for g in rep["gaps"])
                                                        or "<li>Nothing recorded as unchecked.</li>") + "</ul>")
     if rep["requirements"]:

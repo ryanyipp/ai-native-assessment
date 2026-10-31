@@ -41,7 +41,14 @@ from flowlens.models.contracts import (
 )
 from flowlens.orchestration.replay import execute_step, reach_state
 from flowlens.orchestration.review import COORDINATOR, ReviewRun, _Attempt
-from flowlens.orchestration.runner import _action_label, relative_path, semantic_step
+from flowlens.orchestration.runner import (
+    CANCEL_POLL_S,
+    CANCEL_REASON,
+    RunCancelled,
+    _action_label,
+    relative_path,
+    semantic_step,
+)
 from flowlens.services.llm import BudgetExceeded
 from flowlens.storage.queue import StaleAttempt, TaskQueue
 
@@ -177,8 +184,13 @@ class QueueReviewRun(ReviewRun):
             self.engines.setdefault(task.attempt_id, []).append(eng)
         return eng
 
+    def cancel(self) -> None:
+        super().cancel()
+        self.stopping = CANCEL_REASON  # workers claim nothing more
+
     def check_attempt(self, task: Task, what: str) -> None:
-        """Refuse work from an expired attempt; otherwise renew its lease."""
+        """Refuse work from a cancelled run or an expired attempt; otherwise renew its lease."""
+        self.raise_if_cancelled()
         if task.attempt_id in self.revoked:
             self.event("late_action_rejected", f"Refused {what} from {task.owner} attempt {task.attempt_id}: "
                        "its lease expired and the task was reassigned", agent_id=COORDINATOR, task=task,
@@ -243,7 +255,9 @@ class QueueReviewRun(ReviewRun):
         self.event("fault_injected", f"[INJECTED FAULT] {agent} stalls for {fi.stall_s}s holding {task.key} "
                    f"attempt {task.attempt_id} (lease {self.run.limits.task_lease_s}s)", agent_id=agent, task=task,
                    injected=True, stall_s=fi.stall_s, attempt_id=task.attempt_id)
-        await asyncio.sleep(fi.stall_s)
+        resume_at = time.monotonic() + fi.stall_s
+        while time.monotonic() < resume_at and not self.cancel_requested.is_set():
+            await asyncio.sleep(CANCEL_POLL_S)
         self.event("fault_injected", f"[INJECTED FAULT] {agent} resumes after its stall and tries to continue",
                    agent_id=agent, task=task, injected=True, attempt_id=task.attempt_id)
 
@@ -322,6 +336,9 @@ class QueueReviewRun(ReviewRun):
                         self.event("task_recovered", f"{task.key} recovered: expired attempt(s) "
                                    f"{', '.join(done.expired_attempts)}; completed by {agent} attempt {task.attempt_id}",
                                    agent_id=COORDINATOR, task=done, completed_by=agent)
+                except RunCancelled:  # still claimed: the end of the run marks it unfinished with the reason
+                    self.event("task_cancelled", f"{agent} stopped {task.type} task {task.key}: {CANCEL_REASON}",
+                               agent_id=agent, task=task)
                 except (AttemptRevoked, StaleAttempt) as e:
                     self.reject_late_result(task, agent, e)
                 except Exception as e:  # browser/setup errors: bounded retry
@@ -456,6 +473,9 @@ class QueueReviewRun(ReviewRun):
                 act = decision.action
                 if isinstance(act, explorer.FinishAction):
                     note = f"explorer finished: {act.summary[:160]}"
+                    # An unverified note, kept apart from findings: no requirement, no verification task.
+                    self.event("explorer_observation", act.summary, agent_id=agent, task=task, state_id=current.id,
+                               route=current.route, persistence=act.persistence, model_call_id=mc_id)
                     break
                 ex = await eng.execute(act)
                 current, sem = self._explorer_step(act.model_dump(), ex, current, sem, agent, ctx.context_id,
@@ -530,7 +550,10 @@ class QueueReviewRun(ReviewRun):
         s = self.summary
         text = (f"{reason}; tasks {counts}; claimed by {owners}; {s['cases']} test case(s), {s['candidates']} candidate(s), "
                 f"verification {dict((o, s['outcomes'].count(o)) for o in sorted(set(s['outcomes'])))}")
-        if error:
+        if self.cancel_requested.is_set():
+            status = RunStatus.cancelled
+            text = f"Results are incomplete. {text}"
+        elif error:
             status = RunStatus.failed
             text = f"failed in the coordinator: {error}. Results are incomplete; zero findings does not mean the website passed. {text}"
         elif counts.get("unfinished") or counts.get("blocked") or counts.get("failed") or self.budget_note or self.stopping:

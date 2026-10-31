@@ -62,8 +62,9 @@ const statusMeta: Record<RunStatus, { tone: Tone; label: string; icon: ReactNode
   queued: { tone: 'blue', label: 'Queued', icon: <CircleDashed size={12} />, help: 'Waiting to start.' },
   running: { tone: 'blue', label: 'Running', icon: <Loader2 size={12} className="animate-spin" />, help: 'Workers are acting in the browser.' },
   completed: { tone: 'green', label: 'Completed', icon: <CheckCircle2 size={12} />, help: 'The workflow finished within limits. This is not a verdict on the website.' },
-  partial: { tone: 'amber', label: 'Partial', icon: <PauseCircle size={12} />, help: 'Stopped at a budget limit. Results are incomplete, not passing.' },
+  partial: { tone: 'amber', label: 'Partial', icon: <PauseCircle size={12} />, help: 'Stopped at a limit, or some work could not run. Results are incomplete, not passing.' },
   failed: { tone: 'red', label: 'Failed', icon: <XCircle size={12} />, help: 'The run stopped on an error.' },
+  cancelled: { tone: 'neutral', label: 'Cancelled', icon: <CircleSlash size={12} />, help: 'A person stopped this run. Results are incomplete, and a model request already sent may still be charged.' },
   interrupted: { tone: 'neutral', label: 'Interrupted', icon: <CircleSlash size={12} />, help: 'The backend stopped before the run finished. Records remain inspectable.' },
 }
 

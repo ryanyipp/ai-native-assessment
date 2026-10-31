@@ -83,3 +83,8 @@ async def test_crash_mid_review_states_where_it_stopped(fixture_server, tmp_path
     assert not d.findings
     err = next(e for e in d.events if e.type == "run_error")
     assert err.data["stage"].startswith("testing form") and err.agent_id == "coordinator"
+
+
+def test_cancel_route_needs_a_run_executing_here(api):
+    client = api[0] if isinstance(api, tuple) else api
+    assert client.post("/api/runs/run_missing/cancel").status_code == 404

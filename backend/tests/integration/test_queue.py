@@ -163,3 +163,13 @@ async def test_explorer_budget_share_leaves_room_for_testing(fixture_server, tmp
     unfinished = [t for t in d.tasks if t.status == TaskStatus.unfinished]
     assert unfinished and all(t.note for t in unfinished)
     assert "explorer share of the budget" in d.run.stop_reason
+
+
+async def test_explorer_notes_are_labelled_events_not_findings(fixture_server, tmp_path):
+    script, _ = queue_script()
+    qr, store = make_queue_run(fixture_server, tmp_path, script)
+    await qr.execute()
+    d = store.detail(qr.run.id)
+    notes = [e for e in d.events if e.type == "explorer_observation"]
+    assert notes and all(any(s.id == e.data["state_id"] for s in d.states) for e in notes)
+    assert all(f.reported_by == "input-tester" for f in d.findings)  # notes add no finding

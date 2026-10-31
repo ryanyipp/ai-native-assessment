@@ -94,7 +94,8 @@ function FindingCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; o
 export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelect: (s: Selection) => void }) {
   const r = detail.run
   const failed = detail.actions.filter((a) => !a.ok).length
-  const stopped = r.status === 'failed' || r.status === 'partial' || r.status === 'interrupted'
+  const stopped = ['failed', 'partial', 'interrupted', 'cancelled'].includes(r.status)
+  const observations = detail.events.filter((e) => e.type === 'explorer_observation')
   const hasVerifier = (detail.verifications ?? []).length > 0 || r.mode !== 'single_explorer'
   const order = ['confirmed', 'not_reproduced', 'inconclusive', 'unverified']
   const counts = order.map((s) => [s, detail.findings.filter((f) => f.kind !== 'persistence_check' && f.verification_status === s).length] as const)
@@ -140,6 +141,24 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
         detail.findings.map((f) => f.kind === 'persistence_check'
           ? <FindingCard key={f.id} f={f} detail={detail} onSelect={onSelect} />
           : <CandidateCard key={f.id} f={f} detail={detail} onSelect={onSelect} />)
+      )}
+
+      {observations.length > 0 && (
+        <section className="rounded-xl border border-dashed border-slate-300 bg-white p-4" aria-label="Unverified explorer observations">
+          <SectionTitle>Unverified explorer observations</SectionTitle>
+          <p className="text-xs text-slate-500">Notes from explorers. Nothing checked these, and they are not findings.</p>
+          <ul className="mt-2 space-y-2 text-[13px] text-slate-800">
+            {observations.map((e) => (
+              <li key={e.seq}>
+                <button type="button" className="text-left text-xs font-medium text-accent-700 underline"
+                  onClick={() => onSelect({ kind: 'state', id: String(e.data.state_id) })}>
+                  {e.agent_id} at {String(e.data.route)}
+                </button>
+                <p className="[overflow-wrap:anywhere]">{e.message}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">

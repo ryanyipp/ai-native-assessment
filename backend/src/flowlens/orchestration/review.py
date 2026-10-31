@@ -121,8 +121,10 @@ class ReviewRun(ExplorerRun):
         return lim.reserved_verification_calls + 2 * min(lim.max_forms_tested, 1)
 
     def engine(self, cookies: list[dict]) -> BrowserEngine:
-        return BrowserEngine(self.scope_origins, self.settings.flowlens_headless,
-                             self.settings.flowlens_test_session_path or None, cookies=cookies)
+        eng = BrowserEngine(self.scope_origins, self.settings.flowlens_headless,
+                            self.settings.flowlens_test_session_path or None, cookies=cookies)
+        eng.before_action = self.raise_if_cancelled
+        return eng
 
     def state_by_id(self, state_id: str) -> ScreenState | None:
         return next((s for s in self.states.values() if s.id == state_id), None)

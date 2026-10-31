@@ -19,7 +19,13 @@ from flowlens.models.contracts import (
     RunLimits,
     utcnow,
 )
-from flowlens.orchestration.launch import LOADED_FINGERPRINT, StaleCodeError, check_code_current, start_run_thread
+from flowlens.orchestration.launch import (
+    LOADED_FINGERPRINT,
+    StaleCodeError,
+    check_code_current,
+    request_cancel,
+    start_run_thread,
+)
 from flowlens.services.llm import OpenRouterClient, offered_models
 
 router = APIRouter(prefix="/api")
@@ -155,6 +161,17 @@ def create_run(body: RunCreate, request: Request):
     store.put(run)
     start_run_thread(run, store, s, llm)
     return run
+
+
+@router.post("/runs/{run_id}/cancel", status_code=202)
+def cancel_run(run_id: str, request: Request):
+    """Stop new claims, model calls and browser actions. The run then ends with status cancelled."""
+    run = request.app.state.store.get(Run, run_id)
+    if run is None:
+        raise HTTPException(404, "run not found")
+    if not request_cancel(run_id):
+        raise HTTPException(409, f"run is not executing in this server (status {run.status.value})")
+    return {"run_id": run_id, "cancelling": True}
 
 
 class PreviewRequest(BaseModel):

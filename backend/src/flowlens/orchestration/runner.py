@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import threading
 import time
 import traceback
 from typing import Any
@@ -53,6 +54,12 @@ from flowlens.services.llm import BudgetExceeded, LLMClient, check_budget, reaso
 from flowlens.storage.db import Store
 
 MAX_CONSECUTIVE_INVALID = 3
+CANCEL_POLL_S = 0.25
+CANCEL_REASON = "cancelled by user"
+
+
+class RunCancelled(Exception):
+    """A person cancelled the run: stop acting. Not a failure of the run or its task."""
 FIELD_TAGS = ("input", "textarea", "select")
 NON_FIELD_TYPES = ("submit", "button", "reset", "hidden", "image")
 
@@ -158,6 +165,26 @@ class ExplorerRun:
         self.holds: dict[str, int] = {}  # capacity held for admitted work (queue mode)
         self.in_flight_phase: dict[str, int] = {}
         self.stage = "exploring"  # where the review is; used in failure reasons
+        self.cancel_requested = threading.Event()  # set from the API thread
+
+    def cancel(self) -> None:
+        self.cancel_requested.set()
+
+    def raise_if_cancelled(self) -> None:
+        if self.cancel_requested.is_set():
+            raise RunCancelled(CANCEL_REASON)
+
+    async def _until_cancelled(self, call):
+        """Await a model call, abandoning it on cancellation. The provider may still bill a sent request."""
+        pending = asyncio.ensure_future(call)
+        try:
+            while True:
+                done, _ = await asyncio.wait({pending}, timeout=CANCEL_POLL_S)
+                if done:
+                    return pending.result()
+                self.raise_if_cancelled()
+        finally:
+            pending.cancel()
 
     def next_step(self) -> int:
         self.step_seq += 1
@@ -365,6 +392,7 @@ class ExplorerRun:
         bounds this phase's own count (queue mode: exploration share).
         """
         lim = self.run.limits
+        self.raise_if_cancelled()
         self.guard_call(task)
         self.reserve_call(phase, reserve, phase_cap, hold_key)
         call = ModelCall(run_id=self.run.id, step=max(self.step_seq, 0), model=self.llm.model, latency_ms=0,
@@ -373,9 +401,9 @@ class ExplorerRun:
         heartbeat = self.start_heartbeat(task)
         try:
             extra = {"schema": schema} if schema and getattr(self.llm, "supports_schema", False) else {}
-            resp = await asyncio.wait_for(
+            resp = await self._until_cancelled(asyncio.wait_for(
                 self.llm.complete(messages, max_tokens or lim.max_output_tokens, reasoning_tokens, **extra),
-                timeout=self.call_deadline_s)
+                timeout=self.call_deadline_s))
             call.ok = True
         except Exception as e:  # recorded, then surfaced as an invalid reply
             call.error = str(e)[:300]
@@ -387,6 +415,8 @@ class ExplorerRun:
         u = self.run.usage
         u.model_calls += 1
         setattr(u, self.PHASE_COUNTER[phase], getattr(u, self.PHASE_COUNTER[phase]) + 1)
+        if resp is None and self.cancel_requested.is_set():
+            u.calls_without_cost += 1  # the request may have been sent; its cost is unknown
         if resp:
             call.model, call.provider, call.latency_ms = resp.model, resp.provider, resp.latency_ms
             call.prompt_tokens, call.completion_tokens = resp.prompt_tokens, resp.completion_tokens
@@ -416,6 +446,7 @@ class ExplorerRun:
                    agent_id=agent_id, task=task, model_call_id=call.id, ok=call.ok, phase=phase,
                    finish_reason=call.finish_reason)
         if resp is None:
+            self.raise_if_cancelled()
             raise ValueError(call.error or "model call failed")
         return resp.content, call.id
 
@@ -455,6 +486,8 @@ class ExplorerRun:
             self.task.status = "done" if status == RunStatus.completed else "failed"
             self.store.put(self.task)
             status, reason = await self.after_explore(status, reason)
+        except RunCancelled:
+            status, reason = RunStatus.cancelled, f"{CANCEL_REASON}; results are incomplete{self.incomplete_note()}"
         except Exception as e:
             where = self.stage
             self.event("run_error", f"Stopped while {where}: {type(e).__name__}: {e}", agent_id="coordinator",
@@ -479,6 +512,7 @@ class ExplorerRun:
         async with BrowserEngine(self.scope_origins, self.settings.flowlens_headless,
                                  self.settings.flowlens_test_session_path or None,
                                  cookies=self.explore_cookies()) as eng:
+            eng.before_action = self.raise_if_cancelled
             start = NavigateAction(url=run.target_url)
             ex = await eng.execute(start)
             current = self._record_explorer_step(start.model_dump(), ex, None, None)

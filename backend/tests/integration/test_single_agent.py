@@ -9,6 +9,7 @@ from flowlens.orchestration.queue_review import CURRENT_TASK
 from flowlens.orchestration.single_agent import SingleAgentRun
 from flowlens.services.llm import LLMResponse, ScriptedClient
 from flowlens.storage.db import Store
+from test_leases import HangingClient, _cancel_once_calling
 from test_queue import make_queue_run, queue_script
 from test_review import REQS, make_script
 
@@ -99,3 +100,16 @@ async def test_single_agent_transitions_name_the_single_agent(fixture_server, tm
     explore = [t for t in store.detail(run.id).transitions if t.phase == "explore"]
     assert explore and {t.agent_id for t in explore} == {"single-agent"}
     assert {t.context_id for t in explore} == {sa.explore_context_id}
+
+
+async def test_cancel_stops_a_sequential_path_run(fixture_server, tmp_path):
+    settings = Settings(_env_file=None, artifacts_dir=tmp_path / "a", flowlens_allowed_origins=fixture_server.url,
+                        openrouter_api_key=None)
+    store = Store(tmp_path / "s.db")
+    run = Run(target_url=fixture_server.url + "/", goal="Explore the dashboard forms", requirements=REQS,
+              model="scripted-test-model", mode="single_agent", limits=RunLimits(),
+              provenance=Provenance(live=False, mocked_model=True))
+    store.put(run)
+    await _cancel_once_calling(SingleAgentRun(run, store, settings, HangingClient()))
+    d = store.detail(run.id)
+    assert d.run.status == RunStatus.cancelled and d.run.stop_reason.startswith("cancelled by user") and d.actions

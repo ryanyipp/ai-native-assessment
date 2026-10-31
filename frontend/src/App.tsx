@@ -30,7 +30,7 @@ function originOf(url: string) {
 }
 
 const DEMO_RUN = 'run_a572a9bf88c5'
-const STOPPED = new Set(['failed', 'partial', 'interrupted'])
+const STOPPED = new Set(['failed', 'partial', 'interrupted', 'cancelled'])
 
 const MODE_LABEL: Record<string, string> = {
   queue_review: 'Shared queue', explore_test_verify: 'Explorer → tester → verifier', single_agent: 'Single-agent baseline',
@@ -47,6 +47,12 @@ function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactN
   const r = detail.run
   const active = ACTIVE.has(r.status)
   const working = agentsOf(detail).filter((w) => workerStatus(detail, w).state === 'working').length
+  const [cancel, setCancel] = useState<{ run: string; error: string | null } | null>(null)
+  const cancelling = cancel?.run === r.id && !cancel.error
+  const requestCancel = () => {
+    setCancel({ run: r.id, error: null })
+    api.cancelRun(r.id).catch((e: Error) => setCancel({ run: r.id, error: e.message }))
+  }
   return (
     <header className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-slate-200 bg-white px-4 py-1.5" data-testid="run-toolbar">
       <h1 className="sr-only">{r.goal}</h1>
@@ -97,6 +103,11 @@ function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactN
       <div className="order-last flex w-full min-w-0 overflow-x-auto xl:order-none xl:w-auto xl:flex-1" data-testid="toolbar-agents">{agents}</div>
       {/* Report built by the backend from this run's saved records only. */}
       <div className="ml-auto flex shrink-0 items-center gap-1.5">
+        {active && !r.imported_from && (
+          <Tooltip content={cancel?.run === r.id && cancel.error ? cancel.error : 'Stops new tasks, model calls and browser actions, and keeps the evidence so far. A model request already sent may still be charged.'}>
+            <Button size="sm" onClick={requestCancel} disabled={cancelling}>{cancelling ? 'Cancelling…' : 'Cancel run'}</Button>
+          </Tooltip>
+        )}
         <a href={`/api/runs/${r.id}/report`} target="_blank" rel="noreferrer"
           className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50">
           <FileText size={13} aria-hidden />Report
