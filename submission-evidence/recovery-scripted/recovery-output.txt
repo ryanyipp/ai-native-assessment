@@ -1,0 +1,21 @@
+run run_2093b8a0a670
+  202 19:51:10.042 explorer-a   task_claimed          explorer-a claimed explore task explore:start (attempt 1)
+  205 19:51:11.530 explorer-a   fault_injected        [INJECTED FAULT] explorer-a stalls for 75s holding explore:start attempt att_a68db0338a35 (lease 45s)
+  206 19:51:56.292 coordinator  lease_expired         Lease expired: explorer-a attempt att_a68db0338a35 on explore:start made no action or model call for 45s 
+  207 19:51:56.318 coordinator  context_fenced        Closed 1 browser context(s) of explorer-a attempt att_a68db0338a35; further actions from it fail
+  208 19:51:56.350 coordinator  task_reassigned       explore:start returned to the queue for another worker (excluded: explorer-a; attempt 1/2 used)
+  209 19:51:56.444 explorer-b   task_claimed          explorer-b claimed explore task explore:start (attempt 2)
+  226 19:51:59.511 explorer-b   task_completed        explorer-b finished explore task explore:start: done (explorer finished: nothing new)
+  227 19:51:59.529 coordinator  task_recovered        explore:start recovered: expired attempt(s) att_a68db0338a35; completed by explorer-b attempt att_245c9b9
+  295 19:52:26.606 coordinator  late_action_rejected  Refused model call from explorer-a attempt att_a68db0338a35: its lease expired and the task was reassigne
+  296 19:52:26.713 coordinator  result_rejected       Late result from explorer-a attempt att_a68db0338a35 rejected: task_2abb9494915b: attempt att_a68db0338a3
+  297 19:52:27.199 coordinator  run_finished          Run completed: queue drained; tasks {'done': 6}; claimed by {'explorer-a': 0, 'explorer-b': 4, 'input-tes
+PASS scripted model label
+PASS lease expired for the original attempt
+PASS browser context closed
+PASS replacement is explorer-b with a new attempt
+PASS replacement finished the task
+PASS late call refused
+PASS late result rejected
+PASS no model cost
+final completed | queue drained; tasks {'done': 6}; claimed by {'explorer-a': 0, 'explorer-b': 4, 'input-tester': 1, 'verifier': 1}; 2 test case(s), 1 candidate(s), verification  | findings [('R5', 'confirmed')]

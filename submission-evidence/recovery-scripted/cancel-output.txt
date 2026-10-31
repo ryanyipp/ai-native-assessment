@@ -1,0 +1,22 @@
+run run_3d0d5bfbed86
+PASS scripted label 
+PASS browsers open while active 2
+PASS button shows Cancelling 
+PASS repeat cancel while stopping 202
+stopped after 1.1 s
+PASS UI click returned 202 [202]
+PASS terminal status cancelled Results are incomplete. cancelled by user; tasks {'unfinished': 3, 'done': 1}; claimed by 
+PASS UI shows Cancelled 
+PASS Cancel button gone 
+PASS partial evidence remains 4 actions
+PASS no ready or claimed tasks 
+PASS workers stopped their tasks 
+PASS no claims or accepted results after the request 
+PASS no browser action started after the request 2 in-progress action(s) finished and were recorded
+PASS no successful model call after the request 
+calls_without_cost 0
+PASS browser processes closed 0
+PASS no new events after the end 
+PASS cancel after the end is 409 {"detail":"run is not executing in this server (status cancelled)"}
+PASS cancel of an unknown run is 404 
+18/18 passed

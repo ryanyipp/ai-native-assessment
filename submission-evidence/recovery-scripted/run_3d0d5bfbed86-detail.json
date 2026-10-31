@@ -1,0 +1,1461 @@
+{
+ "run": {
+  "id": "run_3d0d5bfbed86",
+  "target_url": "http://localhost:5174/",
+  "goal": "Explore the dashboard forms",
+  "requirements": [],
+  "model": "scripted-test-model",
+  "mode": "queue_review",
+  "limits": {
+   "max_steps": 15,
+   "max_model_calls": 40,
+   "max_cost_usd": 0.5,
+   "max_output_tokens": 800,
+   "max_output_tokens_planning": 1400,
+   "max_duration_s": 600,
+   "max_states": 30,
+   "reserved_verification_calls": 4,
+   "max_forms_tested": 3,
+   "max_cases_per_form": 3,
+   "verification_replays": 2,
+   "reserved_testing_calls": 8,
+   "explore_steps_per_task": 4,
+   "max_depth": 2,
+   "max_tasks": 40,
+   "task_max_attempts": 2,
+   "task_lease_s": 300,
+   "planning_reasoning_tokens": 384
+  },
+  "target_build": null,
+  "fault_injection": null,
+  "target_profile": "fixture",
+  "scope_origins": [
+   "http://localhost:5174"
+  ],
+  "imported_from": null,
+  "status": "cancelled",
+  "stop_reason": "Results are incomplete. cancelled by user; tasks {'unfinished': 3, 'done': 1}; claimed by {'explorer-a': 2, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+  "provenance": {
+   "live": false,
+   "playback": false,
+   "injected_failure": false,
+   "synthetic_fixture": true,
+   "mocked_model": true
+  },
+  "usage": {
+   "model_calls": 3,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "total_tokens": 0,
+   "reported_cost_usd": 0.0,
+   "calls_without_cost": 0,
+   "exploration_calls": 2,
+   "testing_calls": 1,
+   "verification_calls": 0,
+   "truncated_calls": 0
+  },
+  "created_at": "2026-10-31T19:50:44.485377Z",
+  "finished_at": "2026-10-31T19:50:56.889051Z"
+ },
+ "states": [
+  {
+   "id": "state_4d07f78d9f55",
+   "run_id": "run_3d0d5bfbed86",
+   "signature": "88218e31c26ae2b2",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/",
+   "url": "http://localhost:5174/",
+   "title": "Dashboard \u00b7 Creator Studio",
+   "summary": "Dashboard",
+   "screenshot_artifact_id": "art_845c9589c9d6",
+   "first_seen_step": 0,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+     "action_result_id": "act_03bdedb59c2a"
+    },
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:task_8d8c3a1f85ab:ws_8644407d21",
+     "action_result_id": "act_f42a50ef9cb5"
+    }
+   ],
+   "structure": "88218e31c26ae2b2",
+   "layout": "2a9cbb91e7fcaec8"
+  },
+  {
+   "id": "state_6fe30450d714",
+   "run_id": "run_3d0d5bfbed86",
+   "signature": "d88f89ed7886b427",
+   "signature_policy": "route+controls+headings+field-filled:v1",
+   "route": "/schedule/new",
+   "url": "http://localhost:5174/schedule/new",
+   "title": "Schedule a post \u00b7 Creator Studio",
+   "summary": "Schedule a post (0/2 fields filled)",
+   "screenshot_artifact_id": "art_905291368c5b",
+   "first_seen_step": 1,
+   "setup_recipe": [],
+   "semantic_recipe": [
+    {
+     "type": "navigate",
+     "path": "/",
+     "control": null,
+     "value": null,
+     "key": null,
+     "checked": null
+    },
+    {
+     "type": "click",
+     "path": null,
+     "control": {
+      "role": "link",
+      "name": "Schedule a post",
+      "input_type": null,
+      "context": null
+     },
+     "value": null,
+     "key": null,
+     "checked": null
+    }
+   ],
+   "discovered_by": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+   "sightings": [
+    {
+     "agent_id": "explorer-a",
+     "phase": "explore",
+     "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+     "action_result_id": "act_c92adfb55acb"
+    },
+    {
+     "agent_id": "input-tester",
+     "phase": "input_test",
+     "context_id": "input-tester:tc_f90387fc6d87:ws_7f7c9d95d8",
+     "action_result_id": "act_1311a20c1235"
+    }
+   ],
+   "structure": "86925cef53ad2a61",
+   "layout": "70735f36baaaedb5"
+  }
+ ],
+ "transitions": [
+  {
+   "id": "tr_b5b2dede68b6",
+   "run_id": "run_3d0d5bfbed86",
+   "step": 1,
+   "source_state_id": "state_4d07f78d9f55",
+   "target_state_id": "state_6fe30450d714",
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "label": "click link 'Schedule a post'",
+   "action_result_id": "act_c92adfb55acb",
+   "ok": true,
+   "duration_ms": 161,
+   "screenshot_artifact_id": "art_905291368c5b",
+   "model_call_id": "mc_aa4048489682",
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+   "test_case_id": null,
+   "verification_id": null
+  }
+ ],
+ "actions": [
+  {
+   "id": "act_03bdedb59c2a",
+   "error_detail": null,
+   "recovery": null,
+   "run_id": "run_3d0d5bfbed86",
+   "step": 0,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/"
+   },
+   "target_description": "http://localhost:5174/",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/",
+   "started_at": "2026-10-31T19:50:46.029294Z",
+   "duration_ms": 40,
+   "screenshot_artifact_id": "art_845c9589c9d6",
+   "observation_artifact_id": "art_723541c3e31f",
+   "target_box": null,
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+   "task_id": "task_fa5185f60777"
+  },
+  {
+   "id": "act_c92adfb55acb",
+   "error_detail": null,
+   "recovery": null,
+   "run_id": "run_3d0d5bfbed86",
+   "step": 1,
+   "action": {
+    "type": "click",
+    "element_id": "e3"
+   },
+   "target_description": "link 'Schedule a post'",
+   "ok": true,
+   "error": null,
+   "url_before": "http://localhost:5174/",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-31T19:50:49.433073Z",
+   "duration_ms": 161,
+   "screenshot_artifact_id": "art_905291368c5b",
+   "observation_artifact_id": "art_23d32c84e3d1",
+   "target_box": {
+    "x": 386,
+    "y": 195,
+    "width": 144,
+    "height": 37
+   },
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c",
+   "task_id": "task_fa5185f60777"
+  },
+  {
+   "id": "act_1311a20c1235",
+   "error_detail": null,
+   "recovery": null,
+   "run_id": "run_3d0d5bfbed86",
+   "step": 2,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/schedule/new"
+   },
+   "target_description": "http://localhost:5174/schedule/new",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/schedule/new",
+   "started_at": "2026-10-31T19:50:55.840494Z",
+   "duration_ms": 74,
+   "screenshot_artifact_id": "art_cc08782b4d2b",
+   "observation_artifact_id": "art_933f8fa823ee",
+   "target_box": null,
+   "agent_id": "input-tester",
+   "phase": "input_test",
+   "context_id": "input-tester:tc_f90387fc6d87:ws_7f7c9d95d8",
+   "task_id": "task_9c948d396534"
+  },
+  {
+   "id": "act_f42a50ef9cb5",
+   "error_detail": null,
+   "recovery": null,
+   "run_id": "run_3d0d5bfbed86",
+   "step": 3,
+   "action": {
+    "type": "navigate",
+    "url": "http://localhost:5174/"
+   },
+   "target_description": "http://localhost:5174/",
+   "ok": true,
+   "error": null,
+   "url_before": "about:blank",
+   "url_after": "http://localhost:5174/",
+   "started_at": "2026-10-31T19:50:55.874150Z",
+   "duration_ms": 50,
+   "screenshot_artifact_id": "art_6f97e696fb14",
+   "observation_artifact_id": "art_7903cb4d869a",
+   "target_box": null,
+   "agent_id": "explorer-a",
+   "phase": "explore",
+   "context_id": "explorer-a:task_8d8c3a1f85ab:ws_8644407d21",
+   "task_id": "task_8d8c3a1f85ab"
+  }
+ ],
+ "findings": [],
+ "events": [
+  {
+   "seq": 183,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_401f728f54ef",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_started",
+   "message": "Shared-queue review started with model scripted-test-model: explorer-a, explorer-b, input-tester, verifier",
+   "data": {
+    "mocked_model": true
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:44.521961Z"
+  },
+  {
+   "seq": 184,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": null,
+   "agent_id": "coordinator",
+   "type": "task_queued",
+   "message": "explore task queued by coordinator: explore:start",
+   "data": {
+    "task_type": "explore",
+    "key": "explore:start",
+    "depends_on": [],
+    "payload": {},
+    "depth": 0
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:44.588069Z"
+  },
+  {
+   "seq": 185,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "task_claimed",
+   "message": "explorer-a claimed explore task explore:start (attempt 1)",
+   "data": {
+    "lease_expires_at": "2026-10-31T19:55:44.616761+00:00",
+    "attempt_id": "att_e1175c622860"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:44.630543Z"
+  },
+  {
+   "seq": 186,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 0: open start URL",
+   "data": {
+    "action_result_id": "act_03bdedb59c2a",
+    "ok": true,
+    "duration_ms": 40,
+    "phase": "explore",
+    "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:46.247245Z"
+  },
+  {
+   "seq": 187,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: Dashboard",
+   "data": {
+    "state_id": "state_4d07f78d9f55",
+    "route": "/",
+    "phase": "explore",
+    "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:46.275836Z"
+  },
+  {
+   "seq": 188,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 1 (explorer-a): 0 tokens, US$0.00000",
+   "data": {
+    "model_call_id": "mc_aa4048489682",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": null
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.383152Z"
+  },
+  {
+   "seq": 189,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "scripted",
+   "data": {
+    "step": 1,
+    "action": {
+     "type": "click",
+     "element_id": "e3"
+    },
+    "model_call_id": "mc_aa4048489682"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.400001Z"
+  },
+  {
+   "seq": 190,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 1: click link 'Schedule a post'",
+   "data": {
+    "action_result_id": "act_c92adfb55acb",
+    "ok": true,
+    "duration_ms": 161,
+    "phase": "explore",
+    "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.747302Z"
+  },
+  {
+   "seq": 191,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "state_discovered",
+   "message": "New state: Schedule a post (0/2 fields filled)",
+   "data": {
+    "state_id": "state_6fe30450d714",
+    "route": "/schedule/new",
+    "phase": "explore",
+    "context_id": "explorer-a:task_fa5185f60777:ws_81d2f5161c"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.790337Z"
+  },
+  {
+   "seq": 192,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "form_discovered",
+   "message": "Form on /schedule/new: Post title, Publish date",
+   "data": {
+    "form_id": "form_60cf4688f487",
+    "state_id": "state_6fe30450d714",
+    "action_result_id": "act_c92adfb55acb",
+    "evidence_refs": [
+     "art_905291368c5b",
+     "art_23d32c84e3d1"
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.838255Z"
+  },
+  {
+   "seq": 193,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_401f728f54ef",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "handoff_created",
+   "message": "Handoff ho_8bdd9bfd1846: form form_60cf4688f487 from explorer-a to input-tester",
+   "data": {
+    "handoff_id": "ho_8bdd9bfd1846",
+    "kind": "form_to_tester",
+    "from_agent": "explorer-a",
+    "to_agent": "input-tester",
+    "form_id": "form_60cf4688f487",
+    "finding_id": null,
+    "task_id": "task_9c948d396534",
+    "artifact_id": "art_f16939eb7b87"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.895470Z"
+  },
+  {
+   "seq": 194,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": null,
+   "agent_id": "explorer-a",
+   "type": "task_queued",
+   "message": "input_test task queued by explorer-a: input_test:8a8bf412b0cd0dd3",
+   "data": {
+    "task_type": "input_test",
+    "key": "input_test:8a8bf412b0cd0dd3",
+    "depends_on": [],
+    "payload": {
+     "form_id": "form_60cf4688f487",
+     "handoff_id": "ho_8bdd9bfd1846"
+    },
+    "depth": 0
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.936393Z"
+  },
+  {
+   "seq": 195,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "input-tester",
+   "type": "task_claimed",
+   "message": "input-tester claimed input_test task input_test:8a8bf412b0cd0dd3 (attempt 1)",
+   "data": {
+    "lease_expires_at": "2026-10-31T19:55:49.979450+00:00",
+    "attempt_id": "att_68c915bc8650"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:49.993654Z"
+  },
+  {
+   "seq": 196,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "coordinator",
+   "type": "capacity_held",
+   "message": "Held 2 calls for input_test:8a8bf412b0cd0dd3 (admitted test)",
+   "data": {
+    "holds": {
+     "task_9c948d396534": 2
+    }
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:50.011868Z"
+  },
+  {
+   "seq": 197,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "model_call",
+   "message": "Model call 2 (explorer-a): 0 tokens, US$0.00000",
+   "data": {
+    "model_call_id": "mc_8825ecacb73a",
+    "ok": true,
+    "phase": "explore",
+    "finish_reason": null
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.028836Z"
+  },
+  {
+   "seq": 198,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "decision",
+   "message": "scripted",
+   "data": {
+    "step": 2,
+    "action": {
+     "type": "finish",
+     "persistence": "unknown",
+     "checked_values": [],
+     "summary": "nothing new"
+    },
+    "model_call_id": "mc_8825ecacb73a"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.044822Z"
+  },
+  {
+   "seq": 199,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "explorer_observation",
+   "message": "nothing new",
+   "data": {
+    "state_id": "state_6fe30450d714",
+    "route": "/schedule/new",
+    "persistence": "unknown",
+    "model_call_id": "mc_8825ecacb73a"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.066554Z"
+  },
+  {
+   "seq": 200,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "input-tester",
+   "type": "model_call",
+   "message": "Model call 3 (input-tester): 0 tokens, US$0.00000",
+   "data": {
+    "model_call_id": "mc_1e1fd4b56728",
+    "ok": true,
+    "phase": "input_test",
+    "finish_reason": null
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.134076Z"
+  },
+  {
+   "seq": 201,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "input-tester",
+   "type": "test_plan",
+   "message": "Input tester planned 2 case(s): scripted",
+   "data": {
+    "model_call_id": "mc_1e1fd4b56728",
+    "cases": [
+     {
+      "label": "past date",
+      "inputs": {
+       "Post title": "Past",
+       "Publish date": "2026-06-01"
+      },
+      "submit": "Schedule post",
+      "requirement_ref": "R5",
+      "expected": "rejected",
+      "check_page": null
+     },
+     {
+      "label": "future date",
+      "inputs": {
+       "Post title": "Future",
+       "Publish date": "2026-07-01"
+      },
+      "submit": "Schedule post",
+      "requirement_ref": "R4",
+      "expected": "scheduled",
+      "check_page": null
+     }
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.150475Z"
+  },
+  {
+   "seq": 202,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_8d8c3a1f85ab",
+   "attempt_id": null,
+   "agent_id": "explorer-a",
+   "type": "task_queued",
+   "message": "explore task queued by explorer-a: explore:88218e31c26ae2b2",
+   "data": {
+    "task_type": "explore",
+    "key": "explore:88218e31c26ae2b2",
+    "depends_on": [],
+    "payload": {
+     "state_id": "state_4d07f78d9f55"
+    },
+    "depth": 1
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.936060Z"
+  },
+  {
+   "seq": 203,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_94cf17eaf9ca",
+   "attempt_id": null,
+   "agent_id": "explorer-a",
+   "type": "task_queued",
+   "message": "explore task queued by explorer-a: explore:d88f89ed7886b427",
+   "data": {
+    "task_type": "explore",
+    "key": "explore:d88f89ed7886b427",
+    "depends_on": [],
+    "payload": {
+     "state_id": "state_6fe30450d714"
+    },
+    "depth": 1
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:53.979134Z"
+  },
+  {
+   "seq": 204,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_fa5185f60777",
+   "attempt_id": "att_e1175c622860",
+   "agent_id": "explorer-a",
+   "type": "task_completed",
+   "message": "explorer-a finished explore task explore:start: done (explorer finished: nothing new)",
+   "data": {
+    "result_refs": [
+     "state_6fe30450d714",
+     "tr_b5b2dede68b6"
+    ]
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:54.010375Z"
+  },
+  {
+   "seq": 205,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_8d8c3a1f85ab",
+   "attempt_id": "att_3c878d730fbd",
+   "agent_id": "explorer-a",
+   "type": "task_claimed",
+   "message": "explorer-a claimed explore task explore:88218e31c26ae2b2 (attempt 1)",
+   "data": {
+    "lease_expires_at": "2026-10-31T19:55:54.035221+00:00",
+    "attempt_id": "att_3c878d730fbd"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:54.043285Z"
+  },
+  {
+   "seq": 206,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_94cf17eaf9ca",
+   "attempt_id": "att_4535bbc3cd17",
+   "agent_id": "explorer-b",
+   "type": "task_claimed",
+   "message": "explorer-b claimed explore task explore:d88f89ed7886b427 (attempt 1)",
+   "data": {
+    "lease_expires_at": "2026-10-31T19:55:54.597970+00:00",
+    "attempt_id": "att_4535bbc3cd17"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:54.612048Z"
+  },
+  {
+   "seq": 207,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_401f728f54ef",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "cancel_requested",
+   "message": "Cancellation requested: no new tasks, model calls or browser actions. An action already running finishes and is recorded.",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:55.874150Z"
+  },
+  {
+   "seq": 208,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "input-tester",
+   "type": "action_executed",
+   "message": "Step 2: setup: open /schedule/new",
+   "data": {
+    "action_result_id": "act_1311a20c1235",
+    "ok": true,
+    "duration_ms": 74,
+    "phase": "input_test",
+    "context_id": "input-tester:tc_f90387fc6d87:ws_7f7c9d95d8"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.113347Z"
+  },
+  {
+   "seq": 209,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_8d8c3a1f85ab",
+   "attempt_id": "att_3c878d730fbd",
+   "agent_id": "explorer-a",
+   "type": "action_executed",
+   "message": "Step 3: setup: open /",
+   "data": {
+    "action_result_id": "act_f42a50ef9cb5",
+    "ok": true,
+    "duration_ms": 50,
+    "phase": "explore",
+    "context_id": "explorer-a:task_8d8c3a1f85ab:ws_8644407d21"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.203065Z"
+  },
+  {
+   "seq": 210,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "input-tester",
+   "type": "task_cancelled",
+   "message": "input-tester stopped input_test task input_test:8a8bf412b0cd0dd3: cancelled by user",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.366901Z"
+  },
+  {
+   "seq": 211,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_8d8c3a1f85ab",
+   "attempt_id": "att_3c878d730fbd",
+   "agent_id": "explorer-a",
+   "type": "task_unfinished",
+   "message": "explorer-a finished explore task explore:88218e31c26ae2b2: unfinished (stopped early: cancelled by user)",
+   "data": {
+    "result_refs": []
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.408648Z"
+  },
+  {
+   "seq": 212,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_94cf17eaf9ca",
+   "attempt_id": "att_4535bbc3cd17",
+   "agent_id": "explorer-b",
+   "type": "task_cancelled",
+   "message": "explorer-b stopped explore task explore:d88f89ed7886b427: cancelled by user",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.719594Z"
+  },
+  {
+   "seq": 213,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_9c948d396534",
+   "attempt_id": "att_68c915bc8650",
+   "agent_id": "coordinator",
+   "type": "task_unfinished",
+   "message": "input_test task input_test:8a8bf412b0cd0dd3 not run: cancelled by user",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.843599Z"
+  },
+  {
+   "seq": 214,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_94cf17eaf9ca",
+   "attempt_id": "att_4535bbc3cd17",
+   "agent_id": "coordinator",
+   "type": "task_unfinished",
+   "message": "explore task explore:d88f89ed7886b427 not run: cancelled by user",
+   "data": {},
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.860011Z"
+  },
+  {
+   "seq": 215,
+   "run_id": "run_3d0d5bfbed86",
+   "task_id": "task_401f728f54ef",
+   "attempt_id": "att_1",
+   "agent_id": "coordinator",
+   "type": "run_finished",
+   "message": "Run cancelled: Results are incomplete. cancelled by user; tasks {'unfinished': 3, 'done': 1}; claimed by {'explorer-a': 2, 'explorer-b': 1, 'input-tester': 1, 'verifier': 0}; 0 test case(s), 0 candidate(s), verification {}",
+   "data": {
+    "status": "cancelled"
+   },
+   "provenance": {
+    "live": false,
+    "playback": false,
+    "injected_failure": false,
+    "synthetic_fixture": true,
+    "mocked_model": true
+   },
+   "created_at": "2026-10-31T19:50:56.900810Z"
+  }
+ ],
+ "evidence": [
+  {
+   "id": "art_845c9589c9d6",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "screenshot",
+   "path": "runs/run_3d0d5bfbed86/screenshots/000-navigate.png",
+   "sha256": "87acad57d0fd974c0befdba37fceb9aabc12f1213295a7bec466f1a50acee3e2",
+   "media_type": "image/png",
+   "created_at": "2026-10-31T19:50:46.185058Z"
+  },
+  {
+   "id": "art_723541c3e31f",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "observation",
+   "path": "runs/run_3d0d5bfbed86/observation/000.json",
+   "sha256": "87b755c418624615813a0b20c101c664464bc1bc381e0466779fd6a34a4a76e7",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:46.212137Z"
+  },
+  {
+   "id": "art_b8f2cbf0dc8b",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "model_call",
+   "path": "runs/run_3d0d5bfbed86/model_call/001-explorer-a-mc_aa4048489682.json",
+   "sha256": "7be532cbcc7b6fece7ad1109d81680ed472ec684b4a6070e6dd78e2119a52f23",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:49.326879Z"
+  },
+  {
+   "id": "art_905291368c5b",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "screenshot",
+   "path": "runs/run_3d0d5bfbed86/screenshots/001-click.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-31T19:50:49.694224Z"
+  },
+  {
+   "id": "art_23d32c84e3d1",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "observation",
+   "path": "runs/run_3d0d5bfbed86/observation/001.json",
+   "sha256": "08c6aa574e460a8ec9ff33bc45cdb50c391827458e08d52639591060ee358e5e",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:49.714383Z"
+  },
+  {
+   "id": "art_f16939eb7b87",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "handoff",
+   "path": "runs/run_3d0d5bfbed86/handoff/ho_8bdd9bfd1846.json",
+   "sha256": "f36c7de3b29764ecca45aff9e61aa8d87310e204519ab5862014ed5f40a5da01",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:49.864233Z"
+  },
+  {
+   "id": "art_83496e1ba181",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "model_call",
+   "path": "runs/run_3d0d5bfbed86/model_call/002-explorer-a-mc_8825ecacb73a.json",
+   "sha256": "7a9972aa433c287676ed93274064b55356ee40daab9d6e0ba2a27a53ff0c7697",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:52.980569Z"
+  },
+  {
+   "id": "art_ce86af8c576c",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "model_call",
+   "path": "runs/run_3d0d5bfbed86/model_call/003-input-tester-mc_1e1fd4b56728.json",
+   "sha256": "d486ffe061ab5af90ca4e3ffcc6f2dc03827291f8008aa4e636c71ff6da609d8",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:53.085413Z"
+  },
+  {
+   "id": "art_cc08782b4d2b",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "screenshot",
+   "path": "runs/run_3d0d5bfbed86/screenshots/002-navigate.png",
+   "sha256": "16d95042245513ae7c4b37ba0c9adb7f9eae0a78e10ac7ab5ee8f93b08579265",
+   "media_type": "image/png",
+   "created_at": "2026-10-31T19:50:56.058130Z"
+  },
+  {
+   "id": "art_933f8fa823ee",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "observation",
+   "path": "runs/run_3d0d5bfbed86/observation/002.json",
+   "sha256": "08c6aa574e460a8ec9ff33bc45cdb50c391827458e08d52639591060ee358e5e",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:56.074699Z"
+  },
+  {
+   "id": "art_6f97e696fb14",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "screenshot",
+   "path": "runs/run_3d0d5bfbed86/screenshots/003-navigate.png",
+   "sha256": "87acad57d0fd974c0befdba37fceb9aabc12f1213295a7bec466f1a50acee3e2",
+   "media_type": "image/png",
+   "created_at": "2026-10-31T19:50:56.150272Z"
+  },
+  {
+   "id": "art_7903cb4d869a",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "observation",
+   "path": "runs/run_3d0d5bfbed86/observation/003.json",
+   "sha256": "87b755c418624615813a0b20c101c664464bc1bc381e0466779fd6a34a4a76e7",
+   "media_type": "application/json",
+   "created_at": "2026-10-31T19:50:56.166399Z"
+  }
+ ],
+ "model_calls": [
+  {
+   "id": "mc_aa4048489682",
+   "run_id": "run_3d0d5bfbed86",
+   "step": 0,
+   "model": "scripted-test-model",
+   "provider": "none",
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "total_tokens": 0,
+   "reported_cost_usd": 0.0,
+   "latency_ms": 0,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_b8f2cbf0dc8b",
+   "finish_reason": null,
+   "reasoning_tokens": null,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_8825ecacb73a",
+   "run_id": "run_3d0d5bfbed86",
+   "step": 1,
+   "model": "scripted-test-model",
+   "provider": "none",
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "total_tokens": 0,
+   "reported_cost_usd": 0.0,
+   "latency_ms": 0,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_83496e1ba181",
+   "finish_reason": null,
+   "reasoning_tokens": null,
+   "agent_id": "explorer-a",
+   "phase": "explore"
+  },
+  {
+   "id": "mc_1e1fd4b56728",
+   "run_id": "run_3d0d5bfbed86",
+   "step": 1,
+   "model": "scripted-test-model",
+   "provider": "none",
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "total_tokens": 0,
+   "reported_cost_usd": 0.0,
+   "latency_ms": 0,
+   "ok": true,
+   "error": null,
+   "artifact_id": "art_ce86af8c576c",
+   "finish_reason": null,
+   "reasoning_tokens": null,
+   "agent_id": "input-tester",
+   "phase": "input_test"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "task_fa5185f60777",
+   "run_id": "run_3d0d5bfbed86",
+   "type": "explore",
+   "key": "explore:start",
+   "depends_on": [],
+   "input_refs": [],
+   "owner": "explorer-a",
+   "attempt_id": "att_e1175c622860",
+   "lease_expires_at": "2026-10-31T19:55:49.957411Z",
+   "status": "done",
+   "result_refs": [
+    "state_6fe30450d714",
+    "tr_b5b2dede68b6"
+   ],
+   "note": "explorer finished: nothing new",
+   "priority": 1,
+   "depth": 0,
+   "attempts": 1,
+   "max_attempts": 2,
+   "payload": {},
+   "queued_by": "coordinator",
+   "created_at": "2026-10-31T19:50:44.571704Z",
+   "claimed_at": "2026-10-31T19:50:44.616761Z",
+   "finished_at": "2026-10-31T19:50:54.005149Z",
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_9c948d396534",
+   "run_id": "run_3d0d5bfbed86",
+   "type": "input_test",
+   "key": "input_test:8a8bf412b0cd0dd3",
+   "depends_on": [],
+   "input_refs": [
+    "form_60cf4688f487",
+    "ho_8bdd9bfd1846"
+   ],
+   "owner": "input-tester",
+   "attempt_id": "att_68c915bc8650",
+   "lease_expires_at": "2026-10-31T19:55:55.826329Z",
+   "status": "unfinished",
+   "result_refs": [],
+   "note": "not run: cancelled by user",
+   "priority": 2,
+   "depth": 0,
+   "attempts": 1,
+   "max_attempts": 2,
+   "payload": {
+    "form_id": "form_60cf4688f487",
+    "handoff_id": "ho_8bdd9bfd1846"
+   },
+   "queued_by": "explorer-a",
+   "created_at": "2026-10-31T19:50:49.917280Z",
+   "claimed_at": "2026-10-31T19:50:49.979450Z",
+   "finished_at": "2026-10-31T19:50:56.835861Z",
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_8d8c3a1f85ab",
+   "run_id": "run_3d0d5bfbed86",
+   "type": "explore",
+   "key": "explore:88218e31c26ae2b2",
+   "depends_on": [],
+   "input_refs": [
+    "state_4d07f78d9f55"
+   ],
+   "owner": "explorer-a",
+   "attempt_id": "att_3c878d730fbd",
+   "lease_expires_at": "2026-10-31T19:55:55.857276Z",
+   "status": "unfinished",
+   "result_refs": [],
+   "note": "stopped early: cancelled by user",
+   "priority": 1,
+   "depth": 1,
+   "attempts": 1,
+   "max_attempts": 2,
+   "payload": {
+    "state_id": "state_4d07f78d9f55"
+   },
+   "queued_by": "explorer-a",
+   "created_at": "2026-10-31T19:50:53.913052Z",
+   "claimed_at": "2026-10-31T19:50:54.035221Z",
+   "finished_at": "2026-10-31T19:50:56.391654Z",
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  },
+  {
+   "id": "task_94cf17eaf9ca",
+   "run_id": "run_3d0d5bfbed86",
+   "type": "explore",
+   "key": "explore:d88f89ed7886b427",
+   "depends_on": [],
+   "input_refs": [
+    "state_6fe30450d714"
+   ],
+   "owner": "explorer-b",
+   "attempt_id": "att_4535bbc3cd17",
+   "lease_expires_at": "2026-10-31T19:55:55.268073Z",
+   "status": "unfinished",
+   "result_refs": [],
+   "note": "not run: cancelled by user",
+   "priority": 1,
+   "depth": 1,
+   "attempts": 1,
+   "max_attempts": 2,
+   "payload": {
+    "state_id": "state_6fe30450d714"
+   },
+   "queued_by": "explorer-a",
+   "created_at": "2026-10-31T19:50:53.960775Z",
+   "claimed_at": "2026-10-31T19:50:54.597970Z",
+   "finished_at": "2026-10-31T19:50:56.835861Z",
+   "excluded_workers": [],
+   "expired_attempts": [],
+   "fencing": false
+  }
+ ],
+ "forms": [
+  {
+   "id": "form_60cf4688f487",
+   "run_id": "run_3d0d5bfbed86",
+   "key": "8a8bf412b0cd0dd3",
+   "state_id": "state_6fe30450d714",
+   "url": "http://localhost:5174/schedule/new",
+   "route": "/schedule/new",
+   "headings": [
+    "Schedule a post"
+   ],
+   "fields": [
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Post title",
+      "input_type": "text",
+      "context": null
+     },
+     "required": true,
+     "observed_value": ""
+    },
+    {
+     "control": {
+      "role": "textbox",
+      "name": "Publish date",
+      "input_type": "date",
+      "context": null
+     },
+     "required": true,
+     "observed_value": ""
+    }
+   ],
+   "submit_controls": [
+    {
+     "role": "button",
+     "name": "Schedule post",
+     "input_type": null,
+     "context": null
+    }
+   ],
+   "page_text": "Creator Studio Dashboard Schedule a post Studio date: 2026-06-15 Post title Publish date Schedule post",
+   "page_links": [
+    "/"
+   ],
+   "action_only": false,
+   "discovered_by": "explorer-a",
+   "action_result_id": "act_c92adfb55acb",
+   "evidence_refs": [
+    "art_905291368c5b",
+    "art_23d32c84e3d1"
+   ]
+  }
+ ],
+ "handoffs": [
+  {
+   "id": "ho_8bdd9bfd1846",
+   "run_id": "run_3d0d5bfbed86",
+   "kind": "form_to_tester",
+   "from_agent": "explorer-a",
+   "to_agent": "input-tester",
+   "task_id": "task_9c948d396534",
+   "source_state_id": "state_6fe30450d714",
+   "form_id": "form_60cf4688f487",
+   "finding_id": null,
+   "setup": {
+    "target_state_id": "state_6fe30450d714",
+    "expected_signature": "d88f89ed7886b427",
+    "direct_path": "/schedule/new",
+    "steps": [
+     {
+      "type": "navigate",
+      "path": "/",
+      "control": null,
+      "value": null,
+      "key": null,
+      "checked": null
+     },
+     {
+      "type": "click",
+      "path": null,
+      "control": {
+       "role": "link",
+       "name": "Schedule a post",
+       "input_type": null,
+       "context": null
+      },
+      "value": null,
+      "key": null,
+      "checked": null
+     }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+   },
+   "requirements": [],
+   "expected_behaviour": [
+    {
+     "text": "No requirement supplied.",
+     "source": "none supplied"
+    }
+   ],
+   "evidence_refs": [
+    "art_905291368c5b",
+    "art_23d32c84e3d1",
+    "art_f16939eb7b87"
+   ],
+   "created_at": "2026-10-31T19:50:49.864233Z"
+  }
+ ],
+ "test_cases": [],
+ "verifications": []
+}
