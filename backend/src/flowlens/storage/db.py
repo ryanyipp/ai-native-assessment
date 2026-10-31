@@ -145,8 +145,11 @@ class Store:
         return [Event.model_validate_json(r[0]) for r in rows]
 
     def total_reported_cost(self) -> float:
-        """Recorded spend across every run, used for the overall credit pool."""
-        return sum(r.usage.reported_cost_usd for r in self.list_runs())
+        """Spend by this installation, used for the overall credit pool.
+
+        Imported demo runs keep their recorded cost on the run, but it was not spent here.
+        """
+        return sum(r.usage.reported_cost_usd for r in self.list_runs() if not r.imported_from)
 
     def mark_interrupted(self) -> int:
         """Runs left running by a crashed process stay inspectable, labelled interrupted."""

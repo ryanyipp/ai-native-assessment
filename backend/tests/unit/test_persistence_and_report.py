@@ -14,9 +14,11 @@ from flowlens.models.contracts import (
     RunLimits,
     RunStatus,
     SemanticStep,
+    Usage,
     ControlRef,
     VerificationAttempt,
 )
+from flowlens.storage.db import Store
 from flowlens.services.report import build_report, to_html, to_markdown
 from flowlens.verification import persistence
 
@@ -115,3 +117,15 @@ def test_partial_report_lists_incomplete_work_in_plain_words(tmp_path):
     rep = build_report(_detail(tmp_path, status=RunStatus.partial), tmp_path, "http://h")
     assert rep["incomplete"] and "it reached its limit on browser steps" in rep["gaps"][0]
     assert "Having no findings for an area does not mean that area works" in rep["gaps"][0]
+
+
+def test_imported_runs_keep_their_cost_but_leave_the_live_pool(tmp_path):
+    store = Store(tmp_path / "p.db")
+    lim = RunLimits()
+    live = Run(target_url="http://x/", goal="live", model="m", limits=lim, usage=Usage(reported_cost_usd=0.25))
+    demo = Run(target_url="http://x/", goal="demo", model="m", limits=lim, usage=Usage(reported_cost_usd=2.0),
+               imported_from="FlowLens demo bundle")
+    store.put(live)
+    store.put(demo)
+    assert store.total_reported_cost() == 0.25
+    assert store.get(Run, demo.id).usage.reported_cost_usd == 2.0
