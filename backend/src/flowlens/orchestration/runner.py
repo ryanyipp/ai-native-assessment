@@ -244,7 +244,7 @@ class ExplorerRun:
                 action=action, label=_action_label(action, ex.target_description),
                 action_result_id=result.id, ok=ex.ok, duration_ms=ex.duration_ms,
                 screenshot_artifact_id=result.screenshot_artifact_id, model_call_id=model_call_id,
-                context_id="explorer-a:default",
+                agent_id=self.explorer_id, context_id=self.explore_context_id,
             ))
         outcome = "ok" if ex.ok else f"FAILED ({ex.error})"
         self.history.append(f"{result.step}. {_action_label(action, ex.target_description)} -> {outcome}; "

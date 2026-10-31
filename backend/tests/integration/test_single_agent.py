@@ -78,3 +78,24 @@ async def test_healthy_model_call_longer_than_lease_does_not_expire(fixture_serv
     cur = next(t for t in qr.queue.snapshot() if t.id == task.id)
     assert cur.expired_attempts == [task.attempt_id]
     assert "lease_expired" in [e.type for e in store.detail(qr.run.id).events]
+
+
+async def test_single_agent_transitions_name_the_single_agent(fixture_server, tmp_path):
+    script, _ = make_script()
+
+    def spy(messages):
+        sys_ = messages[0]["content"].replace("You are the single agent, now exploring", "You are Explorer A")
+        return script([{"role": "system", "content": sys_}, *messages[1:]])
+
+    settings = Settings(_env_file=None, artifacts_dir=tmp_path / "a", flowlens_allowed_origins=fixture_server.url,
+                        openrouter_api_key=None)
+    store = Store(tmp_path / "s.db")
+    run = Run(target_url=fixture_server.url + "/", goal="Explore the dashboard forms", requirements=REQS,
+              model="scripted-test-model", mode="single_agent", limits=RunLimits(),
+              provenance=Provenance(live=False, mocked_model=True))
+    store.put(run)
+    sa = SingleAgentRun(run, store, settings, ScriptedClient(spy))
+    await sa.execute()
+    explore = [t for t in store.detail(run.id).transitions if t.phase == "explore"]
+    assert explore and {t.agent_id for t in explore} == {"single-agent"}
+    assert {t.context_id for t in explore} == {sa.explore_context_id}
