@@ -268,6 +268,7 @@ export interface RunDetail {
 export interface Health {
   ok: boolean
   model: string
+  models?: string[]
   api_key_configured: boolean
   allowed_origins: string[]
   approved_origins?: string[]

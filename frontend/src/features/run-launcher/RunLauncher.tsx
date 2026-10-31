@@ -97,6 +97,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
     max_model_calls: 40,
     max_output_tokens: 800,
   })
+  const [model, setModel] = useState<string | null>(null) // null: the server default
   const [touched, setTouched] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -158,6 +159,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
         requirements: requirements.split('\n').map((r) => r.trim()).filter(Boolean),
         limits,
         mode,
+        ...(model ? { model } : {}),
         ...(mode === 'queue_review' && injectStall ? { fault_injection: { worker: 'explorer-a', task_type: 'explore', stall_s: 75 } } : {}),
       })
       onCreated(run)
@@ -272,9 +274,15 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               </div>
             </details>
 
+            <FormField id={`${uid}-model`} label="Model" hint="Used by every worker in this run, through OpenRouter.">
+              <select id={`${uid}-model`} className={cx(inputCls(), 'font-mono text-[13px]')} disabled={!health} aria-describedby={`${uid}-model-hint`}
+                value={model ?? health?.model ?? ''} onChange={(e) => setModel(e.target.value)}>
+                {(health?.models ?? (health ? [health.model] : [])).map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </FormField>
+
             <div className="rounded-lg bg-slate-50 px-3 py-2.5 text-xs text-slate-600">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span>Model <code className="font-mono text-slate-900">{health?.model ?? 'unknown'}</code></span>
                 <span className="inline-flex items-center gap-1">
                   <KeyRound size={12} aria-hidden /> API key {health ? (health.api_key_configured ? 'configured on server' : 'missing') : 'unknown'}
                 </span>

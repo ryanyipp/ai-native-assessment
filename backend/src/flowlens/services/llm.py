@@ -78,14 +78,28 @@ def reasoning_request(reasoning_tokens: int | None) -> dict:
     return {"max_tokens": reasoning_tokens, "exclude": True}
 
 
+# Inexpensive models benchmarked in docs/model-comparison.md, offered in the launcher.
+BENCHMARKED_MODELS = (
+    "google/gemini-3-flash-preview",
+    "deepseek/deepseek-v4-flash",
+    "openai/gpt-5-nano",
+    "anthropic/claude-haiku-5.5",
+)
+
+
+def offered_models(settings: Settings) -> list[str]:
+    """Models a run may use: the configured default first, then the benchmarked ones."""
+    return list(dict.fromkeys((settings.openrouter_model, *BENCHMARKED_MODELS)))
+
+
 class OpenRouterClient:
     is_mock = False
     supports_schema = False  # set from FLOWLENS_PROVIDER_JSON_SCHEMA; off by default (see __init__)
 
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, model: str | None = None):
         if not settings.has_api_key:
             raise RuntimeError("OPENROUTER_API_KEY is not set in .env")
-        self.model = settings.openrouter_model
+        self.model = model or settings.openrouter_model
         self._base = settings.openrouter_base_url.rstrip("/")
         self._key = settings.openrouter_api_key.get_secret_value().strip()  # type: ignore[union-attr]
         self._timeout = settings.flowlens_model_timeout_s

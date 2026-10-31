@@ -53,7 +53,7 @@ export const api = {
     request<{ origin: string; revoked: boolean }>(`/api/origins?origin=${encodeURIComponent(origin)}`, { method: 'DELETE' }),
   preview: (url: string) =>
     request<PagePreview>('/api/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) }),
-  createRun: (body: { target_url: string; goal: string; requirements: string[]; limits?: Partial<Run['limits']>; mode?: 'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'; fault_injection?: { worker: string; task_type: string; stall_s: number } }) =>
+  createRun: (body: { target_url: string; goal: string; requirements: string[]; limits?: Partial<Run['limits']>; model?: string; mode?: 'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'; fault_injection?: { worker: string; task_type: string; stall_s: number } }) =>
     request<Run>('/api/runs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

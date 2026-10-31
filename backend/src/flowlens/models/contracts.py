@@ -95,6 +95,7 @@ class RunCreate(BaseModel):
     limits: RunLimits | None = None
     mode: Literal["single_explorer", "explore_test_verify", "queue_review", "single_agent"] = "single_explorer"
     fault_injection: FaultInjection | None = None  # queue_review only
+    model: str | None = None  # one of the offered models; None uses OPENROUTER_MODEL
 
 
 class Usage(BaseModel):

@@ -20,7 +20,7 @@ from flowlens.models.contracts import (
     utcnow,
 )
 from flowlens.orchestration.launch import LOADED_FINGERPRINT, StaleCodeError, check_code_current, start_run_thread
-from flowlens.services.llm import OpenRouterClient
+from flowlens.services.llm import OpenRouterClient, offered_models
 
 router = APIRouter(prefix="/api")
 
@@ -104,6 +104,7 @@ def health(request: Request):
     return {
         "ok": True,
         "model": s.openrouter_model,
+        "models": offered_models(s),
         "api_key_configured": s.has_api_key,
         "allowed_origins": s.allowed_origins,
         "approved_origins": [a["origin"] for a in store.approved_origins()],
@@ -140,7 +141,9 @@ def create_run(body: RunCreate, request: Request):
     )
     if body.fault_injection and body.mode != "queue_review":
         raise HTTPException(400, "fault_injection is only supported in queue_review mode")
-    llm = OpenRouterClient(s)
+    if body.model and body.model not in offered_models(s):
+        raise HTTPException(400, f"model {body.model} is not offered")
+    llm = OpenRouterClient(s, body.model)
     run = Run(
         target_url=target, goal=body.goal, requirements=body.requirements, model=llm.model,
         limits=limits, mode=body.mode,

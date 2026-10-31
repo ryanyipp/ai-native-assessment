@@ -24,7 +24,7 @@ def api(tmp_path, monkeypatch, fixture_server):
     from flowlens.config import get_settings
     get_settings.cache_clear()
     script, calls = make_script()
-    monkeypatch.setattr("flowlens.api.runs.OpenRouterClient", lambda s: ScriptedClient(script))
+    monkeypatch.setattr("flowlens.api.runs.OpenRouterClient", lambda s, model=None: ScriptedClient(script))
     from flowlens.main import app
     with TestClient(app) as c:
         yield c, fixture_server, calls

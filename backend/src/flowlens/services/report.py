@@ -376,6 +376,9 @@ class ReportBuilder:
             "title": "Website review report", "goal": no_ids(r.goal), "target": r.target_url,
             "date": r.created_at.strftime("%d %b %Y, %H:%M UTC"), "workflow": WORKFLOW.get(r.mode, r.mode),
             "recorded": r.imported_from,
+            "models": ", ".join(sorted({c.model for c in d.model_calls})) or r.model,
+            "cost": f"US${u.reported_cost_usd:.4f} for this run"
+                    + (f" ({u.calls_without_cost} call(s) reported no cost, so the true cost may be higher)" if u.calls_without_cost else ""),
             "status_label": status_label, "status_text": status_text, "incomplete": incomplete,
             "summary": lines, "groups": groups, "requirements": reqs, "gaps": gaps,
             "evidence_note": (
@@ -421,6 +424,7 @@ def to_markdown(rep: dict) -> str:
     out = [f"# {rep['title']}", "",
            f"**Goal:** {_md(rep['goal'])}  ", f"**Website:** {rep['target']}  ",
            f"**Reviewed:** {rep['date']}  ", f"**How it was reviewed:** {rep['workflow']}  ",
+           f"**Model:** {_md(rep['models'])}  ", f"**Cost:** {rep['cost']}  ",
            f"**Status:** {rep['status_label']}. {rep['status_text']}", ""]
     if rep.get("recorded"):
         out += [f"> **Recorded result.** Loaded from {rep['recorded']}; it was not run by this installation.", ""]
@@ -559,7 +563,7 @@ def to_html(rep: dict, md_href: str) -> str:
             f'<h1>{_e(rep["title"])}</h1>',
             '<dl class="meta">' + "".join(f"<dt>{k}</dt><dd>{_e(v)}</dd>" for k, v in (
                 ("Goal", rep["goal"]), ("Website", rep["target"]), ("Reviewed", rep["date"]),
-                ("How it was reviewed", rep["workflow"]), ("Status", f'{rep["status_label"]}. {rep["status_text"]}'))) + "</dl>"]
+                ("How it was reviewed", rep["workflow"]), ("Model", rep["models"]), ("Cost", rep["cost"]), ("Status", f'{rep["status_label"]}. {rep["status_text"]}'))) + "</dl>"]
     if rep.get("recorded"):
         body.append(f'<div class="banner"><b>Recorded result.</b> Loaded from {_e(rep["recorded"])}; it was not run by this installation.</div>')
     if rep["incomplete"]:
