@@ -1,4 +1,4 @@
-# FlowLens with both fixture apps (broken and corrected builds of each).
+# FlowLens with all three fixture apps (broken and corrected builds of each).
 #
 #   docker compose up --build        then open http://localhost:5173
 #
@@ -23,7 +23,7 @@ services:
       DATABASE_URL: sqlite:////data/flowlens.db
       ARTIFACTS_DIR: /data/artifacts
       FLOWLENS_ALLOWED_ORIGINS: >-
-        http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177
+        http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177,http://localhost:5178,http://127.0.0.1:5178,http://localhost:5179,http://127.0.0.1:5179
       FLOWLENS_LOAD_DEMO: ${FLOWLENS_LOAD_DEMO:-1}
     command: >-
       sh -c 'if [ "$$FLOWLENS_LOAD_DEMO" = "1" ]; then python -m flowlens.demo load --bundle /app/demo; fi;
@@ -37,6 +37,8 @@ services:
       - "${CREATOR_CORRECTED_HOST_PORT:-5175}:5175"
       - "${TICKET_BROKEN_HOST_PORT:-5176}:5176"
       - "${TICKET_CORRECTED_HOST_PORT:-5177}:5177"
+      - "${LEAVE_BROKEN_HOST_PORT:-5178}:5178"
+      - "${LEAVE_CORRECTED_HOST_PORT:-5179}:5179"
 
   creator-studio-broken:
     <<: *backend-image
@@ -69,6 +71,22 @@ services:
     environment: { TICKET_DESK_MODE: corrected, TICKET_DESK_DATA: /data/fixtures/ticket-desk-corrected.json }
     volumes: [flowlens-data:/data]
     command: uvicorn app:app --app-dir /app/fixtures/ticket-desk --host 0.0.0.0 --port 5177
+
+  leave-desk-broken:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { LEAVE_DESK_MODE: broken, LEAVE_DESK_DATA: /data/fixtures/leave-desk-broken.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/leave-desk --host 0.0.0.0 --port 5178
+
+  leave-desk-corrected:
+    <<: *backend-image
+    network_mode: service:backend
+    depends_on: [backend]
+    environment: { LEAVE_DESK_MODE: corrected, LEAVE_DESK_DATA: /data/fixtures/leave-desk-corrected.json }
+    volumes: [flowlens-data:/data]
+    command: uvicorn app:app --app-dir /app/fixtures/leave-desk --host 0.0.0.0 --port 5179
 
   frontend:
     build: { context: ., dockerfile: docker/frontend.Dockerfile }

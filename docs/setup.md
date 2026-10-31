@@ -1,6 +1,6 @@
 # Setting up FlowLens
 
-There are two ways to run FlowLens with its two fixture apps:
+There are two ways to run FlowLens with its three fixture apps:
 
 - **Docker Compose**: one command, nothing installed locally except Docker.
 - **Native**: Python, Node and Playwright installed on your machine.
@@ -17,6 +17,8 @@ Both can show the **recorded demo runs** without an API key.
 | creator-studio, corrected | 5175 | The same app with the defect fixed. |
 | ticket-desk, broken | 5176 | A second fixture app with seeded defects. |
 | ticket-desk, corrected | 5177 | Its corrected build. |
+| leave-desk, broken | 5178 | A third fixture app with seeded defects, held out from evaluation so far. |
+| leave-desk, corrected | 5179 | Its corrected build. |
 
 The fixtures are review targets. Their source and `evaluation/` are never given to the runtime agents. Each fixture creates its own data file on first use.
 
@@ -29,7 +31,7 @@ All settings are optional, and empty values fall back to the defaults in `backen
 | `OPENROUTER_API_KEY` | Live runs only | Without it the UI works, saved and demo runs can be inspected and previews work, but **Start live run** is disabled. Server-side only; never sent to the browser. |
 | `OPENROUTER_MODEL` | | Default `google/gemini-3-flash-preview`. |
 | `FLOWLENS_BUDGET_USD`, `FLOWLENS_RUN_BUDGET_USD` | | The overall credit pool (10) and the per-run cap (0.50). |
-| `FLOWLENS_ALLOWED_ORIGINS` | | Fixture origins that get test-data workspaces. The default covers ports 5174–5177 on `localhost` and `127.0.0.1`. Change it only if you move the fixtures. Other websites are approved in the launcher. |
+| `FLOWLENS_ALLOWED_ORIGINS` | | Fixture origins that get test-data workspaces. The default covers ports 5174–5179 on `localhost` and `127.0.0.1`. Change it only if you move the fixtures. Other websites are approved in the launcher. |
 | `DATABASE_URL`, `ARTIFACTS_DIR` | | Default `artifacts/flowlens.db` and `artifacts/`, both git-ignored. |
 | `FRONTEND_PORT` | | The frontend port and the CORS origin (5173). |
 | `FLOWLENS_API_URL` | | The backend URL the frontend proxies to (`http://127.0.0.1:8000`). Read by the frontend dev server; set it when the backend uses another port. |
