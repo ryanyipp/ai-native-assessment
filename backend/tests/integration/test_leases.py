@@ -216,6 +216,17 @@ async def test_attempt_expired_before_acceptance_changes_no_finding(fixture_serv
     assert [e for e in d.events if e.type == "action_executed" and e.attempt_id in expired]  # earlier evidence stays
 
 
+async def test_timed_out_slot_waiter_does_not_keep_capacity():
+    client = OpenRouterClient(Settings(_env_file=None, openrouter_api_key="test", openrouter_base_url="http://127.0.0.1:9/v1"))
+    client._slots = slots = threading.BoundedSemaphore(1)
+    slots.acquire()
+    with pytest.raises(TimeoutError):
+        await asyncio.wait_for(client.complete([{"role": "user", "content": "x"}], 10), timeout=0.2)
+    slots.release()
+    await asyncio.sleep(0.3)
+    assert slots.acquire(blocking=False)  # the slot came back: later calls can proceed
+
+
 def test_failed_status_saved_by_a_current_attempt_stays_failed(tmp_path):
     _, q = _q(tmp_path)
     q.enqueue(_t("a"))

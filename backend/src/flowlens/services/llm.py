@@ -21,6 +21,7 @@ from flowlens.config import Settings
 # Shared across runs in this process (runs execute in worker threads).
 _call_slots: threading.BoundedSemaphore | None = None
 _slots_lock = threading.Lock()
+SLOT_POLL_S = 0.05
 
 
 def _slots(n: int) -> threading.BoundedSemaphore:
@@ -134,9 +135,10 @@ class OpenRouterClient:
             "Content-Type": "application/json",
             "X-Title": "FlowLens",
         }
-        # Several workers share one event loop in queue mode, so wait for a slot off-loop;
-        # a blocking acquire here would freeze the loop while the slot holders await I/O.
-        await asyncio.to_thread(self._slots.acquire)
+        # Several workers share one event loop, so a blocking acquire would freeze it. A thread waiting
+        # on the semaphore cannot be cancelled and would keep a slot nobody releases, so poll instead.
+        while not self._slots.acquire(blocking=False):
+            await asyncio.sleep(SLOT_POLL_S)
         try:
             t0 = time.perf_counter()
             async with httpx.AsyncClient(timeout=self._timeout) as client:
