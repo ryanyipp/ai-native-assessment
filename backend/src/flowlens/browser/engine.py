@@ -226,6 +226,17 @@ def page_structure(obs: Observation) -> tuple[str, str]:
             hashlib.sha256(layout.encode()).hexdigest()[:16])
 
 
+def page_destinations(obs: Observation) -> list[str]:
+    """Where a page can lead: normalised link routes plus every non-link control.
+
+    Link text is left out because lists repeat data ("Harbour Jazz Night - 2 tickets"), but other
+    controls and alerts are kept, so a new button, field or error never looks like the same page.
+    """
+    out = {f"link:{normalise_route(e.href)}" if e.role == "link" and e.href else f"{e.role}:{e.name}"
+           for e in obs.elements}
+    return sorted(out | {f"alert:{m}" for m in obs.alert_messages})
+
+
 # Third-party ad networks. Their full-page interstitials ("#google_vignette") covered controls and
 # timed out clicks, and their rotating content changed state fingerprints between visits
 # (run_156b7b84dc3b). Requests to them are refused; the site's own requests are unaffected.

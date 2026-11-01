@@ -228,6 +228,9 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               <AutoTextarea id={`${uid}-req`} className={inputCls()} rows={3} value={requirements} maxRem={20} aria-describedby={`${uid}-req-hint`}
                 placeholder="Saved drafts keep their title and caption after reload."
                 onChange={(e) => setRequirements(e.target.value)} />
+              {!requirements.trim() && (
+                <p role="status" className="mt-1 text-xs text-amber-800">No requirements: suspected defects can only stay inconclusive, because nothing states the expected behaviour.</p>
+              )}
             </FormField>
             <fieldset className="space-y-1.5">
               <legend className="text-[13px] font-medium text-slate-800">Workflow</legend>

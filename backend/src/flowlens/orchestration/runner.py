@@ -23,6 +23,7 @@ from flowlens.browser.engine import (
     control_of,
     normalise_route,
     origin_of,
+    page_destinations,
     page_structure,
     state_signature,
 )
@@ -214,7 +215,7 @@ class ExplorerRun:
         if st is None:
             structure, layout = page_structure(ex.observation)
             st = ScreenState(
-                structure=structure, layout=layout,
+                structure=structure, layout=layout, destinations=page_destinations(ex.observation),
                 run_id=self.run.id, signature=sig, route=route, url=ex.observation.url,
                 title=ex.observation.title, summary=_state_summary(ex.observation),
                 screenshot_artifact_id=shot_id, first_seen_step=step,

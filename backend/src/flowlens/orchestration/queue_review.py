@@ -46,6 +46,7 @@ from flowlens.orchestration.runner import (
     CANCEL_REASON,
     RunCancelled,
     _action_label,
+    extract_forms,
     relative_path,
     semantic_step,
 )
@@ -144,6 +145,21 @@ class QueueReviewRun(ReviewRun):
             if form_state and form_state.layout and form_state.layout == st.layout:
                 return (f"outcome of the already-tested form '{form_state.summary}' "
                         "(same layout; its messages are kept in the test-case record)")
+        return self.covered_by(st, explored, task)
+
+    def covered_by(self, st: ScreenState, explored: set, task: Task) -> str | None:
+        """Why this page adds no exploration: an explored page on its route leads everywhere it does.
+
+        Catches pages that differ only by listed data or a status banner (run_3f84fb9bdc8b: the events
+        page with bookings, and /?cancelled=1). The state stays on the map; only the extra task is
+        skipped. A new control, form field, link target or alert keeps it explorable.
+        """
+        if not st.destinations:
+            return None
+        for other in self.states.values():
+            if (other.id != st.id and other.route == st.route and set(st.destinations) <= set(other.destinations)
+                    and (other.id in explored or other.id == task.payload.get("state_id"))):
+                return f"same destinations as '{other.summary}': only listed data or a status message differs"
         return None
 
     def defer_frontier(self, states: list[ScreenState], agent_id: str, task: Task) -> None:
@@ -411,8 +427,22 @@ class QueueReviewRun(ReviewRun):
         lines = "\n".join(f"- {s.summary} ({s.route}, found by {s.discovered_by})" for s in known) or "- (none yet)"
         return (f"You are {agent}, one of two explorers sharing a map. You started this task at: {current.summary}. "
                 f"States the team has already recorded:\n{lines}\n"
+                "FlowLens replayed any steps needed to reach this page in your own test workspace, so data shown here "
+                "may come from that setup, not from you. The input tester owns every recorded form: do not fill or "
+                "submit one, and do not repeat a journey to satisfy the goal again. "
                 "Prefer actions that reach pages or page conditions not in that list. Finish when nothing new is "
                 "reachable within a few actions.")
+
+    def tester_owned(self, obs, act) -> str | None:
+        """The recorded form this explorer action would fill or submit, if any."""
+        el = next((e for e in obs.elements if e.id == getattr(act, "element_id", None)), None)
+        if el is None:
+            return None
+        for key, fields, submits in extract_forms(obs):
+            controls = {(c.role, c.name) for c in [*(f.control for f in fields), *submits]}
+            if key in self.forms and (el.role, el.name) in controls:
+                return key
+        return None
 
     async def explore_task(self, task: Task, agent: str) -> tuple[list[str], str | None, TaskStatus | None]:
         lim = self.run.limits
@@ -478,6 +508,12 @@ class QueueReviewRun(ReviewRun):
                     self.event("explorer_observation", act.summary, agent_id=agent, task=task, state_id=current.id,
                                route=current.route, persistence=act.persistence, model_call_id=mc_id)
                     break
+                owned = self.tester_owned(obs, act)
+                if owned:
+                    self.event("explorer_action_refused", f"{agent} may not use form {owned}: the input tester owns it",
+                               agent_id=agent, task=task, model_call_id=mc_id, action=act.model_dump())
+                    history.append(f"{step}. refused, not run: the input tester owns this form. Go elsewhere or finish.")
+                    continue
                 ex = await eng.execute(act)
                 current, sem = self._explorer_step(act.model_dump(), ex, current, sem, agent, ctx.context_id,
                                                    task, mc_id, att, produced)

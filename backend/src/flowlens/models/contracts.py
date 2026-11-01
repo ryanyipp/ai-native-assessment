@@ -375,6 +375,7 @@ class ScreenState(BaseModel):
     sightings: list[StateSighting] = Field(default_factory=list)
     structure: str | None = None  # page structure without field fill flags (see engine.page_structure)
     layout: str | None = None  # structure without status/alert messages
+    destinations: list[str] = Field(default_factory=list)  # see engine.page_destinations
 
 
 class Transition(BaseModel):

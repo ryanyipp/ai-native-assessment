@@ -49,6 +49,7 @@ def test_structure_ignores_fill_but_keeps_errors_dialogs_and_banners():
 async def test_queue_skips_variations_and_tested_outcomes_but_explores_new_pages(fixture_server, tmp_path):
     script, _ = filling_script()
     qr, store = make_queue_run(fixture_server, tmp_path, script, name="frontier")
+    qr.tester_owned = lambda obs, act: None  # produce a filled variation; ownership is tested separately
     await qr.execute()
     d = store.detail(qr.run.id)
     skipped = [t for t in d.tasks if t.status == TaskStatus.skipped]

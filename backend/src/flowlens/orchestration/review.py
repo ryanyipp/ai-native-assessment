@@ -44,7 +44,7 @@ from flowlens.models.contracts import (
 from flowlens.orchestration.replay import execute_step, reach_state
 from flowlens.orchestration.runner import ExplorerRun, relative_path
 from flowlens.services.llm import BudgetExceeded
-from flowlens.services.test_data import SetupError, session_provider
+from flowlens.services.test_data import SetupError, WorkspaceProvider, session_provider
 from flowlens.verification.assertions import AssertionInvalid, evaluate, validate_assertion
 
 COORDINATOR = "coordinator"
@@ -130,8 +130,12 @@ class ReviewRun(ExplorerRun):
         return next((s for s in self.states.values() if s.id == state_id), None)
 
     def setup_for(self, state: ScreenState) -> SetupRecipe:
+        # A record created by filling a form belongs to the workspace that created it, so its URL
+        # cannot open in a fresh workspace (run_816054f4e335 step 35: 404). Replay the recipe instead.
+        created = (self.provider.isolation == WorkspaceProvider.isolation and ":id" in state.route
+                   and any(s.type == "fill" for s in state.semantic_recipe))
         return SetupRecipe(target_state_id=state.id, expected_signature=state.signature,
-                           direct_path=relative_path(state.url), steps=list(state.semantic_recipe),
+                           direct_path=None if created else relative_path(state.url), steps=list(state.semantic_recipe),
                            data_isolation=self.provider.isolation)
 
     def save_task(self, task: Task) -> None:
