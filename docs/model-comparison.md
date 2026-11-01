@@ -280,3 +280,32 @@ Medians across repetitions. Defects are found/known across runs; `n/a` means no 
 | Haiku 5.5 | queue | ticket-broken | 2 | `run_8404dfb697b9` | completed | yes | T2,T3,T4 | – | 0/2 | 0 | 0 | 44 | 13 | 17198 | 4550 | 0.0040 | 3139/4741 | 107/484 | 1 | 1 |
 | Haiku 5.5 | queue | ticket-corrected | 2 | `run_1decb11fd77e` | completed | yes | T2,T3 | – | 0/0 | 0 | 0 | 21 | 8 | 9695 | 2134 | 0.0020 | 3025/4021 | 51/537 | 0 | 0 |
 | Haiku 5.5 | single | ticket-corrected | 2 | `run_cf2bf545f377` | completed | yes | T2,T3 | – | 0/0 | 0 | 0 | 27 | 6 | 9152 | 1563 | 0.0017 | 2384/4304 | 53/144 | 0 | 0 |
+
+## Exploratory extension: four more model families (incomplete)
+
+Exploratory, run after the current-code rerun. Sections above are unchanged. Scenario: `evaluation/model-comparison/scenario_rerun_four_more.json`. Results: `evaluation/results/rerun-four-more/`. All 45 runs have fingerprint `d3c871e37e928ad6`.
+
+**Outcome: 45 of 64 planned runs.** The spending guard stopped the batch because key usage exceeded recorded cost by US$0.0511, over the US$0.05 tolerance. It was not raised or bypassed. 16 failed calls carry no recorded cost and are the likely cause, not a proven one. MiniMax and GLM are complete; Qwen and Kimi are partial, mostly first repetitions, and are not comparable as totals.
+
+**Parameters.** Every model and mode used the frozen request: temperature 0, reasoning effort low (minimal on a truncation retry), excluded reasoning text, JSON object mode, and OpenRouter's choice of provider. FlowLens uses JSON decisions, not native tool calls, and sends no conversation history, so no reasoning or tool-call history is replayed.
+
+**Compatibility (not scored).** MiniMax and GLM returned parseable typed assertions. Qwen and Kimi did not: reasoning used the output cap at both low and minimal (`assertion_probe.json`). With reasoning disabled, one diagnostic call each parsed (`reasoning_off_diagnostic.json`), but that setting needs a client change and was not used. Qwen and Kimi were first held back, then run on frozen settings at Ryan's instruction, after the other two models' cells.
+
+| Model | Mode | Runs | Scored | Supported | False confirmations | Unsupported hits | Mean US$/run | Mean time | Mean calls | Truncated |
+|---|---|---|---|---|---|---|---|---|---|---|
+| MiniMax | Queue | 8 | 5/6 | 5/6 | 0 | 0 | 0.0168 | 128.7 s | 24.2 | 0 |
+| MiniMax | Single | 8 | 1/6 | 1/6 | 0 | 0 | 0.0062 | 84.5 s | 8.0 | 1 |
+| GLM | Queue | 8 | 5/6 | 4/6 | 0 | 1 | 0.0326 | 249.1 s | 20.0 | 13 |
+| GLM | Single | 8 | 4/6 | 4/6 | 0 | 0 | 0.0128 | 191.3 s | 8.6 | 1 |
+| Qwen | Queue | 4 of 8 | 0/3 | 0/3 | 0 | 0 | 0.0149 | 87.2 s | 12.2 | 13 |
+| Qwen | Single | 3 of 8 | 0/3 | 0/3 | 0 | 0 | 0.0106 | 116.5 s | 7.3 | 10 |
+| Kimi | Queue | 3 of 8 | 0/3 | 0/3 | 0 | 0 | 0.0237 | 188.2 s | 13.3 | 7 |
+| Kimi | Single | 3 of 8 | 0/3 | 0/3 | 0 | 0 | 0.0122 | 170.3 s | 7.3 | 4 |
+
+Five runs were unusable (Qwen 3, Kimi 2); one Kimi run failed. Per-run records are in `tables.md`, `scores.json` and `supported.json`.
+
+**Unsupported checks (2 of 16 replayed findings).** Both failed on both builds. `run_2c145ba56e79` (GLM queue, D1): a validation-message check on Publish date; its page was not individually inspected, so it is not classed as wrong-page. `run_7c4f3cb01e13` (MiniMax queue, T5): a text-absence check, classed as another assertion-selection failure; the same run had another supported DT5 finding. No permanent-link error occurred. Replays had no setup errors. Support checking is benchmark tooling, not a product safeguard.
+
+**Spending.** Recorded US$0.8323, key usage US$0.8833, including US$0.0858 of smoke tests and probes. 16 failed calls have no recorded cost.
+
+**Caveats.** Two repetitions, development fixtures, later timing, mixed providers, and no statistical test. This compares workflows, not agent count alone.

@@ -23,7 +23,8 @@ from flowlens.storage.db import Store  # noqa: E402
 
 SC = json.loads((ROOT / "evaluation" / "model-comparison" / os.environ.get("BENCHMARK_SCENARIO", "scenario.json")).read_text("utf-8"))
 SHORT = {"google/gemini-3-flash-preview": "Gemini", "deepseek/deepseek-v4-flash": "DeepSeek", "openai/gpt-5-nano": "GPT-5 Nano",
-         "anthropic/claude-haiku-5.5": "Haiku 5.5"}
+         "anthropic/claude-haiku-5.5": "Haiku 5.5", "minimax/minimax-m2.7": "MiniMax", "qwen/qwen3.5-plus-02-15": "Qwen",
+         "z-ai/glm-4.7": "GLM", "moonshotai/kimi-k2.5": "Kimi"}
 MODE = {"single_agent": "single", "queue_review": "queue"}
 
 
