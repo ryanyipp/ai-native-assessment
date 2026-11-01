@@ -6,7 +6,7 @@ import { api } from '../../lib/api'
 import { fmtUsd } from '../../lib/format'
 import type { Health, Run } from '../../lib/types'
 
-const DEFAULT_GOAL = 'Create a draft, save it, reload the page, and check whether the saved content persists.'
+const GOAL_HINT = 'Create a draft, save it, reload the page, and check whether the saved content persists.'
 
 // Bounds mirror RunLimits in backend/src/flowlens/models/contracts.py.
 const LIMITS = {
@@ -87,7 +87,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
   const [ack, setAck] = useState(false)
   const [approving, setApproving] = useState(false)
   const [approveError, setApproveError] = useState<string | null>(null)
-  const [goal, setGoal] = useState(DEFAULT_GOAL)
+  const [goal, setGoal] = useState('')
   const [requirements, setRequirements] = useState('')
   const [injectStall, setInjectStall] = useState(false)
   const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'>('single_explorer')
@@ -220,7 +220,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               </p>
             )}
             <FormField id={`${uid}-goal`} label="Review goal" error={show('goal')}>
-              <AutoTextarea id={`${uid}-goal`} className={inputCls(show('goal'))} rows={3} value={goal} maxRem={16}
+              <AutoTextarea id={`${uid}-goal`} className={inputCls(show('goal'))} rows={3} value={goal} maxRem={16} placeholder={GOAL_HINT}
                 aria-invalid={!!show('goal')} aria-describedby={show('goal') ? `${uid}-goal-err` : undefined}
                 onChange={(e) => setGoal(e.target.value)} />
             </FormField>
