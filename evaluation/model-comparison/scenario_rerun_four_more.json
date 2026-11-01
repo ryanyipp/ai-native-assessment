@@ -2,9 +2,7 @@
   "note": "Exploratory extension. Copy of scenario_rerun_nano_haiku.json with only models, smoke_models and these notes changed; same code fingerprint d3c871e37e928ad6. Models were selected by Ryan before testing.",
   "models": [
     "minimax/minimax-m2.7",
-    "qwen/qwen3.5-plus-02-15",
-    "z-ai/glm-4.7",
-    "moonshotai/kimi-k2.5"
+    "z-ai/glm-4.7"
   ],
   "smoke_models": [
     "minimax/minimax-m2.7",
@@ -12,7 +10,7 @@
     "z-ai/glm-4.7",
     "moonshotai/kimi-k2.5"
   ],
-  "model_notes": "Unchanged client request for every model and mode: temperature 0, reasoning effort low with excluded reasoning text (minimal on the truncation retry), response_format json_object. OpenRouter lists all three for all four models. Provider routing is left to OpenRouter; the provider serving each call is recorded.",
+  "model_notes": "Unchanged client request for every model and mode: temperature 0, reasoning effort low with excluded reasoning text (minimal on the truncation retry), response_format json_object. OpenRouter lists all three for all four models. Provider routing is left to OpenRouter; the provider serving each call is recorded. qwen/qwen3.5-plus-02-15 and moonshotai/kimi-k2.5 were removed from scored runs before any scored run: under the frozen client their hidden reasoning used the whole output cap at effort low and minimal, so no typed assertion parsed. Disabling reasoning needs a client change, which is out of bounds for this experiment.",
   "modes": [
     "single_agent",
     "queue_review"

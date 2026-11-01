@@ -1,0 +1,7 @@
+{"at": "2026-11-01T14:00:12.342671+00:00", "label": "start", "recorded_usd": 0.0, "key_usage_base": 3.037795811, "key_usage": 3.037795811}
+{"at": "2026-11-01T14:01:19.920259+00:00", "label": "smoke:run_f25101e8efd3", "recorded_usd": 0.00527499, "key_usage_base": 3.037795811, "key_usage": 3.041164601}
+{"at": "2026-11-01T14:03:08.068275+00:00", "label": "smoke:run_4a0856e48a82", "recorded_usd": 0.01373814, "key_usage_base": 3.037795811, "key_usage": 3.047951781}
+{"at": "2026-11-01T14:06:53.450117+00:00", "label": "smoke:run_15b647a44ece", "recorded_usd": 0.01892126, "key_usage_base": 3.037795811, "key_usage": 3.068794051}
+{"at": "2026-11-01T14:09:01.213470+00:00", "label": "smoke:run_d0eb6e634c54", "recorded_usd": 0.027170451999999998, "key_usage_base": 3.037795811, "key_usage": 3.091973893}
+{"at": "2026-11-01T14:13:23.778024+00:00", "label": "probe:assertion", "recorded_usd": 0.0195848, "key_usage_base": 3.037795811, "key_usage": 3.112613053}
+{"at": "2026-11-01T14:13:23.778024+00:00", "label": "probe:reasoning-off", "recorded_usd": 0.001156476, "key_usage_base": 3.037795811, "key_usage": 3.112613053}

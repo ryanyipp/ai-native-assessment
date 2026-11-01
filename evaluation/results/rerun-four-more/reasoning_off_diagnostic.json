@@ -1,0 +1,28 @@
+[
+ {
+  "model": "qwen/qwen3.5-plus-02-15",
+  "label": "diagnostic only, not used in scored runs",
+  "reasoning": {
+   "enabled": false
+  },
+  "provider": "Alibaba",
+  "finish": "stop",
+  "completion_tokens": 139,
+  "reasoning_tokens": 0,
+  "cost": 0.00042224,
+  "parsed": true
+ },
+ {
+  "model": "moonshotai/kimi-k2.5",
+  "label": "diagnostic only, not used in scored runs",
+  "reasoning": {
+   "enabled": false
+  },
+  "provider": "Venice",
+  "finish": "stop",
+  "completion_tokens": 172,
+  "reasoning_tokens": 0,
+  "cost": 0.000734236,
+  "parsed": true
+ }
+]

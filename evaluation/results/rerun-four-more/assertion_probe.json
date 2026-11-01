@@ -1,0 +1,114 @@
+[
+ {
+  "model": "minimax/minimax-m2.7",
+  "label": "compatibility probe, not scored",
+  "source_prompt": "mc_1dd301f08645",
+  "max_tokens": 1400,
+  "attempts": [
+   {
+    "reasoning_setting": "low",
+    "provider": "Minimax",
+    "finish": "stop",
+    "reasoning_tokens": 0,
+    "completion_tokens": 624,
+    "cost": 0.0009753,
+    "parsed": true,
+    "assertion": "validation_message_present"
+   },
+   {
+    "reasoning_setting": "minimal",
+    "provider": "Minimax",
+    "finish": "stop",
+    "reasoning_tokens": 0,
+    "completion_tokens": 716,
+    "cost": 0.0010857,
+    "parsed": true,
+    "assertion": "validation_message_present"
+   }
+  ]
+ },
+ {
+  "model": "qwen/qwen3.5-plus-02-15",
+  "label": "compatibility probe, not scored",
+  "source_prompt": "mc_1dd301f08645",
+  "max_tokens": 1400,
+  "attempts": [
+   {
+    "reasoning_setting": "low",
+    "provider": "Alibaba",
+    "finish": "length",
+    "reasoning_tokens": 1400,
+    "completion_tokens": 1402,
+    "cost": 0.002392,
+    "parsed": false,
+    "error": "invalid verifier decision: Invalid JSON: EOF while parsing a value at line 1 column 0 at ()"
+   },
+   {
+    "reasoning_setting": "minimal",
+    "provider": "Alibaba",
+    "finish": "length",
+    "reasoning_tokens": 1400,
+    "completion_tokens": 1402,
+    "cost": 0.002392,
+    "parsed": false,
+    "error": "invalid verifier decision: Invalid JSON: EOF while parsing a value at line 1 column 0 at ()"
+   }
+  ]
+ },
+ {
+  "model": "z-ai/glm-4.7",
+  "label": "compatibility probe, not scored",
+  "source_prompt": "mc_1dd301f08645",
+  "max_tokens": 1400,
+  "attempts": [
+   {
+    "reasoning_setting": "low",
+    "provider": "Z.AI",
+    "finish": "stop",
+    "reasoning_tokens": 281,
+    "completion_tokens": 407,
+    "cost": 0.0013754,
+    "parsed": true,
+    "assertion": "validation_message_present"
+   },
+   {
+    "reasoning_setting": "minimal",
+    "provider": "Z.AI",
+    "finish": "stop",
+    "reasoning_tokens": 298,
+    "completion_tokens": 460,
+    "cost": 0.001492,
+    "parsed": true,
+    "assertion": "validation_message_present"
+   }
+  ]
+ },
+ {
+  "model": "moonshotai/kimi-k2.5",
+  "label": "compatibility probe, not scored",
+  "source_prompt": "mc_1dd301f08645",
+  "max_tokens": 1400,
+  "attempts": [
+   {
+    "reasoning_setting": "low",
+    "provider": "Venice",
+    "finish": "length",
+    "reasoning_tokens": 1638,
+    "completion_tokens": 1400,
+    "cost": 0.005055064,
+    "parsed": false,
+    "error": "invalid verifier decision: Invalid JSON: EOF while parsing a value at line 1 column 0 at ()"
+   },
+   {
+    "reasoning_setting": "minimal",
+    "provider": "Venice",
+    "finish": "length",
+    "reasoning_tokens": 1637,
+    "completion_tokens": 1400,
+    "cost": 0.004817336,
+    "parsed": false,
+    "error": "invalid verifier decision: Invalid JSON: EOF while parsing a string at line 1 column 8 at ()"
+   }
+  ]
+ }
+]
