@@ -1,0 +1,165 @@
+[
+ {
+  "source_run": "run_b136420c0fdf",
+  "finding": "fnd_19d4039b209e",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_949a99cc5927",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_124cfcc64bba",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_b136420c0fdf",
+  "finding": "fnd_9f3fcc0007a9",
+  "requirement": "T5",
+  "assertion": "navigation_reached",
+  "params": {
+   "route": "/bookings",
+   "expect_reached": true
+  },
+  "broken": {
+   "run_id": "run_20e05a7285de",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_edd330d409a1",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_8017f3ef313a",
+  "finding": "fnd_35cfb909408d",
+  "requirement": "T5",
+  "assertion": "element_visible",
+  "params": {
+   "name": "Harbour Jazz Night",
+   "role": "link",
+   "expect_visible": false
+  },
+  "broken": {
+   "run_id": "run_4df90ba88403",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_393ba7e0424a",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_619c5b2bc20c",
+  "finding": "fnd_61916860d768",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_4b0cf7cb8ff6",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_7ad38b1760f3",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_619c5b2bc20c",
+  "finding": "fnd_170ba0540ed4",
+  "requirement": "T5",
+  "assertion": "text_or_value_retained",
+  "params": {
+   "expected": "Harbour Jazz Night \u00b7 2 ticket(s)",
+   "expect_present": false
+  },
+  "broken": {
+   "run_id": "run_71a31f33921c",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_c2183946a9a6",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_66e7d1b88ede",
+  "finding": "fnd_7ae6df975a79",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_6c694b0ad426",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_8d26c0a13bda",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ }
+]
