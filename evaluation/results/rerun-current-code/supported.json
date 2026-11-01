@@ -1,0 +1,379 @@
+[
+ {
+  "source_run": "run_52d4703e30af",
+  "finding": "fnd_a3f6d485fd44",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_184927a9e7ee",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_a0e2ceceb93a",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_26e821e30662",
+  "finding": "fnd_a2a9d0f9a276",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_e168e35ad095",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_89f18bf1fd68",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_7a2cb135c9f8",
+  "finding": "fnd_84fa226b401d",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_b97c29901a5d",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_4f6030c06c75",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_467651dc36a2",
+  "finding": "fnd_32c43d54ff12",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_f9b8de145a83",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_c08e18550ece",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_ca4a403cae45",
+  "finding": "fnd_bd5c345b46d8",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_c9d20af5bb1e",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_2d002e80ec62",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_ca4a403cae45",
+  "finding": "fnd_5b4b92a6c94e",
+  "requirement": "T5",
+  "assertion": "text_or_value_retained",
+  "params": {
+   "expected": "Harbour Jazz Night \u00b7 2 ticket(s)",
+   "field": null,
+   "expect_present": false
+  },
+  "broken": {
+   "run_id": "run_85cbf1017707",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_e0334b1c19ec",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_270bccedb542",
+  "finding": "fnd_790e8423dd16",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_e2b00a048c89",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_3981df9326ea",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_ed3bf3a726a0",
+  "finding": "fnd_c598749897eb",
+  "requirement": "T5",
+  "assertion": "element_visible",
+  "params": {
+   "name": "Harbour Jazz Night",
+   "role": "link",
+   "expect_visible": false
+  },
+  "broken": {
+   "run_id": "run_8d10757749f7",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_a9c2e8ac1f1a",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_8999f4f354bf",
+  "finding": "fnd_96e4b9ba1c26",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_405bdca14a21",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_441c7b113d52",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_8ef3d0621c6c",
+  "finding": "fnd_e7ddb010fde8",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_52086506d9b4",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_6b667a9ab5f2",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_19fdc87e98a7",
+  "finding": "fnd_35a4f9bcbea8",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_4c67cf7b41ab",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_c23873ad5725",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_fe6c8f711122",
+  "finding": "fnd_e0bf1ccacbf2",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_bb4c10096e21",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_50eb036659e6",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_d103c84ef8e2",
+  "finding": "fnd_ba07d4154561",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_34a5d9b104e8",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_18986231c97d",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_d103c84ef8e2",
+  "finding": "fnd_1ee8b929c653",
+  "requirement": "T5",
+  "assertion": "text_or_value_retained",
+  "params": {
+   "expected": "Harbour Jazz Night \u00b7 2 ticket(s)",
+   "expect_present": false
+  },
+  "broken": {
+   "run_id": "run_9fee2045b441",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_65a63060ebfa",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ }
+]

@@ -41,6 +41,24 @@ Haiku was added after the main batch, on the two local fixtures only, so its fig
 
 Records: [`evaluation/results/model-comparison-haiku/`](../evaluation/results/model-comparison-haiku/) and [scenario_haiku.json](../evaluation/model-comparison/scenario_haiku.json).
 
+## Addendum: planned rerun on current code
+
+A new evaluation at commit `d584bb1`, run after an assertion audit of the historical batch. It does not replace any result here. Same fixtures, requirements, limits, output caps and 2 repetitions; 32 runs, none dropped, and no call lacked a cost. Spend: US$0.3334 recorded, US$0.333 key usage.
+
+A **supported detection** is a scored detection whose recorded assertion fails on the broken build and passes on the corrected build, in browser-only replays (`scripts/supported_check.py`, frozen before the batch).
+
+| Model | Mode | Scored detections | Supported | False confirmations | US$ per run | Mean s | Mean calls | Truncated |
+|---|---|---|---|---|---|---|---|---|
+| Gemini | queue | 6/6 | **6/6** | 0 | 0.0284 | 76.1 | 23.1 | 4 |
+| Gemini | single | 4/6 | **3/6** | 0 | 0.0093 | 42.3 | 8.5 | 2 |
+| DeepSeek | queue | 2/6 | **1/6** | 0 | 0.0028 | 109.0 | 22.4 | 39 |
+| DeepSeek | single | 2/6 | **2/6** | 0 | 0.0012 | 67.6 | 8.0 | 5 |
+
+- **Unsupported:** `run_26e821e30662` evaluated a validation message on the dashboard check page, which never shows one on either build. `run_ed3bf3a726a0` matched the permanent "Book tickets" link.
+- **Limits:** 2 repetitions on fixtures used in development, and run after seeing the audit, so this is not independent confirmation.
+
+Records: [`evaluation/results/rerun-current-code/`](../evaluation/results/rerun-current-code/).
+
 ## Method
 
 - **Models:** the current Gemini model plus two inexpensive alternatives. Prices and parameters were checked on OpenRouter's API on 2026-10-31 and are recorded in [scenario.json](../evaluation/model-comparison/scenario.json). Each run used one model for every role.
