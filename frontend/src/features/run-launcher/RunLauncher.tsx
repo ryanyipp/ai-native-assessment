@@ -6,6 +6,12 @@ import { api } from '../../lib/api'
 import { fmtUsd } from '../../lib/format'
 import type { Health, Run } from '../../lib/types'
 
+const DEMO_SITES = [
+  ['Ticket Desk: fixed', 'http://localhost:5177/'],
+  ['Ticket Desk: broken', 'http://localhost:5176/'],
+  ['Creator Studio: fixed', 'http://localhost:5175/'],
+  ['Creator Studio: broken', 'http://localhost:5174/'],
+] as const
 const GOAL_HINT = 'Create a draft, save it, reload the page, and check whether the saved content persists.'
 
 // Bounds mirror RunLimits in backend/src/flowlens/models/contracts.py.
@@ -193,6 +199,14 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               <input id={`${uid}-url`} className={cx(inputCls(show('url')), 'font-mono text-[13px]')} value={targetUrl} inputMode="url" autoComplete="off" spellCheck={false}
                 aria-invalid={!!show('url')} aria-describedby={show('url') ? `${uid}-url-err` : `${uid}-url-hint`}
                 onChange={(e) => { setTargetUrl(e.target.value); setAck(false); setApproveError(null) }} />
+              <div className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Demo sites">
+                {DEMO_SITES.map(([name, url]) => (
+                  <button key={url} type="button" onClick={() => { setTargetUrl(url); setAck(false); setApproveError(null) }}
+                    className={cx('rounded-full border px-2 py-0.5 text-xs', targetUrl === url ? 'border-accent-700 text-accent-700' : 'border-slate-200 text-slate-600 hover:text-slate-900')}>
+                    {name}
+                  </button>
+                ))}
+              </div>
             </FormField>
             {needsApproval && (
               <div className="space-y-2 rounded-lg border border-amber-300 bg-amber-50/60 px-3 py-2.5 text-[13px]" role="group" aria-label="Approve target origin">
