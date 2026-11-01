@@ -104,17 +104,21 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
     <div className="space-y-4 px-4 py-4">
       {stopped && (
         <Callout tone={r.status === 'failed' ? 'red' : 'amber'} title={r.status === 'failed' ? 'Review stopped on an error' : 'Review did not finish'}>
-          <span className="[overflow-wrap:anywhere]">{r.stop_reason ?? 'No stop reason was recorded.'}</span>{' '}
           <strong>{detail.findings.length === 0 ? 'Zero findings here does not mean the website passed.' : 'The findings below are incomplete.'}</strong>
+          <details className="mt-1">
+            <summary className="cursor-pointer select-none text-xs font-medium">Why it stopped</summary>
+            <p className="mt-1 [overflow-wrap:anywhere]">{r.stop_reason ?? 'No stop reason was recorded.'}</p>
+          </details>
         </Callout>
       )}
       {hasVerifier ? (
-        <Callout title="How to read these results">
-          The input tester reports suspicions; a separate verifier replays each one in fresh browser sessions with fresh test data, and code
+        <details className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] text-slate-700">
+          <summary className="cursor-pointer select-none font-medium">How to read these results</summary>
+          <p className="mt-1">The input tester reports suspicions; a separate verifier replays each one in fresh browser sessions with fresh test data, and code
           evaluates a typed assertion taken from an explicit requirement. <strong>Confirmed</strong>, <strong>not reproduced</strong> and{' '}
           <strong>inconclusive</strong> are all shown. An assertion can still encode the wrong expectation, so review the requirement and
-          evidence.
-        </Callout>
+          evidence.</p>
+        </details>
       ) : (
         <Callout title="Completed is not the same as correct">
           A <strong>completed</strong> run means the explorer finished its goal within the limits. It does not verify the website. Findings
@@ -144,9 +148,9 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
       )}
 
       {observations.length > 0 && (
-        <section className="rounded-xl border border-dashed border-slate-300 bg-white p-4" aria-label="Unverified explorer observations">
-          <SectionTitle>Unverified explorer observations</SectionTitle>
-          <p className="text-xs text-slate-500">Notes from explorers. Nothing checked these, and they are not findings.</p>
+        <details className="rounded-xl border border-dashed border-slate-300 bg-white p-4" aria-label="Unverified explorer observations">
+          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800">Unverified explorer observations ({observations.length})</summary>
+          <p className="mt-1 text-xs text-slate-500">Notes from explorers. Nothing checked these, and they are not findings.</p>
           <ul className="mt-2 space-y-2 text-[13px] text-slate-800">
             {observations.map((e) => (
               <li key={e.seq}>
@@ -158,7 +162,7 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ArrowRight, ChevronLeft, ChevronRight, Cpu, ExternalLink, Globe, Image, MousePointerClick, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ScreenshotPreview } from '../../components/Screenshot'
@@ -150,8 +151,7 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
         </section>
       )}
 
-      <section>
-        <SectionTitle>{tc || ver ? 'Last browser action' : 'Action'}</SectionTitle>
+      <Technical summary={tc || ver ? 'Last browser action' : 'Action'}>
         <dl className="divide-y divide-slate-100">
           <Field label="Command"><code className="font-mono text-xs">{t.action.type}</code>{t.action.element_id && <span className="font-mono text-xs text-slate-500"> · {t.action.element_id}</span>}</Field>
           {a?.target_description && <Field label="Target">{a.target_description}</Field>}
@@ -164,7 +164,7 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
           {a && <Field label="Page after" mono>{a.url_after}</Field>}
           {a && <Field label="Started">{fmtTime(a.started_at)}</Field>}
         </dl>
-      </section>
+      </Technical>
 
       <section>
         <SectionTitle>Timing</SectionTitle>
@@ -172,8 +172,7 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
       </section>
 
       {mc && (
-        <section>
-          <SectionTitle>Model decision</SectionTitle>
+        <Technical summary="Model decision">
           {reasoning && (
             <blockquote className="mb-2 border-l-2 border-violet-300 pl-3 text-[13px] italic leading-relaxed text-slate-700">{reasoning}</blockquote>
           )}
@@ -183,7 +182,7 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
             <Field label="Reported cost"><span className="tabular-nums">{fmtUsd(mc.reported_cost_usd, 6)}</span></Field>
             {!mc.ok && <Field label="Error"><span className="text-red-700">{mc.error}</span></Field>}
           </dl>
-        </section>
+        </Technical>
       )}
 
       <Technical>
@@ -308,6 +307,24 @@ function StateEvidence({ detail, s, onSelect }: { detail: RunDetail; s: ScreenSt
   )
 }
 
+function StepJump({ detail, step, onSelect }: { detail: RunDetail; step: number; onSelect: (s: Selection) => void }) {
+  const [value, setValue] = useState(String(step))
+  const go = () => {
+    const n = Number(value)
+    const hit = value.trim() && Number.isInteger(n) ? detail.transitions.find((x) => x.step === n) : undefined
+    if (hit) onSelect({ kind: 'transition', id: hit.id })
+    else setValue(String(step))
+  }
+  return (
+    <label className="flex min-w-[5.5rem] items-center justify-center gap-1 text-xs tabular-nums text-slate-600">
+      Step
+      <input aria-label="Go to step" inputMode="numeric" className="w-10 rounded border border-slate-200 px-1 py-0.5 text-center tabular-nums"
+        value={value} onChange={(e) => setValue(e.target.value)} onBlur={go} onFocus={(e) => e.target.select()}
+        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }} />
+    </label>
+  )
+}
+
 export function EvidencePanel({ detail, selection, onSelect, onStep }: {
   detail: RunDetail
   selection: Selection
@@ -322,9 +339,9 @@ export function EvidencePanel({ detail, selection, onSelect, onStep }: {
       <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-2">
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" onClick={() => onStep(-1)} aria-label="Previous step"><ChevronLeft size={15} /></Button>
-          <span className="min-w-[5.5rem] text-center text-xs tabular-nums text-slate-600">
-            {t ? `Step ${t.step}` : `State · step ${s!.first_seen_step}`}
-          </span>
+          {t ? <StepJump key={t.id} detail={detail} step={t.step} onSelect={onSelect} /> : (
+            <span className="min-w-[5.5rem] text-center text-xs tabular-nums text-slate-600">State · step {s!.first_seen_step}</span>
+          )}
           <Button variant="ghost" size="sm" onClick={() => onStep(1)} aria-label="Next step"><ChevronRight size={15} /></Button>        </div>
         <Button variant="ghost" size="sm" onClick={() => onSelect(null)} aria-label="Close evidence"><X size={15} /></Button>
       </div>
