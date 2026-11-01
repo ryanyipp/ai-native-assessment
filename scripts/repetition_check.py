@@ -59,12 +59,23 @@ def explorer(style, page, user):
     return {"type": "finish", "summary": "scripted finish"}
 
 
+def looper(page, user):
+    """Imitates run_b92fc0e8e8c3: keeps walking links even when the map has nothing new."""
+    hist = user.split("Your previous actions:")[1].split("Current page:")[0]
+    links = re.findall(r'(e\d+) link "([^"]+)"', page)
+    for e, name in links:
+        if name not in hist:
+            return {"type": "click", "element_id": e}
+    return {"type": "click", "element_id": links[0][0]} if links else {"type": "finish", "summary": "scripted finish"}
+
+
 def script(style):
     def reply(messages):
         system, user = messages[0]["content"], messages[-1]["content"]
         if "You operate a real browser" in system:
             page = user.split("Current page:")[1].split("\n\nNote:")[0]
-            return json.dumps({"reasoning": "scripted", "action": explorer(style, page, user)})
+            act = looper(page, user) if style == "looper" else explorer(style, page, user)
+            return json.dumps({"reasoning": "scripted", "action": act})
         if "designed input cases" in system:
             n = len(re.findall(r"(?m)^Case \d+", user)) or 2
             return json.dumps({"reasoning": "scripted", "assessments": [
@@ -106,7 +117,7 @@ async def main():
                     break
                 except httpx.HTTPError:
                     time.sleep(0.1)
-            rows = [await one(style, tmp) for style in ("booker", "navigator")]
+            rows = [await one(style, tmp) for style in ("booker", "navigator", "looper")]
         finally:
             proc.terminate()
     out = Path(sys.argv[1])

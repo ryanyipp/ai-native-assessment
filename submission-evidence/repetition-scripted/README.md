@@ -8,3 +8,13 @@ Scripted evidence, not real-model evidence: `scripts/repetition_check.py` on Tic
 | Booker, after | 59 | 41 | 28 | 6 | 0 / 3 | 4 |
 | Navigator, before | 66 | 47 | 30 | 7 | 0 / 3 | 4 |
 | Navigator, after | 59 | 41 | 26 | 6 | 0 / 3 | 4 |
+
+## Coverage tracker
+
+Scripted evidence, Ticket Desk corrected. Coverage (routes, forms, test cases) was unchanged in all three.
+
+| Script | Calls before | Calls after | Actions before | Actions after |
+|---|---|---|---|---|
+| Booker | 28 | 20 | 59 | 54 |
+| Navigator | 26 | 18 | 59 | 54 |
+| Looper | 22 | 14 | 49 | 41 |

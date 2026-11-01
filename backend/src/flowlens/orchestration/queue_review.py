@@ -39,6 +39,7 @@ from flowlens.models.contracts import (
     Transition,
     new_id,
 )
+from flowlens.orchestration.coverage import NO_PROGRESS_LIMIT, Coverage, control_key
 from flowlens.orchestration.replay import execute_step, reach_state
 from flowlens.orchestration.review import COORDINATOR, ReviewRun, _Attempt
 from flowlens.orchestration.runner import (
@@ -85,6 +86,7 @@ class QueueReviewRun(ReviewRun):
         self.faults_left = run.fault_injection.times if run.fault_injection else 0
         self.workers_running = False
         self.fault_target_claimed = asyncio.Event()
+        self.coverage = Coverage()
 
     @property
     def explorer_reserve(self) -> int:
@@ -433,6 +435,11 @@ class QueueReviewRun(ReviewRun):
                 "Prefer actions that reach pages or page conditions not in that list. Finish when nothing new is "
                 "reachable within a few actions.")
 
+    def stop_no_progress(self, agent: str, task: Task, why: str) -> str:
+        note = f"stopped: no exploration progress ({why})"
+        self.event("explore_no_progress", f"{agent} {note}", agent_id=agent, task=task)
+        return note
+
     def tester_owned(self, obs, act) -> str | None:
         """The recorded form this explorer action would fill or submit, if any."""
         el = next((e for e in obs.elements if e.id == getattr(act, "element_id", None)), None)
@@ -472,14 +479,20 @@ class QueueReviewRun(ReviewRun):
                 sem = list(st.semantic_recipe) if reached.strategy == "recipe" or st.semantic_recipe else [
                     SemanticStep(type="navigate", path=setup.direct_path)]
             obs, history = ex.observation, []
+            self.coverage.observe(obs)
+            stalled = 0
             self._current_depth = task.depth
             await self.maybe_stall(task, agent)
             for step in range(1, lim.explore_steps_per_task + 1):
                 if self.stopping:
                     status, note = TaskStatus.unfinished, f"stopped early: {self.stopping}"
                     break
+                if self.coverage.exhausted():  # no call: nothing is left for this explorer to choose
+                    note = self.stop_no_progress(agent, task, "every observed control has been followed")
+                    break
                 messages = explorer.build_messages(self.run.goal, self.run.requirements, history, obs, step,
-                                                   lim.explore_steps_per_task, self.team_note(agent, current),
+                                                   lim.explore_steps_per_task,
+                                                   self.team_note(agent, current) + "\n" + self.coverage.summary(agent, obs),
                                                    name=EXPLORERS[agent])
                 try:
                     content, mc_id = await self.call_model(
@@ -514,12 +527,24 @@ class QueueReviewRun(ReviewRun):
                                agent_id=agent, task=task, model_call_id=mc_id, action=act.model_dump())
                     history.append(f"{step}. refused, not run: the input tester owns this form. Go elsewhere or finish.")
                     continue
+                el = next((e for e in obs.elements if e.id == getattr(act, "element_id", None)), None)
+                if el is not None:
+                    self.coverage.pursuing[agent] = control_key(el)
                 ex = await eng.execute(act)
+                self.coverage.pursuing.pop(agent, None)
+                known = len(att.new_states)
                 current, sem = self._explorer_step(act.model_dump(), ex, current, sem, agent, ctx.context_id,
                                                    task, mc_id, att, produced)
                 history.append(f"{step}. {_action_label(act.model_dump(), ex.target_description)} -> "
                                f"{'ok' if ex.ok else 'FAILED (' + str(ex.error) + ')'}; now at {ex.url_after}")
                 obs = ex.observation
+                if ex.ok:
+                    self.coverage.record(el, current.summary)
+                self.coverage.observe(obs)
+                stalled = 0 if self.coverage.progress(len(att.new_states) > known, obs) else stalled + 1
+                if stalled >= NO_PROGRESS_LIMIT:
+                    note = self.stop_no_progress(agent, task, f"{stalled} steps reached nothing new")
+                    break
         self.defer_frontier(att.new_states, agent, task)
         return produced, note, status
 
