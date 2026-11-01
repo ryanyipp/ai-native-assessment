@@ -90,7 +90,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
   const [goal, setGoal] = useState('')
   const [requirements, setRequirements] = useState('')
   const [injectStall, setInjectStall] = useState(false)
-  const [mode, setMode] = useState<'single_explorer' | 'explore_test_verify' | 'queue_review' | 'single_agent'>('single_explorer')
+  const [mode, setMode] = useState<'queue_review' | 'single_agent'>('queue_review')
   const [limits, setLimits] = useState<Record<LimitKey, number>>({
     max_cost_usd: health?.default_run_budget_usd ?? 0.5,
     max_steps: 15,
@@ -232,8 +232,6 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             <fieldset className="space-y-1.5">
               <legend className="text-[13px] font-medium text-slate-800">Workflow</legend>
               {([
-                ['single_explorer', 'Explorer only', 'One explorer. Results are unverified.'],
-                ['explore_test_verify', 'Explorer → input tester → verifier (sequential)', 'Tests the forms found, then replays suspected defects.'],
                 ['queue_review', 'Shared queue: two explorers, tester, verifier', 'Workers share one task queue in separate browser sessions.'],
                 ['single_agent', 'Single-agent baseline', 'One agent explores, tests and checks its own findings.'],
               ] as const).map(([value, label, hint]) => (

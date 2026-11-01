@@ -16,6 +16,7 @@ The rest of this file and `docs/plan.md` describe the agreed plan. This table sa
 | Reports | Implemented, built from saved records with no reporter model |
 | Live updates | Implemented as polling every 1.5 s; SSE is not implemented |
 | Cancel a run (API and UI) | Implemented |
+| Launcher workflows | Shared queue (default) and single-agent baseline; `single_explorer` and `explore_test_verify` stay in the API and old runs still display |
 | Re-check of a finding (`reverify`) | Script only (`scripts/checkpoint2_eval.py`); not in the API or UI |
 | Queue explorer finish notes | Shown as unverified explorer observations; they are not findings |
 | Review chat, goal auditor | Not implemented; out of submission scope |
