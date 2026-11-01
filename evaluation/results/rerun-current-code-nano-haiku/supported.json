@@ -1,0 +1,354 @@
+[
+ {
+  "source_run": "run_7e0cf6b33f36",
+  "finding": "fnd_27f29d828c73",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_b49c256f02e7",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_a1aaeab39ac4",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_5d3d33e0990e",
+  "finding": "fnd_0a6b03b9edc0",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": "past",
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_31da049db5d5",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_52f3f3a67764",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_226e5d73cb8e",
+  "finding": "fnd_7521005c6033",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_5ba11fcc5fba",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_93a6c97baefd",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_13cf0bec7454",
+  "finding": "fnd_d16fd587e1d5",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_f561e5f91c47",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_14c89119d722",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_42dc371c058d",
+  "finding": "fnd_5e7b0191315d",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_5fb69bdb545e",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_cb6ac49c9ac5",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_6e665cb751c3",
+  "finding": "fnd_08c2860664ab",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": "past",
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_d04b22415477",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_639a242a092d",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_50b98dfb5d5a",
+  "finding": "fnd_eb6e755168ae",
+  "requirement": "R3",
+  "assertion": "text_or_value_retained",
+  "params": {
+   "expected": "My Draft",
+   "field": "Title",
+   "expect_present": true
+  },
+  "broken": {
+   "run_id": "run_99c2ee70334d",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_7984ca0586a4",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_50b98dfb5d5a",
+  "finding": "fnd_dbccfbd5946a",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": null
+  },
+  "broken": {
+   "run_id": "run_ababd40c6532",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_a4aa988a753f",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_1d15a8031a26",
+  "finding": "fnd_bfaf0c8d494a",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_0a8b5706fc13",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_f095639ce737",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_206a80c0159c",
+  "finding": "fnd_797d99c76eeb",
+  "requirement": "R5",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Publish date"
+  },
+  "broken": {
+   "run_id": "run_085674950744",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_667b199401e3",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_4acffb592b6e",
+  "finding": "fnd_1f4fb67602ea",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": "between 1 and 6",
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_9cbbfc1b6400",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_5d99e649ee90",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ },
+ {
+  "source_run": "run_b6e3e72cc747",
+  "finding": "fnd_e53712011378",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_ca9465e93705",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_e766935baab1",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "supported": false
+ },
+ {
+  "source_run": "run_623ecbc4cc6e",
+  "finding": "fnd_cbb38d8813cb",
+  "requirement": "T2",
+  "assertion": "validation_message_present",
+  "params": {
+   "text_contains": null,
+   "field": "Tickets"
+  },
+  "broken": {
+   "run_id": "run_97fe90af6ea0",
+   "status": "confirmed",
+   "attempts": [
+    "confirmed",
+    "confirmed"
+   ]
+  },
+  "corrected": {
+   "run_id": "run_84396c9da36b",
+   "status": "not_reproduced",
+   "attempts": [
+    "not_reproduced",
+    "not_reproduced"
+   ]
+  },
+  "supported": true
+ }
+]

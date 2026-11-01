@@ -43,21 +43,35 @@ Records: [`evaluation/results/model-comparison-haiku/`](../evaluation/results/mo
 
 ## Addendum: planned rerun on current code
 
-A new evaluation at commit `d584bb1`, run after an assertion audit of the historical batch. It does not replace any result here. Same fixtures, requirements, limits, output caps and 2 repetitions; 32 runs, none dropped, and no call lacked a cost. Spend: US$0.3334 recorded, US$0.333 key usage.
+A new evaluation, run after an assertion audit of the historical batch. It does not replace any result here. All 64 runs used backend fingerprint `d3c871e37e928ad6`: Gemini and DeepSeek at commit `d584bb1`, Nano and Haiku at `71a53cb`, which only adds their scenario. Same fixtures, requirements, limits, output caps and 2 repetitions per cell. No run was dropped or repeated, and no call lacked a cost. Nano and Haiku ran later, and temperature 0 is not applied to them.
 
-A **supported detection** is a scored detection whose recorded assertion fails on the broken build and passes on the corrected build, in browser-only replays (`scripts/supported_check.py`, frozen before the batch).
+A **supported detection** is a scored detection whose recorded assertion fails on the broken build and passes on the corrected build, in browser-only replays (`scripts/supported_check.py`, frozen before the batches).
 
-| Model | Mode | Scored detections | Supported | False confirmations | US$ per run | Mean s | Mean calls | Truncated |
-|---|---|---|---|---|---|---|---|---|
-| Gemini | queue | 6/6 | **6/6** | 0 | 0.0284 | 76.1 | 23.1 | 4 |
-| Gemini | single | 4/6 | **3/6** | 0 | 0.0093 | 42.3 | 8.5 | 2 |
-| DeepSeek | queue | 2/6 | **1/6** | 0 | 0.0028 | 109.0 | 22.4 | 39 |
-| DeepSeek | single | 2/6 | **2/6** | 0 | 0.0012 | 67.6 | 8.0 | 5 |
+| Model | Mode | Runs | Scored | Supported | False confirmations | Mean US$/run | Mean s | Mean calls | Truncated |
+|---|---|---|---|---|---|---|---|---|---|
+| Gemini | queue | 8 | 6/6 | **6/6** | 0 | 0.0284 | 76.1 | 23.1 | 4 |
+| Gemini | single | 8 | 4/6 | **3/6** | 0 | 0.0093 | 42.3 | 8.5 | 2 |
+| Haiku 5.5 | queue | 8 | 4/6 | **1/6** | 0 | 0.0064 | 68.5 | 20.9 | 0 |
+| Haiku 5.5 | single | 8 | 3/6 | **2/6** | 0 | 0.0024 | 39.9 | 7.4 | 0 |
+| GPT-5 Nano | queue | 8 | 2/6 | **1/6** | 2 | 0.0035 | 62.7 | 20.9 | 1 |
+| GPT-5 Nano | single | 8 | 3/6 | **1/6** | 1 | 0.0030 | 60.8 | 15.5 | 1 |
+| DeepSeek | queue | 8 | 2/6 | **1/6** | 0 | 0.0028 | 109.0 | 22.4 | 39 |
+| DeepSeek | single | 8 | 2/6 | **2/6** | 0 | 0.0012 | 67.6 | 8.0 | 5 |
 
-- **Unsupported:** `run_26e821e30662` evaluated a validation message on the dashboard check page, which never shows one on either build. `run_ed3bf3a726a0` matched the permanent "Book tickets" link.
-- **Limits:** 2 repetitions on fixtures used in development, and run after seeing the audit, so this is not independent confirmation.
+Queue total: 14/24 scored, 9/24 supported. Single total: 12/24 scored, 8/24 supported.
 
-Records: [`evaluation/results/rerun-current-code/`](../evaluation/results/rerun-current-code/).
+**Unsupported scored detections:**
+- **Validation message checked on a separate page (7):** `run_26e821e30662`, `run_7e0cf6b33f36`, `run_5d3d33e0990e`, `run_226e5d73cb8e`, `run_6e665cb751c3`, `run_1d15a8031a26` and `run_b6e3e72cc747`. The assertion ran on the check page, which shows no message on either build.
+- **Same fault on a missing page (1):** `run_13cf0bec7454` used `/bookings`, which also shows no message.
+- **Permanent link (1):** `run_ed3bf3a726a0` matched "Book tickets for Harbour Jazz Night".
+
+These are faults in the checks, not evidence the defects were absent. Separately, false confirmation `run_50b98dfb5d5a` (R3) checked an empty new-draft page.
+
+**Spend:** US$0.4552 recorded, US$0.4534 key usage.
+
+**Limits:** 2 repetitions on fixtures used in development, run after seeing the audit, so this is not independent confirmation.
+
+Records: [`rerun-current-code/`](../evaluation/results/rerun-current-code/), [`rerun-current-code-nano-haiku/`](../evaluation/results/rerun-current-code-nano-haiku/).
 
 ## Method
 
