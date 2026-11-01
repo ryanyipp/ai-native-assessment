@@ -22,8 +22,8 @@ from flowlens.verification import persistence
 
 WORKFLOW = {
     "single_explorer": "One explorer agent (no separate testing or verification)",
-    "explore_test_verify": "Explorer, then input tester, then independent verifier",
-    "queue_review": "Shared queue: two explorers, an input tester and an independent verifier",
+    "explore_test_verify": "Explorer, then input tester, then a separate verifier",
+    "queue_review": "Shared queue: two explorers, an input tester and a separate verifier",
     "single_agent": "Single agent that explores, tests and checks its own findings (comparison baseline)",
     "reverify": "Re-check of an earlier finding against another build",
 }
@@ -227,7 +227,14 @@ class ReportBuilder:
         n = len(attempts)
         st = f.verification_status.value
         indep = f.verification_independence != "self"
-        who = "an independent verifier" if indep else "the same agent that reported it (self-check, not independent)"
+        who = "a separate verifier agent" if indep else "the same agent that reported it (self-check, not independent)"
+        replayed = [a for a in attempts if a.result is not None]  # code evaluated an assertion in the browser
+        failed_setup = next((a for a in attempts if a.setup_error), None)
+        # Older records may keep a replay outcome without the assertion result.
+        ran = [a for a in attempts if a.result is not None or a.setup_ok]
+        outcomes = "; ".join(f"replay {a.replay_index + 1}: " + (f"assertion {'held' if a.result.passed else 'failed'}, " if a.result else "")
+                             + a.outcome for a in ran)
+        reviewer = {"verification_label": "Verification" if replayed else "Verification assessment"}
         if f.kind == "persistence_check":
             s = persistence.summarise(f.same_context_check)
             label = {"passed": "Explorer claim; same-session check matched",
@@ -241,20 +248,40 @@ class ReportBuilder:
         if st == "confirmed":
             return {"status": st, "label": "Confirmed" if indep else "Confirmed by self-check only", "tone": "red" if indep else "amber",
                     "independence": "independent" if indep else "self",
-                    "text": f"Re-checked by {who}: repeated {n} time(s) in fresh browser sessions and the problem appeared each time. "
-                            + ("" if indep else "Treat as likely but not independently confirmed.")}
+                    "text": f"Assertion chosen by {who} and evaluated by code in {len(ran)} fresh browser replay(s) ({outcomes}). "
+                            + ("" if indep else "Treat as likely but not independently confirmed."), **reviewer}
         if st == "not_reproduced":
             return {"status": st, "label": "Not reproduced", "tone": "green", "independence": "independent" if indep else "self",
-                    "text": f"Re-checked by {who} in {n} fresh browser session(s); the problem did not appear."}
+                    "text": f"Assertion chosen by {who} and evaluated by code in {len(ran)} fresh browser replay(s) "
+                            f"({outcomes}); the problem did not appear.", **reviewer}
         if st == "inconclusive":
             why = next((INCONCLUSIVE_WHY[a.failure_class] for a in attempts if a.failure_class in INCONCLUSIVE_WHY), None)
-            return {"status": st, "label": "Inconclusive", "tone": "slate", "independence": "independent" if indep else "self",
-                    "text": f"Re-checked by {who}, but no verdict was possible" + (f": {why}." if why else ".")
-                            + (" A person should decide whether this matters." if (why or "").startswith("no supplied") else "")}
+            base = {"status": st, "label": "Inconclusive", "tone": "slate", "independence": "independent" if indep else "self",
+                    **reviewer}
+            if replayed:
+                return base | {"text": f"Assertion evaluated by code in {len(replayed)} fresh browser replay(s) ({outcomes}), "
+                                       "but the replays gave no verdict" + (f": {why}." if why else ".")}
+            if failed_setup:
+                return base | {"text": f"Inconclusive: browser replay was attempted but setup failed "
+                                       f"({_clip(failed_setup.setup_error, 200)}). No assertion was evaluated."}
+            if any(a.failure_class == "expectation" for a in attempts):
+                return base | {"text": "Inconclusive: no supplied requirement defines the expected behaviour. "
+                                       "Browser replay was not attempted. A person should decide whether this matters."}
+            return base | {"text": f"Reviewed by {who}. Browser replay was not attempted"
+                                   + (f": {why}." if why else ".")}
         stopped = self.d.run.status in ("partial", "failed", "interrupted", "cancelled")
         return {"status": "unverified", "label": "Unverified", "tone": "amber", "independence": "none",
                 "text": "Only the agent that reported it has seen this; it was not re-checked"
                         + (" because the review stopped first." if stopped else ".")}
+
+    def reviewed(self, f: Finding) -> dict:
+        """Who looked at a finding. Browser verification is only claimed when an assertion was evaluated."""
+        ran = any(self.verifs[i].result is not None or self.verifs[i].setup_ok for i in f.verification_ids if i in self.verifs)
+        if not ran:
+            return {"Reviewed by": f.verified_by or "—", "Independence": "not applicable: no browser replay ran"}
+        return {"Verified by": f.verified_by or "—", "Independence": (
+            "self-check" if f.verification_independence == "self"
+            else "separate agent context; shares the tester's steps and the same model")}
 
     def finding(self, f: Finding) -> dict:
         req = self.reqs.get(f.requirement_ref or "")
@@ -289,11 +316,12 @@ class ReportBuilder:
                      if f.kind == "persistence_check" else _clip(no_ids(f.description), 140),
             "kind": kind, "requirement": (f"{req.id}: {req.text}" if req else None),
             "expected": f.expected, "observed": f.observed, "inputs": f.inputs,
+            "expected_label": "Expected" if req or f.kind == "persistence_check" else "Tester-proposed expectation",
             "verification": self.verification(f), "steps": steps, "screenshots": shots,
             "technical": {
                 "Finding id": f.id, "Reported by": f.reported_by, "Kind": f.kind,
                 "Verification status (stored)": f.verification_status.value,
-                "Verified by": f.verified_by or "—", "Independence": f.verification_independence or ("—" if not f.verified_by else "independent"),
+                **self.reviewed(f),
                 "Stored reason": _clip(f.verification_reason, 600) or "—",
                 "Re-check attempts": "; ".join(
                     f"#{a.replay_index + 1} {a.outcome} (setup {a.setup_strategy or 'failed'}"
@@ -340,7 +368,7 @@ class ReportBuilder:
             gaps.append(f"The review did not finish: {plain_stop(r.status.value, r.stop_reason, d.tasks)}. "
                         "Having no findings for an area does not mean that area works.")
         if r.mode == "single_explorer":
-            gaps.append("No input testing or independent verification ran in this workflow; anything reported is an unverified observation.")
+            gaps.append("No input testing or separate verification ran in this workflow; anything reported is an unverified observation.")
         seen_forms = set()
         for f in untested:
             heading = f.headings[0] if f.headings else f.route
@@ -454,7 +482,7 @@ def to_markdown(rep: dict) -> str:
         lines = [f"### {n}. {_md(x['title'])}", "", f"**Status: {v['label']}.** {v['text']}  ", f"*{x['kind']}*", ""]
         if x["requirement"]:
             lines += [f"**Requirement:** {_md(x['requirement'])}", ""]
-        lines += [f"**Expected:** {_md(x['expected'])}", "", f"**Observed:** {_md(x['observed'])}", ""]
+        lines += [f"**{x['expected_label']}:** {_md(x['expected'])}", "", f"**Observed:** {_md(x['observed'])}", ""]
         if v.get("check") and v["check"]["rows"]:
             lines += ["| Value the explorer checked | Expected | Result |", "|---|---|---|"]
             for row in v["check"]["rows"]:
@@ -500,8 +528,9 @@ def to_markdown(rep: dict) -> str:
         out += [f"| {_md(q['id'])}: {_md(q['text'])} | {_md(q['coverage'])} |" for q in rep["requirements"]]
         out += [""]
     out += ["## How findings were checked", "",
-            "- **Confirmed / Not reproduced / Inconclusive** (independent): a separate verifier agent repeated the steps in "
+            "- **Confirmed / Not reproduced** (separate verifier): a separate verifier agent repeated the steps in "
             "fresh browser sessions, and code, not the agent, decided the result.",
+            "- **Inconclusive**: no verdict. Each finding says whether a browser replay ran.",
             "- **Self-check**: the same agent that reported the finding checked it (single-agent baseline). Code still "
             "evaluated the result, but it is not independent.",
             "- **Unverified / Explorer claim**: only the reporting agent saw it. A same-session check compares the explorer's "
@@ -556,7 +585,7 @@ def to_html(rep: dict, md_href: str) -> str:
                  f'<p>{_e(v["text"])}</p>']
         if x["requirement"]:
             parts.append(f'<p><b>Requirement:</b> {_e(x["requirement"])}</p>')
-        parts.append(f'<div class="cmp"><div><b>Expected</b>{_e(x["expected"])}</div><div><b>Observed</b>{_e(x["observed"])}</div></div>')
+        parts.append(f'<div class="cmp"><div><b>{_e(x["expected_label"])}</b>{_e(x["expected"])}</div><div><b>Observed</b>{_e(x["observed"])}</div></div>')
         if v.get("check") and v["check"]["rows"]:
             rows = "".join(
                 f'<tr><td>{_e(r["field"])}</td><td>{_e(r["expected"])}</td><td>'

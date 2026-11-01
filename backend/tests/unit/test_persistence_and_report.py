@@ -101,7 +101,7 @@ def test_report_leads_with_summary_and_separates_self_checks(tmp_path):
     rep = build_report(_detail(tmp_path), tmp_path, "http://localhost:8000")
     md = to_markdown(rep)
     assert md.index("## Summary") < md.index("## Problems to fix") < md.index("## What was not checked") < md.index("## Diagnostics")
-    assert "**Status: Confirmed.** Re-checked by an independent verifier" in md
+    assert "**Status: Confirmed.** Assertion chosen by a separate verifier agent" in md
     assert "Type “2026-06-14” into “Publish date”" in md and "Click “Schedule post”" in md
     assert "(http://localhost:8000/api/artifacts/art_shot)" in md and "(file missing)" in md
     main = md.split("## Diagnostics")[0]

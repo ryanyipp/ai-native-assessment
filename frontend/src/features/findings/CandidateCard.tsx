@@ -52,22 +52,22 @@ function Attempt({ v, detail, onSelect }: { v: VerificationAttempt; detail: RunD
   return (
     <li className="space-y-2 rounded-lg border border-slate-200 p-3">
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-xs font-semibold">Replay {v.replay_index + 1}</span>
+        <span className="text-xs font-semibold">{wasAttempted(v) ? `Replay ${v.replay_index + 1}` : 'Assessment'}</span>
         <Badge tone={m.tone}>{m.label}</Badge>
         {v.failure_class && <Badge>{failureText[v.failure_class]}</Badge>}
         {v.result && <Badge tone={v.result.passed ? 'green' : 'red'}>Assertion {v.result.passed ? 'held' : 'failed'}</Badge>}
       </div>
       <p className="text-xs leading-relaxed text-slate-700">{v.reason}</p>
       <dl className="divide-y divide-slate-100 text-xs">
-        <Field label="Context" mono>{v.context_id ?? '—'} (fresh)</Field>
-        <Field label="Setup">{v.setup_ok ? `reached via ${v.setup_strategy}` : v.setup_error ?? 'not attempted'}</Field>
+        {v.context_id && <Field label="Context" mono>{v.context_id} (fresh)</Field>}
+        <Field label="Setup">{v.setup_ok ? `reached via ${v.setup_strategy}` : v.setup_error ? `replay setup failed: ${v.setup_error}` : 'browser replay not attempted'}</Field>
         {shown.length > 0 && (
           <Field label="Observed" mono>
             <span className="[overflow-wrap:anywhere]">{shown.map((k) => `${k}: ${JSON.stringify(obs[k])}`).join(' · ')}</span>
           </Field>
         )}
       </dl>
-      <EvidenceStrip ids={v.evidence_refs} detail={detail} label={`Verifier replay ${v.replay_index + 1}`} />
+      <EvidenceStrip ids={v.evidence_refs} detail={detail} label={wasAttempted(v) ? `Verifier replay ${v.replay_index + 1}` : 'Verifier assessment'} />
       {tr && (
         <button type="button" onClick={() => onSelect({ kind: 'transition', id: tr.id })} className="text-xs font-medium text-accent-700 hover:underline">
           Show this replay on the map (step {tr.step}) →
@@ -77,11 +77,18 @@ function Attempt({ v, detail, onSelect }: { v: VerificationAttempt; detail: RunD
   )
 }
 
+/** True only when saved records show a browser replay began; a verifier review alone is not one. */
+function wasAttempted(v: VerificationAttempt) {
+  return v.setup_ok || !!v.setup_strategy || !!v.setup_error || v.action_result_ids.length > 0
+}
+
 export function CandidateCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; onSelect: (s: Selection) => void }) {
   const m = verificationMeta[f.verification_status]
   const tc = testCaseFor(detail, f.test_case_id)
   const attempts = (detail.verifications ?? []).filter((v) => v.finding_id === f.id).sort((a, b) => a.replay_index - b.replay_index)
   const assertion = attempts.find((a) => a.assertion)?.assertion
+  const evaluated = attempts.some((a) => a.result)
+  const noRule = !evaluated && !attempts.some(wasAttempted) && attempts.some((a) => a.failure_class === 'expectation')
   const testTr = tc && detail.transitions.find((t) => t.test_case_id === tc.id)
   return (
     <article className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm" aria-label={`Finding ${f.id}`}>
@@ -89,14 +96,16 @@ export function CandidateCard({ f, detail, onSelect }: { f: Finding; detail: Run
         <Badge tone={m.tone}>{m.label}</Badge>
         <Badge>{f.kind === 'defect_candidate' ? 'Candidate defect' : 'Review observation'}</Badge>
         {f.requirement_ref && <Badge tone="blue">{f.requirement_ref}</Badge>}
-        <span className="text-[11px] text-slate-500">reported by {f.reported_by}{f.verified_by ? ` · verified by ${f.verified_by}` : ''}</span>
+        <span className="text-[11px] text-slate-500">reported by {f.reported_by}{f.verified_by ? ` · ${evaluated ? 'verified' : 'reviewed'} by ${f.verified_by}` : ''}</span>
       </div>
       <h2 className="text-sm font-semibold leading-snug">{f.description}</h2>
-      {f.verification_reason && <p className="text-xs leading-relaxed text-slate-600">{f.verification_reason}</p>}
+      {noRule
+        ? <p className="text-xs leading-relaxed text-slate-600">Inconclusive: no supplied requirement defines the expected behaviour. Browser replay was not attempted.</p>
+        : f.verification_reason && <p className="text-xs leading-relaxed text-slate-600">{f.verification_reason}</p>}
       <dl className="divide-y divide-slate-100">
         <Field label="Requirement">{f.requirement_text ? `${f.requirement_ref}: ${f.requirement_text}` : 'None supplied for this expectation'}</Field>
         <Field label="Inputs" mono><span className="[overflow-wrap:anywhere]">{JSON.stringify(f.inputs ?? {})}</span></Field>
-        <Field label="Expected">{f.expected}</Field>
+        <Field label={f.requirement_text ? 'Expected' : 'Tester-proposed expectation'}>{f.expected}</Field>
         <Field label="Tester saw">{f.observed}</Field>
         {f.source_finding_id && <Field label="Re-check of" mono>{f.source_finding_id}</Field>}
       </dl>
@@ -121,7 +130,7 @@ export function CandidateCard({ f, detail, onSelect }: { f: Finding; detail: Run
       </section>
 
       <section>
-        <SectionTitle aside={<ShieldCheck size={14} className="text-slate-500" />}>Independent verification</SectionTitle>
+        <SectionTitle aside={<ShieldCheck size={14} className="text-slate-500" />}>{evaluated ? 'Verification' : 'Verification assessment'}</SectionTitle>
         {assertion ? (
           <dl className="mb-2 divide-y divide-slate-100 text-xs">
             <Field label="Assertion" mono><span className="[overflow-wrap:anywhere]">{assertion.type} {JSON.stringify(assertion.params)}</span></Field>

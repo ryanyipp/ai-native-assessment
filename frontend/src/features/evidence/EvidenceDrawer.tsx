@@ -129,7 +129,7 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
             <Field label="Case">{tc.label}</Field>
             <Field label="Inputs" mono><span className="[overflow-wrap:anywhere]">{JSON.stringify(tc.inputs)}</span></Field>
             <Field label="Requirement">{tc.requirement_ref ?? 'none (tester expectation only)'}</Field>
-            <Field label="Expected">{tc.expected}</Field>
+            <Field label={tc.requirement_ref ? 'Expected' : 'Tester-proposed expectation'}>{tc.expected}</Field>
             <Field label="Status">{tc.status}{tc.setup_error ? ` — ${tc.setup_error}` : ''}</Field>
             <Field label="Tester verdict">{tc.tester_verdict ?? '—'}{tc.tester_note ? ` — ${tc.tester_note}` : ''}</Field>
           </dl>

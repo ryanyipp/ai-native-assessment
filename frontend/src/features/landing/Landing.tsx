@@ -44,7 +44,7 @@ export default function Landing() {
         <section className="fl-enter max-w-3xl pb-12 pt-14 sm:pt-20">
           <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl">See how a website works—and what needs attention.</h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            FlowLens agents explore website journeys, build an interactive flow map, test inputs and independently re-check suspected issues against your requirements.
+            FlowLens agents explore website journeys, build an interactive flow map, test inputs and re-check suspected issues against your requirements.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <a href="/workspace" className={buttonClass('primary', 'lg')}>Start a review<ArrowRight size={16} aria-hidden /></a>

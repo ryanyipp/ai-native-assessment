@@ -122,7 +122,7 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
       ) : (
         <Callout title="Completed is not the same as correct">
           A <strong>completed</strong> run means the explorer finished its goal within the limits. It does not verify the website. Findings
-          stay <strong>unverified</strong> until an independent verifier replays them in a fresh browser. No verifier ran in this run.
+          stay <strong>unverified</strong> until a separate verifier replays them in a fresh browser. No verifier ran in this run.
         </Callout>
       )}
       {counts.length > 0 && (
