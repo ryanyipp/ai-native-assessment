@@ -176,7 +176,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             <div>
               <h2 id={`${uid}-title`} className="text-base font-semibold">New review run</h2>
               <p className="mt-0.5 text-[13px] text-slate-500">
-                Settings stay here while you preview the target. Starting a run drives a real browser with live model calls and uses API credit.
+                Starting a run uses a real browser and API credit.
               </p>
             </div>
             {onClose && (
@@ -232,10 +232,10 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
             <fieldset className="space-y-1.5">
               <legend className="text-[13px] font-medium text-slate-800">Workflow</legend>
               {([
-                ['single_explorer', 'Explorer only', 'One explorer pursues the goal. Its result stays unverified.'],
-                ['explore_test_verify', 'Explorer → input tester → verifier (sequential)', 'Forms the explorer opens are tested; suspected requirement violations are replayed in fresh sessions. Uses more model calls.'],
-                ['queue_review', 'Shared queue: two explorers, tester, verifier', 'Workers claim tasks from one queue in separate browser contexts and data workspaces. Exploration stops at its budget share so testing and verification can run.'],
-                ['single_agent', 'Single-agent baseline', 'One agent context explores, tests and checks its own findings (evaluation baseline; its checks are self-checks).'],
+                ['single_explorer', 'Explorer only', 'One explorer. Results are unverified.'],
+                ['explore_test_verify', 'Explorer → input tester → verifier (sequential)', 'Tests the forms found, then replays suspected defects.'],
+                ['queue_review', 'Shared queue: two explorers, tester, verifier', 'Workers share one task queue in separate browser sessions.'],
+                ['single_agent', 'Single-agent baseline', 'One agent explores, tests and checks its own findings.'],
               ] as const).map(([value, label, hint]) => (
                 <label key={value} className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-2.5 py-2 text-[13px] has-[:checked]:border-accent-500 has-[:checked]:bg-accent-50">
                   <input type="radio" name={`${uid}-mode`} value={value} checked={mode === value} onChange={() => setMode(value)} className="mt-0.5" />
