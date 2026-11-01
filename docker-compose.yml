@@ -16,6 +16,11 @@ services:
   backend:
     build: { context: ., dockerfile: docker/backend.Dockerfile }
     image: flowlens-backend:local
+    extra_hosts:
+      - "creator-broken.localhost:127.0.0.1"
+      - "creator-fixed.localhost:127.0.0.1"
+      - "ticket-broken.localhost:127.0.0.1"
+      - "ticket-fixed.localhost:127.0.0.1"
     env_file:
       - path: .env
         required: false
@@ -23,7 +28,7 @@ services:
       DATABASE_URL: sqlite:////data/flowlens.db
       ARTIFACTS_DIR: /data/artifacts
       FLOWLENS_ALLOWED_ORIGINS: >-
-        http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177,http://localhost:5178,http://127.0.0.1:5178,http://localhost:5179,http://127.0.0.1:5179
+        http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:5177,http://127.0.0.1:5177,http://localhost:5178,http://127.0.0.1:5178,http://localhost:5179,http://127.0.0.1:5179,http://creator-broken.localhost:5174,http://creator-fixed.localhost:5175,http://ticket-broken.localhost:5176,http://ticket-fixed.localhost:5177
       FLOWLENS_LOAD_DEMO: ${FLOWLENS_LOAD_DEMO:-1}
     command: >-
       sh -c 'if [ "$$FLOWLENS_LOAD_DEMO" = "1" ]; then python -m flowlens.demo load --bundle /app/demo; fi;
