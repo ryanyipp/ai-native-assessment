@@ -24,7 +24,7 @@ The rest of this file and `docs/plan.md` describe the agreed plan. This table sa
 
 A completed run finished its work; it does not mean the website passed. Fresh browser contexts do not isolate a public website's server data.
 
-## Stack (initial choices)
+## Stack
 
 - **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Flow (custom state nodes, labelled transition edges)
 - **Backend:** Python 3.12, FastAPI, Pydantic contracts, custom asyncio coordinator in one process
@@ -36,7 +36,12 @@ A completed run finished its work; it does not mean the website passed. Fresh br
 
 ## Scope
 
-In scope: Chromium, one user role, bounded exploration, a supplied test session, and the `fixtures/creator-studio` creator-dashboard fixture. A second small app is optional.
+In scope: Chromium, one user role, bounded exploration and an optional supplied test session (`FLOWLENS_TEST_SESSION_PATH`).
+
+Targets:
+
+- **Fixture apps**, each with a broken and a corrected build and per-execution test-data workspaces: `fixtures/creator-studio` (5174/5175), `fixtures/ticket-desk` (5176/5177) and `fixtures/leave-desk` (5178/5179).
+- **Approved public or staging websites**, approved in the launcher. They get fresh browser contexts only; their server data is not isolated.
 
 Out of scope: exhaustive coverage, automatic code repair, load testing, real TikTok integration and full crash-resume.
 
@@ -56,7 +61,17 @@ Out of scope: exhaustive coverage, automatic code repair, load testing, real Tik
 - Assertion vocabulary (v1): element visible, validation message present, navigation reached, expected text/value retained, explicit state condition.
 - Provenance fields stay separate: live, playback, injected failure and synthetic fixture data.
 - Enforce depth, action, model-call, time, state-count and cost limits. Hitting a budget means the review is partial, not passing.
-- Starting budget: max 2 concurrent model calls and about 40 calls per run, with part of it reserved for verification.
+- Budget defaults:
+
+  | Limit | Default | Where it comes from |
+  |---|---|---|
+  | Model calls per run | **60** | The launcher, which always sends its own limits |
+  | Model calls per run | **40** | API fallback: `FLOWLENS_MAX_MODEL_CALLS_PER_RUN` when a request sends no limits, and the `RunLimits` default when a request's limits omit `max_model_calls` |
+  | Cost per run | US$0.50 | `FLOWLENS_RUN_BUDGET_USD`; the launcher starts from the same value |
+  | Overall credit pool | US$10 | `FLOWLENS_BUDGET_USD`, summed across this installation's runs |
+  | Concurrent model calls | 2 | `FLOWLENS_MAX_CONCURRENT_MODEL_CALLS` |
+  | Reserved calls (shared queue) | 8 testing, 4 verification | `RunLimits`; explorers stop before using them |
+  | Output tokens per call | 800; 1400 for tester and verifier | `FLOWLENS_MAX_OUTPUT_TOKENS`, `max_output_tokens_planning` |
 
 ## Core contracts
 
@@ -73,6 +88,8 @@ See the minimum fields in `docs/plan.md` § Contracts. The lead session owns sch
 - No runtime agent may access the repository or `evaluation/` answer keys.
 
 ## Build order (checkpoints)
+
+> **Historical.** All six checkpoints were completed by 2 Nov 2026; this list records the order they were built in. Current behaviour is described in `docs/architecture.md`, and the history in `docs/development-log.md`.
 
 0. **Foundation:** contracts exist; backend, frontend and fixture start; secrets ignored.
 1. **Vertical slice:** a real model drives *create draft → save → reload → verify persistence* with one explorer, and the transitions appear on a clickable evidence map.
