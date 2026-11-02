@@ -34,4 +34,6 @@
 
 ## Launcher stall option does not cause a takeover
 
+> **Fixed later in `5cbc0b1`:** the option now also sends `task_lease_s: 45`. The check of the fixed option is in [`../launcher-checkbox/`](../launcher-checkbox/README.md). The finding below describes the launcher before that commit.
+
 The launcher's **Inject a stall** option sends `stall_s: 75` but no `task_lease_s`, so the run gets the default lease of 300 s. A 75 s stall is shorter than the lease: explorer-a resumes before it expires and no recovery happens. The three launcher-started injected runs in the demo database (`run_156b7b84dc3b`, `run_bcd20230e89c`, `run_89c829d6a0f5`) all have a 300 s lease and no `lease_expired`, `task_reassigned` or `result_rejected` event. Recovery is shown by API or script runs that set a lease shorter than the stall, as here and in `../checkpoint-4/`.

@@ -172,7 +172,7 @@ The launcher sends cost (US$0.50), model calls (60), output tokens, steps and de
 
 A worker that resumes after expiry is refused on its next action, and its result is rejected (`result_rejected`). Tester and verifier writes go through the queue and `guard_publish`, with no `await` between the check and the write. Records the attempt wrote before expiry stay, labelled with its task and context.
 
-**Fault injection.** `fault_injection` on `POST /api/runs` (queue mode only) stalls a chosen worker after a claim while it holds an open context. The launcher's checkbox stalls `explorer-a` for 75 s; the API also accepts other workers and task types. Such runs carry `provenance.injected_failure` and `[INJECTED FAULT]` events.
+**Fault injection.** `fault_injection` on `POST /api/runs` (queue mode only) stalls a chosen worker after a claim while it holds an open context. The launcher's checkbox stalls `explorer-a` for 75 s and sets `task_lease_s` to 45 s, so the lease expires during the stall and another explorer takes over; with the default 300 s lease the stall would end first and nothing would be taken over. The API also accepts other workers, task types and leases. Such runs carry `provenance.injected_failure` and `[INJECTED FAULT]` events.
 
 **Cancellation.** `POST /api/runs/{id}/cancel` and **Cancel run** block new claims, model calls and browser actions. A call in flight is abandoned within about 0.25 s, a running browser action finishes and is recorded, unrun tasks become `unfinished`, and the run ends `cancelled`. The provider may still bill a request it received. Cancellation reaches only runs executing in the current process.
 

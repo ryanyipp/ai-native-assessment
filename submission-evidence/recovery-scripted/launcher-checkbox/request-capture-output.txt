@@ -1,0 +1,11 @@
+launcher_stall_check.py capture http://localhost:5173   (rebuilt frontend container, commit 5cbc0b1 source)
+POST /api/runs was captured and aborted in the browser: no run was created (demo runs before 62, after 62).
+
+stall off: mode=queue_review task_lease_s=None fault_injection=None
+hint: Inject a stall (labelled fault) explorer-a stops for 75 s after its first claim, and task leases are shortened to 45 s so its lease expires and another explorer takes over. The run is labelled as containing an injected failure.
+stall on: mode=queue_review task_lease_s=45 fault_injection={'worker': 'explorer-a', 'task_type': 'explore', 'stall_s': 75}
+stall ticked, then single agent: mode=single_agent task_lease_s=None fault_injection=None
+PASS request bodies as intended
+CAPTURE EXIT 0
+
+The same capture against a local preview of the same build (port 5273) gave identical output.
