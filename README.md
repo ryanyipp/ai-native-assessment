@@ -1,59 +1,96 @@
 # FlowLens
 
-An AI website reviewer. It explores an authorised staging site, builds an evidence-linked map of observed states and transitions, tests form inputs against requirements you supply, and re-checks suspected defects in fresh browser replays. See `docs/plan.md` for the agreed plan and `AGENTS.md` for working rules.
+[![CI](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml)
 
-**Status:** submission. Checkpoints 0–6 are built (vertical slice, verification, shared queue, recovery, review product, evaluation). What exists and what was only planned is listed under "Implementation status" in `AGENTS.md`. In short: the UI refreshes by polling every 1.5 s, reports are built from saved records with no model, re-checks are script-only, and review chat is out of scope. A completed run finished its work; it does not mean the website passed.
+FlowLens is for someone who needs to check a staging website against written requirements, such as a developer or QA reviewer before a release. Model-driven agents click through the site in a real browser, test form inputs against the requirements, and re-check each suspected defect in fresh browser sessions before confirming it. The result is a map of the pages and moves it observed, findings linked to screenshots, and a report.
 
-## How a review works
+Scope is deliberately bounded: one user role, Chromium, authorised local or staging origins, and fixed limits on model calls, cost, depth and time. It does not crawl a whole site or repair code, and a finished review does not mean the site passed.
 
-Four model-driven workers share one task queue. Code, not a model, runs the queue and writes the report.
+## Demo
 
-| Part | Kind | Does |
-|---|---|---|
-| Coordinator | Code | Queues tasks, gives each claim a lease, expires stalled attempts, rejects late results, enforces call, cost and time limits |
-| Explorer A and B | Model + browser | Choose links and buttons on claimed pages; code records states, transitions and forms, and refuses repeated or form-filling explorer actions |
-| Input tester | Model + browser | Plans input cases for a discovered form; code fills text fields, dropdowns and tick boxes in a fresh browser and records what happened; the model then judges each case against the requirements |
-| Verifier | Model + browser | Judges whether the requirement applies to the tested control, then picks one typed assertion; code replays the case twice in fresh browsers and evaluates the assertion |
-| Report | Code | Builds the HTML and Markdown report from saved records |
+**[Demo video (3:44, narrated, MP4)](frontend/public/flowlens-demo.mp4)**: GitHub opens the file page; use **View raw** to download it. The same video plays on the FlowLens landing page at http://localhost:5173.
 
-A **confirmed** finding means the assertion failed in every fresh replay. It still rests on a model's reading of the requirement and its choice of assertion. Details and current behaviour are in [docs/architecture.md](docs/architecture.md).
+The video is a recorded run with a real model (Gemini 3 Flash) on Ticket Desk, a fixture app with deliberately seeded defects. With the goal "Test and check the pages and inputs" and four supplied requirements, it confirmed both seeded defects in that build, each in two fresh replays: 7 tickets accepted (T1) and a cancelled booking still listed (T4). The saved run, `run_7bbdcc167bb6`, is bundled and opens without an API key.
 
-## Known limitations
+![FlowLens workspace for run_7bbdcc167bb6: the four workers, the map of observed pages and moves, and a confirmed finding](docs/images/flowlens-workspace.png)
 
-- **Requirements are needed.** Without them, a suspected problem stays an unverified observation.
-- **Applicability is a model judgement.** Code checks its shape and that it names a tested control, not that it is right.
-- **Unsupported controls:** radio buttons and file inputs. A case that needs one is marked `execution_failed` before the form is touched. Any case that does not complete gets no verdict and does not count as tested.
-- **Bounded exploration:** call, cost, depth and task limits apply, and coverage is not exhaustive. On Leave Desk, explorers still repeat navigation.
-- **Recovery is in one process.** Stalled workers are recovered within a run; if the backend restarts, running reviews are marked `interrupted`, not resumed.
-- **Tester output:** truncated or invalid JSON can stop a form's test plan, which the run reports as untested.
+## Quick start
 
-## Try it
+Prerequisite: Docker Desktop or Docker Engine with Compose v2.24 or later. The first build downloads about 1–2 GB.
 
 ```sh
-docker compose up --build          # FlowLens + three fixture apps (broken and corrected builds); open http://localhost:5173
+git clone https://github.com/ryanyipp/ai-native-assessment.git
+cd ai-native-assessment
+docker compose up --build
 ```
 
-The landing page has a demo video and **Explore recorded demos**, which opens eight saved runs without an API key, including the run in the video (`run_7bbdcc167bb6`). Live runs need `OPENROUTER_API_KEY` in `.env` (copy `.env.example`; never commit `.env`). Choose **Start a review**, keep the default target `http://localhost:5174/` or pick another fixture, enter a goal (at least 5 characters) and the requirements, and click **Start live run**.
+Open http://localhost:5173. The stack uses host ports 5173 (UI), 8000 (API) and 5174–5179 (three fixture apps, broken and corrected builds).
 
-Native setup (Python 3.12 + uv, Node 22+), configuration and the recorded demo runs are described in **[docs/setup.md](docs/setup.md)**.
+- **Browse recorded runs (no key, no cost):** choose **Explore recorded demos**. Eight saved runs load at start, including the video's run, and are labelled as recorded results.
+- **Live reviews (paid):** copy `.env.example` to `.env`, set `OPENROUTER_API_KEY`, then run `docker compose up --build` again. Choose **Start a review**, pick a target such as `http://localhost:5176/` (Ticket Desk, broken), enter a goal and the requirements, and click **Start live run**. The video's run cost US$0.017; each run is capped at US$0.50 and 60 model calls by default.
 
-## Checks
+`docker compose down -v` removes the containers and the data volume. Native setup without Docker, configuration and the list of recorded runs are in [docs/setup.md](docs/setup.md).
+
+## How it works
+
+| Part | Kind | Role |
+|---|---|---|
+| Explorer A and B | Model + browser | Choose links and buttons on claimed pages. Code records states, transitions and forms, and refuses repeated actions and form filling. |
+| Input tester | Model + browser | Plans input cases for each discovered form. Code fills text fields, dropdowns and tick boxes in a fresh browser and records the outcome; the model judges each case against the requirements. |
+| Verifier | Model + browser | Judges whether the requirement applies to the tested control, then picks one typed assertion. Code replays the case in two fresh browsers and evaluates the assertion. |
+| Coordinator | Python, no model | Runs the shared task queue: claims with leases, recovery of stalled workers, rejection of late results, and call, cost and time limits. |
+| Report | Python, no model | Builds the HTML and Markdown reports from saved records. |
+
+A finding is **confirmed** only when the assertion fails in every replay. It still rests on a model's reading of the requirement and its choice of assertion. Findings that cannot be checked stay visible as inconclusive. Details: [docs/architecture.md](docs/architecture.md).
+
+## Validation and CI
+
+[CI](.github/workflows/ci.yml) runs on every push to `main` and on pull requests, with no secrets:
+
+- **Backend:** Python 3.12 with `uv sync --frozen`, Playwright Chromium, then `pytest`. Tests drive the local fixture apps in a real browser with mocked model clients; the model URL points at a dead port, so no paid call can succeed.
+- **Frontend:** Node 22, `npm ci`, `npm run lint` and `npm run build`, which type-checks first.
+
+CI does not run live models, Docker Compose or the browser checks of the UI, and there is no deployment step. Evidence for those is separate: the benchmark records below, saved runs in [submission-evidence/](submission-evidence/), and screenshot-based UI checks (`scripts/ui_check_*.py`). To run the offline checks locally, from the repository root:
 
 ```powershell
-cd backend; .\.venv\Scripts\python -m pytest -q     # no model calls; starts its own fixture servers
-cd frontend; npm run lint; npm run build             # build type-checks first (tsc -b)
+cd backend; .\.venv\Scripts\python -m pytest -q; cd ..
+cd frontend; npm run lint; npm run build; cd ..
 ```
-
-Browser checks against saved runs (`scripts/ui_check_*.py`) and the CI workflow are described in [docs/setup.md](docs/setup.md#checks).
 
 ## Evaluation
 
-[docs/model-comparison.md](docs/model-comparison.md) compares models and the shared queue with a single-agent baseline. Every batch ran on code earlier than the submission; the document gives each batch's commit and fingerprint. The current-code rerun separates **scored** detections from **supported** ones, whose assertion also passes on the corrected build. Gemini 3 Flash found 6/6 supported in the shared queue and 3/6 as a single agent; across four models the totals were 9/24 and 8/24. An extension with four more model families stopped at 45 of 64 runs. Earlier evaluations are in [docs/evaluation.md](docs/evaluation.md) and [docs/evaluation-2.md](docs/evaluation-2.md).
+The benchmark compares two whole workflows on the Creator Studio and Ticket Desk fixtures (3 seeded defects, 2 repetitions each): the shared queue (two explorers, tester, separate verifier) and a single agent that explores, tests and checks its own findings. It ran on earlier code (fingerprint `d3c871e37e928ad6`), before exploration memory, dropdown and tick-box handling, execution-failure handling and the verifier's applicability check, so it does not measure those.
 
-## Budget
+A detection is **supported** when its assertion fails on the broken build and passes on the corrected build in browser-only replays.
 
-`FLOWLENS_BUDGET_USD` (default 10) is the overall credit pool, summed from provider-reported cost across this installation's runs. `FLOWLENS_RUN_BUDGET_USD` (default 0.50) caps each run. Output is bounded by `FLOWLENS_MAX_OUTPUT_TOKENS` (800). The launcher sends 60 model calls per run; `FLOWLENS_MAX_MODEL_CALLS_PER_RUN` (40) applies only to API requests that send no limits. Limits are checked **before** each call, so a call that starts under the limit can finish over it: this is a software guard, not a billing cap. Hitting a limit marks the run `partial`, never passing.
+| Six complete models | Shared queue | Single agent |
+|---|---|---|
+| Supported detections | **18/36** | **13/36** |
+| Scored detections | 24/36 | 17/36 |
 
-## Attribution
+- **The benefit varied by model.** Supported detections, queue vs single: Gemini 3 Flash 6 vs 3, MiniMax 5 vs 1, GLM 4 vs 4, GPT-5 Nano 1 vs 1, Claude Haiku 1 vs 2, DeepSeek 1 vs 2 (each out of 6).
+- **The queue cost 1.2–3.1× more per run.** Gemini queue runs averaged US$0.028.
+- **Two batches are combined.** Gemini, Haiku, Nano and DeepSeek come from the rerun batch (called "current-code" after the code of that day); MiniMax and GLM come from a later extension at the same code fingerprint.
+- **Qwen and Kimi are incomplete and excluded.** The extension stopped at its spending guard after 45 of 64 runs; their 3–4 runs per cell had no detections and many truncated replies.
+- **The sample is small:** 2 repetitions, fixtures also used in development, and no significance test.
 
-See [docs/attribution.md](docs/attribution.md).
+Full tables, run IDs and earlier batches: [docs/model-comparison.md](docs/model-comparison.md). Records: [evaluation/results/](evaluation/results/).
+
+## Known limitations
+
+- **Requirements are needed.** Without them, suspicions stay unverified observations.
+- **Applicability is a model judgement.** Code checks that it names a tested control, not that it is right.
+- **Radio buttons and file inputs are unsupported.** Such cases are marked `execution_failed` before the form is touched. Cases that do not complete get no verdict and do not count as tested.
+- **Exploration is bounded and imperfect.** On Leave Desk, explorers still revisit navigation.
+- **Recovery works within one process.** If the backend restarts, running reviews are marked `interrupted`, not resumed.
+- **Model output can fail.** A truncated or invalid test plan leaves a form untested, and the report says so.
+- **Fresh browser contexts do not isolate a public site's server data.** Only the fixtures provide per-run test-data workspaces.
+
+## Documentation and attribution
+
+- [docs/setup.md](docs/setup.md): native setup, configuration, recorded runs, checks.
+- [docs/architecture.md](docs/architecture.md): workers, queue, leases and recovery, assertions, current behaviour.
+- [docs/model-comparison.md](docs/model-comparison.md): benchmark method and results.
+- [docs/development-log.md](docs/development-log.md): build history and problems found along the way.
+- [docs/plan.md](docs/plan.md) and [AGENTS.md](AGENTS.md): the agreed plan and the working rules; AGENTS.md lists what was implemented.
+- [docs/attribution.md](docs/attribution.md): libraries and AI assistance. The code was written with Claude, as the commit co-author trailers show; Ryan set the scope, ran and recorded the demos, and reviewed the work.

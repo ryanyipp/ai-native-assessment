@@ -21,7 +21,7 @@ args = [a for a in sys.argv[1:] if not a.startswith("--out")]
 OUT = Path(next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--out=")), "setup-check"))
 UI, API, FIXTURES = args[0].rstrip("/"), args[1].rstrip("/"), args[2:]
 DEMO = ["run_a572a9bf88c5", "run_d50048493cc5", "run_a54099283d9d", "run_53d7009ff711",
-        "run_fc9eba62a54c", "run_15f19bf8bb46", "run_40e786578fef"]
+        "run_fc9eba62a54c", "run_15f19bf8bb46", "run_40e786578fef", "run_7bbdcc167bb6"]
 results: list[tuple[str, bool, str]] = []
 
 

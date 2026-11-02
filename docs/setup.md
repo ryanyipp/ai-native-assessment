@@ -31,8 +31,9 @@ All settings are optional, and empty values fall back to the defaults in `backen
 | Setting | Needed for | Notes |
 |---|---|---|
 | `OPENROUTER_API_KEY` | Live runs only | Without it the UI works, saved and demo runs can be inspected and previews work, but **Start live run** is disabled. Server-side only; never sent to the browser. |
-| `OPENROUTER_MODEL` | | Default `google/gemini-3-flash-preview`. |
+| `OPENROUTER_MODEL` | | Default `google/gemini-3-flash-preview`. The launcher offers it first, then the benchmarked models. |
 | `FLOWLENS_BUDGET_USD`, `FLOWLENS_RUN_BUDGET_USD` | | The overall credit pool (10) and the per-run cap (0.50). The pool counts runs made by this installation, not imported demos. |
+| `FLOWLENS_MAX_OUTPUT_TOKENS`, `FLOWLENS_MAX_MODEL_CALLS_PER_RUN` | | Output cap per call (800) and calls per run (40). The launcher always sends its own limits, 60 calls by default, so the 40 applies only to API requests without limits. |
 | `FLOWLENS_ALLOWED_ORIGINS` | | Fixture origins that get test-data workspaces. The default covers ports 5174–5179 on `localhost` and `127.0.0.1`. Change it only if you move the fixtures. Other websites are approved in the launcher. |
 | `DATABASE_URL`, `ARTIFACTS_DIR` | | Default `artifacts/flowlens.db` and `artifacts/`, both git-ignored. |
 | `FRONTEND_PORT` | | The frontend port and the CORS origin (5173). |
@@ -132,10 +133,14 @@ Maintainers re-export with `python -m flowlens.demo export RUN_ID ... --note RUN
 
 ## Checks
 
+From the repository root:
+
 ```powershell
-cd backend; .\.venv\Scripts\python -m pytest -q     # starts its own fixture servers; no model calls
-cd frontend; npm run build; npm run lint
+cd backend; .\.venv\Scripts\python -m pytest -q; cd ..    # starts its own fixture servers; no model calls
+cd frontend; npm run lint; npm run build; cd ..           # build runs tsc -b first
 ```
+
+Budget limits are checked **before** each call, so a call that starts under a limit can finish over it (at most one call per concurrent slot). This is a software guard, not a billing cap. Hitting a limit marks the run `partial`, never passing.
 
 `scripts/ui_check_*.py` and `check_setup.py` are browser checks against saved runs, with the backend and frontend running. They make no model calls and work without an API key. Runs they need are loaded automatically from `demo/` or `scripts/check-runs/` (saved runs used only by these checks); existing runs are skipped. If a prerequisite is still missing, a script prints `MISSING PREREQUISITE` and exits with code 3. `check_setup.py` needs a backend with no API key.
 
@@ -143,12 +148,12 @@ Paid model runs need an explicit `--live`: `ui_check_workspace.py`, `ui_check_pu
 
 ### Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests, on Ubuntu with no secrets:
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests, on Ubuntu 24.04 with no secrets:
 
-- **Backend:** `uv sync --frozen`, Chromium for the locked Playwright version, then `pytest`. Browser tests drive the local fixture apps and agents use mocked model clients. The model URL points at a dead local port and the key is empty, so no paid call can succeed.
-- **Frontend:** `npm ci`, `npm run lint`, `npm run build`.
+- **Backend:** `uv` with Python 3.12, `uv sync --frozen`, `uv run --frozen python -m playwright install --with-deps chromium`, then `uv run --frozen pytest -q`. Browser tests drive the local fixture apps and agents use mocked model clients. The model URL points at a dead local port and the key is empty, so no paid call can succeed.
+- **Frontend:** Node 22, `npm ci`, `npm run lint`, `npm run build`.
 
-CI does not cover live model runs, the evaluation batches, `scripts/ui_check_*.py`, Docker Compose or public websites. A green run means these automated checks passed, not that a live review works.
+CI does not cover live model runs, the evaluation batches, `scripts/ui_check_*.py`, Docker Compose or public websites, and there is no deployment step: FlowLens runs locally, natively or with Docker Compose. A green run means these automated checks passed, not that a live review works.
 
 ## Which setup paths have been tested
 

@@ -31,7 +31,7 @@ A completed run finished its work; it does not mean the website passed. Fresh br
 - **Browser:** Playwright Python + Chromium, executing validated structured commands
 - **Persistence:** SQLite as the source of truth, with evidence stored as local files under `artifacts/` (ignored by Git)
 - **Live updates:** planned as SSE; implemented as polling every 1.5 s
-- **Model:** one server-side OpenRouter adapter. The model ID comes from `OPENROUTER_MODEL`. Never call the model from the frontend.
+- **Model:** one server-side OpenRouter adapter. The default model ID comes from `OPENROUTER_MODEL`; the launcher may pick one of the offered benchmarked models per run. Never call the model from the frontend.
 - **Verification and packaging:** pytest, browser integration tests, lockfiles (`uv.lock`, `package-lock.json`), Docker Compose
 
 ## Scope

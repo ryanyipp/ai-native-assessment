@@ -1,6 +1,6 @@
 # Architecture notes
 
-These notes follow the build by checkpoint, so later sections replace earlier ones where they differ. See "Current behaviour" at the end. `docs/plan.md` remains the agreed plan.
+These notes follow the build by checkpoint, so later sections replace earlier ones where they differ. See "Current behaviour" at the end. `docs/plan.md` remains the agreed plan. Module paths are relative to `backend/src/flowlens/`.
 
 ## Workers and boundaries
 
@@ -59,7 +59,7 @@ No runtime agent receives the fixture mode, its source, the defect list or evalu
 
    New states reached by testing or verification are recorded as `deferred` explore tasks (event `frontier_deferred`) for the checkpoint 3 queue.
 
-`ReverifyRun` replays an earlier finding's recipe **with its recorded assertion** against another build. It makes no model call, so one executable check can be compared across the broken and corrected builds.
+`ReverifyRun` replays an earlier finding's recipe **with its recorded assertion** against another build. It makes no model call, so one executable check can be compared across the broken and corrected builds. It is run from `scripts/checkpoint2_eval.py` and `scripts/supported_check.py`; the API does not accept it as a run mode and there is no UI for it.
 
 ## Assertions
 
