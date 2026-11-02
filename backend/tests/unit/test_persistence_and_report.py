@@ -119,6 +119,7 @@ def test_html_report_keeps_outcomes_outside_dropdowns_and_opens_them_for_print(t
     card = html[html.index('<article class="card edge-red">'):html.index("</article>")]
     visible = card[:card.index("<details>")]
     assert "Confirmed" in visible and "<b>Browser verification:</b> ran." in visible
+    assert "Tested against a requirement" in visible and "Possible problem" not in html  # the kind must not contradict the status
     for label in ("How to reproduce", "Evidence", "Verification records", "Technical details"):
         assert f"<summary>{label}" in card
     assert 'href="/api/artifacts/art_shot"' in card and "beforeprint" in html

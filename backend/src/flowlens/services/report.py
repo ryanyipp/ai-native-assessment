@@ -317,7 +317,8 @@ class ReportBuilder:
                 s2, o2 = self.evidence_for(v.evidence_refs)
                 shots += [{**x, "label": f"Re-check {v.replay_index + 1}: {x['label']}"} for x in s2]
                 other += o2
-        kind = {"defect_candidate": "Possible problem", "review_observation": "Observation (no requirement covers this)",
+        # The kind says where the finding came from; its status is shown separately, so it must not read as a verdict.
+        kind = {"defect_candidate": "Tested against a requirement", "review_observation": "Observation (no requirement covers this)",
                 "persistence_check": "Explorer observation"}[f.kind]
         attempts = [self.verifs[i] for i in f.verification_ids if i in self.verifs]
         evaluated = sum(a.result is not None or a.outcome != "inconclusive" for a in attempts)
