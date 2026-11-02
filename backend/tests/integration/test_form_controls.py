@@ -6,6 +6,7 @@ The scripted verdicts exercise mechanics only. They say nothing about how a real
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 import time
@@ -30,19 +31,25 @@ DATES = {"Start date": "2026-07-10", "End date": "2026-07-12"}
 
 @pytest.fixture
 def leave_desk(tmp_path):
-    port = 5396
+    with socket.socket() as s:  # each test gets its own port, so a server still shutting down cannot answer for this one
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
     env = {**os.environ, "LEAVE_DESK_DATA": str(tmp_path / "ld.json"), "LEAVE_DESK_MODE": "corrected"}
     proc = subprocess.Popen([sys.executable, "-m", "uvicorn", "app:app", "--app-dir", str(REPO / "fixtures" / "leave-desk"),
                              "--port", str(port), "--log-level", "warning"], env=env)
     url = f"http://localhost:{port}"
     for _ in range(100):
+        assert proc.poll() is None, "Leave Desk exited during startup"
         try:
             httpx.get(url, timeout=1)
             break
         except httpx.HTTPError:
             time.sleep(0.1)
+    else:
+        pytest.fail("Leave Desk did not start")
     yield SimpleNamespace(url=url)
     proc.terminate()
+    proc.wait(timeout=10)
 
 
 def case(label, inputs, submit, ref=None):
