@@ -1,3 +1,4 @@
+
 # FlowLens
 
 [![CI](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml)
@@ -8,8 +9,7 @@ FlowLens uses four AI workers to explore staging websites, test forms against wr
 
 A narrated, real-model review of Ticket Desk, showing two seeded defects, their verification replays and the generated report.
 
-<!-- To embed a player: edit this README on github.com, drag in the MP4 (10 MB limit on Free plans), and replace the link below with the attachment URL on its own line. -->
-**[Demo video (3:44, MP4)](frontend/public/flowlens-demo.mp4)**: GitHub opens the file page; use **View raw** to download it. It also plays on the FlowLens landing page at http://localhost:5173.
+https://github.com/user-attachments/assets/72c1741d-8bca-4116-9913-50885a93d59c
 
 ## Quick start
 
