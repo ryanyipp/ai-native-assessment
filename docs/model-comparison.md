@@ -7,6 +7,8 @@
 > 3. **Current-code rerun:** 64 runs on 4 models (Gemini, Haiku, Nano, DeepSeek) at fingerprint `d3c871e37e928ad6`. It reports **scored** and **supported** detections; supported ones also pass on the corrected build. Queue 14/24 scored, 9/24 supported; single 12/24 scored, 8/24 supported.
 > 4. **Exploratory extension:** MiniMax, GLM, Qwen and Kimi, stopped by the spending guard at 45 of 64 runs; Qwen and Kimi are incomplete.
 >
+> **Six complete models combined** (batches 3 and 4, same fingerprint; recomputed from each batch's `scores.json` and `supported.json`): shared queue 18/36 supported and 24/36 scored; single agent 13/36 supported and 17/36 scored. Supported detections per model, queue vs single, out of 6: Gemini 6 vs 3, MiniMax 5 vs 1, GLM 4 vs 4, GPT-5 Nano 1 vs 1, Haiku 1 vs 2, DeepSeek 1 vs 2. Queue runs cost 1.2–3.1× more per run. Qwen and Kimi are excluded as incomplete. The comparison is between whole workflows (separate verifier, more calls, task split), not agent count alone.
+>
 > "Current code" means the code at that rerun. Exploration memory, select and checkbox handling, execution-failure handling and the verifier's applicability check came later, so no batch here measures them.
 
 **Recommendation: use `google/gemini-3-flash-preview` in `queue_review` for the live demo.** It was the only condition to find every known defect, and it had no false confirmations. It is also the most expensive, at about US$0.027 per run.
