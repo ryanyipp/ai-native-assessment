@@ -14,6 +14,7 @@ const LIMITS = {
   max_steps: { min: 1, max: 60, step: 1, label: 'Max browser steps' },
   max_model_calls: { min: 1, max: 200, step: 1, label: 'Max model calls' },
   max_output_tokens: { min: 100, max: 4000, step: 50, label: 'Max output tokens per call' },
+  max_depth: { min: 0, max: 6, step: 1, label: 'Max exploration depth' },
 } as const
 type LimitKey = keyof typeof LIMITS
 
@@ -96,6 +97,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
     max_steps: 15,
     max_model_calls: 40,
     max_output_tokens: 800,
+    max_depth: 2,
   })
   const [model, setModel] = useState<string | null>(null) // null: the server default
   const [touched, setTouched] = useState(false)
@@ -260,7 +262,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
                 </span>
               </summary>
               <div className="grid grid-cols-2 gap-3 border-t border-slate-200 px-3 py-3">
-                {LIMIT_KEYS.filter((k) => !(mode === 'queue_review' && k === 'max_steps')).map((k) => (
+                {LIMIT_KEYS.filter((k) => k !== (mode === 'queue_review' ? 'max_steps' : 'max_depth')).map((k) => (
                   <FormField key={k} id={`${uid}-${k}`} label={LIMITS[k].label} error={show(k)}>
                     <input id={`${uid}-${k}`} type="number" className={cx(inputCls(show(k)), 'tabular-nums')}
                       min={LIMITS[k].min} max={LIMITS[k].max} step={LIMITS[k].step} value={Number.isNaN(limits[k]) ? '' : limits[k]}
@@ -271,7 +273,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
                 <p className="col-span-2 text-xs leading-relaxed text-slate-500">
                   Limits are checked before each model call, so a run can finish slightly over its cost limit (in-flight overshoot). Reaching a
                   limit marks the run partial, never passing. The time limit is soft: it is checked between steps and tasks and does not interrupt work already running.
-                  {mode === 'queue_review' && ' Shared queue runs use fixed exploration limits (4 actions per task, depth 2, 40 tasks) instead of a browser step limit.'}
+                  {mode === 'queue_review' && ' Shared queue runs use fixed exploration limits (4 actions per task, 40 tasks) instead of a browser step limit. Pages beyond the depth limit are recorded but not explored, and mark the run partial.'}
                 </p>
               </div>
             </details>

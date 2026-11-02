@@ -17,6 +17,7 @@ export interface RunLimits {
   max_model_calls: number
   max_cost_usd: number
   max_output_tokens: number
+  max_depth?: number
   max_duration_s: number
   max_states: number
 }
