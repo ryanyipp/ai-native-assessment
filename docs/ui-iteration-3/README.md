@@ -1,5 +1,7 @@
 # UI iteration 3: simplified workspace with an agent activity strip (2026-10-29)
 
+> **Historical design record (29 Oct 2026).** The current UI differs; this records the design at that time.
+
 **Before:** see `docs/ui-iteration-2/after-*.png`. That layout had a two-line header full of metadata (run id, model, calls, tokens, cost, mode, build label), and a docked worker view with "Swap views" that took a column away from the map.
 
 ## After

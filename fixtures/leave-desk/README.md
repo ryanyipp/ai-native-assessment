@@ -1,8 +1,8 @@
-# leave-desk fixture (held out)
+# leave-desk fixture
 
 A third small app: an employee leave-request site with its own broken and corrected builds.
 
-**Status:** held out. It was frozen before any agent ran on it, and no FlowLens evaluation has used it yet.
+**Status:** no longer held out. The app and answer key were frozen in `1731eeb` (1 Nov 2026) before any agent ran on it, and the app has not changed since. No scored evaluation batch uses it. On 2 Nov 2026, live runs on it (for example `run_35ace22b5bc8` and `run_118da630dc8b`) were used during development and led to code changes, so later results on it are development checks, not held-out evidence.
 
 ```powershell
 backend\.venv\Scripts\python -m uvicorn app:app --app-dir fixtures\leave-desk --port 5178

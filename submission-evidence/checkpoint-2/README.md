@@ -1,5 +1,7 @@
 # Checkpoint 2 evidence: explorer → input tester → verifier
 
+> **Historical evidence (29 Oct 2026).** Recorded on the code of that day and kept as checkpoint evidence. Current behaviour is described in `docs/architecture.md` and the README.
+
 All runs used real Chromium against the local creator-studio fixture:
 - **Broken build** on :5174 (`CREATOR_STUDIO_MODE=broken`).
 - **Corrected build** on :5175 (`CREATOR_STUDIO_MODE=corrected`).

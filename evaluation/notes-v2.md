@@ -1,3 +1,5 @@
+> **Historical (29 Oct 2026).** Notes on `batch-cp5` and `batch-heldout`, which ran on the code of that day. Newer results are in `docs/model-comparison.md`.
+
 ## Reading these results
 
 **Held-out app (`batch-heldout`).** ticket-desk was frozen in `25a6701` before either condition ran, and no prompt was changed afterwards.

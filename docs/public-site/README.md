@@ -1,5 +1,7 @@
 # Public website support: TodoMVC (2026-10-30)
 
+> **Historical record (30 Oct 2026).** Describes the code and results on that date. Current behaviour is described in `docs/architecture.md` and the README.
+
 Target: `https://demo.playwright.dev/todomvc/`, a public demo app that keeps its todos in the browser's `localStorage`.
 
 ## What changed

@@ -1,5 +1,7 @@
 # Diagnosis of run_156b7b84dc3b (2026-10-30)
 
+> **Historical record (30 Oct 2026).** A diagnosis of one run on the code of that date. Current behaviour is described in `docs/architecture.md` and the README.
+
 | | |
 |---|---|
 | Run | Shared queue, `https://automationexercise.com/` (approved public website) |

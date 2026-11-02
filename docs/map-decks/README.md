@@ -1,5 +1,7 @@
 # Map card decks and the resizable sidebar (2026-10-30)
 
+> **Historical design record (30 Oct 2026).** The current UI differs; this records the design at that time.
+
 ## Card decks
 
 The decks are visual grouping only. No state, transition or evidence record is merged, changed or hidden from the inspector. The grouping lives in `frontend/src/lib/decks.ts`, and `FlowMap.tsx` uses it to choose what to draw.

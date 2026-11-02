@@ -1,5 +1,7 @@
 # Checkpoint 3 evidence: shared queue with two explorers
 
+> **Historical evidence (29 Oct 2026).** Recorded on the code of that day and kept as checkpoint evidence. Current behaviour is described in `docs/architecture.md` and the README.
+
 `run_72e3868cc54e-detail.json` is the full API record of the live run. It includes tasks, events, states with sightings, handoffs, test cases, verifications and model calls. The run used real Chromium, `google/gemini-3-flash-preview` through OpenRouter, and the broken fixture build on :5174. It was started with `POST /api/runs`, `mode: queue_review`.
 
 - **Result:** partial. Explorer budget share used; 2 explore tasks unfinished; 1 tester task blocked by a truncated model reply.

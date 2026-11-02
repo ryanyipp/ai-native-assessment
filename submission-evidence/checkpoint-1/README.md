@@ -1,5 +1,7 @@
 # Checkpoint 1 evidence: live run `run_e957eab8645e`
 
+> **Historical evidence (29 Oct 2026).** Recorded on the code of that day and kept as checkpoint evidence. Current behaviour is described in `docs/architecture.md` and the README.
+
 Provenance: **live** (real Chromium and real `google/gemini-3-flash-preview` calls via OpenRouter), against the synthetic creator-studio fixture. No playback, no mocked model.
 
 - `run-detail.json`: the full API record (run, states, transitions, action results, finding, events, model calls).

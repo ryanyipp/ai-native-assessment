@@ -1,5 +1,7 @@
 # Checkpoint 4 evidence: injected stall and recovery
 
+> **Historical evidence (29 Oct 2026).** Recorded on the code of that day and kept as checkpoint evidence. Current behaviour is described in `docs/architecture.md` and the README.
+
 `run_248eaaa2a5cd-detail.json` is the full API record. The run used real Chromium, `google/gemini-3-flash-preview`, the broken fixture build, and `mode: queue_review` with `fault_injection: {worker: explorer-a, task_type: explore, stall_s: 75}` and `task_lease_s: 45`. It is labelled `provenance.injected_failure: true`.
 
 | Seq | Event |

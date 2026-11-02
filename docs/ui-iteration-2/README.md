@@ -1,5 +1,7 @@
 # UI iteration 2: browser preview and worker views around the map (2026-10-29)
 
+> **Historical design record (29 Oct 2026).** The current UI differs; this records the design at that time.
+
 Goal: make agent activity understandable without inventing any of it. Every image, status and highlight in the new views comes from recorded browser observations, actions and events.
 
 ## Before

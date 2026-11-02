@@ -1,5 +1,7 @@
 # Review reports and the persistence-check fix (2026-10-30)
 
+> **Historical record (30 Oct 2026).** The report layout and wording have changed since (for example `a8005ea`, `45614ae`); the sample report in this folder shows the format of that date. Current behaviour is described in `docs/architecture.md` and the README.
+
 ## Persistence check: "not evaluated" instead of incidental text matches
 
 Before this change, the explorer's same-session check could count text that happened to be on the page as a match. In the TodoMVC run `run_15f19bf8bb46`, the claim "FlowLens milk: completed" matched only because the page has a "Completed" filter link.

@@ -1,5 +1,7 @@
 # UI iteration record (2026-10-29)
 
+> **Historical design record (29 Oct 2026).** The current UI differs; this records the design at that time.
+
 All screenshots render the saved real run `run_e957eab8645e` (live Chromium + `google/gemini-3-flash-preview`) through the real backend. The exceptions are `after-new-run-finished.png` and `after-run-in-progress.png`, which show `run_87cd1eda95c3`, a new run created through the launcher dialog. It was a live run: 6 calls, 4,564 tokens, reported US$0.0046.
 
 ## Before
