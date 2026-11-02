@@ -1,0 +1,44 @@
+{
+  "agent_id": "input-tester",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Input Tester inside FlowLens. You designed input cases for a form; code executed them in fresh browser sessions. For each case you get your inputs and expectation, and the facts the browser recorded afterwards (URLs, headings, status and alert messages, invalid fields, visible text).\n\nJudge each case only from those recorded facts:\n- \"as_expected\": the facts match the expectation.\n- \"unexpected\": the facts contradict the expectation.\n- \"unclear\": the facts are insufficient, or the expectation itself is not stated by a requirement.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<one sentence>\", \"assessments\": [\n  {\"case\": <case number>, \"verdict\": \"as_expected\" | \"unexpected\" | \"unclear\",\n   \"observed_summary\": \"<what the facts show>\", \"requirement_ref\": \"<id or null>\"}]}\n\nIf a case has a check page, its facts include that page before and after the action; compare them.\nYour verdicts are unverified candidates. A separate verifier checks them independently.\nReply with compact JSON on a single line (no indentation)."
+    },
+    {
+      "role": "user",
+      "content": "Supplied requirements:\n- T1: A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.\n- T2: The email must contain an \"@\". Otherwise the booking is rejected with a validation message.\n- T3: After a successful booking, a confirmation page shows the event, the name and the number of tickets.\n- T4: A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.\n\nForm: http://ticket-broken.localhost:5176/bookings/033f9112/cancel (Cancel this booking?)\n\nCase 1: Cancel booking\n  inputs: {}\n  requirement: T4\n  expected: Booking no longer appears under My bookings\n  execution: executed\n  recorded facts: {\"url_before\": \"http://ticket-broken.localhost:5176/bookings/cb96aa6a/cancel\", \"url_after\": \"http://ticket-broken.localhost:5176/?cancelled=1\", \"title\": \"Events \u00b7 Ticket Desk\", \"headings\": [\"Events\", \"My bookings\"], \"status_messages\": [\"Booking cancelled.\"], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Ticket Desk \u00b7 Events Events Booking cancelled. Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings Harbour Jazz Night \u00b7 2 ticket(s)\", \"check_page\": {\"path\": \"/\", \"before\": {\"url_before\": \"http://ticket-broken.localhost:5176/\", \"url_after\": \"http://ticket-broken.localhost:5176/\", \"title\": \"Events \u00b7 Ticket Desk\", \"headings\": [\"Events\", \"My bookings\"], \"status_messages\": [], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Ticket Desk \u00b7 Events Events Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings Harbour Jazz Night \u00b7 2 ticket(s)\"}, \"after\": {\"url_before\": \"http://ticket-broken.localhost:5176/\", \"url_after\": \"http://ticket-broken.localhost:5176/\", \"title\": \"Events \u00b7 Ticket Desk\", \"headings\": [\"Events\", \"My bookings\"], \"status_messages\": [], \"alert_messages\": [], \"invalid_fields\": [], \"text_excerpt\": \"Ticket Desk \u00b7 Events Events Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings Harbour Jazz Night \u00b7 2 ticket(s)\"}}}"
+    }
+  ],
+  "response": "{\"reasoning\": \"The booking for 'Harbour Jazz Night' still appears under 'My bookings' in the check page after the cancellation action was performed, contradicting the requirement.\", \"assessments\": [{\"case\": 1, \"verdict\": \"unexpected\", \"observed_summary\": \"The booking 'Harbour Jazz Night \u00b7 2 ticket(s)' is still visible in the 'My bookings' section after the cancellation attempt.\", \"requirement_ref\": \"T4\"}]}",
+  "usage": {
+    "prompt_tokens": 818,
+    "completion_tokens": 98,
+    "total_tokens": 916,
+    "cost": 0.000703,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.000703,
+      "upstream_inference_prompt_cost": 0.000409,
+      "upstream_inference_completions_cost": 0.000294
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null,
+  "finish_reason": "stop",
+  "max_tokens": 1400,
+  "reasoning_request": {
+    "effort": "low",
+    "exclude": true
+  }
+}

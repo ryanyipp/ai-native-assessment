@@ -1,0 +1,76 @@
+{
+  "id": "ver_3203c3924d7f",
+  "run_id": "run_7bbdcc167bb6",
+  "finding_id": "fnd_ed063fc1e5ab",
+  "handoff_id": "ho_ca7fb8ae5f08",
+  "verifier_id": "verifier",
+  "replay_index": 1,
+  "target_origin": "http://ticket-broken.localhost:5176",
+  "context_id": "verifier:ver_3203c3924d7f:ws_c45927e9d1",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "direct",
+  "setup_error": null,
+  "failure_class": null,
+  "applicability": null,
+  "applicability_target": null,
+  "applicability_reason": null,
+  "assertion": {
+    "type": "validation_message_present",
+    "params": {
+      "text_contains": null,
+      "field": "Tickets"
+    },
+    "requirement_ref": "T1",
+    "expected": "A validation message should be displayed because 7 tickets is outside the allowed range of 1 to 6.",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "validation_message_present",
+      "params": {
+        "text_contains": null,
+        "field": "Tickets"
+      },
+      "requirement_ref": "T1",
+      "expected": "A validation message should be displayed because 7 tickets is outside the allowed range of 1 to 6.",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://ticket-broken.localhost:5176/bookings/cd48aff6?booked=1",
+      "route": "/bookings/:id",
+      "alert_messages": [],
+      "field_validation": {},
+      "status_messages": [
+        "Booking confirmed."
+      ],
+      "matching_messages": []
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion validation_message_present failed: the page violated T1 in this fresh replay.",
+  "action_result_ids": [
+    "act_7843c781c835",
+    "act_9d835e84375f",
+    "act_fdc9417ee520",
+    "act_0a6fde7e2fb6",
+    "act_df7860f17873"
+  ],
+  "evidence_refs": [
+    "art_1bdf49900b9b",
+    "art_423436489c04",
+    "art_ba725aac8db8",
+    "art_556c5c609f3e",
+    "art_81d83043ffde",
+    "art_e6372b531cdf",
+    "art_7b05e91d8dcb",
+    "art_3abcfe9be681",
+    "art_c6502262d2b5",
+    "art_f46186ff361c"
+  ],
+  "model_call_id": null,
+  "started_at": "2026-11-02T08:39:34.215794Z",
+  "finished_at": "2026-11-02T08:39:36.109613Z"
+}

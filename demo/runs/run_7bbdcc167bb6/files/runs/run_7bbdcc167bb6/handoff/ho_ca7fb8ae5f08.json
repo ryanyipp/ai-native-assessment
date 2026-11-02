@@ -1,0 +1,65 @@
+{
+  "id": "ho_ca7fb8ae5f08",
+  "run_id": "run_7bbdcc167bb6",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_7996c857882a",
+  "source_state_id": "state_193b69a004ce",
+  "form_id": "form_667226b68323",
+  "finding_id": "fnd_ed063fc1e5ab",
+  "setup": {
+    "target_state_id": "state_193b69a004ce",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Book tickets for Harbour Jazz Night",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "T1",
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+      "source": "T1"
+    }
+  ],
+  "evidence_refs": [
+    "art_efa86dac1c3c",
+    "art_a23f23c0cf83",
+    "art_0b40ff3e74eb",
+    "art_7ef73c5e2751",
+    "art_3366d83f4c9c",
+    "art_b17c73476396",
+    "art_4cc59ffc20c3",
+    "art_20b9d6c48103",
+    "art_168daa563a9f",
+    "art_35f202afdb1d"
+  ],
+  "created_at": "2026-11-02T08:39:29.185168Z"
+}

@@ -1,0 +1,140 @@
+{
+  "id": "ho_3e4246b3b15d",
+  "run_id": "run_7bbdcc167bb6",
+  "kind": "candidate_to_verifier",
+  "from_agent": "input-tester",
+  "to_agent": "verifier",
+  "task_id": "task_cf02ec6012df",
+  "source_state_id": "state_4fbab65b039e",
+  "form_id": "form_45b6056fdc43",
+  "finding_id": "fnd_ff68cf921d92",
+  "setup": {
+    "target_state_id": "state_4fbab65b039e",
+    "expected_signature": "e56c81eab5e28397",
+    "direct_path": null,
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Book tickets for Harbour Jazz Night",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Name",
+          "input_type": "text",
+          "context": null
+        },
+        "value": "Alice",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Email",
+          "input_type": "text",
+          "context": null
+        },
+        "value": "alice@example.com",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Tickets",
+          "input_type": "number",
+          "context": null
+        },
+        "value": "2",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "button",
+          "name": "Book tickets",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Cancel booking",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "T4",
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.",
+      "source": "T4"
+    }
+  ],
+  "evidence_refs": [
+    "art_d3cef3c59b75",
+    "art_9e4d398439c8",
+    "art_60174c6be81c",
+    "art_351519c679f0",
+    "art_6909f6bd020b",
+    "art_333a904402d7",
+    "art_788a993d31fa",
+    "art_1e5e23eb2931",
+    "art_91d8708b6ffc",
+    "art_584f28615441",
+    "art_0a12fce12f4a",
+    "art_326deb3f0809",
+    "art_680085af7b45",
+    "art_582b70310d93",
+    "art_199f2b0b81c9",
+    "art_973d8c528b04",
+    "art_07406110c8a5",
+    "art_4995a6717de0",
+    "art_4dcb1f479365",
+    "art_761af25e6c97"
+  ],
+  "created_at": "2026-11-02T08:39:47.522133Z"
+}

@@ -13,7 +13,7 @@ def test_demo_bundle_loads_labelled_and_idempotent(tmp_path, monkeypatch):
     get_settings.cache_clear()
     try:
         loaded = demo.load(demo.DEFAULT_BUNDLE)
-        assert len(loaded) == 7
+        assert len(loaded) == 8
         assert demo.load(demo.DEFAULT_BUNDLE) == []  # second load skips existing runs
         s = get_settings()
         store = Store(s.database_path)
@@ -25,5 +25,7 @@ def test_demo_bundle_loads_labelled_and_idempotent(tmp_path, monkeypatch):
             assert d.events and all((s.artifacts_path / e.path).is_file() for e in d.evidence)
         md = to_markdown(build_report(store.detail("run_a572a9bf88c5"), s.artifacts_path, "http://localhost:8000"))
         assert "**Recorded result.**" in md and "Confirmed" in md
+        video_run = store.detail("run_7bbdcc167bb6")  # the run shown in the landing-page video
+        assert sorted((f.requirement_ref, f.verification_status.value) for f in video_run.findings) == [("T1", "confirmed"), ("T4", "confirmed")]
     finally:
         get_settings.cache_clear()

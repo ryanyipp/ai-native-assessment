@@ -1,0 +1,44 @@
+{
+  "agent_id": "verifier",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the Verifier inside FlowLens, a website reviewer. A candidate defect was reported against an explicit requirement. Code will repeat the reported inputs in fresh browser sessions with fresh test data and then evaluate ONE assertion that you choose against the resulting page.\n\nFirst decide whether the requirement applies to the tested form, control and action. Judge this from the control's name and type, the page, the form's purpose and the requirement's wording, never from what the entered value looks like. A value resembling a date, email or number in a free-text field does not make that field subject to a rule about dates, emails or numbers. Reply \"applies\" and name the tested control or action as \"applicability_target\"; reply \"not_applicable\" if it governs something else; reply \"ambiguous\" if the requirement does not let you tell. Repeating a behaviour cannot show that a requirement applies, so do not assume it does. Unless it applies, give no assertion: the candidate stays inconclusive.\n\nThen decide whether the requirement text explicitly states what must happen for these inputs. A requirement that only describes what something has or contains does not make a value mandatory or forbidden. If it is not explicit, reply with \"explicit\": false and no assertion; the candidate stays a review observation.\n\nOtherwise choose the assertion that the page must satisfy if the requirement is met after the actions. Code decides the outcome: if the assertion fails, the requirement violation is confirmed; if it passes, the candidate is not reproduced. Do not try to predict the outcome; encode the requirement faithfully.\n\nAssertion vocabulary (type and params):\n- element_visible {\"name\": str, \"role\": str|null, \"expect_visible\": bool}: a control or heading whose\n  name contains `name` is (or, with expect_visible=false, is not) on the page.\n- validation_message_present {\"text_contains\": str|null, \"field\": str|null}: the page shows a\n  validation/alert message (optionally containing text). With `field`, only that field's own\n  validation message or a page alert naming the field counts.\n- navigation_reached {\"route\": str, \"expect_reached\": bool}: the final page's normalised route equals\n  `route` (ids shown as :id), or with expect_reached=false does not.\n- text_or_value_retained {\"expected\": str, \"field\": str|null, \"expect_present\": bool}: a field holds\n  `expected`, or the visible page text contains it (expect_present=false: the text is gone).\n- state_condition {\"condition\": \"remained_on_start_route\" | \"left_start_route\"}: whether the page\n  route after the actions equals the route before them.\n\nReply with ONE JSON object and nothing else:\n{\"reasoning\": \"<short>\", \"requirement_ref\": \"<the requirement id>\", \"explicit\": true | false,\n  \"applicability\": \"applies\" | \"not_applicable\" | \"ambiguous\",\n  \"applicability_target\": \"<tested control or action name>\",\n  \"applicability_reason\": \"<one short sentence from the control, page and requirement>\",\n  \"requirement_quote\": \"<exact words from the requirement that state the expected behaviour>\",\n  \"assertion\": {\"type\": \"<one type above>\", \"params\": {...}} | null,\n  \"expected\": \"<the expected value in plain words>\"}\nReply with compact JSON on a single line (no indentation)."
+    },
+    {
+      "role": "user",
+      "content": "Requirement T1: A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.\n\nInputs to repeat: {\"Name\": \"Bob\", \"Email\": \"bob@example.com\", \"Tickets\": \"7\"}\nControls the test used:\n  - \"Name\" (textbox, type=text) = \"Bob\"\n  - \"Email\" (textbox, type=text) = \"bob@example.com\"\n  - \"Tickets\" (textbox, type=number) = \"7\"\nSteps code will repeat after reaching the start page:\n  1. fill textbox 'Name' = 'Bob'\n  2. fill textbox 'Email' = 'bob@example.com'\n  3. fill textbox 'Tickets' = '7'\n  4. click button 'Book tickets'\n\nForm under test: /events/:id/book\nPage: http://ticket-broken.localhost:5176/events/1/book\nHeadings: Book tickets\nFields:\n  - \"Name\" (textbox, type=text)\n  - \"Email\" (textbox, type=text)\n  - \"Tickets\" (textbox, type=number)\nSubmit controls: \"Book tickets\"\nLinks on this page: /\nVisible page text (truncated): Ticket Desk \u00b7 Events Book tickets Harbour Jazz Night Name Email Tickets Book tickets\n\nStart page as you observed it in a fresh session (before the steps):\nURL: http://ticket-broken.localhost:5176/events/1/book\nTitle: Book tickets \u00b7 Ticket Desk\nHeadings: Book tickets\nInteractive elements:\n  e1 link \"Events\" href=/\n  e2 textbox \"Name\" value=\"\"\n  e3 textbox \"Email\" value=\"\"\n  e4 textbox \"Tickets\" type=number value=\"\"\n  e5 button \"Book tickets\"\nVisible text (truncated): Ticket Desk \u00b7 Events Book tickets Harbour Jazz Night Name Email Tickets Book tickets"
+    }
+  ],
+  "response": "{\"reasoning\": \"The requirement specifies a range for the 'Tickets' field and mandates a validation message and no booking creation for values outside that range.\", \"requirement_ref\": \"T1\", \"explicit\": true, \"applicability\": \"applies\", \"applicability_target\": \"Tickets\", \"applicability_reason\": \"The 'Tickets' field is a number input on a booking form, and the requirement explicitly governs the number of tickets allowed in a booking.\", \"requirement_quote\": \"Any other number must be rejected with a validation message, and no booking is created.\", \"assertion\": {\"type\": \"validation_message_present\", \"params\": {\"text_contains\": null, \"field\": \"Tickets\"}}, \"expected\": \"A validation message should be displayed because 7 tickets is outside the allowed range of 1 to 6.\"}",
+  "usage": {
+    "prompt_tokens": 1179,
+    "completion_tokens": 177,
+    "total_tokens": 1356,
+    "cost": 0.0011205,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0011205,
+      "upstream_inference_prompt_cost": 0.0005895,
+      "upstream_inference_completions_cost": 0.000531
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "error": null,
+  "finish_reason": "stop",
+  "max_tokens": 1400,
+  "reasoning_request": {
+    "effort": "low",
+    "exclude": true
+  }
+}

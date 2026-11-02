@@ -69,6 +69,16 @@
       "reported_cost_usd": 0.0,
       "note": "Re-check of an earlier finding against the corrected creator-studio build: not reproduced",
       "missing_files": 0
+    },
+    {
+      "run_id": "run_7bbdcc167bb6",
+      "status": "completed",
+      "mode": "queue_review",
+      "target_url": "http://ticket-broken.localhost:5176/",
+      "recorded_at": "2026-11-02T08:39:09.667177Z",
+      "reported_cost_usd": 0.016797500000000003,
+      "note": "Shared-queue review of ticket-desk (broken build) with the vague goal used in the demo video: two defects confirmed in two replays each",
+      "missing_files": 0
     }
   ]
 }
