@@ -95,7 +95,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
   const [limits, setLimits] = useState<Record<LimitKey, number>>({
     max_cost_usd: health?.default_run_budget_usd ?? 0.5,
     max_steps: 15,
-    max_model_calls: 40,
+    max_model_calls: 60,
     max_output_tokens: 800,
     max_depth: 2,
   })
