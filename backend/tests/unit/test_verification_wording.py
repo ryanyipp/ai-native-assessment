@@ -22,7 +22,7 @@ def test_no_requirement_says_replay_was_not_attempted(tmp_path):
     rep = _rep(tmp_path, {"result": None, "assertion": None, "setup_ok": False, "setup_strategy": None, "setup_error": None,
                           "failure_class": "expectation", "action_result_ids": []})
     md = to_markdown(rep)
-    assert "Inconclusive: no supplied requirement defines the expected behaviour. Browser replay was not attempted." in md
+    assert "**Status: Inconclusive.** No supplied requirement defines the expected behaviour. Browser replay was not attempted." in md
     assert "Re-checked" not in md and "Verified by" not in md
     assert "**Tester-proposed expectation:**" in md
     assert "Reviewed by" in md and "not applicable: no browser replay ran" in md
@@ -32,7 +32,7 @@ def test_no_requirement_says_replay_was_not_attempted(tmp_path):
 def test_setup_failure_does_not_imply_verification(tmp_path):
     md = to_markdown(_rep(tmp_path, {"result": None, "assertion": None, "setup_ok": False, "setup_strategy": None,
                                      "setup_error": "could not reach the form", "failure_class": "setup"}))
-    assert "browser replay was attempted but setup failed (could not reach the form)" in md
+    assert "Browser replay was attempted but setup failed (could not reach the form)" in md
     assert "No assertion was evaluated." in md and "Re-checked" not in md
 
 

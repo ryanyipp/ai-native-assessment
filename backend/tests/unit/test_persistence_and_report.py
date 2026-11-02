@@ -113,6 +113,19 @@ def test_report_leads_with_summary_and_separates_self_checks(tmp_path):
     assert "@media print" in html and "<details><summary>Technical diagnostics</summary>" in html and 'href="/api/artifacts/art_shot"' in html
 
 
+def test_html_report_keeps_outcomes_outside_dropdowns_and_opens_them_for_print(tmp_path):
+    rep = build_report(_detail(tmp_path), tmp_path, "http://localhost:8000")
+    html = to_html(rep, "/api/runs/x/report.md")
+    card = html[html.index('<article class="card edge-red">'):html.index("</article>")]
+    visible = card[:card.index("<details>")]
+    assert "Confirmed" in visible and "<b>Browser verification:</b> ran." in visible
+    for label in ("How to reproduce", "Evidence", "Verification records", "Technical details"):
+        assert f"<summary>{label}" in card
+    assert 'href="/api/artifacts/art_shot"' in card and "beforeprint" in html
+    assert html.index("<h2>What was not checked</h2>") < html.index("Problems to fix")
+    assert "**Browser verification:** ran." in to_markdown(rep)
+
+
 def test_partial_report_lists_incomplete_work_in_plain_words(tmp_path):
     rep = build_report(_detail(tmp_path, status=RunStatus.partial), tmp_path, "http://h")
     assert rep["incomplete"] and "it reached its limit on browser steps" in rep["gaps"][0]

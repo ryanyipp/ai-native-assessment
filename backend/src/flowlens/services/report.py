@@ -267,7 +267,7 @@ class ReportBuilder:
                     **reviewer}
             unapplied = next((a for a in attempts if a.failure_class == "applicability"), None)
             if unapplied:
-                return base | {"text": f"Inconclusive: {_clip(unapplied.reason, 300)}. Browser replay of the test was not "
+                return base | {"text": f"Inconclusive: {_clip(unapplied.reason, 300).rstrip('.')}. Browser replay of the test was not "
                                        "completed, and repeating it could not settle this."}
             if replayed:
                 return base | {"text": f"Assertion evaluated by code in {len(replayed)} fresh browser replay(s) ({outcomes}), "
@@ -320,6 +320,7 @@ class ReportBuilder:
         kind = {"defect_candidate": "Possible problem", "review_observation": "Observation (no requirement covers this)",
                 "persistence_check": "Explorer observation"}[f.kind]
         attempts = [self.verifs[i] for i in f.verification_ids if i in self.verifs]
+        evaluated = sum(a.result is not None or a.outcome != "inconclusive" for a in attempts)
         return {
             # Explorer persistence findings carry a generic stored description; the report states what was claimed.
             "title": ("Does entered content stay after a reload? (explorer's claim: "
@@ -329,6 +330,8 @@ class ReportBuilder:
             "expected": f.expected, "observed": f.observed, "inputs": f.inputs,
             "expected_label": "Expected" if req or f.kind == "persistence_check" else "Tester-proposed expectation",
             "verification": self.verification(f), "steps": steps, "screenshots": shots,
+            "replay": (f"ran. Code evaluated an assertion in {evaluated} fresh browser replay(s)." if evaluated
+                       else "no result. No assertion was evaluated in a browser replay."),
             "technical": {
                 "Finding id": f.id, "Reported by": f.reported_by, "Kind": f.kind,
                 "Verification status (stored)": f.verification_status.value,
@@ -494,7 +497,10 @@ def to_markdown(rep: dict) -> str:
 
     def finding(x: dict, n: int) -> list[str]:
         v = x["verification"]
-        lines = [f"### {n}. {_md(x['title'])}", "", f"**Status: {v['label']}.** {v['text']}  ", f"*{x['kind']}*", ""]
+        text = v["text"].removeprefix(f"{v['label']}: ")  # the status label already says it
+        text = text[:1].upper() + text[1:]
+        lines = [f"### {n}. {_md(x['title'])}", "", f"**Status: {v['label']}.** {text}  ", f"**Browser verification:** {x['replay']}  ",
+                 f"*{x['kind']}*", ""]
         if x["requirement"]:
             lines += [f"**Requirement:** {_md(x['requirement'])}", ""]
         lines += [f"**{x['expected_label']}:** {_md(x['expected'])}", "", f"**Observed:** {_md(x['observed'])}", ""]
@@ -563,29 +569,38 @@ _CSS = """
 :root{--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--soft:#f8fafc}
 *{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#f1f5f9}
 main{max-width:860px;margin:0 auto;background:#fff;padding:40px 48px 56px;min-height:100vh}
-h1{font-size:26px;margin:0 0 4px}h2{font-size:19px;margin:36px 0 10px;padding-top:8px;border-top:1px solid var(--line)}
-h3{font-size:16px;margin:0 0 6px}a{color:#1d4ed8}
-.meta{display:grid;grid-template-columns:150px 1fr;gap:4px 14px;margin:16px 0;color:var(--muted)}.meta dt{font-weight:600;color:var(--ink)}
+main,td,th,li,p,dd{overflow-wrap:anywhere}
+h1{font-size:27px;line-height:1.25;margin:0 0 4px}h2{font-size:19px;line-height:1.3;margin:38px 0 12px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}a{color:#1d4ed8}p{margin:8px 0}
+.meta{display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 14px;margin:18px 0;color:var(--muted)}.meta dt{font-weight:600;color:var(--ink)}
 .meta dd{margin:0;overflow-wrap:anywhere}
 .toolbar{display:flex;gap:8px;margin:0 0 20px}.toolbar a,.toolbar button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:var(--ink);text-decoration:none;cursor:pointer}
 .summary{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 18px}.summary ul{margin:0;padding-left:20px}
 .banner{border-left:4px solid #d97706;background:#fffbeb;padding:10px 14px;border-radius:6px;margin:12px 0}
-.card{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0;break-inside:avoid}
+.card{border:1px solid var(--line);border-left-width:5px;border-radius:10px;padding:16px 20px 14px;margin:16px 0}
+.edge-red{border-left-color:#dc2626}.edge-amber{border-left-color:#d97706}.edge-green{border-left-color:#16a34a}.edge-slate{border-left-color:#94a3b8}
+.status{margin:0 0 8px}.reason{margin:0 0 6px}.replay{font-size:14px;color:var(--muted);margin:0 0 12px}.replay b{color:var(--ink)}
 .pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px}
 .red{background:#fee2e2;color:#991b1b}.amber{background:#fef3c7;color:#92400e}.green{background:#dcfce7;color:#166534}.slate{background:#e2e8f0;color:#334155}
 .kind{font-size:12px;color:var(--muted)}.ev{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:14px}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}.cmp div{background:var(--soft);border-radius:8px;padding:8px 12px}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.cmp div{background:var(--soft);border-radius:8px;padding:8px 12px}
 .cmp b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 th{font-size:12px;color:var(--muted);font-weight:600}
-details{margin-top:10px;border:1px dashed #cbd5e1;border-radius:8px;padding:6px 12px;background:#fcfcfd}summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
-details dl{display:grid;grid-template-columns:200px 1fr;gap:4px 12px;font-size:13px}details dt{color:var(--muted)}details dd{margin:0;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+details{margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:#fcfcfd}details[open] summary{margin-bottom:6px}details ol,details ul{margin:6px 0;padding-left:22px;font-size:14px}summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
+details dl{display:grid;grid-template-columns:190px minmax(0,1fr);gap:4px 12px;font-size:13px;margin:6px 0}details dt{color:var(--muted)}details dd{margin:0;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:12px}
 .missing{color:#b91c1c;font-size:12px}.note{color:var(--muted);font-size:13px}
 @media (max-width:640px){main{padding:24px 18px}.meta,.cmp,.ev,details dl{grid-template-columns:1fr}}
 @media print{body{background:#fff}main{padding:0;max-width:none}.toolbar{display:none}a{color:inherit;text-decoration:none}
- .card,.summary{border-color:#94a3b8}h2{break-after:avoid}details{border:none;padding:0}details:not([open]) > :not(summary){display:none}
+ .card,.summary{border-color:#94a3b8}h2,h3,.status{break-after:avoid}.cmp,li,tr{break-inside:avoid}details{border:none;padding:0;background:none}details:not([open]) > :not(summary){display:none}
  details:not([open]) summary::after{content:" (open before printing to include)";font-weight:400}}
 """
+
+
+# Printing opens every dropdown, then restores the reader's own selection.
+_PRINT_SCRIPT = ("<script>(()=>{let shut=[];addEventListener('beforeprint',()=>{shut=[...document.querySelectorAll('details:not([open])')];"
+                 "shut.forEach(d=>d.open=true)});addEventListener('afterprint',()=>shut.forEach(d=>d.open=false))})()</script>")
+VERIFICATION_RECORDS = ("Verification status (stored)", "Verified by", "Reviewed by", "Independence", "Stored reason", "Re-check attempts")
 
 
 def _e(t: Any) -> str:
@@ -593,11 +608,17 @@ def _e(t: Any) -> str:
 
 
 def to_html(rep: dict, md_href: str) -> str:
+    def link(o: dict) -> str:
+        return f'<a href="{_e(o["href"])}" target="_blank" rel="noopener">{_e(o["label"])}</a>'
+
+    def records(items: list[tuple[str, str]]) -> str:
+        return "<dl>" + "".join(f"<dt>{_e(k)}</dt><dd>{v}</dd>" for k, v in items) + "</dl>"
+
     def finding(x: dict, n: int) -> str:
         v = x["verification"]
-        parts = [f'<article class="card"><h3>{n}. {_e(x["title"])}</h3>',
-                 f'<p><span class="pill {v["tone"]}">{_e(v["label"])}</span><span class="kind">{_e(x["kind"])}</span></p>',
-                 f'<p>{_e(v["text"])}</p>']
+        parts = [f'<article class="card edge-{v["tone"]}"><p class="status"><span class="pill {v["tone"]}">{_e(v["label"])}</span>'
+                 f'<span class="kind">{_e(x["kind"])}</span></p><h3>{n}. {_e(x["title"])}</h3>',
+                 f'<p class="reason">{_e(v["text"])}</p><p class="replay"><b>Browser verification:</b> {_e(x["replay"])}</p>']
         if x["requirement"]:
             parts.append(f'<p><b>Requirement:</b> {_e(x["requirement"])}</p>')
         parts.append(f'<div class="cmp"><div><b>{_e(x["expected_label"])}</b>{_e(x["expected"])}</div><div><b>Observed</b>{_e(x["observed"])}</div></div>')
@@ -609,32 +630,32 @@ def to_html(rep: dict, md_href: str) -> str:
             parts.append(f'<table><thead><tr><th>Value the explorer checked</th><th>Expected</th><th>Result</th></tr></thead>'
                          f'<tbody>{rows}</tbody></table>')
         if x["steps"]:
-            parts.append("<p><b>How to reproduce</b></p><ol>" + "".join(f"<li>{_e(s)}</li>" for s in x["steps"]) + "</ol>")
+            parts.append(f'<details><summary>How to reproduce ({len(x["steps"])} steps)</summary><ol>'
+                         + "".join(f"<li>{_e(s)}</li>" for s in x["steps"]) + "</ol></details>")
         if x["screenshots"]:
-            parts.append("<p><b>Evidence</b></p><ul>" + "".join(
-                f'<li><a href="{_e(s["href"])}" target="_blank" rel="noopener">{_e(s["label"])}</a>'
-                + ("" if s["present"] else ' <span class="missing">(file missing)</span>') + "</li>" for s in x["screenshots"]) + "</ul>")
-        tech = []
-        for k, val in x["technical"].items():
-            if k == "Other records":
-                val_html = ", ".join(f'<a href="{_e(o["href"])}" target="_blank" rel="noopener">{_e(o["label"])}</a>' for o in val) or "none"
-            else:
-                val_html = _e(val)
-            tech.append(f"<dt>{_e(k)}</dt><dd>{val_html}</dd>")
-        parts.append(f'<details><summary>Technical details</summary><dl>{"".join(tech)}</dl></details></article>')
+            parts.append(f'<details><summary>Evidence ({len(x["screenshots"])} screenshots)</summary><ul>' + "".join(
+                f'<li>{link(s)}' + ("" if s["present"] else ' <span class="missing">(file missing)</span>') + "</li>"
+                for s in x["screenshots"]) + "</ul></details>")
+        checks = [(k, _e(val)) for k, val in x["technical"].items() if k in VERIFICATION_RECORDS]
+        tech = [(k, (", ".join(link(o) for o in val) or "none") if k == "Other records" else _e(val))
+                for k, val in x["technical"].items() if k not in VERIFICATION_RECORDS]
+        parts.append(f'<details><summary>Verification records</summary>{records(checks)}</details>'
+                     f'<details><summary>Technical details</summary>{records(tech)}</details></article>')
         return "".join(parts)
 
     body = [f'<main><nav class="toolbar"><a href="{_e(md_href)}" download>Download Markdown</a>'
             '<button type="button" onclick="window.print()">Print</button></nav>',
             f'<h1>{_e(rep["title"])}</h1>',
             '<dl class="meta">' + "".join(f"<dt>{k}</dt><dd>{_e(v)}</dd>" for k, v in (
-                ("Goal", rep["goal"]), ("Website", rep["target"]), ("Reviewed", rep["date"]),
-                ("How it was reviewed", rep["workflow"]), ("Model", rep["models"]), ("Cost", rep["cost"]), ("Status", f'{rep["status_label"]}. {rep["status_text"]}'))) + "</dl>"]
+                ("Status", f'{rep["status_label"]}. {rep["status_text"]}'), ("Website", rep["target"]), ("Goal", rep["goal"]),
+                ("Reviewed", rep["date"]), ("How it was reviewed", rep["workflow"]), ("Model", rep["models"]), ("Cost", rep["cost"]))) + "</dl>"]
     if rep.get("recorded"):
         body.append(f'<div class="banner"><b>Recorded result.</b> Loaded from {_e(rep["recorded"])}; it was not run by this installation.</div>')
     if rep["incomplete"]:
         body.append('<div class="banner"><b>Incomplete review.</b> Some areas were not checked; see “What was not checked”.</div>')
     body.append('<h2>Summary</h2><div class="summary"><ul>' + "".join(f"<li>{_e(s)}</li>" for s in rep["summary"]) + "</ul></div>")
+    body.append("<h2>What was not checked</h2><ul>" + ("".join(f"<li>{_e(g)}</li>" for g in rep["gaps"])
+                                                       or "<li>Nothing recorded as unchecked.</li>") + "</ul>")
     n = 0
     for key, title, empty in (("act", "Problems to fix (confirmed)", "No confirmed problems."),
                               ("decide", "Needs a decision or a further check", "Nothing in this group."),
@@ -652,22 +673,21 @@ def to_html(rep: dict, md_href: str) -> str:
         body.append('<h2>Unverified explorer observations</h2><p class="note">Notes from explorers. Nothing checked these, '
                     'and they are not findings.</p><ul>' + "".join(
                         f'<li><b>{_e(o["by"])}</b> at {_e(o["route"])}: {_e(o["text"])}</li>' for o in rep["observations"]) + "</ul>")
-    body.append("<h2>What was not checked</h2><ul>" + ("".join(f"<li>{_e(g)}</li>" for g in rep["gaps"])
-                                                       or "<li>Nothing recorded as unchecked.</li>") + "</ul>")
     if rep["requirements"]:
         body.append("<h2>Requirements</h2><table><thead><tr><th>Requirement</th><th>Coverage in this run</th></tr></thead><tbody>"
                     + "".join(f'<tr><td><b>{_e(q["id"])}</b> {_e(q["text"])}</td><td>{_e(q["coverage"])}</td></tr>'
                               for q in rep["requirements"]) + "</tbody></table>")
     body.append("<h2>How findings were checked</h2><ul>"
-                "<li><b>Confirmed, Not reproduced, Inconclusive</b>: a separate verifier agent repeated the steps in fresh browser "
+                "<li><b>Confirmed, Not reproduced</b>: a separate verifier agent repeated the steps in fresh browser "
                 "sessions, and code, not the agent, decided the result (independent).</li>"
+                "<li><b>Inconclusive</b>: no verdict. Each finding says whether a browser replay ran.</li>"
                 "<li><b>Self-check</b>: the agent that reported the finding checked it itself (single-agent baseline). Code still "
                 "evaluated the result, but it is not independent.</li>"
                 "<li><b>Unverified / Explorer claim</b>: only the reporting agent saw it. A same-session check compares the "
                 "explorer's own values in its own browser; checkbox and on/off states are shown as <i>not evaluated</i>.</li></ul>")
     body.append(f'<h2>About evidence links</h2><p class="note">{_e(rep["evidence_note"])}</p>')
     body.append('<h2>Diagnostics</h2><details><summary>Technical diagnostics</summary><dl>'
-                + "".join(f"<dt>{_e(k)}</dt><dd>{_e(v)}</dd>" for k, v in rep["diagnostics"].items()) + "</dl></details></main>")
+                + "".join(f"<dt>{_e(k)}</dt><dd>{_e(v)}</dd>" for k, v in rep["diagnostics"].items()) + "</dl></details></main>" + _PRINT_SCRIPT)
     host = urlsplit(rep["target"]).netloc
     return (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             f"<title>Review report: {_e(host)}</title><style>{_CSS}</style></head><body>{''.join(body)}</body></html>")
