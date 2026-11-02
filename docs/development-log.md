@@ -142,3 +142,15 @@ Frontend build and lint are clean. UI checks 29/29, 22/22, 13/13; the recovery t
 - **Design record:** `docs/ui-iteration-2/README.md`.
 - **Checks:** 30/30 new, plus 29/22/13 regression; backend 64 passed.
 - **Live runs:** `run_a4f1034bfe0f` (US$0.028); `run_a54099283d9d` (US$0.023) was started by mistake when a failed script edit re-ran the live check. It is disclosed and kept.
+
+## 2026-10-30 to 2026-11-02: Setup, benchmarks and correctness work
+
+Summarised from commit history; details are in the commits and the linked documents.
+
+- **Setup and CI (30 Oct):** offline CI for backend tests and frontend checks (`db078c3`); landing page at `/`, workspace at `/workspace` (`a3ce3d0`); fresh-clone setup checks (`docs/setup-verification.md`).
+- **Model comparison (31 Oct–1 Nov):** benchmark harness and main batch (`a4bf97d`, `b357341`), Haiku addendum (`ae01e23`), launcher model selector (`e9e14fa`). After an assertion audit, the supported-detection rule and the rerun scenario were frozen (`d584bb1`, `71a53cb`) and the rerun recorded (`8db800e`, `6bd5f26`). Results: [model-comparison.md](model-comparison.md).
+- **Leave Desk (1 Nov):** a third fixture with an answer key, held out at first (`1731eeb`, `dc11d71`). It was used for development from 2 Nov.
+- **Queue safety (1 Nov):** task writes and published results refused from expired attempts (`1ad584d`); model-slot waiting that cancellation cannot leak (`03fd0dd`); run cancellation, explorer observations and mode-aware report limits (`cc04c4b`, `dfcfdbb`, `f1c689d`); scripted recovery and cancellation evidence (`a824dd7`).
+- **Exploration (2 Nov):** coverage summary and no-progress stop (`f369fb2`, `880d649`), then shared exploration memory with reservations and refusal of repeated explorer work (`f8b03ad`).
+- **Testing and verification (2 Nov):** browser steps chosen from the observed control type (`c291d3f`); execution failures kept apart from website verdicts (`d5b162e`); a verifier applicability judgement required before confirming (`6cb34ed`); browser verification claimed only when replays ran (`b115e87`).
+- **Architecture notes:** `docs/architecture.md` was written checkpoint by checkpoint until 2 Nov, then rewritten as a current reference. The checkpoint history it held is in the entries above.

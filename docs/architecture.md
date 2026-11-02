@@ -1,207 +1,207 @@
-# Architecture notes
+# Architecture
 
-These notes follow the build by checkpoint, so later sections replace earlier ones where they differ. See "Current behaviour" at the end. `docs/plan.md` remains the agreed plan. Module paths are relative to `backend/src/flowlens/`.
+This is a reference for the current code. Module paths are relative to `backend/src/flowlens/`. How the design got here is in [development-log.md](development-log.md); the original plan is in [plan.md](plan.md).
 
-## Workers and boundaries
+## 1. Default workflow and module map
 
-| Worker | Code | Receives | Produces | Cannot |
+The launcher starts a **shared-queue review** (`queue_review`) by default. One backend process runs each review in its own thread and asyncio event loop. Four workers claim tasks from a queue that Python code manages; models choose browser actions, test inputs and assertions, and code executes, records, evaluates and accepts.
+
+```text
+launcher / POST /api/runs
+        │
+        ▼
+QueueReviewRun (coordinator, no model)  ── SQLite: runs, tasks, states, findings, events …
+        │ enqueues explore:start
+        ▼
+ explorer-a ─┐                    input_test task              verify task
+ explorer-b ─┴─ explore tasks ──► (form handoff) ──► input-tester ──► (candidate handoff) ──► verifier
+        ▲                                                │                                     │
+        └──────────── new states become explore tasks ───┴─────────────────────────────────────┘
+```
+
+| Area | Module | Role |
+|---|---|---|
+| API | `api/runs.py`, `main.py` | Runs, cancel, preview, origin approval, artifacts, reports. Marks unfinished runs `interrupted` at startup. |
+| Launch | `orchestration/launch.py` | Picks the run class by mode, starts the run thread, refuses to start from stale code. |
+| Coordinator | `orchestration/queue_review.py` | `QueueReviewRun`: workers, leases, watchdog, frontier rules, explorer tasks. |
+| Tester and verifier steps | `orchestration/review.py` | `ReviewRun`, which `QueueReviewRun` extends: handoffs, case execution, replays, acceptance. |
+| Shared recording | `orchestration/runner.py` | `ExplorerRun`, the base class: recording actions and states, form discovery, budgets, cancellation. |
+| Exploration memory | `orchestration/coverage.py` | `Coverage`: what was followed, what is open, short-lived claims. |
+| Setup replay | `orchestration/replay.py` | `reach_state`: direct path, then semantic recipe, then a signature check. |
+| Queue | `storage/queue.py` | `TaskQueue` on SQLite: atomic enqueue, claim, renew, expire, complete. |
+| Store | `storage/db.py` | SQLite source of truth; each record is validated JSON. |
+| Contracts | `models/contracts.py` | Pydantic models, mirrored in `frontend/src/lib/types.ts`. |
+| Agents | `agents/explorer.py`, `agents/input_tester.py`, `agents/verifier.py` | Prompts and strict reply parsing. No browser or database access. |
+| Browser | `browser/engine.py` | Playwright execution of typed actions, observations, signatures, origin scope. |
+| Test data | `services/test_data.py` | Fixture workspaces or plain fresh contexts. |
+| Assertions | `verification/assertions.py` | Typed assertion vocabulary, evaluated by code. |
+| Model | `services/llm.py` | The only place a model is called (OpenRouter, server side). |
+| Reports | `services/report.py` | HTML and Markdown from saved records, no model. |
+
+## 2. Workers
+
+| Worker | Agent id | Claims | Model decides | Code decides |
 |---|---|---|---|---|
-| Coordinator (code) | `orchestration/review.py` `ReviewRun` | Run config, records | Tasks, handoffs, acceptance events | Run a model |
-| Explorer A | `agents/explorer.py` | Goal, supplied requirements, compact observation, own history | Browser actions, states, transitions, finish summary | Confirm anything (contract validator) |
-| Input tester | `agents/input_tester.py` | One `form_to_tester` handoff + requirements | Planned cases, then verdicts on code-recorded facts | Set a verification status |
-| Verifier | `agents/verifier.py` | Requirement, inputs with their observed controls, form context, steps, its own fresh observation of the start page | Applicability judgement, explicit/not-explicit judgement, requirement quote, one typed assertion | See the tester's verdict or observed outcome; decide the outcome |
+| Explorer A | `explorer-a` | `explore` | Next action on the claimed page, or finish | Execution, recording, form discovery, refusal of repeats and form use |
+| Explorer B | `explorer-b` | `explore` | Same | Same |
+| Input tester | `input-tester` | `input_test` | Case plan; then a verdict per completed case | Browser steps per control type, execution, outcome facts |
+| Verifier | `verifier` | `verify` | Applicability, explicitness, requirement quote, one assertion | Replays, assertion evaluation, outcome |
 
-No runtime agent receives the fixture mode, its source, the defect list or evaluation answers. Prompts contain only page observations, supplied requirements and handoff fields.
+Explorer A and B run the same code (`QueueReviewRun.explore_task` and `agents/explorer.py`). They differ only in their worker identity, which appears in prompts, records and claims, and in the tasks each one claims. The prompt tells each one which states the team has already recorded, and the exploration memory steers them to different open controls (section 6).
 
-## Sequential flow (checkpoint 2)
+Agents see page observations, supplied requirements and handoff fields. They never see the fixture mode, its source, the defect list or evaluation answers. The verifier does not see the tester's verdict or observed outcome.
 
-1. **Explore.** Explorer A acts as in checkpoint 1. After every successful action, code groups the observed controls by enclosing `<form>` and records a `DiscoveredForm` (event `form_discovered`). The dedup key is the set of field role, name and type; the route is excluded, so create and edit pages with the same fields count once.
-2. **Hand off to the tester.** For each form (up to `max_forms_tested`), the coordinator creates an `input_test` task and a `Handoff` of kind `form_to_tester`. It contains:
-   - the source state and evidence refs;
-   - the form;
-   - a `SetupRecipe`: a direct path plus a semantic step recipe, and the expected state signature;
-   - every supplied requirement with an id;
-   - one `Expectation` per requirement, with its source.
+## 3. Coordinator and queue
 
-   The handoff JSON is stored as an artifact (event `handoff_created`).
-3. **Test.** The tester plans up to `max_cases_per_form` cases. Each case runs in a **new browser context with a newly provisioned fixture workspace**:
-   - Code reaches the start state, either by the direct path or by the recipe, and requires a signature match.
-   - Each field and the submit control are resolved by role and name against the fresh observation.
-   - Code records outcome facts: URLs, headings, status and alert messages, invalid fields, and text.
+`QueueReviewRun.execute` enqueues `explore:start` and runs four worker coroutines plus a watchdog. Each worker loops: claim a task of its type, run it, complete it.
 
-   Event `test_executed`. A second tester call judges each case from those facts.
-4. **Candidates.** An `unexpected` verdict that cites a supplied requirement becomes a `defect_candidate`. Anything else that isn't `as_expected` becomes a `review_observation` (event `candidate_reported`). Each records:
-   - the requirement;
-   - the inputs;
-   - the reproduction recipe and steps;
-   - the tester's evidence.
-5. **Hand off to the verifier.** Kind `candidate_to_verifier`, with the requirement and expected behaviour.
-   - **Review observations** are recorded as `inconclusive`, failure class `expectation`, with no replay.
-   - **Applicability** is judged by the verifier first, from the control, page and requirement wording. `not_applicable`, `ambiguous`, a missing judgement, or a target the test did not use gives `inconclusive`, failure class `applicability`, because repeating a behaviour cannot establish that a requirement applies. Code checks the shape of this judgement only; it cannot prove the judgement is right, so a `confirmed` finding still rests on a model's reading of the requirement.
-   - **Candidates** get a fresh context and workspace for each replay (`verification_replays`, default 2):
-     - Code reaches the start state.
-     - On the first replay, the verifier sees its own fresh observation and either declines (not explicit) or quotes the requirement and selects an assertion. Code checks that the quote appears in the requirement text and validates the typed params.
-     - Code repeats the steps and evaluates the assertion (event `verification_executed`).
-   - **Control types.** Text-like inputs use `fill`, selects use `select` with an observed option value, and checkboxes use `check` with a boolean. These steps are saved and replayed unchanged. An invalid option, an unclear boolean, a radio or file control, or a missing submit control makes the case `execution_failed` before the form is touched.
-   - **Execution failures.** A case that did not complete keeps its partial actions and screenshots, skips the tester's assessment, creates no finding and does not count as tested. A replay action that fails gives failure class `execution` (older records say `application`). HTTP errors the site itself returns are recorded as observed results of a completed action.
-6. **Accept.** The coordinator accepts only attempts:
-   - made by a `verifier*` worker other than the reporter;
-   - that have evidence;
-   - where every non-inconclusive outcome has an engine-evaluated result.
-
-   Only then is the finding updated (event `result_accepted`; otherwise `result_rejected`).
-
-   | Replay outcomes | Finding status |
-   |---|---|
-   | All confirmed | `confirmed` |
-   | All not reproduced | `not_reproduced` |
-   | Anything else | `inconclusive`, with the reasons |
-
-   New states reached by testing or verification are recorded as `deferred` explore tasks (event `frontier_deferred`) for the checkpoint 3 queue.
-
-`ReverifyRun` replays an earlier finding's recipe **with its recorded assertion** against another build. It makes no model call, so one executable check can be compared across the broken and corrected builds. It is run from `scripts/checkpoint2_eval.py` and `scripts/supported_check.py`; the API does not accept it as a run mode and there is no UI for it.
-
-## Assertions
-
-`verification/assertions.py` holds the v1 vocabulary:
-- `element_visible`
-- `validation_message_present`
-- `navigation_reached`
-- `text_or_value_retained`
-- `state_condition`
-
-Each type has a pydantic params model with `extra="forbid"`, and evaluation is plain Python over the recorded `Observation`. An assertion states what the page shows **when the requirement is met**: `passed=False` means a violation in that replay. Status messages (`role=status`) do not count as validation; alerts (`role=alert`) and user-invalid fields do. A field-scoped validation check also accepts a page alert that names the field.
-
-## Identity and replay
-
-- `ObservedElement.id` (e1, e2 …) is valid only in its own observation. Recipes store `SemanticStep`s with a `ControlRef` (role, accessible name, input type). `resolve_control` raises on zero or several matches; a replay that cannot resolve is a setup failure, never a guess.
-- Navigation steps store a path relative to the target origin, so a recipe can be replayed against another build.
-- States are merged by signature within a run, and each merge appends a `StateSighting` (agent, phase, context). Different runs are never merged, so builds and modes stay separate. Fresh tester and verifier sessions add only their start and outcome states; intermediate steps remain actions with evidence.
-
-## Data isolation
-
-A fresh browser does not isolate server records. `services/test_data.py` calls the target's harness endpoint (`FLOWLENS_WORKSPACE_ENDPOINT`, POST) before each tester or verifier execution and sets the returned workspace cookie on the new context. The context id (`<agent>:<record id>:<workspace>`) is stored on every action, state sighting, transition, test case and verification attempt. If provisioning fails, the result is `inconclusive` with failure class `setup`.
-
-## Budget
-
-All workers call the model through `ExplorerRun.call_model`, which is checked against **one** run budget (calls, run cost and the overall pool) and recorded with `agent_id` and `phase`.
-
-- **Reserved calls:** the explorer leaves `reserved_verification_calls` plus 2 tester calls unused; the tester leaves the verification reserve.
-- **Output caps:** tester and verifier calls use `max_output_tokens_planning` (default 1400), because hidden reasoning shares the output cap.
-- **Exhausted budget:** if verification runs out of budget, the result is inconclusive and the run is `partial`.
-
-## Ready for later checkpoints
-
-`Task` already has `owner`, `attempt_id`, `lease_expires_at` and `depends_on`, and every record carries agent and context ids. Handoffs are standalone records. Adding the shared queue, leases, the second explorer and stale-result rejection replaces the sequential loop in `ReviewRun.after_explore` without changing the record shapes.
-
-# Checkpoint 3: shared queue (`queue_review` mode)
-
-The sequential `explore_test_verify` mode above is unchanged and stays selectable for regression checks.
-
-## Queue (`storage/queue.py`)
-
-Tasks live in the SQLite `tasks` table. Every operation runs in one `BEGIN IMMEDIATE` transaction:
+`storage/queue.py` runs every operation in one `BEGIN IMMEDIATE` transaction:
 
 | Operation | Behaviour |
 |---|---|
-| `enqueue` | Deduplicated by `(run_id, key)`, checked inside the transaction and backed by a unique expression index. Returns the existing task if the key is taken. |
-| `claim(worker, types)` | Picks the highest-priority `ready` task of those types whose `depends_on` tasks are all `done`. Sets owner, a new `attempt_id`, `attempts += 1`, `claimed_at` and `lease_expires_at`. Ready tasks whose dependency ended failed, blocked or unfinished become `blocked`. |
-| `complete` / `fail` | Accepted only if owner and attempt are still current (`StaleAttempt` otherwise). `fail` puts the task back to `ready` until `max_attempts` claims are used, then marks it `failed`. |
-| `mark_unfinished` | At the end of a run, every task that never ran becomes `unfinished`, with the reason. |
+| `enqueue` | Deduplicated by `(run_id, key)` with a unique index. |
+| `claim` | Takes the highest-priority `ready` task of the worker's types whose dependencies are `done`; sets owner, a new `attempt_id` and a lease. Tasks whose dependency ended badly become `blocked`. |
+| `renew` | Extends the current attempt's lease. |
+| `complete`, `fail`, `update` | Accepted only from the current owner and attempt (`StaleAttempt` otherwise). `fail` retries until `task_max_attempts` claims are used. |
+| `expire_overdue` | Revokes attempts past their lease (section 9). |
+| `mark_unfinished` | At the end, every task that never ran becomes `unfinished`, with the reason. |
 
-Lease enforcement is described under checkpoint 4.
+A worker exits when nothing it could claim is ready or could become ready, when the time limit is hit, or (explorers only) when the explorer call share is used. The run is `completed` only if no task is unfinished, blocked or failed and no limit was hit; otherwise it is `partial`. `cancelled`, `failed` (a coordinator error) and `interrupted` are separate statuses.
 
-## Workers (`orchestration/queue_review.py`)
+## 4. Handoffs and task flow
 
-Four coroutines share one event loop: `explorer-a`, `explorer-b` (type `explore`), `input-tester` (`input_test`) and `verifier` (`verify`).
-
-| Task | Queued by | Work | Produces |
+| Task | Queued by | Payload | Produces |
 |---|---|---|---|
-| `explore:start` | coordinator | Open the target in a fresh context and workspace | States, transitions, forms |
-| `explore:<signature>` | whichever worker first recorded the state | Reach the state by direct path or semantic recipe (signature must match), then up to `explore_steps_per_task` model-chosen actions. The prompt lists states the team already has. | New states (depth + 1, up to `max_depth`; deeper ones are recorded `unfinished`), forms |
-| `input_test:<form key>` | the explorer that saw the form | The checkpoint 2 tester on the stored `form_to_tester` handoff | Test cases; outcome states queued as explore tasks; candidates |
-| `verify:<finding>` | input-tester; `depends_on` the test task | The checkpoint 2 verifier on the stored `candidate_to_verifier` handoff | Verification attempts and the accepted result |
+| `explore:start` | coordinator | none | States, transitions, forms |
+| `explore:<signature>` | the worker that first recorded the state | `state_id` | More states and forms |
+| `input_test:<form key>` | the explorer that saw the form | form and `form_to_tester` handoff | Test cases, candidate findings |
+| `verify:<finding>` | input tester; depends on the test task | finding and `candidate_to_verifier` handoff | Verification attempts, accepted status |
 
-- **Shared discoveries:** every worker records into one signature-keyed state map. A merge appends a sighting (agent, phase, context), so provenance is kept.
-- **Isolation:** each task, test case and replay gets its own browser context and a newly provisioned fixture workspace. A state found by one explorer is reproduced by another through the stored recipe, not through shared server data.
-- **Budget:**
-  - One run budget is shared by every worker.
-  - Explorers stop when total calls reach `max_model_calls − reserved_testing_calls − reserved_verification_calls`; the tester leaves the verification reserve.
-  - Capacity is reserved in one synchronous step (see Budget reservation), which replaced an earlier check that could overshoot by one call.
-- **Termination:** a worker exits when no task it can claim is ready, no task is in progress, and nothing in progress could produce more. It also exits when the time limit is hit or the explorer budget share is used. The run is `partial` if anything is unfinished, blocked or failed, or if a budget limit was hit.
+A **handoff** is a stored record, also saved as a JSON artifact (event `handoff_created`). It contains the source state, the form or finding, a `SetupRecipe` (direct path, semantic steps and expected state signature), the supplied requirements with ids, one expectation per requirement, and evidence references.
 
-# Checkpoint 4: leases, fencing and recovery
+**New states.** States reached by any worker become `explore` tasks, except:
 
-- **Renewal.** Every browser-context launch, browser action and model call by a queue worker first calls `check_attempt`. A revoked attempt is refused (`late_action_rejected`); otherwise the lease is renewed for `task_lease_s`.
-- **Expiry.** A watchdog coroutine calls `TaskQueue.expire_overdue` every 0.25 s. This is atomic: an expiry and a completion racing on the same attempt have exactly one winner.
-  - **Who may retry:** the expired owner is excluded from the task when another live worker of that type exists. Otherwise the same worker retries with a fresh attempt, so single-worker types are not stranded.
-  - **Fencing hold:** the task is held (`fencing`) until the coordinator has closed every browser context opened by the expired attempt (`context_fenced`). Only then is it released (`task_reassigned`).
-  - **Last attempt:** expiry on the final attempt marks the task `failed`.
-- **Late results.** When the expired worker resumes, its next action or model call is refused. The worker still submits its result, and the queue rejects it because the attempt is no longer current (`result_rejected`). When a reassigned task completes, `task_recovered` records the expired attempts and the recovering worker. Records the expired attempt wrote *before* expiry stay, labelled with its task and context id.
-- **Fault injection.** `fault_injection` on `POST /api/runs` (queue_review only) stalls a chosen worker after a claim, while it holds an open browser context. Such runs carry `provenance.injected_failure = true`, and the events are prefixed `[INJECTED FAULT]`. Setup step: the other explorers wait up to 15 s for the faulty worker's first claim, so the stall lands on real work. Everything after the stall (diagnosis, fencing, reassignment, rejection, recovery) is the normal coordinator path.
+- a variation of an explored page with the same structure (only field fill state differs);
+- the outcome of an already-tested form with the same layout (its messages stay in the test-case record);
+- a page on an explored route whose destinations are a subset of that page's (only listed data or a status banner differs);
+- states deeper than `max_depth`, which are recorded as `unfinished`.
 
-## Budget reservation
+Skipped states stay on the map; only the extra task is not run.
 
-`reserve_call` checks and takes capacity in one synchronous step: no `await` between check and increment, and in-flight calls count as used. Usage keeps per-phase counters (`exploration_calls`, `testing_calls`, `verification_calls`).
+## 5. Browser contexts, workspaces and setup replay
 
-| Worker | Limits |
+Every explore task, test case and verification replay opens a **new browser context**. On fixture targets, `services/test_data.py` first asks the fixture for a new **test-data workspace** (`POST` to `FLOWLENS_WORKSPACE_ENDPOINT`, default `/__fixture/workspaces`) and sets it as a cookie, so server-side records are separate too. Approved public websites get a fresh context only; their server data is shared. If provisioning fails, the result is inconclusive with failure class `setup`.
+
+The context id (`<agent>:<record id>:<workspace>`) is stored on every action, state sighting, transition, test case and verification attempt.
+
+**Setup replay.** A worker reaches its start state with `orchestration/replay.py`: open the direct path; if the reached state's signature differs, replay the semantic recipe from the start; succeed only on a signature match. A record created by filling a form exists only in the workspace that created it, so such states skip the direct path and replay the recipe. Recipes store `SemanticStep`s with a `ControlRef` (role, accessible name, input type), never element ids; each control is resolved fresh, with a short wait, and zero or several matches is an explicit failure.
+
+States are merged by signature within a run, and each merge adds a sighting (agent, phase, context). Different runs are never merged.
+
+## 6. Exploration memory and reservations
+
+`orchestration/coverage.py` keeps one `Coverage` record per run, shared by both explorers:
+
+- **Followed and open controls.** A link is identified by its destination, so one page reached by two labels counts once. Links to one id-based route form a record group; a couple of records are sampled while samples keep showing new controls, and the rest stay listed as unvisited.
+- **Reservations.** Before each planning call, an explorer is assigned an open control that the other is not working on. The reservation lasts at most 120 s and is released when the task ends, so a stalled explorer cannot hold work.
+- **Refusals.** Code refuses an action that repeats followed work or would fill or submit a recorded form (the input tester owns forms), and tells the model why. Refused actions are not executed.
+- **No-progress stop.** Only a new control or page structure counts as progress. A task stops after 3 steps without progress, after 2 refused choices, or when nothing open is reachable.
+
+Reservations are not leases. A **reservation** steers which control an explorer is asked about, lives in memory and is advisory. A **lease** (section 9) is the queue's ownership of a task and decides whose results are accepted.
+
+## 7. Test execution, execution failures and applicability
+
+**Plan.** The tester gets the form and requirements and returns up to `max_cases_per_form` cases (default 3). Each case gives exact inputs, a submit control, an optional requirement id, the control that requirement governs, an expected result and an optional check page. If the named control is not used by the case, the case is not requirement-backed.
+
+**Execution** (`ReviewRun.execute_case`), per case in its own context and workspace:
+
+- Code chooses the browser step from the observed control: `fill` for text-like inputs, `select` with an observed option for dropdowns, `check` with a boolean for checkboxes and switches.
+- Radio buttons, file inputs, an unknown option, an unclear boolean or a missing submit control make the case `execution_failed` before the form is touched.
+- With a check page, code observes it in a second tab before and after the submit.
+- Code records outcome facts: URLs, headings, status and alert messages, invalid fields and text.
+
+**Execution failures.** A case that did not complete keeps its actions and screenshots, gets no tester verdict, creates no finding and does not count as tested. A setup failure is `setup_failed`.
+
+**Assessment.** A second tester call judges completed cases from the recorded facts. `unexpected` with a supplied requirement becomes a `defect_candidate`; any other non-`as_expected` verdict becomes a `review_observation`.
+
+**Applicability.** On the first replay the verifier sees the requirement, inputs, the controls the test used, the form and its own fresh observation of the start page. It must say whether the requirement applies and name the control. `not_applicable`, `ambiguous`, a missing judgement, a named control the test did not use, or no reason gives `inconclusive` with failure class `applicability`, and no assertion is run. Code checks the shape of this judgement only, not whether it is right.
+
+## 8. Assertions, replays and acceptance
+
+**Vocabulary** (`verification/assertions.py`): `element_visible`, `validation_message_present`, `navigation_reached`, `text_or_value_retained`, `state_condition`. Each has a params model that forbids extra fields, and evaluation is plain Python over the recorded observation. An assertion states what the page shows when the requirement is met, so `passed=False` is a violation. Status messages do not count as validation; alerts and invalid fields do, and a field-scoped check also accepts a page alert naming the field.
+
+**Replays** (`ReviewRun.replay`), `verification_replays` times (default 2), each in a fresh context and workspace:
+
+1. Code reaches the start state.
+2. On the first replay only, the verifier judges applicability and explicitness, quotes the requirement and chooses an assertion. Code checks that the quote is in the requirement, that it cites the candidate's requirement, and that the params validate. Later replays reuse that assertion.
+3. Code repeats the recorded steps and evaluates the assertion, on the check page if the case has one.
+
+Each attempt ends `confirmed` (assertion failed), `not_reproduced` (held) or `inconclusive` with a failure class: `setup`, `execution` (a browser action did not complete), `expectation`, `applicability` or `verifier`. Review observations get one `inconclusive` attempt with no replay.
+
+**Acceptance** (`ReviewRun.accept`). Before the finding changes, the coordinator checks that every attempt came from a `verifier*` worker other than the reporter, has evidence, and that every non-inconclusive outcome has an engine-evaluated result. Then: all `confirmed` gives `confirmed`, all `not_reproduced` gives `not_reproduced`, anything else gives `inconclusive` with the reasons. All three stay visible.
+
+## 9. Budgets, leases, cancellation, recovery and reporting
+
+**Model budget.** Every call goes through `ExplorerRun.call_model` against one run budget: calls, run cost and the installation's credit pool. At most `FLOWLENS_MAX_CONCURRENT_MODEL_CALLS` (2) run at once. Capacity is taken in one synchronous step, and calls in flight count as used.
+
+| Worker | Limit |
 |---|---|
-| Explorers | Their own count ≤ `max_model_calls − reserved_testing_calls − reserved_verification_calls`, and the total ≤ `max − reserved_verification_calls` |
-| Tester | Total ≤ `max − reserved_verification_calls` |
-| Verifier | Total ≤ `max` |
+| Explorers | Their calls ≤ `max_model_calls − reserved_testing_calls − reserved_verification_calls`; total ≤ `max − reserved_verification_calls` |
+| Input tester | Holds 2 calls (plan and assessment) when it starts a form, or the task is `unfinished`; total ≤ `max − reserved_verification_calls` |
+| Verifier | Total ≤ `max_model_calls` |
 
-Cost is still checked before each call from provider-reported totals; one call's cost can overshoot the cost limit.
+Tester and verifier calls use `max_output_tokens_planning` (1400). An invalid reply is repaired once; a truncated one is retried with minimal reasoning or a larger cap. Cost is checked before each call from provider-reported totals, so one call can overshoot. Hitting a limit makes the run `partial`.
 
-## Planning outputs
+**Limits by mode.**
 
-Tester and verifier calls send `reasoning: {effort: low, exclude: true}`, or `minimal` on a starved retry, with `max_output_tokens_planning` 1400. `planning_reasoning_tokens` is kept only so old records validate. Plans have at most 3 cases and shorter fields. The provider's `finish_reason` and reasoning-token count are stored per call, and `Usage.truncated_calls` counts cut-off replies.
-
-# Current behaviour
-
-## Live updates and reports
-
-The frontend polls `GET /api/runs/{id}` every 1.5 s while a run is active. There is no SSE route. Reports are built from saved records with no model call.
-
-## Limits by mode
-
-| Limit | Explorer only, sequential, single-agent | Shared queue |
+| Limit | Shared queue | Single agent, sequential, explorer only |
 |---|---|---|
-| `max_model_calls`, `max_cost_usd`, overall pool | Enforced before each call | Enforced before each call |
-| `max_steps` | Enforced | **Not used**; hidden in the launcher |
-| `max_states` | Enforced | **Not used** |
-| `max_forms_tested` | Sequential and single-agent | **Not used**; `max_tasks` and call capacity bound testing |
-| `explore_steps_per_task`, `max_depth`, `max_tasks`, `task_max_attempts`, `task_lease_s` | Not used | Enforced |
-| `max_cases_per_form`, `verification_replays` | Sequential and single-agent | Enforced |
-| `max_duration_s` | Soft, during exploration only | Soft |
+| `max_model_calls`, `max_cost_usd`, credit pool | Enforced | Enforced |
+| `explore_steps_per_task` (4), `max_depth` (2), `max_tasks` (40), `task_max_attempts` (2), `task_lease_s` (300) | Enforced | Not used |
+| `max_steps`, `max_states`, `max_forms_tested` | Not used | Enforced |
+| `max_cases_per_form`, `verification_replays` | Enforced | Single agent and sequential |
+| `max_duration_s` | Soft: checked before claims and between steps | Soft, during exploration |
 
-The time limit never interrupts running work. In queue mode it is checked before a claim and between explorer steps, so a test or verification in progress finishes first. Cost limits can overshoot by the calls already in flight.
+The launcher sends cost (US$0.50), model calls (60), output tokens, steps and depth; every other limit takes the `RunLimits` default shown above. A request with no limits at all uses the `FLOWLENS_*` settings (40 calls).
 
-## Stale attempts
+**Leases.** Every browser-context launch, browser action and model call by a queue worker first calls `check_attempt`, which refuses a revoked attempt (`late_action_rejected`) or renews the lease. A heartbeat renews it during a model call, up to the call deadline. The watchdog runs every 0.25 s:
 
-Tester and verifier task saves go through `TaskQueue.update`, which refuses an attempt that is no longer current. `guard_publish` checks the attempt immediately before findings or an accepted verification are written. No `await` falls between that check and the writes, so the watchdog cannot expire the attempt in between. Evidence the attempt recorded before it expired stays, labelled with its task and context.
+1. `expire_overdue` revokes the attempt atomically; an expiry and a completion racing on it have exactly one winner.
+2. The coordinator closes every browser context the attempt opened (`context_fenced`).
+3. The task returns to the queue (`task_reassigned`), excluding the expired worker if another worker of that type exists; on the last attempt it is `failed`.
 
-## Cancellation
+A worker that resumes after expiry is refused on its next action, and its result is rejected (`result_rejected`). Tester and verifier writes go through the queue and `guard_publish`, with no `await` between the check and the write. Records the attempt wrote before expiry stay, labelled with its task and context.
 
-`POST /api/runs/{id}/cancel` and **Cancel run** set a flag that blocks new claims, model calls and browser actions. An in-flight or slot-waiting call is abandoned within about 0.25 s, a browser action already running finishes and is recorded, browser contexts close through the normal exit, leftover tasks become `unfinished`, and the run ends `cancelled` with its evidence kept. A request the provider already received may still be charged; that call is counted under `calls_without_cost`. Cancellation works only for a run executing in the current backend process.
+**Fault injection.** `fault_injection` on `POST /api/runs` (queue mode only) stalls a chosen worker after a claim while it holds an open context. The launcher's checkbox stalls `explorer-a` for 75 s; the API also accepts other workers and task types. Such runs carry `provenance.injected_failure` and `[INJECTED FAULT]` events.
 
-## Exploration memory
+**Cancellation.** `POST /api/runs/{id}/cancel` and **Cancel run** block new claims, model calls and browser actions. A call in flight is abandoned within about 0.25 s, a running browser action finishes and is recorded, unrun tasks become `unfinished`, and the run ends `cancelled`. The provider may still bill a request it received. Cancellation reaches only runs executing in the current process.
 
-`orchestration/coverage.py` gives the queue explorers one shared record of what was followed, where it led and what is still open:
+**Recovery scope.** Leases, fencing and reassignment work inside one backend process. If the process stops, the next start marks any `queued` or `running` run `interrupted`, keeping its evidence; it is not resumed. A run is also refused if the backend source changed on disk after the process started.
 
-- A link is identified by its destination, so the same page reached by two labels counts once. Links to one id-based route form a record group; a few records are sampled and the rest stay listed as unvisited.
-- Open work is claimed before the model plans, so explorers planning at the same time pick different things. Claims expire, so a stalled worker cannot hold work.
-- Code refuses a repeated action or a form fill with specific feedback (forms belong to the input tester). Only a new control or page structure counts as progress, and a task stops after 3 consecutive steps without one or after 2 refused repeats.
+**Live updates.** The frontend polls `GET /api/runs/{id}` every 1.5 s while a run is active. There is no SSE route.
 
-This reduced repetition on Ticket Desk and Creator Studio. On Leave Desk, explorers still revisit navigation such as Dashboard. These changes came after every benchmark batch, so no benchmark result measures them.
+**Reports.** `services/report.py` builds the report from saved records with no model call: `GET /api/runs/{id}/report` (HTML) and `/report.md`. A finished run is described as finished, never as passed, and incomplete work is listed.
 
-## Recovery scope
+## 10. Alternative modes and limitations
 
-Lease expiry, fencing and reassignment work inside one backend process. If that process stops, the next start marks any `queued` or `running` run `interrupted`, with its evidence kept; it is not resumed. Full crash-resume is out of scope.
+| Mode | Class | Started from | What it is |
+|---|---|---|---|
+| `queue_review` | `QueueReviewRun` | Launcher (default), API | Shared queue, described above |
+| `single_agent` | `SingleAgentRun` | Launcher, API | Evaluation baseline: one agent identity and continuing context explores, tests and chooses assertions for its own findings. Same budgets, fresh contexts per case and replay, and code evaluation; findings are marked self-checked. |
+| `explore_test_verify` | `ReviewRun` | API only | Sequential: one explorer, then the tester and verifier in turn. Testing and verification states are recorded as `deferred`, not explored. |
+| `single_explorer` | `ExplorerRun` | API only (the API default when `mode` is omitted) | Exploration only. On finishing, the explorer's persistence claim and a same-session check are stored as a `persistence_check` finding, shown as an unverified explorer observation. |
+| `reverify` | `ReverifyRun` | Scripts only (`scripts/checkpoint2_eval.py`, `scripts/supported_check.py`) | Replays an earlier finding's recipe and recorded assertion against another build with no model call. The API rejects it as a mode. |
 
-## Explorer observations
+When a queue explorer finishes, its summary is stored as an `explorer_observation` event. These notes appear in the Findings tab and report as unverified, create no finding and are never sent to the verifier.
 
-When a queue explorer finishes, its summary is stored as an `explorer_observation` event linked to its task and state. The Findings tab and report show these as unverified explorer observations. They create no finding, are not sent to the verifier, and are not read by the evaluation scorers. Runs made before this change have only the shortened note on the task, so they show none.
+**Limitations.** Applicability and assertion choice are model judgements. Radio and file controls are not supported. Exploration is bounded and can still repeat navigation (seen on Leave Desk). Recovery does not survive a backend restart. Fresh contexts do not isolate a public website's server data. The README lists these for users.
 
-## Credit pool and attribution
+## Older records
 
-The overall pool counts only runs made by this installation; imported demo runs keep their recorded cost on the run. Single-agent explore transitions now name the single agent. Older records are unchanged, so explore transitions in earlier single-agent runs still read `explorer-a` / `explorer-a:default`.
+Records from earlier code still load and display. Differences to expect:
+
+- Failed replay actions in older records have failure class `application`; current code uses `execution`.
+- Runs before explorer observations show none.
+- Single-agent explore transitions in older runs read `explorer-a` / `explorer-a:default`.
+- `planning_reasoning_tokens` is kept in limits only so old records validate.
+- Imported demo runs keep their recorded cost but do not count toward the local credit pool.
