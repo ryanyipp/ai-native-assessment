@@ -19,7 +19,7 @@ The UI refreshes active runs by polling every 1.5 s. Public website targets get 
 | creator-studio, corrected | 5175 | The same app with the defect fixed. |
 | ticket-desk, broken | 5176 | A second fixture app with seeded defects. |
 | ticket-desk, corrected | 5177 | Its corrected build. |
-| leave-desk, broken | 5178 | A third fixture app with seeded defects, held out from evaluation so far. |
+| leave-desk, broken | 5178 | A third fixture app with seeded defects. It is in no scored evaluation batch, but it was used during development from 2 Nov 2026, so it is not a held-out test. |
 | leave-desk, corrected | 5179 | Its corrected build. |
 
 The fixtures are review targets. Their source and `evaluation/` are never given to the runtime agents. Each fixture creates its own data file on first use.
@@ -103,7 +103,7 @@ Open http://localhost:5173.
 
 ## Recorded demo runs (no API key)
 
-`demo/` holds seven saved runs: their records plus the screenshots and page records they reference.
+`demo/` holds eight saved runs: their records plus the screenshots and page records they reference. All but the last were recorded on earlier code (29 Oct 2026); they are shown as recorded, not re-run.
 
 | Run | What it shows |
 |---|---|
@@ -114,6 +114,7 @@ Open http://localhost:5173.
 | `run_fc9eba62a54c` | The single-agent baseline: a finding confirmed only by self-check. |
 | `run_15f19bf8bb46` | A public website (TodoMVC) explorer run; its checkbox claims are not evaluated. |
 | `run_40e786578fef` | A re-check of an earlier finding on the corrected build: not reproduced. |
+| `run_7bbdcc167bb6` | The run in the landing-page video (2 Nov 2026): a shared-queue review of ticket-desk (broken) with the goal "Test and check the pages and inputs". T1 (7 tickets accepted) and T4 (cancelled booking still listed) were each confirmed in two replays. |
 
 To load them natively (Docker does this automatically), with the backend stopped or running:
 
