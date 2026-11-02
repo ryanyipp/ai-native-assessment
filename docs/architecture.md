@@ -1,4 +1,4 @@
-# Architecture notes (checkpoint 2)
+# Architecture notes
 
 These notes follow the build by checkpoint, so later sections replace earlier ones where they differ. See "Current behaviour" at the end. `docs/plan.md` remains the agreed plan.
 
@@ -183,6 +183,20 @@ Tester and verifier task saves go through `TaskQueue.update`, which refuses an a
 ## Cancellation
 
 `POST /api/runs/{id}/cancel` and **Cancel run** set a flag that blocks new claims, model calls and browser actions. An in-flight or slot-waiting call is abandoned within about 0.25 s, a browser action already running finishes and is recorded, browser contexts close through the normal exit, leftover tasks become `unfinished`, and the run ends `cancelled` with its evidence kept. A request the provider already received may still be charged; that call is counted under `calls_without_cost`. Cancellation works only for a run executing in the current backend process.
+
+## Exploration memory
+
+`orchestration/coverage.py` gives the queue explorers one shared record of what was followed, where it led and what is still open:
+
+- A link is identified by its destination, so the same page reached by two labels counts once. Links to one id-based route form a record group; a few records are sampled and the rest stay listed as unvisited.
+- Open work is claimed before the model plans, so explorers planning at the same time pick different things. Claims expire, so a stalled worker cannot hold work.
+- Code refuses a repeated action or a form fill with specific feedback (forms belong to the input tester). Only a new control or page structure counts as progress, and a task stops after 3 consecutive steps without one or after 2 refused repeats.
+
+This reduced repetition on Ticket Desk and Creator Studio. On Leave Desk, explorers still revisit navigation such as Dashboard. These changes came after every benchmark batch, so no benchmark result measures them.
+
+## Recovery scope
+
+Lease expiry, fencing and reassignment work inside one backend process. If that process stops, the next start marks any `queued` or `running` run `interrupted`, with its evidence kept; it is not resumed. Full crash-resume is out of scope.
 
 ## Explorer observations
 
