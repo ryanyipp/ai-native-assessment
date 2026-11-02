@@ -2,10 +2,11 @@ import { FlaskConical, ShieldCheck } from 'lucide-react'
 import { Badge, Field, SectionTitle } from '../../components/ui'
 import { Thumb } from '../../components/Screenshot'
 import { artifactUrl } from '../../lib/api'
-import { evidenceFor, testCaseFor } from '../../lib/run-model'
+import { evidenceFor, testCaseFor, wasAttempted } from '../../lib/run-model'
 import { verificationMeta } from '../../lib/ui-utils'
 import type { Finding, RunDetail, VerificationAttempt } from '../../lib/types'
 import type { Selection } from '../flow-map/FlowMap'
+import { FindingEvidenceDialog } from './FindingEvidenceDialog'
 
 const failureText: Record<string, string> = {
   setup: 'Setup failure (could not recreate the start conditions)',
@@ -82,11 +83,6 @@ function Attempt({ v, detail, onSelect }: { v: VerificationAttempt; detail: RunD
   )
 }
 
-/** True only when saved records show a browser replay began; a verifier review alone is not one. */
-function wasAttempted(v: VerificationAttempt) {
-  return v.setup_ok || !!v.setup_strategy || !!v.setup_error || v.action_result_ids.length > 0
-}
-
 export function CandidateCard({ f, detail, onSelect }: { f: Finding; detail: RunDetail; onSelect: (s: Selection) => void }) {
   const m = verificationMeta[f.verification_status]
   const tc = testCaseFor(detail, f.test_case_id)
@@ -114,6 +110,7 @@ export function CandidateCard({ f, detail, onSelect }: { f: Finding; detail: Run
         <Field label="Tester saw">{f.observed}</Field>
         {f.source_finding_id && <Field label="Re-check of" mono>{f.source_finding_id}</Field>}
       </dl>
+      <FindingEvidenceDialog f={f} detail={detail} attempts={attempts} />
 
       <section>
         <SectionTitle aside={<FlaskConical size={14} className="text-slate-500" />}>Original suspicion: input tester evidence</SectionTitle>

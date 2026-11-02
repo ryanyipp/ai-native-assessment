@@ -1,5 +1,5 @@
 // Read-only helpers that derive views from the real run records. Nothing is invented here.
-import type { ActionResult, ModelCall, RunDetail, ScreenState, Transition } from './types'
+import type { ActionResult, ModelCall, RunDetail, ScreenState, SetupRecipe, Transition, VerificationAttempt } from './types'
 
 export function transitionsByStep(d: RunDetail): Transition[] {
   return [...d.transitions].sort((a, b) => a.step - b.step)
@@ -16,6 +16,30 @@ export function selectionForStep(d: RunDetail, step: number): { kind: 'transitio
   if (t) return { kind: 'transition', id: t.id }
   const a = d.actions.find((x) => x.step === step)
   return a ? { kind: 'action', id: a.id } : null
+}
+
+/** True only when saved records show a browser replay began; a verifier review alone is not one. */
+export function wasAttempted(v: VerificationAttempt) {
+  return v.setup_ok || !!v.setup_strategy || !!v.setup_error || v.action_result_ids.length > 0
+}
+
+export interface SequenceItem { action: ActionResult; kind: 'setup' | 'test' | 'check'; isResult: boolean }
+
+/**
+ * One test's or replay's own actions, in recorded order. Built from saved action ids, never from step
+ * numbers, because other agents' steps fall between them. The result action is linked through the map
+ * move: a replay's closing check page is not in its saved action ids.
+ */
+export function evidenceSequence(d: RunDetail, ids: string[], strategy: string | null, recipe: SetupRecipe | null | undefined,
+                                 resultId: string | null | undefined): SequenceItem[] {
+  const setup = strategy === 'direct' ? 1 : strategy ? (recipe?.direct_path ? 1 : 0) + (recipe?.steps.length ?? 0) : 0
+  const all = resultId && !ids.includes(resultId) ? [...ids, resultId] : ids
+  return all.flatMap((id, i) => {
+    const action = d.actions.find((a) => a.id === id)
+    if (!action) return []
+    const kind = i < setup ? 'setup' as const : action.action.type === 'inspect' ? 'check' as const : 'test' as const
+    return [{ action, kind, isResult: id === resultId }]
+  })
 }
 
 export function stateById(d: RunDetail, id: string): ScreenState | undefined {
