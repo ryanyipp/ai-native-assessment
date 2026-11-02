@@ -3,7 +3,9 @@
 
 [![CI](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanyipp/ai-native-assessment/actions/workflows/ci.yml)
 
-FlowLens uses four AI workers to explore staging websites, test forms against written requirements, and present findings with replay evidence.
+FlowLens is a multi-agent AI website reviewer for developers, QA reviewers and team leads checking a staging site before release. 
+Give it a website URL, a review goal and expected-behaviour requirements; it produces an interactive map of observed pages and actions, findings linked to screenshots and replay evidence, and a review report.
+Four AI workers handle exploration, form testing and verification, while Python code controls execution, budgets and result acceptance.
 
 ## Watch the demo
 
