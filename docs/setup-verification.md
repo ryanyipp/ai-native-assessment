@@ -1,5 +1,7 @@
 # Setup verification (2026-10-30)
 
+> **Historical record.** These checks ran on 30 Oct 2026 against commits `5b8ae14` (native) and `a2e9a47` (Docker), when the bundle had 7 demo runs and the suite had 75 tests. They were not repeated on later code. A clean-clone Docker check on 2 Nov 2026 (commit `9609f6e`) stopped when the machine ran out of disk space, so setup of the current code from a clean clone is unverified. See [setup.md](setup.md) for current instructions.
+
 Every test ran from a **separate `git clone` of the committed repository**, made in a temporary folder outside this checkout.
 
 - **Commits tested:** `5b8ae14` for the native path. `a2e9a47` for Docker; it adds the Compose fix found during testing and the smoke-check script.
