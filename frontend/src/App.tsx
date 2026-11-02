@@ -133,8 +133,6 @@ function RunHeader({ detail, agents }: { detail: RunDetail; agents: React.ReactN
             <dd>{r.target_profile === 'website'
               ? "Fresh browser context per worker; the website's server data is shared, not isolated"
               : 'Fixture: fresh browser context and test-data workspace per worker'}</dd>
-            {r.scope_origins && r.scope_origins.length > 0 && (<><dt className="text-slate-500">Allowed origins</dt>
-              <dd className="font-mono [overflow-wrap:anywhere]">{r.scope_origins.join(', ')}</dd></>)}
             <dt className="text-slate-500">Provenance</dt><dd><ProvenanceBadge run={r} /></dd>
             <dt className="text-slate-500">Model</dt><dd className="font-mono [overflow-wrap:anywhere]">{r.model}</dd>
             <dt className="text-slate-500">Usage</dt>
