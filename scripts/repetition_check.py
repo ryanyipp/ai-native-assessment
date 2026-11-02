@@ -4,7 +4,7 @@ Two scripted explorers imitate the saved runs: "booker" tries to book in every t
 "navigator" keeps walking the site (run_3f84fb9bdc8b). Point PYTHONPATH at another checkout's backend/src
 to measure older code.
 
-Usage (repo root): backend\.venv\Scripts\python scripts\repetition_check.py OUT_DIR
+Usage (repo root): backend\.venv\Scripts\python scripts\repetition_check.py OUT_DIR [ticket-desk|leave-desk]
 """
 
 import asyncio
@@ -31,6 +31,7 @@ from flowlens.services.llm import ScriptedClient  # noqa: E402
 from flowlens.storage.db import Store  # noqa: E402
 
 PORT = 5399
+SITE = sys.argv[2] if len(sys.argv) > 2 else "ticket-desk"
 PLAN = {"reasoning": "scripted", "cases": [{"label": "Valid", "submit": "Book tickets", "expected": "booked", "inputs": {
     "Name": "John Doe", "Email": "john@example.com", "Tickets": "2"}}, {"label": "Zero", "submit": "Book tickets",
     "expected": "rejected", "inputs": {"Name": "John Doe", "Email": "john@example.com", "Tickets": "0"}}]}
@@ -69,17 +70,34 @@ def looper(page, user):
     return {"type": "click", "element_id": links[0][0]} if links else {"type": "finish", "summary": "scripted finish"}
 
 
+def follower(page, user):
+    """A cooperative model: takes the first control the coverage summary lists, and walks home if there are none here."""
+    here = re.search(r"Unexplored on this page: (.*?)\.\n", user).group(1)
+    links = re.findall(r'(e\d+) (?:link|button) "([^"]+)"', page)
+    for e, name in links:
+        if name in here:
+            return {"type": "click", "element_id": e}
+    hop = re.search(r"Next step towards unexplored work: (.*?)\.\n", user)
+    for e, name in links if hop else []:
+        if name in hop.group(1):
+            return {"type": "click", "element_id": e}
+    away = re.search(r"Unexplored elsewhere: (.*?)\.\n", user).group(1)
+    return {"type": "click", "element_id": links[0][0]} if away != "none" and links else {"type": "finish", "summary": "scripted finish"}
+
+
 def script(style):
     def reply(messages):
         system, user = messages[0]["content"], messages[-1]["content"]
         if "You operate a real browser" in system:
             page = user.split("Current page:")[1].split("\n\nNote:")[0]
-            act = looper(page, user) if style == "looper" else explorer(style, page, user)
+            act = {"looper": looper, "follower": follower}.get(style, lambda p, u: explorer(style, p, u))(page, user)
             return json.dumps({"reasoning": "scripted", "action": act})
         if "designed input cases" in system:
             n = len(re.findall(r"(?m)^Case \d+", user)) or 2
             return json.dumps({"reasoning": "scripted", "assessments": [
                 {"case": i + 1, "verdict": "as_expected", "observed_summary": "ok", "requirement_ref": None} for i in range(n)]})
+        if SITE == "leave-desk":
+            return json.dumps({"reasoning": "scripted", "cases": []})
         return json.dumps(ACTION_PLAN if "Yes, cancel booking" in user else PLAN)
     return reply
 
@@ -94,6 +112,7 @@ async def one(style, tmp):
     await QueueReviewRun(run, store, s, ScriptedClient(script(style))).execute()
     d = store.detail(run.id)
     model = {t.action_result_id for t in d.transitions if t.model_call_id}
+    chosen = [t.label for t in d.transitions if t.model_call_id and t.agent_id.startswith("explorer") and t.ok]
     submits = [a for a in d.actions if a.action.get("type") == "click" and "button" in (a.target_description or "")
                and a.agent_id.startswith("explorer")]
     return {"style": style, "status": d.run.status.value, "actions": len(d.actions),
@@ -102,13 +121,19 @@ async def one(style, tmp):
                 t.type == "explore" and t.status.value in ("done", "unfinished") for t in d.tasks),
             "test_cases": len(d.test_cases), "forms": len(d.forms), "routes": sorted({s.route for s in d.states}),
             "explorer_submits_model": sum(a.id in model for a in submits), "explorer_submits_setup": sum(a.id not in model for a in submits),
-            "failed_setups": sum(e.type == "task_retry" for e in d.events)}
+            "failed_setups": sum(e.type == "task_retry" for e in d.events),
+            "explorer_calls": sum(m.agent_id.startswith("explorer") for m in d.model_calls),
+            "repeated_model_clicks": sum(n - 1 for n in Counter(chosen).values()),
+            "refused_repeats": sum(e.type == "explorer_repeat_refused" for e in d.events),
+            "structures": len({tuple(s.destinations) for s in d.states}),
+            "unfinished": sorted({t.note for t in d.tasks if t.status.value == "unfinished"}), "clicks": chosen}
 
 
 async def main():
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-        env = {**os.environ, "TICKET_DESK_DATA": str(Path(tmp) / "td.json"), "TICKET_DESK_MODE": "corrected"}
-        proc = subprocess.Popen([sys.executable, "-m", "uvicorn", "app:app", "--app-dir", str(ROOT / "fixtures" / "ticket-desk"),
+        env = {**os.environ, "TICKET_DESK_DATA": str(Path(tmp) / "td.json"), "TICKET_DESK_MODE": "corrected",
+               "LEAVE_DESK_DATA": str(Path(tmp) / "ld.json"), "LEAVE_DESK_MODE": "corrected"}
+        proc = subprocess.Popen([sys.executable, "-m", "uvicorn", "app:app", "--app-dir", str(ROOT / "fixtures" / SITE),
                                  "--port", str(PORT), "--log-level", "warning"], env=env)
         try:
             for _ in range(100):
@@ -117,7 +142,7 @@ async def main():
                     break
                 except httpx.HTTPError:
                     time.sleep(0.1)
-            rows = [await one(style, tmp) for style in ("booker", "navigator", "looper")]
+            rows = [await one(style, tmp) for style in ("follower", "looper")]
         finally:
             proc.terminate()
     out = Path(sys.argv[1])
