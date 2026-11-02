@@ -327,7 +327,6 @@ export default function App() {
               <Tooltip content={`Model calls are made only by the backend. Credit pool: ${fmtUsd(health.spent_reported_usd, 4)} spent of ${fmtUsd(health.budget_usd, 2)}.`}>
                 <span tabIndex={0} className="hidden items-center gap-1.5 text-xs text-slate-600 md:inline-flex">
                   <span className={cx('h-1.5 w-1.5 rounded-full', health.api_key_configured ? 'bg-emerald-500' : 'bg-amber-500')} aria-hidden />
-                  <span className="font-mono">{health.model}</span>
                   {!health.api_key_configured && <span className="text-amber-700">· key missing</span>}
                 </span>
               </Tooltip>
