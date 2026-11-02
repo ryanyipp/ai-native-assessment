@@ -82,4 +82,4 @@ The video shows `run_7bbdcc167bb6`, a shared-queue review with Gemini 3 Flash of
 - [docs/model-comparison.md](docs/model-comparison.md): benchmark method and results.
 - [docs/development-log.md](docs/development-log.md): build history and problems found along the way.
 - [docs/plan.md](docs/plan.md) and [AGENTS.md](AGENTS.md): the agreed plan and the working rules; AGENTS.md lists what was implemented.
-- [docs/attribution.md](docs/attribution.md): libraries and AI assistance. The code was written with Claude, as the commit co-author trailers show; Ryan set the scope, ran and recorded the demos, and reviewed the work.
+- [docs/attribution.md](docs/attribution.md): libraries and AI assistance. 
