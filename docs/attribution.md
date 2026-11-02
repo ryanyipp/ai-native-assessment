@@ -7,6 +7,6 @@
 - Checkpoint 2 added no new dependencies.
 - Checkpoint 3 (shared queue, queue_review workers, task board, tests and checks) was written by Claude (lead session) and added no new dependencies.
 - Checkpoint 4 (leases, fencing, recovery, fault injection, call reservation) was written by Claude (lead session) and added no new dependencies.
-- Later work was also written by Claude: the lead session plus a second, parallel Claude session in the same repository. It covers the reports, the evaluation scripts and batches, the ticket-desk and leave-desk fixtures, exploration memory, form-control handling, execution-failure handling, the verifier's applicability check, the evidence dialog and the landing page. Every commit after the initial one carries a Claude co-author trailer. Ryan chose the scope, ran and recorded the demos, and reviewed the changes.
+- Later work was also written by Claude: the lead session plus a second, parallel Claude session in the same repository. It covers the reports, the evaluation scripts and batches, the ticket-desk and leave-desk fixtures, exploration memory, form-control handling, execution-failure handling, the verifier's applicability check, the evidence dialog and the landing page. Ryan chose the scope, ran and recorded the demos, and reviewed the changes.
 - No dependency was added after 29 Oct 2026, the last change to `backend/pyproject.toml` or `frontend/package.json`.
 - The landing-page demo video was recorded by Ryan and re-encoded with ffmpeg (H.264). ffmpeg was used as a local tool, not as a project dependency.
