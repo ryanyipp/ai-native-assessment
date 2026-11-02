@@ -24,7 +24,7 @@ function DemoVideo() {
       style={{ backgroundImage: 'radial-gradient(rgb(255 255 255 / 0.12) 1px, transparent 1px)', backgroundSize: '22px 22px' }}>
       <div className="flex flex-col items-center gap-3 px-6 text-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20"><Film size={20} aria-hidden /></span>
-        <p className="text-sm font-medium sm:text-base">Demo video coming soon.</p>
+        <p className="text-sm font-medium sm:text-base">The demo video could not be loaded.</p>
       </div>
     </div>
   )
