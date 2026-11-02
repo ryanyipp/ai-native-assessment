@@ -5,8 +5,8 @@ import { buttonClass } from '../../lib/ui-utils'
 const REPOSITORY_URL = 'https://github.com/ryanyipp/ai-native-assessment'
 
 /**
- * The demo video lives in frontend/public/flowlens-demo.mp4. It is gitignored (too large for git), so a
- * fresh clone shows the placeholder. Controls are on and it never autoplays.
+ * The demo video lives in frontend/public/flowlens-demo.mp4. If it fails to load, the placeholder shows.
+ * Controls are on and it never autoplays.
  */
 const DEMO_VIDEO = { src: '/flowlens-demo.mp4' } as { src: string; poster?: string } | null
 
