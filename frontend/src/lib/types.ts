@@ -201,7 +201,8 @@ export interface TestCase {
 export interface VerificationAttempt {
   id: string; finding_id: string; handoff_id: string | null; verifier_id: string; replay_index: number; target_origin: string
   context_id: string | null; setup_ok: boolean; setup_strategy: string | null; setup_error: string | null
-  failure_class: 'setup' | 'application' | 'execution' | 'expectation' | 'verifier' | null
+  failure_class: 'setup' | 'application' | 'execution' | 'expectation' | 'verifier' | 'applicability' | null
+  applicability?: 'applies' | 'not_applicable' | 'ambiguous' | null; applicability_target?: string | null; applicability_reason?: string | null
   assertion: Assertion | null; result: AssertionResult | null; outcome: 'confirmed' | 'not_reproduced' | 'inconclusive'
   reason: string; action_result_ids: string[]; evidence_refs: string[]; model_call_id: string | null
 }

@@ -23,6 +23,7 @@ class PlannedCase(BaseModel):
     inputs: dict[str, str] = Field(max_length=12)  # field name -> exact value
     submit: str | None = Field(None, max_length=160)  # submit control name
     requirement_ref: str | None = Field(None, max_length=20)
+    requirement_target: str | None = Field(None, max_length=160)  # field or submit control the requirement governs
     expected: str = Field(max_length=200)
     # Optional same-site page whose content the requirement says should change because of the action.
     check_page: str | None = Field(None, max_length=200, pattern=r"^/[^\s]*$")
@@ -62,6 +63,7 @@ Reply with ONE JSON object and nothing else:
   {"label": "<short name>", "inputs": {"<field name exactly as listed>": "<value>"},
    "submit": "<submit control name exactly as listed>",
    "requirement_ref": "<requirement id this case checks, or null>",
+   "requirement_target": "<the field or submit control that requirement governs, or null>",
    "expected": "<what should happen, according to that requirement>",
    "check_page": "<optional: a page path from 'Links' where the effect should be visible, or null>"}]}
 
@@ -73,8 +75,10 @@ Rules:
 - Values are typed exactly. A field with type=date needs YYYY-MM-DD.
 - A select field takes exactly one of its listed options. A checkbox takes "true" or "false". Radio and file
   fields cannot be set: leave them out.
-- Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use \
-null and describe your own expectation; it will be treated as a review observation, not a defect.
+- Set requirement_ref only when a supplied requirement states the expected behaviour for this form, this field \
+and this action. A value that merely looks like what a requirement mentions does not count: date-like text in a \
+free-text field is not a date field. If none applies, use null and describe your own expectation; it will be \
+treated as a review observation, not a defect.
 - At most {max_cases} cases. Keep labels and expectations to one short line each.
 - Reply with compact JSON on a single line (no indentation)."""
 

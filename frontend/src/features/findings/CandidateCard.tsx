@@ -12,6 +12,7 @@ const failureText: Record<string, string> = {
   application: 'Application failure during the repeated actions',
   execution: 'Execution failure (not evidence about the website)',
   expectation: 'Expected behaviour not explicit',
+  applicability: 'Requirement may not apply to this test',
   verifier: 'No valid assertion',
 }
 
@@ -60,6 +61,9 @@ function Attempt({ v, detail, onSelect }: { v: VerificationAttempt; detail: RunD
       </div>
       <p className="text-xs leading-relaxed text-slate-700">{v.reason}</p>
       <dl className="divide-y divide-slate-100 text-xs">
+        {v.applicability === 'applies' && (
+          <Field label="Requirement applies to">{v.applicability_target} — {v.applicability_reason} (model judgement, not proven by code)</Field>
+        )}
         {v.context_id && <Field label="Context" mono>{v.context_id} (fresh)</Field>}
         <Field label="Setup">{v.setup_ok ? `reached via ${v.setup_strategy}` : v.setup_error ? `replay setup failed: ${v.setup_error}` : 'browser replay not attempted'}</Field>
         {shown.length > 0 && (

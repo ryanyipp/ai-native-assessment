@@ -559,7 +559,11 @@ class VerificationAttempt(BaseModel):
     # setup: could not recreate the start state; application: the app errored during
     # the repeated actions; expectation: no explicit requirement; verifier: no valid assertion.
     # "application" appears only in older records; replay action failures are now "execution".
-    failure_class: Literal["setup", "application", "execution", "expectation", "verifier"] | None = None
+    failure_class: Literal["setup", "application", "execution", "expectation", "verifier", "applicability"] | None = None
+    # The verifier's judgement of whether the requirement governs what was tested. A model judgement, unproven by code.
+    applicability: Literal["applies", "not_applicable", "ambiguous"] | None = None
+    applicability_target: str | None = None
+    applicability_reason: str | None = None
     assertion: Assertion | None = None
     result: AssertionResult | None = None
     outcome: Literal["confirmed", "not_reproduced", "inconclusive"]

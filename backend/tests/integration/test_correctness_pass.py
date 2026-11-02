@@ -79,6 +79,8 @@ def ticket_script(verdict="facts"):
             calls.append("verifier")
             assert "Check page / , opened" not in user and "Check page /, opened in the same fresh session BEFORE" in user
             return json.dumps({"reasoning": "T5", "requirement_ref": "T5", "explicit": True,
+                               "applicability": "applies", "applicability_target": "Yes, cancel booking",
+                               "applicability_reason": "This action cancels the booking",
                                "requirement_quote": "A cancelled booking no longer appears under My bookings",
                                "assertion": {"type": "text_or_value_retained",
                                              "params": {"expected": "2 ticket(s)", "expect_present": False}},
@@ -223,6 +225,8 @@ async def test_explicit_requirement_without_assertion_is_a_verifier_failure(fixt
     def script(messages):
         if "You are the Verifier" in messages[0]["content"]:
             return json.dumps({"reasoning": "explicit", "requirement_ref": "R5", "explicit": True,
+                               "applicability": "applies", "applicability_target": "Publish date",
+                               "applicability_reason": "A date field on the scheduling form",
                                "requirement_quote": "A publish date in the past must be rejected"})
         return base(messages)
 

@@ -41,6 +41,7 @@ STATUS = {
 INCONCLUSIVE_WHY = {
     "setup": "the re-check could not recreate the starting page",
     "expectation": "no supplied requirement says what should happen here",
+    "applicability": "the requirement does not apply, or may not apply, to what was tested",
     "application": "the website errored while the steps were repeated",
     "execution": "a browser action did not complete during the replay, which is not evidence about the website",
     "verifier": "the checker could not form a valid check",
@@ -248,11 +249,14 @@ class ReportBuilder:
                     "text": ("Only the explorer observed this. FlowLens compared its claimed values in the same browser session, "
                              "which is not an independent re-check. " + (s["headline"] + "." if s else "No values were checked.")),
                     "check": s}
+        judged = next((a for a in attempts if a.applicability == "applies"), None)
+        applied = (f"The verifier judged that the requirement applies to “{judged.applicability_target}”: "
+                   f"{_clip(judged.applicability_reason, 240)} This is a model judgement, not proven by code. " if judged else "")
         if st == "confirmed":
             return {"status": st, "label": "Confirmed" if indep else "Confirmed by self-check only", "tone": "red" if indep else "amber",
                     "independence": "independent" if indep else "self",
                     "text": f"Assertion chosen by {who} and evaluated by code in {len(ran)} fresh browser replay(s) ({outcomes}). "
-                            + ("" if indep else "Treat as likely but not independently confirmed."), **reviewer}
+                            + applied + ("" if indep else "Treat as likely but not independently confirmed."), **reviewer}
         if st == "not_reproduced":
             return {"status": st, "label": "Not reproduced", "tone": "green", "independence": "independent" if indep else "self",
                     "text": f"Assertion chosen by {who} and evaluated by code in {len(ran)} fresh browser replay(s) "
@@ -261,6 +265,10 @@ class ReportBuilder:
             why = next((INCONCLUSIVE_WHY[a.failure_class] for a in attempts if a.failure_class in INCONCLUSIVE_WHY), None)
             base = {"status": st, "label": "Inconclusive", "tone": "slate", "independence": "independent" if indep else "self",
                     **reviewer}
+            unapplied = next((a for a in attempts if a.failure_class == "applicability"), None)
+            if unapplied:
+                return base | {"text": f"Inconclusive: {_clip(unapplied.reason, 300)}. Browser replay of the test was not "
+                                       "completed, and repeating it could not settle this."}
             if replayed:
                 return base | {"text": f"Assertion evaluated by code in {len(replayed)} fresh browser replay(s) ({outcomes}), "
                                        "but the replays gave no verdict" + (f": {why}." if why else ".")}
@@ -354,7 +362,9 @@ class ReportBuilder:
         incomplete = r.status.value in ("partial", "failed", "interrupted", "cancelled", "running", "queued")
 
         # Requirements: what was exercised.
-        tc_by_req = Counter(tc.expectation_source for tc in d.test_cases if tc.status == "executed")
+        unapplied = {f.test_case_id for f in d.findings for i in f.verification_ids
+                     if i in self.verifs and self.verifs[i].failure_class == "applicability"}
+        tc_by_req = Counter(tc.expectation_source for tc in d.test_cases if tc.status == "executed" and tc.id not in unapplied)
         f_by_req = Counter(f.requirement_ref for f in d.findings if f.requirement_ref)
         reqs = []
         for q in self.reqs.values():

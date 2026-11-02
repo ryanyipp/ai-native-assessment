@@ -9,7 +9,7 @@ These notes follow the build by checkpoint, so later sections replace earlier on
 | Coordinator (code) | `orchestration/review.py` `ReviewRun` | Run config, records | Tasks, handoffs, acceptance events | Run a model |
 | Explorer A | `agents/explorer.py` | Goal, supplied requirements, compact observation, own history | Browser actions, states, transitions, finish summary | Confirm anything (contract validator) |
 | Input tester | `agents/input_tester.py` | One `form_to_tester` handoff + requirements | Planned cases, then verdicts on code-recorded facts | Set a verification status |
-| Verifier | `agents/verifier.py` | Requirement, inputs, steps, its own fresh observation of the start page | Explicit/not-explicit judgement, requirement quote, one typed assertion | See the tester's verdict or observed outcome; decide the outcome |
+| Verifier | `agents/verifier.py` | Requirement, inputs with their observed controls, form context, steps, its own fresh observation of the start page | Applicability judgement, explicit/not-explicit judgement, requirement quote, one typed assertion | See the tester's verdict or observed outcome; decide the outcome |
 
 No runtime agent receives the fixture mode, its source, the defect list or evaluation answers. Prompts contain only page observations, supplied requirements and handoff fields.
 
@@ -37,10 +37,13 @@ No runtime agent receives the fixture mode, its source, the defect list or evalu
    - the tester's evidence.
 5. **Hand off to the verifier.** Kind `candidate_to_verifier`, with the requirement and expected behaviour.
    - **Review observations** are recorded as `inconclusive`, failure class `expectation`, with no replay.
+   - **Applicability** is judged by the verifier first, from the control, page and requirement wording. `not_applicable`, `ambiguous`, a missing judgement, or a target the test did not use gives `inconclusive`, failure class `applicability`, because repeating a behaviour cannot establish that a requirement applies. Code checks the shape of this judgement only; it cannot prove the judgement is right, so a `confirmed` finding still rests on a model's reading of the requirement.
    - **Candidates** get a fresh context and workspace for each replay (`verification_replays`, default 2):
      - Code reaches the start state.
      - On the first replay, the verifier sees its own fresh observation and either declines (not explicit) or quotes the requirement and selects an assertion. Code checks that the quote appears in the requirement text and validates the typed params.
      - Code repeats the steps and evaluates the assertion (event `verification_executed`).
+   - **Control types.** Text-like inputs use `fill`, selects use `select` with an observed option value, and checkboxes use `check` with a boolean. These steps are saved and replayed unchanged. An invalid option, an unclear boolean, a radio or file control, or a missing submit control makes the case `execution_failed` before the form is touched.
+   - **Execution failures.** A case that did not complete keeps its partial actions and screenshots, skips the tester's assessment, creates no finding and does not count as tested. A replay action that fails gives failure class `execution` (older records say `application`). HTTP errors the site itself returns are recorded as observed results of a completed action.
 6. **Accept.** The coordinator accepts only attempts:
    - made by a `verifier*` worker other than the reporter;
    - that have evidence;

@@ -317,6 +317,12 @@ class ReviewRun(ExplorerRun):
         for pc in plan.cases[: lim.max_cases_per_form]:
             submit = self._submit_control(form, pc.submit)
             ref = pc.requirement_ref if pc.requirement_ref in self.req_ids else None
+            used = {n.casefold() for n in [*pc.inputs, *([submit.name] if submit else [])]}
+            if ref and pc.requirement_target and pc.requirement_target.strip().casefold() not in used:
+                self.event("requirement_not_linked", f"Case '{pc.label}' does not use {pc.requirement_target!r}, the "
+                           f"control {ref} was said to govern, so it is not requirement-backed",
+                           agent_id=self.tester_id, task=task, model_call_id=plan_mc)
+                ref = None
             tc = TestCase(run_id=self.run.id, form_id=form.id, handoff_id=handoff.id,
                           designed_by=self.tester_id, label=pc.label, inputs=pc.inputs, submit=submit,
                           check_path=pc.check_page,
@@ -549,7 +555,7 @@ class ReviewRun(ExplorerRun):
             for i in range(lim.verification_replays):
                 att = await self.replay(f, handoff, task, i, assertion)
                 attempts.append(att)
-                if att.failure_class in ("expectation", "verifier") and assertion is None:
+                if att.failure_class in ("expectation", "verifier", "applicability") and assertion is None:
                     break  # no valid assertion: further replays would have nothing to evaluate
                 if assertion is None and att.assertion is not None and att.failure_class != "verifier":
                     assertion = att.assertion  # reuse the validated assertion for later replays
@@ -601,7 +607,8 @@ class ReviewRun(ExplorerRun):
                 if assertion is None:
                     try:
                         decision, mc_id = await self.model(
-                            verifier.build_messages(f, start_obs, check_before=check_before),
+                            verifier.build_messages(f, start_obs, check_before=check_before,
+                                                    form=self.store.get(DiscoveredForm, f.form_id) if f.form_id else None),
                             agent_id=self.verifier_id, phase="verify",
                             task=task, parse=verifier.parse_decision,
                             schema=verifier.VerifierDecision.model_json_schema())
@@ -611,11 +618,19 @@ class ReviewRun(ExplorerRun):
                     except ValueError as e:
                         return done("inconclusive", str(e), "verifier")
                     att.model_call_id = mc_id
+                    att.applicability = decision.applicability
+                    att.applicability_target = decision.applicability_target or None
+                    att.applicability_reason = decision.applicability_reason or None
+                    if decision.applicability in ("not_applicable", "ambiguous"):
+                        return done("inconclusive", verifier.applicability_problem(decision, f), "applicability")
                     quote = " ".join(decision.requirement_quote.split()).casefold()
                     quote_ok = bool(quote) and quote in " ".join((f.requirement_text or "").split()).casefold()
                     if not decision.explicit:
                         return done("inconclusive", f"Verifier judged that {f.requirement_ref} does not explicitly "
                                     f"state this behaviour: {decision.reasoning[:240]}", "expectation")
+                    problem = verifier.applicability_problem(decision, f)
+                    if problem:
+                        return done("inconclusive", problem, "applicability")
                     if decision.assertion is None:  # explicit, but no assertion: a verifier failure, not an expectation one
                         return done("inconclusive", f"Verifier said {f.requirement_ref} is explicit but supplied no "
                                     "assertion", "verifier")

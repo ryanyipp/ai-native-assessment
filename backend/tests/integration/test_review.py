@@ -76,6 +76,8 @@ def make_script(tester_verdict=None, tester_ref="R5", verifier_assertion=None):
             calls.append("verifier")
             a = verifier_assertion or {"type": "validation_message_present", "params": {}}
             return json.dumps({"reasoning": "scripted", "requirement_ref": "R5", "explicit": True,
+                               "applicability": "applies", "applicability_target": "Publish date",
+                               "applicability_reason": "A date field on the scheduling form",
                                "requirement_quote": "A publish date in the past must be rejected",
                                "assertion": a, "expected": "a validation message"})
         raise AssertionError("unexpected prompt")
