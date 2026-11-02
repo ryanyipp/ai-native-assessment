@@ -162,7 +162,7 @@ class Task(BaseModel):
     id: str = Field(default_factory=lambda: new_id("task"))
     run_id: str
     type: Literal["explore", "input_test", "verify"] = "explore"
-    # Later checkpoints add leases and concurrent claims; these fields already exist.
+    # owner, attempt_id and lease_expires_at carry the shared queue's claims and leases (storage/queue.py).
     key: str  # stable dedup key
     depends_on: list[str] = Field(default_factory=list)
     input_refs: list[str] = Field(default_factory=list)
@@ -592,7 +592,7 @@ class Finding(BaseModel):
     evidence_refs: list[str] = Field(default_factory=list)
     verification_status: VerificationStatus = VerificationStatus.unverified
     replay_recipe: list[dict[str, Any]] = Field(default_factory=list)
-    # Checkpoint 2: input-test candidates.
+    # Input-test candidates: the tested requirement, inputs and how to reproduce them.
     requirement_ref: str | None = None
     requirement_text: str | None = None
     inputs: dict[str, str] = Field(default_factory=dict)

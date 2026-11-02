@@ -172,8 +172,8 @@ export function RunActivity({ detail, selection, onSelect }: {
             ))}
           </ol>
           <p className="mt-2 text-[11px] text-slate-500">{detail.run.mode === 'queue_review'
-            ? 'Recorded queue events: claims carry an attempt id and lease; lease expiry and reassignment arrive in the next checkpoint.'
-            : 'Sequential handoffs (checkpoint 2). The shared queue is the queue_review mode.'}</p>
+            ? 'Recorded queue events: claims carry an attempt id and lease; expired leases, reassignments and rejected late results appear here too.'
+            : 'Sequential handoffs. The shared queue is the queue_review mode.'}</p>
         </section>
       ) : (
         <div className="flex gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-xs leading-relaxed text-slate-500">

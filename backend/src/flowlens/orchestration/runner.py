@@ -3,7 +3,7 @@
 Code owns execution, recording and limits. The model only proposes the next
 action. States and transitions are derived from what the browser actually did.
 `ReviewRun` (orchestration/review.py) extends this with the input tester and
-verifier; a plain `ExplorerRun` is the checkpoint 1 single-explorer mode.
+verifier; a plain `ExplorerRun` is the explorer-only mode (`single_explorer`).
 """
 
 from __future__ import annotations
@@ -364,7 +364,7 @@ class ExplorerRun:
 
         No await happens between the check and the increment, so concurrent workers on
         the run's event loop cannot both pass a check for the last unit (the overshoot
-        seen in checkpoint 3). Calls in flight count as used.
+        seen during the first shared-queue runs). Calls in flight count as used.
         """
         lim, u = self.run.limits, self.run.usage
         if hold_key is not None and self.holds.get(hold_key, 0) > 0:

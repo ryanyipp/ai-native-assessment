@@ -1,14 +1,16 @@
-"""Sequential explorer -> input tester -> verifier review (checkpoint 2).
+"""Input tester and verifier steps, and the sequential review mode (`explore_test_verify`).
 
-The coordinator here is plain code. It turns the explorer's discovered forms
-into tester handoffs, executes the tester's chosen cases in fresh contexts with
-fresh test data, turns unexpected outcomes into candidate findings, hands each
-candidate to the verifier, and accepts a verification result only after
-checking who produced it and that it is backed by engine-evaluated evidence.
+`ReviewRun` holds the steps every review mode shares: form handoffs, executing the
+tester's cases in fresh contexts with fresh test data, turning unexpected outcomes
+into candidate findings, verification replays, and accepting a verification result
+only after checking who produced it and that it is backed by engine-evaluated
+evidence. The coordinator is plain code.
 
-Concurrent claims, leases and the second explorer come in checkpoint 3; tasks
-are recorded with the fields those need, and new states found by testing are
-recorded as deferred exploration tasks rather than explored now.
+Run on its own, `ReviewRun` is the sequential mode: one explorer, then the tester
+and the verifier in turn. New states found by testing or verification are recorded
+as `deferred` exploration tasks and not explored. `QueueReviewRun`
+(orchestration/queue_review.py) and `SingleAgentRun` (orchestration/single_agent.py)
+extend it.
 """
 
 from __future__ import annotations
@@ -196,7 +198,7 @@ class ReviewRun(ExplorerRun):
         for st in states:
             t = Task(run_id=self.run.id, type="explore", key=f"{self.run.id}:explore:{st.signature}",
                      input_refs=[st.id], status="deferred", owner=None,
-                     note="New state found by testing; the shared exploration queue arrives in checkpoint 3.")
+                     note="New state found by testing; sequential mode does not explore it (shared-queue mode does).")
             self.store.put(t)
             self.event("frontier_deferred", f"New state from {agent_id} queued for exploration (deferred): {st.summary}",
                        agent_id=COORDINATOR, task=task, state_id=st.id, deferred_task_id=t.id)

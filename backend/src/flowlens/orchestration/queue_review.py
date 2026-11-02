@@ -1,4 +1,4 @@
-"""Shared-queue review (checkpoint 3): two explorers, an input tester and a verifier.
+"""Shared-queue review, the default workflow: two explorers, an input tester and a verifier.
 
 The coordinator is code. Work items live in the persistent queue
 (storage/queue.py); four async workers claim them atomically:
@@ -7,10 +7,10 @@ The coordinator is code. Work items live in the persistent queue
   workspace, take a few model-chosen actions, record states/transitions. Each new
   state becomes an explore task (deduplicated by signature, bounded by depth);
   each new form becomes an input_test task with its handoff.
-- input_test (input-tester): the checkpoint 2 tester on a claimed form handoff.
+- input_test (input-tester): the tester steps inherited from ReviewRun, on a claimed form handoff.
   Candidates become verify tasks that depend on the test task. States reached by
   testing become explore tasks too, so the explorers act on them.
-- verify (verifier): the checkpoint 2 verifier on a claimed candidate handoff.
+- verify (verifier): the verifier steps inherited from ReviewRun, on a claimed candidate handoff.
 
 Explorers stop claiming once their share of the call budget is used, leaving
 `reserved_testing_calls + reserved_verification_calls` for the other workers.
