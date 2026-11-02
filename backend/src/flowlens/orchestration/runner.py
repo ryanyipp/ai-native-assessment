@@ -76,6 +76,8 @@ def _action_label(action: dict[str, Any], target: str | None) -> str:
         return f"press {action.get('key', 'Enter')} in {target or action.get('element_id')}"
     if t == "check":
         return f"{'check' if action.get('checked', True) else 'uncheck'} {target or action.get('element_id')}"
+    if t == "select":
+        return f"select \"{str(action.get('value', ''))[:40]}\" in {target or action.get('element_id')}"
     if t == "navigate":
         return f"navigate {action.get('url')}"
     return str(t)
@@ -109,9 +111,9 @@ def semantic_step(action: dict[str, Any], ex: Execution) -> SemanticStep | None:
         return SemanticStep(type="navigate", path=relative_path(ex.url_after if ex.ok else action["url"]))
     if t == "reload":
         return SemanticStep(type="reload")
-    if t in ("click", "fill", "press", "check") and ex.target_element is not None:
+    if t in ("click", "fill", "press", "check", "select") and ex.target_element is not None:
         return SemanticStep(type=t, control=control_of(ex.target_element),
-                            value=action.get("value") if t == "fill" else None,
+                            value=action.get("value") if t in ("fill", "select") else None,
                             key=action.get("key") if t == "press" else None,
                             checked=action.get("checked") if t == "check" else None)
     return None
@@ -125,7 +127,7 @@ def extract_forms(obs) -> list[tuple[str, list[FormField], list[ControlRef]]]:
             groups.setdefault(e.form_index, []).append(e)
     out = []
     for els in groups.values():
-        fields = [FormField(control=control_of(e), required=e.required, observed_value=e.value)
+        fields = [FormField(control=control_of(e), required=e.required, observed_value=e.value, options=e.options)
                   for e in els if e.tag in FIELD_TAGS and (e.input_type or "") not in NON_FIELD_TYPES]
         submits = [control_of(e) for e in els if e.role == "button"]
         if not submits:

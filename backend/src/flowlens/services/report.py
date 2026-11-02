@@ -74,6 +74,8 @@ def plain_step(step: dict[str, Any]) -> str:
     if t == "fill":
         v = step.get("value")
         return f"Leave “{name}” empty" if v == "" else f"Type “{v}” into “{name}”"
+    if t == "select":
+        return f"Choose “{step.get('value')}” in “{name}”"
     if t == "press":
         return f"Press {step.get('key') or 'Enter'} in “{name}”"
     if t == "check":

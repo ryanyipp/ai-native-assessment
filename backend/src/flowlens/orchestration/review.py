@@ -26,6 +26,7 @@ from flowlens.models.contracts import (
     DiscoveredForm,
     Expectation,
     Finding,
+    FormField,
     Handoff,
     ModelCall,
     Run,
@@ -52,6 +53,35 @@ COORDINATOR = "coordinator"
 
 def _short_inputs(inputs: dict[str, str]) -> str:
     return ", ".join(f"{k}={v[:24]!r}" for k, v in inputs.items())[:90]
+
+
+class CaseNotRunnable(ValueError):
+    """A planned case cannot be entered into the observed form."""
+
+
+BOOLEAN_VALUES = {"true": True, "on": True, "yes": True, "checked": True, "1": True,
+                  "false": False, "off": False, "no": False, "unchecked": False, "0": False}
+
+
+def field_step(field: FormField, value: str) -> SemanticStep:
+    """The browser step for one planned input, chosen from the observed control type."""
+    c = field.control
+    if c.role == "radio" or c.input_type == "file":
+        raise CaseNotRunnable(f"{c.describe()} is not supported: {c.input_type or c.role} controls cannot be set")
+    if field.options is not None:
+        wanted = " ".join(value.split()).casefold()
+        hit = (next((o for o in field.options if o.value == value), None)
+               or next((o for o in field.options if wanted in (o.label.casefold(), o.value.casefold())), None))
+        if hit is None or hit.disabled:
+            listed = ", ".join(repr(o.label) for o in field.options if not o.disabled)
+            raise CaseNotRunnable(f"{c.describe()} has no selectable option {value!r} (observed: {listed})")
+        return SemanticStep(type="select", control=c, value=hit.value)
+    if c.role in ("checkbox", "switch"):
+        state = BOOLEAN_VALUES.get(value.strip().casefold())
+        if state is None:
+            raise CaseNotRunnable(f"{c.describe()} needs true or false, not {value!r}")
+        return SemanticStep(type="check", control=c, checked=state)
+    return SemanticStep(type="fill", control=c, value=value)
 
 
 class _Attempt:
@@ -133,7 +163,7 @@ class ReviewRun(ExplorerRun):
         # A record created by filling a form belongs to the workspace that created it, so its URL
         # cannot open in a fresh workspace (run_816054f4e335 step 35: 404). Replay the recipe instead.
         created = (self.provider.isolation == WorkspaceProvider.isolation and ":id" in state.route
-                   and any(s.type == "fill" for s in state.semantic_recipe))
+                   and any(s.type in ("fill", "select", "check") for s in state.semantic_recipe))
         return SetupRecipe(target_state_id=state.id, expected_signature=state.signature,
                            direct_path=None if created else relative_path(state.url), steps=list(state.semantic_recipe),
                            data_isolation=self.provider.isolation)
@@ -365,12 +395,20 @@ class ReviewRun(ExplorerRun):
                 tc.status, tc.setup_error = "setup_failed", reached.error
             else:
                 start_state, start_url = att.mark_state(reached.execution), reached.execution.observation.url
-                steps = self._case_steps(tc, form)
-                before = await self.peek(eng, tc.check_path, att, "before") if tc.check_path else None
+                try:
+                    steps = self._case_steps(tc, form)
+                except CaseNotRunnable as e:  # refused before touching the form: nothing was tested
+                    steps, refused = [], str(e)
+                    tc.observed = outcome_facts(reached.execution.observation, start_url)
+                else:
+                    refused = None
+                before = await self.peek(eng, tc.check_path, att, "before") if tc.check_path and not refused else None
                 err, app_err, ex = await self._run_steps(eng, steps, att)
                 after = (await self.peek(eng, tc.check_path, att, "after")
                          if tc.check_path and ex is not None and not (err or app_err) else None)
-                if err or app_err or ex is None:
+                if refused:
+                    tc.status, tc.setup_error = "execution_failed", refused
+                elif err or app_err or ex is None:
                     tc.status, tc.setup_error = "execution_failed", err or app_err or "no actions executed"
                 else:
                     tc.status = "executed"
@@ -417,13 +455,15 @@ class ReviewRun(ExplorerRun):
 
     @staticmethod
     def _case_steps(tc: TestCase, form: DiscoveredForm) -> list[SemanticStep]:
-        by_name = {f.control.name.casefold(): f.control for f in form.fields}
+        by_name = {f.control.name.casefold(): f for f in form.fields}
         steps = []
         for name, value in tc.inputs.items():
-            ctrl = by_name.get(" ".join(name.split()).casefold()) or ControlRef(role="textbox", name=name)
-            steps.append(SemanticStep(type="fill", control=ctrl, value=value))
-        if tc.submit:
-            steps.append(SemanticStep(type="click", control=tc.submit))
+            field = by_name.get(" ".join(name.split()).casefold())
+            steps.append(field_step(field, value) if field else
+                         SemanticStep(type="fill", control=ControlRef(role="textbox", name=name), value=value))
+        if not tc.submit:
+            raise CaseNotRunnable("no submit control was chosen, so the case would not have been submitted")
+        steps.append(SemanticStep(type="click", control=tc.submit))
         return steps
 
     async def _run_steps(self, eng: BrowserEngine, steps: list[SemanticStep], att: _Attempt

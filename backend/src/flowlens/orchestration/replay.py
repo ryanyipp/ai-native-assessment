@@ -18,6 +18,7 @@ from flowlens.models.contracts import (
     NavigateAction,
     PressAction,
     ReloadAction,
+    SelectAction,
     SemanticStep,
     SetupRecipe,
 )
@@ -69,6 +70,8 @@ async def execute_step(eng: BrowserEngine, origin: str, step: SemanticStep) -> t
             action = FillAction(element_id=el.id, value=step.value or "")
         elif step.type == "press":
             action = PressAction(element_id=el.id, key=step.key or "Enter")
+        elif step.type == "select":
+            action = SelectAction(element_id=el.id, value=step.value or "")
         elif step.type == "check":
             action = CheckAction(element_id=el.id, checked=step.checked is not False)
         else:

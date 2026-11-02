@@ -71,6 +71,8 @@ Rules:
 - If a requirement says the action changes another page (for example, an item disappears from a list),
   set check_page to that page's path. Code opens it in the same session before and after the action.
 - Values are typed exactly. A field with type=date needs YYYY-MM-DD.
+- A select field takes exactly one of its listed options. A checkbox takes "true" or "false". Radio and file
+  fields cannot be set: leave them out.
 - Set requirement_ref only when a supplied requirement states the expected behaviour. If none does, use \
 null and describe your own expectation; it will be treated as a review observation, not a defect.
 - At most {max_cases} cases. Keep labels and expectations to one short line each.
@@ -102,6 +104,8 @@ def render_form(form: DiscoveredForm) -> str:
         extra = [f"type={c.input_type}"] if c.input_type else []
         if f.required:
             extra.append("required")
+        if f.options is not None:
+            extra.append("options=" + json.dumps([o.label for o in f.options if not o.disabled][:30], ensure_ascii=False))
         if f.observed_value:
             extra.append(f"current value={json.dumps(f.observed_value[:80])}")
         lines.append(f"  - {json.dumps(c.name)} ({c.role}{', ' + ', '.join(extra) if extra else ''})")

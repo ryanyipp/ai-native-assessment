@@ -216,6 +216,14 @@ class CheckAction(BaseModel):
     checked: bool = True
 
 
+class SelectAction(BaseModel):
+    """Choose one observed option of a select element, by its option value."""
+
+    type: Literal["select"] = "select"
+    element_id: str = Field(pattern=r"^e\d{1,4}$")
+    value: str = Field(max_length=2000)
+
+
 class NavigateAction(BaseModel):
     type: Literal["navigate"] = "navigate"
     url: str = Field(max_length=2000)
@@ -230,9 +238,15 @@ class InspectAction(BaseModel):
 
 
 BrowserAction = Annotated[
-    ClickAction | FillAction | PressAction | CheckAction | NavigateAction | ReloadAction | InspectAction,
+    ClickAction | FillAction | PressAction | CheckAction | SelectAction | NavigateAction | ReloadAction | InspectAction,
     Field(discriminator="type"),
 ]
+
+
+class SelectOption(BaseModel):
+    value: str
+    label: str
+    disabled: bool = False
 
 
 class ObservedElement(BaseModel):
@@ -249,6 +263,7 @@ class ObservedElement(BaseModel):
     # Browser constraint-validation message shown after user interaction, if any.
     validation_message: str | None = None
     checked: bool | None = None  # checkboxes, radios and switches only
+    options: list[SelectOption] | None = None  # select elements only
     # Text of the enclosing list item or row, if any. name_shared: another control in the same
     # observation has this role and name (one "Toggle Todo" per todo); the context then tells them apart.
     context: str | None = None
@@ -311,10 +326,10 @@ class ControlRef(BaseModel):
 
 
 class SemanticStep(BaseModel):
-    type: Literal["navigate", "reload", "click", "fill", "press", "check"]
+    type: Literal["navigate", "reload", "click", "fill", "press", "check", "select"]
     path: str | None = None  # navigate: path + query relative to the target origin
     control: ControlRef | None = None
-    value: str | None = None  # fill value (synthetic test data only, never secrets)
+    value: str | None = None  # fill text or select option value (synthetic test data only, never secrets)
     key: str | None = None  # press
     checked: bool | None = None  # check
 
@@ -325,6 +340,8 @@ class SemanticStep(BaseModel):
             return "reload"
         if self.type == "fill":
             return f"fill {self.control.describe() if self.control else '?'} = {self.value!r}"
+        if self.type == "select":
+            return f"select {self.value!r} in {self.control.describe() if self.control else '?'}"
         if self.type == "press":
             return f"press {self.key} in {self.control.describe() if self.control else '?'}"
         if self.type == "check":
@@ -415,6 +432,7 @@ class FormField(BaseModel):
     control: ControlRef
     required: bool = False
     observed_value: str | None = None
+    options: list[SelectOption] | None = None  # set for select elements
 
 
 class DiscoveredForm(BaseModel):

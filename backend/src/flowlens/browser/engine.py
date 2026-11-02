@@ -29,6 +29,7 @@ from flowlens.models.contracts import (
     ObservedElement,
     PressAction,
     ReloadAction,
+    SelectAction,
 )
 
 MAX_ELEMENTS = 60
@@ -97,6 +98,7 @@ _INSPECT_JS = r"""
         ? (clean(el.validationMessage) || 'invalid') : null,
       checked: (tag === 'input' && ['checkbox','radio'].includes(el.type)) ? !!el.checked
         : (['checkbox','switch','radio'].includes(el.getAttribute('role') || '') ? el.getAttribute('aria-checked') === 'true' : null),
+      options: tag === 'select' ? [...el.options].slice(0, 100).map(o => ({value: o.value, label: clean(o.textContent), disabled: o.disabled})) : null,
       _el: el,
     });
   }
@@ -435,7 +437,7 @@ class BrowserEngine:
                 await page.goto(url, wait_until="load", timeout=NAV_TIMEOUT_MS)
             elif isinstance(action, ReloadAction):
                 await page.reload(wait_until="load", timeout=NAV_TIMEOUT_MS)
-            elif isinstance(action, (ClickAction, FillAction, PressAction, CheckAction)):
+            elif isinstance(action, (ClickAction, FillAction, PressAction, CheckAction, SelectAction)):
                 el = self._element(action.element_id)
                 target_el = el
                 target = f"{el.role} '{el.name}'"
@@ -446,7 +448,15 @@ class BrowserEngine:
                         raise ActionRejected(f"element {action.element_id} ({el.role}) is not fillable")
                     if el.checked is not None:
                         raise ActionRejected(f"element {action.element_id} is a checkbox; use check")
+                    if el.tag == "select":
+                        raise ActionRejected(f"element {action.element_id} is a select; use select")
                     await loc.fill(action.value)
+                elif isinstance(action, SelectAction):
+                    if el.options is None:
+                        raise ActionRejected(f"element {action.element_id} ({el.role}) is not a select")
+                    if not any(o.value == action.value and not o.disabled for o in el.options):
+                        raise ActionRejected(f"{el.role} '{el.name}' has no selectable option {action.value!r}")
+                    await loc.select_option(value=action.value)
                 elif isinstance(action, CheckAction):
                     if el.checked is None:
                         raise ActionRejected(f"element {action.element_id} ({el.role}) is not a checkbox or switch")
@@ -479,7 +489,7 @@ class BrowserEngine:
         except PlaywrightError as e:
             error = f"browser error: {str(e).splitlines()[0][:300]}"
             error_detail = str(e)[:4000]
-        if isinstance(action, (ClickAction, PressAction, CheckAction)) and error is None:
+        if isinstance(action, (ClickAction, PressAction, CheckAction, SelectAction)) and error is None:
             await self._settle()
         # Guard against any navigation or redirect that left the approved scope. Nothing from an
         # out-of-scope page is observed or captured: go back, or to a blank page if that fails.
