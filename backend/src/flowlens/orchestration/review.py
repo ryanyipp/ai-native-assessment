@@ -136,7 +136,7 @@ class ReviewRun(ExplorerRun):
         self.req_ids = {r.id: r for r in self.reqs}
         self.provider = session_provider(run, settings)
         self.budget_note: str | None = None
-        self.summary: dict[str, Any] = {"forms_tested": 0, "cases": 0, "candidates": 0, "outcomes": []}
+        self.summary: dict[str, Any] = {"forms_tested": 0, "cases": 0, "not_completed": 0, "candidates": 0, "outcomes": []}
 
     def incomplete_note(self) -> str:
         s = self.summary
@@ -265,7 +265,8 @@ class ReviewRun(ExplorerRun):
         self.stage = "finishing"
         s = self.summary
         outcome_counts = {o: s["outcomes"].count(o) for o in sorted(set(s["outcomes"]))}
-        text = (f"{reason}; {s['forms_tested']} form(s) tested with {s['cases']} case(s); "
+        missed = f", {s['not_completed']} not completed" if s["not_completed"] else ""
+        text = (f"{reason}; {s['forms_tested']} form(s) tested with {s['cases']} case(s) executed{missed}; "
                 f"{s['candidates']} candidate(s)"
                 + (f", verification: {outcome_counts}" if outcome_counts else ""))
         if self.budget_note or status == RunStatus.partial:
@@ -323,14 +324,18 @@ class ReviewRun(ExplorerRun):
                           model_call_ids=[plan_mc])
             await self.execute_case(tc, form, handoff, task, state)
             cases.append(tc)
-        self.summary["cases"] += len(cases)
-        if not cases:
+        # Only completed cases reach the assessment: a failed action says nothing about the website.
+        completed = [c for c in cases if c.status == "executed"]
+        self.summary["cases"] += len(completed)
+        self.summary["not_completed"] += len(cases) - len(completed)
+        if not completed:
             task.status = "done"
+            task.result_refs = [c.id for c in cases]
             self.save_task(task)
             return []
         executed = [{"label": c.label, "inputs": c.inputs, "requirement_ref": c.requirement_ref,
                      "expected": c.expected, "status": c.status, "error": c.setup_error, "facts": c.observed}
-                    for c in cases]
+                    for c in completed]
         try:
             assessment, assess_mc = await self.model(
                 input_tester.assess_messages(handoff, form, executed), agent_id=self.tester_id,
@@ -344,13 +349,13 @@ class ReviewRun(ExplorerRun):
         self.guard_publish(task)
         findings = []
         for a in assessment.assessments:
-            if not 1 <= a.case <= len(cases):
+            if not 1 <= a.case <= len(completed):
                 continue
-            tc = cases[a.case - 1]
+            tc = completed[a.case - 1]
             tc.tester_verdict, tc.tester_note = a.verdict, a.observed_summary  # type: ignore[assignment]
             tc.model_call_ids.append(assess_mc)
             self.store.put(tc)
-            if a.verdict == "as_expected" or tc.status != "executed":
+            if a.verdict == "as_expected":
                 continue
             findings.append(self._candidate(tc, form, handoff, state, a.verdict, a.observed_summary, assess_mc, task))
         task.status = "done"
@@ -640,8 +645,8 @@ class ReviewRun(ExplorerRun):
                     att.setup_error = err
                     return done("inconclusive", f"Could not resolve a control in the fresh session: {err}", "setup")
                 if app_err or ex is None:
-                    return done("inconclusive", f"The application failed during the repeated actions: {app_err}",
-                                "application")
+                    return done("inconclusive", f"A browser action did not complete during the replay: {app_err}. "
+                                "This is a tool or execution failure, not evidence about the website.", "execution")
                 target_obs = ex.observation
                 if f.check_path:  # multi-step postcondition: evaluate on the check page after the steps
                     target_obs = await self.peek(eng, f.check_path, rec, "after")

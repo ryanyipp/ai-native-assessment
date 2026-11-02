@@ -626,7 +626,7 @@ class QueueReviewRun(ReviewRun):
         counts = {s.value: sum(1 for t in tasks if t.status == s) for s in TaskStatus if any(t.status == s for t in tasks)}
         owners = {a: sum(1 for t in tasks if t.owner == a) for a in [*EXPLORERS, input_tester.AGENT_ID, verifier.AGENT_ID]}
         s = self.summary
-        text = (f"{reason}; tasks {counts}; claimed by {owners}; {s['cases']} test case(s), {s['candidates']} candidate(s), "
+        text = (f"{reason}; tasks {counts}; claimed by {owners}; {s['cases']} test case(s) executed{f", {s['not_completed']} not completed" if s['not_completed'] else ""}, {s['candidates']} candidate(s), "
                 f"verification {dict((o, s['outcomes'].count(o)) for o in sorted(set(s['outcomes'])))}")
         if self.cancel_requested.is_set():
             status = RunStatus.cancelled

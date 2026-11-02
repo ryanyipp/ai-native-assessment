@@ -170,7 +170,7 @@ export function FindingsPanel({ detail, onSelect }: { detail: RunDetail; onSelec
         <dl className="divide-y divide-slate-100">
           <Field label="States">{detail.states.length} observed</Field>
           <Field label="Transitions">{detail.transitions.length} ({failed} failed actions)</Field>
-          {(detail.test_cases ?? []).length > 0 && <Field label="Test cases">{detail.test_cases!.length} executed or attempted</Field>}
+          {(detail.test_cases ?? []).length > 0 && <Field label="Test cases">{detail.test_cases!.filter((t) => t.status === 'executed').length} executed, {detail.test_cases!.filter((t) => t.status !== 'executed').length} not completed</Field>}
           <Field label="Model calls">{r.usage.model_calls} of {r.limits.max_model_calls} allowed (shared by all workers)
             {r.usage.exploration_calls !== undefined && r.mode === 'queue_review' && (
               <span className="block text-xs text-slate-500">

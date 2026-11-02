@@ -42,6 +42,7 @@ INCONCLUSIVE_WHY = {
     "setup": "the re-check could not recreate the starting page",
     "expectation": "no supplied requirement says what should happen here",
     "application": "the website errored while the steps were repeated",
+    "execution": "a browser action did not complete during the replay, which is not evidence about the website",
     "verifier": "the checker could not form a valid check",
 }
 TASK_WHY = {
@@ -380,9 +381,11 @@ class ReportBuilder:
             n_same = sum(1 for g in untested if (g.headings[0] if g.headings else g.route) == heading and g.route == f.route)
             gaps.append(f"Form found but not tested: “{_clip(heading, 80)}” at {f.route}"
                         + (f" ({n_same} variants)." if n_same > 1 else "."))
-        tc_failed = [tc for tc in d.test_cases if tc.status in ("setup_failed", "execution_failed")]
-        if tc_failed:
-            gaps.append(f"{len(tc_failed)} planned test case(s) could not be run (the starting page could not be recreated or the run failed).")
+        for tc in d.test_cases:
+            if tc.status in ("setup_failed", "execution_failed"):
+                what = "could not start" if tc.status == "setup_failed" else "did not complete"
+                gaps.append(f"Test case “{_clip(tc.label, 80)}” {what}: {_clip(tc.setup_error, 200)}. "
+                            "This is a tool or execution failure, not evidence about the website.")
         # Failed and blocked tasks are listed with their recorded cause; other open tasks by status.
         for ty, st, cause, n in task_problems(d.tasks):
             gaps.append(f"{n} {TASK_KIND.get(ty, ty)} {'failed' if st == 'failed' else 'blocked'}: {cause}.")

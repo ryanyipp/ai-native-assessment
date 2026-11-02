@@ -10,6 +10,7 @@ import type { Selection } from '../flow-map/FlowMap'
 const failureText: Record<string, string> = {
   setup: 'Setup failure (could not recreate the start conditions)',
   application: 'Application failure during the repeated actions',
+  execution: 'Execution failure (not evidence about the website)',
   expectation: 'Expected behaviour not explicit',
   verifier: 'No valid assertion',
 }

@@ -558,7 +558,8 @@ class VerificationAttempt(BaseModel):
     setup_error: str | None = None
     # setup: could not recreate the start state; application: the app errored during
     # the repeated actions; expectation: no explicit requirement; verifier: no valid assertion.
-    failure_class: Literal["setup", "application", "expectation", "verifier"] | None = None
+    # "application" appears only in older records; replay action failures are now "execution".
+    failure_class: Literal["setup", "application", "execution", "expectation", "verifier"] | None = None
     assertion: Assertion | None = None
     result: AssertionResult | None = None
     outcome: Literal["confirmed", "not_reproduced", "inconclusive"]

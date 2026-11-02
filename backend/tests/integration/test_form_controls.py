@@ -15,10 +15,12 @@ from types import SimpleNamespace
 import httpx
 import pytest
 
+from flowlens.browser.engine import BrowserEngine
 from flowlens.config import Settings
-from flowlens.models.contracts import Provenance, Run, RunLimits
+from flowlens.models.contracts import ClickAction, NavigateAction, Provenance, Run, RunLimits
 from flowlens.orchestration.queue_review import QueueReviewRun
 from flowlens.services.llm import ScriptedClient
+from flowlens.services.report import build_report, to_markdown
 from flowlens.storage.db import Store
 
 REPO = Path(__file__).resolve().parents[3]
@@ -106,3 +108,35 @@ async def test_controls_use_the_right_action_through_testing_and_replay(leave_de
     steps = [s for f in d.findings for s in f.reproduction_steps]
     assert any(s.type == "select" and s.value == "Sick" for s in steps)
     assert any(s.type == "check" and s.checked is False for s in steps)
+
+
+async def test_unsupported_values_are_explicit_failures_not_website_verdicts(leave_desk, tmp_path):
+    d, _ = await review(leave_desk, tmp_path)
+    cases = {c.label: c for c in d.test_cases}
+    bad = cases["Bad option"]
+    assert bad.status == "execution_failed" and "'Holiday'" in bad.setup_error and "Annual" in bad.setup_error
+    boolean = cases["Bad boolean"]
+    assert boolean.status == "execution_failed" and "'maybe'" in boolean.setup_error
+    assert cases["Missing control"].status == "execution_failed" and "Ghost field" in cases["Missing control"].setup_error
+    assert cases["Missing control"].evidence_refs  # what happened before the failure stays inspectable
+    for c in (bad, boolean, cases["Missing control"]):
+        assert c.tester_verdict is None and c.tester_note is None
+    assert {f.test_case_id for f in d.findings} == {cases["Select"].id, cases["Untick"].id}
+    assert "2 test case(s) executed, 3 not completed" in d.run.stop_reason
+
+
+async def test_reports_keep_tool_failures_apart_from_website_results(leave_desk, tmp_path):
+    d, root = await review(leave_desk, tmp_path)
+    md = to_markdown(build_report(d, root / "artifacts", "http://h"))
+    assert "Test case “Bad option” did not complete" in md
+    assert "This is a tool or execution failure, not evidence about the website." in md
+
+
+async def test_a_real_site_error_is_an_observed_result_not_a_tool_failure(leave_desk):
+    async with BrowserEngine([leave_desk.url]) as b:
+        await b.execute(NavigateAction(url=leave_desk.url + "/"))
+        await b.page.route("**/profile", lambda r: r.fulfill(status=500, content_type="text/html",
+                                                             body="<h1>Internal Server Error</h1>"))
+        el = next(e for e in b.last_observation.elements if e.name == "Profile")
+        ex = await b.execute(ClickAction(element_id=el.id))
+    assert ex.ok and "Internal Server Error" in ex.observation.headings  # recorded as what the site did

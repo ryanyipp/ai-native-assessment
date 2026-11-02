@@ -130,10 +130,13 @@ function TransitionEvidence({ detail, t, onSelect }: { detail: RunDetail; t: Tra
             <Field label="Inputs" mono><span className="[overflow-wrap:anywhere]">{JSON.stringify(tc.inputs)}</span></Field>
             <Field label="Requirement">{tc.requirement_ref ?? 'none (tester expectation only)'}</Field>
             <Field label={tc.requirement_ref ? 'Expected' : 'Tester-proposed expectation'}>{tc.expected}</Field>
-            <Field label="Status">{tc.status}{tc.setup_error ? ` — ${tc.setup_error}` : ''}</Field>
-            <Field label="Tester verdict">{tc.tester_verdict ?? '—'}{tc.tester_note ? ` — ${tc.tester_note}` : ''}</Field>
+            <Field label="Status">{caseStatus[tc.status] ?? tc.status}{tc.setup_error ? ` — ${tc.setup_error}` : ''}</Field>
+            <Field label="Tester verdict">{tc.status !== 'executed' ? 'Not assessed: the test did not complete'
+              : `${tc.tester_verdict ?? '—'}${tc.tester_note ? ` — ${tc.tester_note}` : ''}`}</Field>
           </dl>
-          <p className="mt-1.5 text-xs text-slate-500">The tester's verdict is an unverified suspicion. See Findings for the verifier's result.</p>
+          <p className="mt-1.5 text-xs text-slate-500">{tc.status !== 'executed'
+            ? 'A tool or execution failure, not evidence about the website. Partial actions and screenshots stay in the timeline.'
+            : "The tester's verdict is an unverified suspicion. See Findings for the verifier's result."}</p>
         </section>
       )}
       {ver && (
@@ -323,6 +326,12 @@ function StepJump({ detail, step, onSelect }: { detail: RunDetail; step: number;
         onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }} />
     </label>
   )
+}
+
+const caseStatus: Record<string, string> = {
+  executed: 'Executed',
+  setup_failed: 'Setup failed',
+  execution_failed: 'Execution failed',
 }
 
 export function EvidencePanel({ detail, selection, onSelect, onStep }: {
