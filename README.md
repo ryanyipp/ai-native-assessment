@@ -40,7 +40,7 @@ Python code manages task ownership, retries, budgets and result acceptance. It a
 
 A confirmed finding reproduced the requirement violation in both replays. Correctness still depends on the model selecting an appropriate requirement and assertion.
 
-![FlowLens workspace: the four workers, the map of observed pages and moves, and a confirmed finding with its replay evidence](docs/images/flowlens-workspace.png)
+![Multi-agent shared queue: Explorer A and B hand forms to the input tester, which hands candidates to the verifier for confirmed, not reproduced or inconclusive outcomes; a Python coordinator manages claims, dependencies, leases, retries, deduplication and budgets](docs/images/flowlens-architecture.png)
 
 [Architecture and handoffs →](docs/architecture.md)
 
