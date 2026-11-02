@@ -165,7 +165,17 @@ class QueueReviewRun(ReviewRun):
         return None
 
     def defer_frontier(self, states: list[ScreenState], agent_id: str, task: Task) -> None:
-        """Queue mode: new states are actionable explore tasks unless they add nothing new to explore."""
+        """Queue mode: new states are actionable explore tasks unless they add nothing new to explore.
+
+        An attempt whose lease expired may not queue follow-up work. It can reach this point without any
+        refused action or model call (run_c19d17f7a20d: explorer-a woke with nothing left to choose and
+        queued a task). No await follows, so the watchdog cannot revoke the attempt during the writes.
+        """
+        if states and task.attempt_id in self.revoked:
+            self.event("late_action_rejected", f"Refused follow-up tasks from {task.owner} attempt {task.attempt_id}: "
+                       "its lease expired and the task was reassigned", agent_id=COORDINATOR, task=task,
+                       worker=task.owner, attempt_id=task.attempt_id, what="follow-up tasks")
+            raise AttemptRevoked(f"{task.attempt_id} revoked")
         lim = self.run.limits
         for st in states:
             depth = task.depth + 1
