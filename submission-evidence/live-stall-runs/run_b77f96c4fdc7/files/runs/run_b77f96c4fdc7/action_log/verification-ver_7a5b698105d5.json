@@ -1,0 +1,85 @@
+{
+  "id": "ver_7a5b698105d5",
+  "run_id": "run_b77f96c4fdc7",
+  "finding_id": "fnd_1f1a956110b2",
+  "handoff_id": "ho_eff1f2e5ed6e",
+  "verifier_id": "verifier",
+  "replay_index": 0,
+  "target_origin": "http://ticket-broken.localhost:5176",
+  "context_id": "verifier:ver_7a5b698105d5:ws_a1db042068",
+  "fresh_context": true,
+  "setup_ok": true,
+  "setup_strategy": "recipe",
+  "setup_error": null,
+  "failure_class": null,
+  "applicability": "applies",
+  "applicability_target": "Yes, cancel booking",
+  "applicability_reason": "The action 'Yes, cancel booking' is the confirmation step for cancelling a booking as described in the requirement.",
+  "assertion": {
+    "type": "text_or_value_retained",
+    "params": {
+      "expected": "Harbour Jazz Night \u00b7 2 ticket(s)",
+      "expect_present": false
+    },
+    "requirement_ref": "T4",
+    "expected": "The booking 'Harbour Jazz Night \u00b7 2 ticket(s)' should no longer be visible in the My bookings list.",
+    "chosen_by": "verifier"
+  },
+  "result": {
+    "assertion": {
+      "type": "text_or_value_retained",
+      "params": {
+        "expected": "Harbour Jazz Night \u00b7 2 ticket(s)",
+        "expect_present": false
+      },
+      "requirement_ref": "T4",
+      "expected": "The booking 'Harbour Jazz Night \u00b7 2 ticket(s)' should no longer be visible in the My bookings list.",
+      "chosen_by": "verifier"
+    },
+    "passed": false,
+    "observed": {
+      "url": "http://ticket-broken.localhost:5176/",
+      "route": "/",
+      "in_page_text": true
+    },
+    "evaluated_by": "engine"
+  },
+  "outcome": "confirmed",
+  "reason": "Assertion text_or_value_retained failed: the page violated T4 in this fresh replay.",
+  "action_result_ids": [
+    "act_959a5e0025a8",
+    "act_13f517dffb94",
+    "act_21ae594e8ab3",
+    "act_d2ac4963cb05",
+    "act_080a91224aab",
+    "act_da15fa0ead7d",
+    "act_efddb915434f",
+    "act_d35c0e7a12df",
+    "act_da59ac0e0a11"
+  ],
+  "evidence_refs": [
+    "art_e374e32a67dc",
+    "art_85f54c912cc7",
+    "art_30def179f6ba",
+    "art_443676ea10c8",
+    "art_3eebeba35416",
+    "art_c626e9c7872c",
+    "art_c1813c023248",
+    "art_641a2549f32a",
+    "art_ddbb420b2d85",
+    "art_36cb72823ebb",
+    "art_c3ec5e293503",
+    "art_e94f1f740a72",
+    "art_e8602897fb79",
+    "art_c1a99ccecda2",
+    "art_cfba4659291a",
+    "art_710e2b633667",
+    "art_3f5513991366",
+    "art_d3f765b683c5",
+    "art_23ace6d3a72b",
+    "art_7531c729237d"
+  ],
+  "model_call_id": "mc_db189eb67ed6",
+  "started_at": "2026-11-02T15:19:02.633513Z",
+  "finished_at": "2026-11-02T15:19:08.279568Z"
+}

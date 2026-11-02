@@ -1,0 +1,146 @@
+{
+  "id": "ho_65d1d79d12dc",
+  "run_id": "run_b77f96c4fdc7",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-b",
+  "to_agent": "input-tester",
+  "task_id": "task_b47e5931edc2",
+  "source_state_id": "state_acbf11c10abf",
+  "form_id": "form_f1e176b3ad36",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_acbf11c10abf",
+    "expected_signature": "e56c81eab5e28397",
+    "direct_path": null,
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Book tickets for Harbour Jazz Night",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Name",
+          "input_type": "text",
+          "context": null
+        },
+        "value": "Alice",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Email",
+          "input_type": "text",
+          "context": null
+        },
+        "value": "alice@example.com",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "fill",
+        "path": null,
+        "control": {
+          "role": "textbox",
+          "name": "Tickets",
+          "input_type": "number",
+          "context": null
+        },
+        "value": "2",
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "button",
+          "name": "Book tickets",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Cancel booking",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "T1",
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    },
+    {
+      "id": "T2",
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message."
+    },
+    {
+      "id": "T3",
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets."
+    },
+    {
+      "id": "T4",
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+      "source": "T1"
+    },
+    {
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message.",
+      "source": "T2"
+    },
+    {
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets.",
+      "source": "T3"
+    },
+    {
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.",
+      "source": "T4"
+    }
+  ],
+  "evidence_refs": [
+    "art_2b6c15746f2c",
+    "art_6fa292937dda"
+  ],
+  "created_at": "2026-11-02T15:18:46.111971Z"
+}

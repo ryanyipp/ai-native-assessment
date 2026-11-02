@@ -1,3 +1,4 @@
 # Recorded demo evidence must stay byte-identical (records carry SHA-256 hashes).
 demo/** -text
 scripts/check-runs/** -text
+submission-evidence/live-stall-runs/run_b77f96c4fdc7/** -text

@@ -1,0 +1,81 @@
+{
+  "id": "ho_b624bce372d9",
+  "run_id": "run_b77f96c4fdc7",
+  "kind": "form_to_tester",
+  "from_agent": "explorer-b",
+  "to_agent": "input-tester",
+  "task_id": "task_02a4c8cd5094",
+  "source_state_id": "state_753d2b26677d",
+  "form_id": "form_c4d74fdea6c0",
+  "finding_id": null,
+  "setup": {
+    "target_state_id": "state_753d2b26677d",
+    "expected_signature": "3f4a0bf26657e3c4",
+    "direct_path": "/events/1/book",
+    "steps": [
+      {
+        "type": "navigate",
+        "path": "/",
+        "control": null,
+        "value": null,
+        "key": null,
+        "checked": null
+      },
+      {
+        "type": "click",
+        "path": null,
+        "control": {
+          "role": "link",
+          "name": "Book tickets for Harbour Jazz Night",
+          "input_type": null,
+          "context": null
+        },
+        "value": null,
+        "key": null,
+        "checked": null
+      }
+    ],
+    "data_isolation": "fresh browser context and a newly provisioned fixture workspace per execution"
+  },
+  "requirements": [
+    {
+      "id": "T1",
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created."
+    },
+    {
+      "id": "T2",
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message."
+    },
+    {
+      "id": "T3",
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets."
+    },
+    {
+      "id": "T4",
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings."
+    }
+  ],
+  "expected_behaviour": [
+    {
+      "text": "A booking must be for between 1 and 6 tickets. Any other number must be rejected with a validation message, and no booking is created.",
+      "source": "T1"
+    },
+    {
+      "text": "The email must contain an \"@\". Otherwise the booking is rejected with a validation message.",
+      "source": "T2"
+    },
+    {
+      "text": "After a successful booking, a confirmation page shows the event, the name and the number of tickets.",
+      "source": "T3"
+    },
+    {
+      "text": "A booking can be cancelled from its confirmation page after confirming. A cancelled booking no longer appears under My bookings.",
+      "source": "T4"
+    }
+  ],
+  "evidence_refs": [
+    "art_eca465795bd1",
+    "art_316721456929"
+  ],
+  "created_at": "2026-11-02T15:18:32.034649Z"
+}

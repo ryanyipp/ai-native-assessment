@@ -1,0 +1,82 @@
+{
+  "url": "http://ticket-broken.localhost:5176/",
+  "title": "Events \u00b7 Ticket Desk",
+  "headings": [
+    "Events",
+    "My bookings"
+  ],
+  "elements": [
+    {
+      "id": "e1",
+      "tag": "a",
+      "role": "link",
+      "name": "Events",
+      "input_type": null,
+      "value": null,
+      "href": "/",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "options": null,
+      "context": null,
+      "name_shared": false
+    },
+    {
+      "id": "e2",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Harbour Jazz Night",
+      "input_type": null,
+      "value": null,
+      "href": "/events/1/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "options": null,
+      "context": "Harbour Jazz Night Book tickets for Harbour Jazz Night",
+      "name_shared": false
+    },
+    {
+      "id": "e3",
+      "tag": "a",
+      "role": "link",
+      "name": "Book tickets for Open-Air Cinema",
+      "input_type": null,
+      "value": null,
+      "href": "/events/2/book",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "options": null,
+      "context": "Open-Air Cinema Book tickets for Open-Air Cinema",
+      "name_shared": false
+    },
+    {
+      "id": "e4",
+      "tag": "a",
+      "role": "link",
+      "name": "Harbour Jazz Night \u00b7 2 ticket(s)",
+      "input_type": null,
+      "value": null,
+      "href": "/bookings/671dea34",
+      "disabled": false,
+      "required": false,
+      "form_index": null,
+      "validation_message": null,
+      "checked": null,
+      "options": null,
+      "context": "Harbour Jazz Night \u00b7 2 ticket(s)",
+      "name_shared": false
+    }
+  ],
+  "text_excerpt": "Ticket Desk \u00b7 Events Events Harbour Jazz Night Book tickets for Harbour Jazz Night Open-Air Cinema Book tickets for Open-Air Cinema My bookings Harbour Jazz Night \u00b7 2 ticket(s)",
+  "status_messages": [],
+  "alert_messages": [],
+  "invalid_fields": []
+}
