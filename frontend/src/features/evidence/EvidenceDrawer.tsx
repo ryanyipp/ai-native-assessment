@@ -6,9 +6,9 @@ import { Badge, Button, Field, SectionTitle, Tooltip } from '../../components/ui
 import { cx } from '../../lib/ui-utils'
 import { artifactUrl } from '../../lib/api'
 import { fmtInt, fmtMs, fmtTime, fmtUsd } from '../../lib/format'
-import { agentFor, describeAction, evidenceFor, modelCallFor, phaseLabel, reasoningFor, stateById, testCaseFor, verificationFor } from '../../lib/run-model'
+import { agentFor, describeAction, evidenceFor, modelCallFor, phaseLabel, reasoningFor, selectionForStep, stateById, testCaseFor, verificationFor } from '../../lib/run-model'
 import { verificationMeta } from '../../lib/ui-utils'
-import type { SemanticStep } from '../../lib/types'
+import type { ActionResult, SemanticStep } from '../../lib/types'
 
 function semanticText(s: SemanticStep) {
   if (s.type === 'navigate') return `open ${s.path}`
@@ -314,8 +314,8 @@ function StepJump({ detail, step, onSelect }: { detail: RunDetail; step: number;
   const [value, setValue] = useState(String(step))
   const go = () => {
     const n = Number(value)
-    const hit = value.trim() && Number.isInteger(n) ? detail.transitions.find((x) => x.step === n) : undefined
-    if (hit) onSelect({ kind: 'transition', id: hit.id })
+    const hit = value.trim() && Number.isInteger(n) ? selectionForStep(detail, n) : null
+    if (hit) onSelect(hit)
     else setValue(String(step))
   }
   return (
@@ -325,6 +325,29 @@ function StepJump({ detail, step, onSelect }: { detail: RunDetail; step: number;
         value={value} onChange={(e) => setValue(e.target.value)} onBlur={go} onFocus={(e) => e.target.select()}
         onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }} />
     </label>
+  )
+}
+
+function ActionEvidence({ detail, a }: { detail: RunDetail; a: ActionResult }) {
+  const agent = agentFor(detail, a.id)
+  return (
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge tone={a.ok ? 'green' : 'red'}>{a.ok ? 'Action succeeded' : 'Action failed'}</Badge>
+          {agent && <Badge icon={<MousePointerClick size={11} />}>{agent}</Badge>}
+          {a.phase && a.phase !== 'explore' && <Badge tone={a.phase === 'verify' ? 'violet' : 'amber'}>{phaseLabel[a.phase]}</Badge>}
+        </div>
+        <h2 className="text-base font-semibold leading-snug text-slate-900">{describeAction(a.action, a.target_description)}</h2>
+        <p className="text-xs text-slate-500">This step added no move to the map. Agents share one step counter, so another agent's step can appear between these.</p>
+      </div>
+      <ScreenshotPreview id={a.screenshot_artifact_id} alt={`Page after step ${a.step}`} caption={`Step ${a.step}`} />
+      <dl className="divide-y divide-slate-100">
+        <Field label="Page" mono><span className="[overflow-wrap:anywhere]">{a.url_after}</span></Field>
+        {a.context_id && <Field label="Context" mono><span className="[overflow-wrap:anywhere]">{a.context_id}</span></Field>}
+        {a.error && <Field label="Error">{a.error}</Field>}
+      </dl>
+    </div>
   )
 }
 
@@ -342,13 +365,15 @@ export function EvidencePanel({ detail, selection, onSelect, onStep }: {
 }) {
   const t = selection?.kind === 'transition' ? detail.transitions.find((x) => x.id === selection.id) : undefined
   const s = selection?.kind === 'state' ? stateById(detail, selection.id) : undefined
-  if (!t && !s) return null
+  const a = selection?.kind === 'action' ? detail.actions.find((x) => x.id === selection.id) : undefined
+  const step = t?.step ?? a?.step
+  if (!t && !s && !a) return null
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-2">
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" onClick={() => onStep(-1)} aria-label="Previous step"><ChevronLeft size={15} /></Button>
-          {t ? <StepJump key={t.id} detail={detail} step={t.step} onSelect={onSelect} /> : (
+          {step !== undefined ? <StepJump key={step} detail={detail} step={step} onSelect={onSelect} /> : (
             <span className="min-w-[5.5rem] text-center text-xs tabular-nums text-slate-600">State · step {s!.first_seen_step}</span>
           )}
           <Button variant="ghost" size="sm" onClick={() => onStep(1)} aria-label="Next step"><ChevronRight size={15} /></Button>        </div>
@@ -356,6 +381,7 @@ export function EvidencePanel({ detail, selection, onSelect, onStep }: {
       </div>
       <div key={selection!.id} className="fl-enter min-h-0 flex-1 overflow-y-auto px-4 py-4">
         {t && <TransitionEvidence detail={detail} t={t} onSelect={onSelect} />}
+        {a && <ActionEvidence detail={detail} a={a} />}
         {s && <StateEvidence detail={detail} s={s} onSelect={onSelect} />}
       </div>
     </div>

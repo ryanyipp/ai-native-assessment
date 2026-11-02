@@ -26,7 +26,7 @@ import { buildDecks, collapsedKeys, deckKey, type Deck } from '../../lib/decks'
 import { cx } from '../../lib/ui-utils'
 import type { RunDetail, ScreenState, Transition } from '../../lib/types'
 
-export type Selection = { kind: 'state'; id: string } | { kind: 'transition'; id: string } | null
+export type Selection = { kind: 'state'; id: string } | { kind: 'transition'; id: string } | { kind: 'action'; id: string } | null
 
 const NODE_W = 232
 const NODE_H = 188
@@ -406,7 +406,7 @@ export function FlowMap({ detail, selection, onSelect, showThumbs, onToggleThumb
         }
       }
     }
-    const hasFocus = selection !== null
+    const hasFocus = selection !== null && selection.kind !== 'action'
     const focusVisible = new Set([...focusStates].map(visibleId))
     const selectedVisible = selection?.kind === 'state' ? visibleId(selection.id) : null
 

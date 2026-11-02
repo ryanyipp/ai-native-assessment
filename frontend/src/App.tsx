@@ -19,7 +19,7 @@ import { RunLauncher } from './features/run-launcher/RunLauncher'
 import { api } from './lib/api'
 import { fmtInt, fmtUsd } from './lib/format'
 import { agentsOf, workerStatus } from './lib/workers'
-import { transitionsByStep } from './lib/run-model'
+import { stepNumbers, selectionForStep } from './lib/run-model'
 import type { Health, Run, RunDetail } from './lib/types'
 
 const ACTIVE = new Set(['queued', 'running'])
@@ -268,25 +268,27 @@ export default function App() {
     if (s) setTab('evidence')
   }, [])
 
-  const ordered = useMemo(() => (detail ? transitionsByStep(detail) : []), [detail])
+  const ordered = useMemo(() => (detail ? stepNumbers(detail) : []), [detail])
 
   const step = useCallback((dir: -1 | 1) => {
     if (!detail || ordered.length === 0) return
     let idx: number
-    if (selection?.kind === 'transition') {
-      idx = ordered.findIndex((t) => t.id === selection.id) + dir
+    if (selection?.kind === 'transition' || selection?.kind === 'action') {
+      const from = selection.kind === 'transition' ? detail.transitions.find((t) => t.id === selection.id)
+        : detail.actions.find((a) => a.id === selection.id)
+      idx = ordered.indexOf(from?.step ?? -1) + dir
     } else if (selection?.kind === 'state') {
       const s = detail.states.find((x) => x.id === selection.id)
-      const after = ordered.findIndex((t) => t.step > (s?.first_seen_step ?? 0))
+      const after = ordered.findIndex((n) => n > (s?.first_seen_step ?? 0))
       idx = dir === 1 ? (after === -1 ? ordered.length - 1 : after) : (after === -1 ? ordered.length - 1 : after) - 1
     } else {
       idx = dir === 1 ? 0 : ordered.length - 1
     }
     idx = Math.max(0, Math.min(ordered.length - 1, idx))
-    select({ kind: 'transition', id: ordered[idx].id })
+    select(selectionForStep(detail, ordered[idx]))
   }, [detail, ordered, selection, select])
 
-  // Arrow keys step through transitions; Escape clears the selection. Ignored while typing or in dialogs.
+  // Arrow keys step through every recorded step; Escape clears the selection. Ignored while typing or in dialogs.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement

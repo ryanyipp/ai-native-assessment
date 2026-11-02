@@ -5,6 +5,19 @@ export function transitionsByStep(d: RunDetail): Transition[] {
   return [...d.transitions].sort((a, b) => a.step - b.step)
 }
 
+/** Every recorded step number, including setup and replay actions that add no move to the map. */
+export function stepNumbers(d: RunDetail): number[] {
+  return [...new Set([...d.actions.map((a) => a.step), ...d.transitions.map((t) => t.step)])].sort((a, b) => a - b)
+}
+
+/** What to show for a step: its map move if it has one, otherwise the recorded action. */
+export function selectionForStep(d: RunDetail, step: number): { kind: 'transition' | 'action'; id: string } | null {
+  const t = d.transitions.find((x) => x.step === step)
+  if (t) return { kind: 'transition', id: t.id }
+  const a = d.actions.find((x) => x.step === step)
+  return a ? { kind: 'action', id: a.id } : null
+}
+
 export function stateById(d: RunDetail, id: string): ScreenState | undefined {
   return d.states.find((s) => s.id === id)
 }
