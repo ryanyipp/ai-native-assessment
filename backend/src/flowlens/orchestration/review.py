@@ -48,7 +48,7 @@ from flowlens.orchestration.replay import execute_step, reach_state
 from flowlens.orchestration.runner import ExplorerRun, relative_path
 from flowlens.services.llm import BudgetExceeded
 from flowlens.services.test_data import SetupError, WorkspaceProvider, session_provider
-from flowlens.verification.assertions import AssertionInvalid, evaluate, validate_assertion
+from flowlens.verification.assertions import AssertionInvalid, evaluate, removal_precondition, validate_assertion
 
 COORDINATOR = "coordinator"
 
@@ -655,6 +655,10 @@ class ReviewRun(ExplorerRun):
                                f"{f.requirement_ref}: {decision.reasoning[:240]}", agent_id=self.verifier_id,
                                task=task, finding_id=f.id, model_call_id=mc_id, assertion=assertion.model_dump())
                 att.assertion = assertion
+                gap = removal_precondition(assertion, check_before) if check_before is not None else None
+                if gap:  # checked per replay: each one has its own fresh data
+                    att.action_result_ids = [r.id for r in rec.results]
+                    return done("inconclusive", gap, "verifier")
                 err, app_err, ex = await self._run_steps(eng, f.reproduction_steps, rec)
                 att.evidence_refs = rec.evidence
                 att.action_result_ids = [r.id for r in rec.results]

@@ -82,6 +82,24 @@ def validate_assertion(a: Assertion) -> _P:
         raise AssertionInvalid(f"{a.type.value} params invalid: {err['msg']} at {err['loc']}") from e
 
 
+def removal_precondition(a: Assertion, before: Observation) -> str | None:
+    """Why a removal check on a check page cannot show anything, or None if it can.
+
+    A page-text absence check evaluated on a check page claims the action removes text that is there.
+    If that text is not on the check page before the action, in the same fresh session, its absence
+    afterwards proves nothing: for example a record id copied from another session, which this replay's
+    data never had (run_2ddb5120a763). Field checks and presence checks are not affected; absence checks
+    without a check page (text that should never appear) are not passed here.
+    """
+    p = validate_assertion(a)
+    if not isinstance(p, TextOrValueRetainedParams) or p.expect_present or p.field:
+        return None
+    if p.expected in before.text_excerpt:
+        return None
+    return (f"The text the assertion expects to disappear ({p.expected[:80]!r}) was not on the check page before "
+            "the action in this fresh replay, so its absence afterwards proves nothing.")
+
+
 def evaluate(a: Assertion, after: Observation, start_url: str) -> AssertionResult:
     p = validate_assertion(a)
     observed: dict = {"url": after.url, "route": normalise_route(after.url)}

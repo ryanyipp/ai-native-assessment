@@ -37,7 +37,8 @@ def test_action_only_form_is_extracted_with_its_own_key():
     assert extract_forms(other)[0][0] != key  # action forms on different pages stay distinct
 
 
-def ticket_script(verdict="facts"):
+def ticket_script(verdict="facts", absent="2 ticket(s)"):
+    """`absent` is the text the scripted verifier says the cancellation removes."""
     calls = []
 
     def script(messages):
@@ -83,7 +84,7 @@ def ticket_script(verdict="facts"):
                                "applicability_reason": "This action cancels the booking",
                                "requirement_quote": "A cancelled booking no longer appears under My bookings",
                                "assertion": {"type": "text_or_value_retained",
-                                             "params": {"expected": "2 ticket(s)", "expect_present": False}},
+                                             "params": {"expected": absent, "expect_present": False}},
                                "expected": "the cancelled booking is not listed"})
         raise AssertionError("unexpected prompt")
 
@@ -138,6 +139,22 @@ async def test_multi_step_postcondition_distinguishes_builds(ticket_builds, tmp_
     await rr.execute()
     (f,) = store.detail(rr.run.id).findings
     assert f.verification_status == "not_reproduced"
+
+
+async def test_removal_check_on_text_the_page_never_showed_is_inconclusive(ticket_builds, tmp_path):
+    """run_2ddb5120a763: the verifier checked that a record id from another session had gone. The list never
+    showed it, so the check held trivially and a real defect read as not reproduced."""
+    broken, _ = ticket_builds
+    script, calls = ticket_script(absent="booking ab12cd34")
+    rr, store = _review(broken, tmp_path, script, "id")
+    await rr.execute()
+    d = store.detail(rr.run.id)
+    (f,) = d.findings
+    assert f.verification_status == "inconclusive" and "proves nothing" in f.verification_reason
+    (att,) = d.verifications  # no second replay without a usable assertion
+    assert att.failure_class == "verifier" and att.result is None and att.setup_ok
+    assert any(a.action.get("check") == "before" for a in d.actions if a.id in att.action_result_ids)  # evidence kept
+    assert "verifier" in calls
 
 
 class TruncatingClient:
