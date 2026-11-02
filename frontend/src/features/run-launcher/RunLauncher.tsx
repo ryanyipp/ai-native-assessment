@@ -17,6 +17,10 @@ const LIMITS = {
   max_depth: { min: 0, max: 6, step: 1, label: 'Max exploration depth' },
 } as const
 type LimitKey = keyof typeof LIMITS
+// The injected stall must outlast the task lease, or explorer-a resumes before its lease expires and no
+// takeover happens (the default lease is 300 s). Only runs with the stall enabled get the shorter lease.
+const STALL_S = 75
+const STALL_LEASE_S = 45
 
 function originOf(url: string) {
   try {
@@ -154,15 +158,16 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
     setApiError(null)
     if (Object.keys(errors).length > 0 || !canRun) return
     setBusy(true)
+    const stall = mode === 'queue_review' && injectStall
     try {
       const run = await api.createRun({
         target_url: targetUrl.trim(),
         goal: goal.trim(),
         requirements: requirements.split('\n').map((r) => r.trim()).filter(Boolean),
-        limits,
+        limits: stall ? { ...limits, task_lease_s: STALL_LEASE_S } : limits,
         mode,
         ...(model ? { model } : {}),
-        ...(mode === 'queue_review' && injectStall ? { fault_injection: { worker: 'explorer-a', task_type: 'explore', stall_s: 75 } } : {}),
+        ...(stall ? { fault_injection: { worker: 'explorer-a', task_type: 'explore', stall_s: STALL_S } } : {}),
       })
       onCreated(run)
     } catch (err) {
@@ -250,7 +255,7 @@ export function RunLauncher({ health, onCreated, onPreview, previewBusy, onClose
               <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-2.5 py-2 text-[13px]">
                 <input type="checkbox" checked={injectStall} onChange={(e) => setInjectStall(e.target.checked)} className="mt-0.5" />
                 <span><span className="font-medium text-slate-900">Inject a stall (labelled fault)</span>
-                  <span className="block text-xs text-slate-600">explorer-a stops for 75 s after its first claim. The run is labelled as containing an injected failure.</span></span>
+                  <span className="block text-xs text-slate-600">explorer-a stops for {STALL_S} s after its first claim, and task leases are shortened to {STALL_LEASE_S} s so its lease expires and another explorer takes over. The run is labelled as containing an injected failure.</span></span>
               </label>
             )}
 
