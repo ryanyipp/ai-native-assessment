@@ -1,0 +1,16 @@
+﻿PASS 1 A claimed, then the injected stall started
+PASS 2 lease expired for A's attempt
+PASS 3 context fenced before the task was released
+PASS 4a B claimed a new attempt of the same task
+PASS 4b B used its own fresh context and workspace
+PASS 4c B began by opening the start URL (the task's setup)
+PASS 5a A's late model call refused
+PASS 5b A's late result rejected
+PASS 5c A recorded no browser action after expiry
+PASS 6a B's completion kept (task done, owned by B)
+PASS 6b recovery recorded
+PASS labels: injected failure and scripted model
+A contexts ['explorer-a:task_f5f4918011e6:ws_8f997e313f'] actions 1 | B contexts ['explorer-b:task_f5f4918011e6:ws_552dd72c75'] actions 2
+B first action {'type': 'navigate', 'url': 'http://localhost:5174/'} | states sighted by B 2
+limits {'task_lease_s': 45, 'max_model_calls': 40, 'max_duration_s': 300} fault {'kind': 'stall_after_claim', 'worker': 'explorer-a', 'task_type': 'explore', 'stall_s': 75, 'times': 1}
+run run_3e59bd16c130 completed | cost 0.0 | calls 9

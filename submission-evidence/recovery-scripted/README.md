@@ -2,7 +2,7 @@
 
 **Scripted evidence.** The model is a scripted stand-in (`mocked_model: true`, `live: false`), so these runs show coordinator behaviour, not model quality. The API, queue, coordinator, real Chromium and creator-studio broken fixture are real. Code commit: `f1c689d`.
 
-For real-model recovery evidence, see `../checkpoint-4/` (`run_248eaaa2a5cd`, made by older code).
+For real-model recovery evidence, see `../checkpoint-4/` (`run_248eaaa2a5cd`, made by older code). The same recovery check re-run on the submitted code is in [`current-code/`](current-code/README.md).
 
 ## Reproduce
 

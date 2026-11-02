@@ -1,0 +1,22 @@
+run run_3e59bd16c130
+    4 14:08:03.078 explorer-a   task_claimed          explorer-a claimed explore task explore:start (attempt 1)
+    7 14:08:11.136 explorer-a   fault_injected        [INJECTED FAULT] explorer-a stalls for 75s holding explore:start attempt att_97d6a2c1ea40 (lease 45s)
+    8 14:08:54.614 coordinator  lease_expired         Lease expired: explorer-a attempt att_97d6a2c1ea40 on explore:start made no action or model call for 45s
+    9 14:08:54.930 coordinator  context_fenced        Closed 1 browser context(s) of explorer-a attempt att_97d6a2c1ea40; further actions from it fail
+   10 14:08:55.206 coordinator  task_reassigned       explore:start returned to the queue for another worker (excluded: explorer-a; attempt 1/2 used)
+   11 14:08:55.881 explorer-b   task_claimed          explorer-b claimed explore task explore:start (attempt 2)
+   28 14:09:16.106 explorer-b   task_completed        explorer-b finished explore task explore:start: done (explorer finished: nothing new)
+   29 14:09:16.161 coordinator  task_recovered        explore:start recovered: expired attempt(s) att_97d6a2c1ea40; completed by explorer-b attempt att_3369615
+   34 14:09:26.499 coordinator  late_action_rejected  Refused model call from explorer-a attempt att_97d6a2c1ea40: its lease expired and the task was reassigne
+   36 14:09:28.167 coordinator  result_rejected       Late result from explorer-a attempt att_97d6a2c1ea40 rejected: task_f5f4918011e6: attempt att_97d6a2c1ea4
+   98 14:11:27.409 coordinator  run_finished          Run completed: queue drained; tasks {'done': 6}; claimed by {'explorer-a': 2, 'explorer-b': 2, 'input-tes
+PASS scripted model label
+PASS lease expired for the original attempt
+PASS browser context closed
+PASS replacement is explorer-b with a new attempt
+PASS replacement finished the task
+PASS late call refused
+PASS late result rejected
+PASS no model cost
+final completed | queue drained; tasks {'done': 6}; claimed by {'explorer-a': 2, 'explorer-b': 2, 'input-tester': 1, 'verifier': 1}; 2 test case(s) executed, 1 candidate(s), veri | findings [('R5', 'confirmed')]
+RECOVERY EXIT 0
