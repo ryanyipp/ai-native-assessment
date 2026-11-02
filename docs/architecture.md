@@ -136,6 +136,8 @@ Reservations are not leases. A **reservation** steers which control an explorer 
 2. On the first replay only, the verifier judges applicability and explicitness, quotes the requirement and chooses an assertion. Code checks that the quote is in the requirement, that it cites the candidate's requirement, and that the params validate. Later replays reuse that assertion.
 3. Code repeats the recorded steps and evaluates the assertion, on the check page if the case has one.
 
+**Removal checks.** When the case has a check page and the assertion says page text should be gone afterwards (`text_or_value_retained` with `expect_present: false` and no field), code first requires that text on the check page **before** the steps, in the same fresh replay. Otherwise the absence afterwards proves nothing (for example a record id copied from another session), and the replay is `inconclusive` with failure class `verifier` instead of `not_reproduced`. This is checked per replay, because each has its own data. Absence checks without a check page, such as text that should never appear, are unaffected.
+
 Each attempt ends `confirmed` (assertion failed), `not_reproduced` (held) or `inconclusive` with a failure class: `setup`, `execution` (a browser action did not complete), `expectation`, `applicability` or `verifier`. Review observations get one `inconclusive` attempt with no replay.
 
 **Acceptance** (`ReviewRun.accept`). Before the finding changes, the coordinator checks that every attempt came from a `verifier*` worker other than the reporter, has evidence, and that every non-inconclusive outcome has an engine-evaluated result. Then: all `confirmed` gives `confirmed`, all `not_reproduced` gives `not_reproduced`, anything else gives `inconclusive` with the reasons. All three stay visible.
@@ -170,7 +172,7 @@ The launcher sends cost (US$0.50), model calls (60), output tokens, steps and de
 2. The coordinator closes every browser context the attempt opened (`context_fenced`).
 3. The task returns to the queue (`task_reassigned`), excluding the expired worker if another worker of that type exists; on the last attempt it is `failed`.
 
-A worker that resumes after expiry is refused on its next action, and its result is rejected (`result_rejected`). Tester and verifier writes go through the queue and `guard_publish`, with no `await` between the check and the write. Records the attempt wrote before expiry stay, labelled with its task and context.
+A worker that resumes after expiry is refused on its next action or attempt to queue follow-up tasks, and its result is rejected (`result_rejected`). Tester and verifier writes go through the queue and `guard_publish`, with no `await` between the check and the write. Records the attempt wrote before expiry stay, labelled with its task and context.
 
 **Fault injection.** `fault_injection` on `POST /api/runs` (queue mode only) stalls a chosen worker after a claim while it holds an open context. The launcher's checkbox stalls `explorer-a` for 75 s and sets `task_lease_s` to 45 s, so the lease expires during the stall and another explorer takes over; with the default 300 s lease the stall would end first and nothing would be taken over. The API also accepts other workers, task types and leases. Such runs carry `provenance.injected_failure` and `[INJECTED FAULT]` events.
 

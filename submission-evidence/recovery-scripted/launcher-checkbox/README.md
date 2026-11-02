@@ -45,4 +45,6 @@ The container UI can only reach the demo backend, which makes paid calls. So `la
 
 ## Gap found
 
+> **Fixed later:** an expired attempt can no longer queue follow-up tasks; the attempt is refused (`late_action_rejected`, "follow-up tasks") and its result rejected. Covered by `backend/tests/unit/test_late_writes_and_removal_checks.py`. The record below is from before the fix.
+
 After its lease expired, explorer-a still wrote one queue record: a `skipped` explore task (event 189) from the end of its explore task, which queues follow-up tasks for states it recorded before the stall. That step does not check that the attempt is still current. The task was skipped, so no work ran from it, and the result itself was rejected. In `../current-code/` explorer-a's late model call was refused first, so it never reached that step. Not fixed here.
