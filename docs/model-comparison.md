@@ -1,5 +1,14 @@
 # Model comparison: single agent and shared queue
 
+> **Reading guide (added at submission; no result below was changed).** This file holds four batches, kept as recorded:
+>
+> 1. **Main batch** (the next sections): 72 runs on 3 models, scored detections only. Its assertions were not checked against the corrected build; the rerun below was made after an audit of them, whose figures are not recorded in this repository.
+> 2. **Haiku addendum:** 16 fixture-only runs.
+> 3. **Current-code rerun:** 64 runs on 4 models (Gemini, Haiku, Nano, DeepSeek) at fingerprint `d3c871e37e928ad6`. It reports **scored** and **supported** detections; supported ones also pass on the corrected build. Queue 14/24 scored, 9/24 supported; single 12/24 scored, 8/24 supported.
+> 4. **Exploratory extension:** MiniMax, GLM, Qwen and Kimi, stopped by the spending guard at 45 of 64 runs; Qwen and Kimi are incomplete.
+>
+> "Current code" means the code at that rerun. Exploration memory, select and checkbox handling, execution-failure handling and the verifier's applicability check came later, so no batch here measures them.
+
 **Recommendation: use `google/gemini-3-flash-preview` in `queue_review` for the live demo.** It was the only condition to find every known defect, and it had no false confirmations. It is also the most expensive, at about US$0.027 per run.
 
 This is 72 scored live runs, 2 per model, mode and target. The sample is small, so treat these as directional results.
